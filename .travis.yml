@@ -1,0 +1,4 @@
+language: bash
+
+before_install:  
+  - ./.validateDCO
