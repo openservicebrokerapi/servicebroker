@@ -16,7 +16,7 @@ echo Commits: $(git rev-list ${TRAVIS_COMMIT_RANGE})
 for commit in $(git rev-list ${TRAVIS_COMMIT_RANGE}); do
   echo
   echo Looking at commit: $commit
-  parents=$(git log -n 1 --format="%P")
+  parents=$(git log -n 1 --format="%P" $commit)
   if [[ "$parents" == *" "* ]]; then
     echo "Skipping a merge commit"
 	continue

@@ -1,3 +1,5 @@
+![Build Status](https://travis-ci.org/cncf/servicebroker.svg?branch=master)
+
 # servicebroker
 Service Broker POC
 
