@@ -16,6 +16,12 @@ echo Commits: $(git rev-list ${TRAVIS_COMMIT_RANGE})
 for commit in $(git rev-list ${TRAVIS_COMMIT_RANGE}); do
   echo
   echo Looking at commit: $commit
+  parents=$(git log -n 1 --format="%P")
+  if [[ "$parents" == *" "* ]]; then
+    echo "Skipping a merge commit"
+	continue
+  fi
+
   set +e
   git log --format="%B" -n 1 $commit | \
     grep -E '^Signed-off-by: ' # ([^<]+) <([^<>@]+@[^<>]+)>$' > /dev/null 2>&1
