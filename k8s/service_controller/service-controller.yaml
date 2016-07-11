@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: service-controller
+spec:
+  replicas: 1
+  selector:
+    app: service-controller
+  template:
+    metadata:
+      name: service-controller
+      labels:
+        app: service-controller
+    spec:
+      containers:
+      - name: service-controller
+        image: gcr.io/bmelville-test/service-controller:latest
+        ports:
+        - containerPort: 10000
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: service-controller
+spec:
+  type: LoadBalancer
+  selector:
+    app: service-controller
+  ports:
+  - protocol: TCP
+    port: 10000
+    targetPort: 10000
