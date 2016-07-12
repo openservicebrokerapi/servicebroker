@@ -1,4 +1,11 @@
+sudo: required
 language: bash
+
+services:
+  - docker
 
 before_install:  
   - ./.validateDCO
+
+script:
+  - make
