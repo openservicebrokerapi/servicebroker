@@ -1,7 +1,7 @@
 # .PHONY: all binary test clean server
 
 EXE:=service_controller
-IMAGE:=$(EXE)
+IMAGE:=service-controller
 GO_FILES=$(shell find . -name *.go -print)
 
 all: binary test
@@ -15,7 +15,7 @@ $(EXE): $(GO_FILES)
 	  -e GOPATH=/ \
 	  golang \
 	  sh -c "go get ./... && go build ."
-	docker build -t $(IMAGE) .
+	docker build -t $(IMAGE):latest .
 
 test: binary
 

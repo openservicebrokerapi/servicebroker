@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: service-controller
-        image: gcr.io/bmelville-test/service-controller:latest
+        image: service-controller:latest
         ports:
         - containerPort: 10000
 ---
