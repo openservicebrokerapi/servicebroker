@@ -22,6 +22,8 @@ type InMemServiceStorage struct {
 	bindingMap map[string][]*BindingPair
 }
 
+var _ ServiceStorage = (*InMemServiceStorage)(nil)
+
 func CreateInMemServiceStorage() ServiceStorage {
 	return &InMemServiceStorage{
 		brokerMap:  make(map[string]*ServiceBroker),
