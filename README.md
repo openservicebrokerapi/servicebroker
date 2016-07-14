@@ -1,4 +1,7 @@
-# Service Broker POC ![Build Status](https://travis-ci.org/cncf/servicebroker.svg?branch=master)
+# Service Broker POC 
+
+[![Build Status](https://travis-ci.org/cncf/servicebroker.svg?branch=master)](https://travis-ci.org/cncf/servicebroker)
+[![Go Report Card](https://goreportcard.com/badge/github.com/cncf/servicebroker)](https://goreportcard.com/github.com/cncf/servicebroker)
 
 This repo has the PoC code the CNCF Service Broker WG.
 
