@@ -1,5 +1,6 @@
 approve_by_comment: true
-approve_regex: LGTM
+approve_regex: '(?i)LGTM'
+reject_regex: '(?i)NOT LGTM'
 reset_on_push: true
 signed_off_by:
   required: true
