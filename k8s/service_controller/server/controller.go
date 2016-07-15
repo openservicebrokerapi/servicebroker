@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/cncf/servicebroker/k8s/service_controller/model"
-	"github.com/cncf/servicebroker/k8s/service_controller/utility"
+	"github.com/cncf/servicebroker/k8s/service_controller/utils"
 )
 
 const (
