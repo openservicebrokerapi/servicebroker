@@ -10,6 +10,9 @@ import (
 type K8sServiceStorage struct {
 }
 
+// The k8s implementation should leverage Third Party Resources
+// https://github.com/kubernetes/kubernetes/blob/master/docs/design/extending-api.md
+
 var _ server.ServiceStorage = (*K8sServiceStorage)(nil)
 
 func CreateServiceStorage() server.ServiceStorage {
