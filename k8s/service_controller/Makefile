@@ -2,7 +2,7 @@
 
 EXE:=service_controller
 IMAGE:=service-controller
-GO_FILES=$(shell find . -name *.go -print)
+GO_FILES=$(shell find . -name \*.go -print)
 
 all: binary test
 
