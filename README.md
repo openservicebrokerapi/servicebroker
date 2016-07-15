@@ -16,7 +16,7 @@ along with a Docker image called`service_controller`.
 ## Running
 
 `docker run -ti service_controller` should bring up a Service Controller
-listengin on port 10000.
+listening on port 10000.
 
 ## Testing
 
