@@ -72,9 +72,10 @@ func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Fetch the catalog from the broker
-	// TODO: Handle auth...
 	u := fmt.Sprintf(CATALOG_URL_FMT_STR, b.Hostname, b.Port)
-	resp, err := http.Get(u)
+	req, err := http.NewRequest("GET", u, nil)
+	req.SetBasicAuth(b.User, b.Password)
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		fmt.Printf("Failed to fetch catalog from %s", u)
 		utils.WriteResponse(w, 400, err)
