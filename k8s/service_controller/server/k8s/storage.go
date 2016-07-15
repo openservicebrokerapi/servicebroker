@@ -29,6 +29,27 @@ func (s *K8sServiceStorage) GetInventory(name string) (*model.Catalog, error) {
 }
 
 func (s *K8sServiceStorage) AddBroker(broker *server.ServiceBroker, catalog *model.Catalog) error {
+	// create TPR
+	// tpr is
+	//    kind.fqdn
+	// or
+	//    kind.domain.tld
+	//
+	// use service-broker.cncf.org
+	// end up with k8s resource of ServiceBroker
+	// version v1alpha1 for now
+	//
+	// store name/host/port/user/pass as metadata
+	//
+	// example yawl
+	// metadata:
+	//   name: service-broker.cncf.org
+	//   (service)name/host/port/user/pass
+	// apiVersion: extensions/v1beta1
+	// kind: ThirdPartyResource
+	// versions:
+	// - name: v1alpha1
+
 	return fmt.Errorf("Not implemented yet")
 }
 
