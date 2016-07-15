@@ -19,11 +19,11 @@ func (s *NilServiceStorage) ListBrokers() ([]*model.ServiceBroker, error) {
 	return nil, nil
 }
 
-func (s *NilServiceStorage) GetBroker(name string) (*model.ServiceBroker, error) {
+func (s *NilServiceStorage) GetBroker(id string) (*model.ServiceBroker, error) {
 	return nil, nil
 }
 
-func (s *NilServiceStorage) GetInventory(name string) (*model.Catalog, error) {
+func (s *NilServiceStorage) GetInventory() (*model.Catalog, error) {
 	return nil, nil
 }
 
@@ -31,43 +31,43 @@ func (s *NilServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *mode
 	return nil
 }
 
-func (s *NilServiceStorage) DeleteBroker(string) error {
+func (s *NilServiceStorage) DeleteBroker(id string) error {
 	return nil
 }
 
-func (s *NilServiceStorage) ServiceExists(broker, service string) bool {
+func (s *NilServiceStorage) ServiceExists(id string) bool {
 	return false
 }
 
-func (s *NilServiceStorage) ListServices(broker string) ([]*model.ServiceInstance, error) {
+func (s *NilServiceStorage) ListServices() ([]*model.ServiceInstance, error) {
 	return nil, nil
 }
 
-func (s *NilServiceStorage) GetService(broker, service string) (*model.ServiceInstance, error) {
+func (s *NilServiceStorage) GetService(id string) (*model.ServiceInstance, error) {
 	return nil, nil
 }
 
-func (s *NilServiceStorage) AddService(broker string, si *model.ServiceInstance) error {
+func (s *NilServiceStorage) AddService(si *model.ServiceInstance) error {
 	return nil
 }
 
-func (s *NilServiceStorage) DeleteService(string, string) error {
+func (s *NilServiceStorage) DeleteService(id string) error {
 	return nil
 }
 
-func (s *NilServiceStorage) ListServiceBindings(string, string) ([]*model.ServiceBinding, error) {
+func (s *NilServiceStorage) ListServiceBindings() ([]*model.ServiceBinding, error) {
 	return nil, nil
 }
 
-func (s *NilServiceStorage) GetServiceBinding(broker, service, binding string) (*model.Credential, error) {
+func (s *NilServiceStorage) GetServiceBinding(id string) (*model.Credential, error) {
 	return nil, nil
 }
 
-func (s *NilServiceStorage) AddServiceBinding(broker string, binding *model.ServiceBinding, cred *model.Credential) error {
+func (s *NilServiceStorage) AddServiceBinding(binding *model.ServiceBinding, cred *model.Credential) error {
 	return nil
 }
 
-func (s *NilServiceStorage) DeleteServiceBinding(string, string, string) error {
+func (s *NilServiceStorage) DeleteServiceBinding(id string) error {
 	return nil
 }
 
@@ -83,11 +83,15 @@ func (s *NotImplementedYetServiceStorage) ListBrokers() ([]*model.ServiceBroker,
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
-func (s *NotImplementedYetServiceStorage) GetBroker(name string) (*model.ServiceBroker, error) {
+func (s *NotImplementedYetServiceStorage) GetBroker(id string) (*model.ServiceBroker, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
-func (s *NotImplementedYetServiceStorage) GetInventory(name string) (*model.Catalog, error) {
+func (s *NotImplementedYetServiceStorage) GetBrokerByService(id string) (*model.ServiceBroker, error) {
+	return nil, fmt.Errorf("Not implemented yet")
+}
+
+func (s *NotImplementedYetServiceStorage) GetInventory(id string) (*model.Catalog, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
@@ -95,43 +99,43 @@ func (s *NotImplementedYetServiceStorage) AddBroker(broker *model.ServiceBroker,
 	return fmt.Errorf("Not implemented yet")
 }
 
-func (s *NotImplementedYetServiceStorage) DeleteBroker(string) error {
+func (s *NotImplementedYetServiceStorage) DeleteBroker(id string) error {
 	return fmt.Errorf("Not implemented yet")
 }
 
-func (s *NotImplementedYetServiceStorage) ServiceExists(broker, service string) bool {
+func (s *NotImplementedYetServiceStorage) ServiceExists(id string) bool {
 	return false
 }
 
-func (s *NotImplementedYetServiceStorage) ListServices(broker string) ([]*model.ServiceInstance, error) {
+func (s *NotImplementedYetServiceStorage) ListServices() ([]*model.ServiceInstance, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
-func (s *NotImplementedYetServiceStorage) GetService(broker, service string) (*model.ServiceInstance, error) {
+func (s *NotImplementedYetServiceStorage) GetService(id string) (*model.ServiceInstance, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
-func (s *NotImplementedYetServiceStorage) AddService(broker string, si *model.ServiceInstance) error {
+func (s *NotImplementedYetServiceStorage) AddService(si *model.ServiceInstance) error {
 	return fmt.Errorf("Not implemented yet")
 }
 
-func (s *NotImplementedYetServiceStorage) DeleteService(string, string) error {
+func (s *NotImplementedYetServiceStorage) DeleteService(id string) error {
 	return fmt.Errorf("Not implemented yet")
 }
 
-func (s *NotImplementedYetServiceStorage) ListServiceBindings(string, string) ([]*model.ServiceBinding, error) {
+func (s *NotImplementedYetServiceStorage) ListServiceBindings() ([]*model.ServiceBinding, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
-func (s *NotImplementedYetServiceStorage) GetServiceBinding(broker, service, binding string) (*model.Credential, error) {
+func (s *NotImplementedYetServiceStorage) GetServiceBinding(id string) (*model.Credential, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
-func (s *NotImplementedYetServiceStorage) AddServiceBinding(broker string, binding *model.ServiceBinding, cred *model.Credential) error {
+func (s *NotImplementedYetServiceStorage) AddServiceBinding(binding *model.ServiceBinding, cred *model.Credential) error {
 	return fmt.Errorf("Not implemented yet")
 }
 
-func (s *NotImplementedYetServiceStorage) DeleteServiceBinding(string, string, string) error {
+func (s *NotImplementedYetServiceStorage) DeleteServiceBinding(id string) error {
 	return fmt.Errorf("Not implemented yet")
 }
 

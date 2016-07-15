@@ -52,11 +52,15 @@ func (kss *K8sServiceStorage) ListBrokers() ([]*model.ServiceBroker, error) {
 	return lsb.Items, nil
 }
 
-func (kss *K8sServiceStorage) GetBroker(name string) (*model.ServiceBroker, error) {
+func (kss *K8sServiceStorage) GetBroker(id string) (*model.ServiceBroker, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
-func (kss *K8sServiceStorage) GetInventory(name string) (*model.Catalog, error) {
+func (kss *K8sServiceStorage) GetBrokerByService(id string) (*model.ServiceBroker, error) {
+	return nil, fmt.Errorf("Not implemented yet")
+}
+
+func (kss *K8sServiceStorage) GetInventory() (*model.Catalog, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
@@ -115,42 +119,42 @@ func (kss *K8sServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *mo
 	return nil
 }
 
-func (kss *K8sServiceStorage) DeleteBroker(string) error {
+func (kss *K8sServiceStorage) DeleteBroker(id string) error {
 	return fmt.Errorf("Not implemented yet")
 }
 
-func (kss *K8sServiceStorage) ServiceExists(broker, service string) bool {
+func (kss *K8sServiceStorage) ServiceExists(id string) bool {
 	return false
 }
 
-func (kss *K8sServiceStorage) ListServices(broker string) ([]*model.ServiceInstance, error) {
+func (kss *K8sServiceStorage) ListServices() ([]*model.ServiceInstance, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
-func (kss *K8sServiceStorage) GetService(broker, service string) (*model.ServiceInstance, error) {
+func (kss *K8sServiceStorage) GetService(id string) (*model.ServiceInstance, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
-func (kss *K8sServiceStorage) AddService(broker string, si *model.ServiceInstance) error {
+func (kss *K8sServiceStorage) AddService(si *model.ServiceInstance) error {
 	return fmt.Errorf("Not implemented yet")
 }
 
-func (kss *K8sServiceStorage) DeleteService(string, string) error {
+func (kss *K8sServiceStorage) DeleteService(id string) error {
 	return fmt.Errorf("Not implemented yet")
 }
 
-func (kss *K8sServiceStorage) ListServiceBindings(string, string) ([]*model.ServiceBinding, error) {
+func (kss *K8sServiceStorage) ListServiceBindings() ([]*model.ServiceBinding, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
-func (kss *K8sServiceStorage) GetServiceBinding(broker, service, binding string) (*model.Credential, error) {
+func (kss *K8sServiceStorage) GetServiceBinding(id string) (*model.Credential, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
-func (kss *K8sServiceStorage) AddServiceBinding(broker string, binding *model.ServiceBinding, cred *model.Credential) error {
+func (kss *K8sServiceStorage) AddServiceBinding(binding *model.ServiceBinding, cred *model.Credential) error {
 	return fmt.Errorf("Not implemented yet")
 }
 
-func (kss *K8sServiceStorage) DeleteServiceBinding(string, string, string) error {
+func (kss *K8sServiceStorage) DeleteServiceBinding(id string) error {
 	return fmt.Errorf("Not implemented yet")
 }
