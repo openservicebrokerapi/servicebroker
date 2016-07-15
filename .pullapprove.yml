@@ -1,9 +1,9 @@
 approve_by_comment: true
 approve_regex: LGTM
 reset_on_push: true
+signed_off_by:
+  required: true
 reviewers:
   required: 1
   members:
     - duglin
-signed_off_by:
-  required: true
