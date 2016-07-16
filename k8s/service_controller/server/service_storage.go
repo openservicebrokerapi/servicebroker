@@ -5,10 +5,17 @@ import (
 )
 
 type ServiceBroker struct {
-	Name     string `json:"name"`
+	// json info from create docs
+	// http://apidocs.cloudfoundry.org/239/service_brokers/create_a_service_broker.html
+	// CF uses name
+	Name string `json:"name"`
+	// CF uses broker_url, and I assume it has the port included
+	// if it is a non standard port
 	Hostname string `json:hostname""`
 	Port     string `json:port""`
-	User     string `json:user""`
+	// CF uses auth_username
+	User string `json:user""`
+	// CF uses auth_password
 	Password string `json:password""`
 }
 
