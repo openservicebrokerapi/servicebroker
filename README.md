@@ -20,4 +20,4 @@ listening on port 10000.
 
 ## Testing
 
-TBD
+`make test-unit`
