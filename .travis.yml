@@ -5,4 +5,4 @@ services:
   - docker
 
 script:
-  - make
+  - make all test-unit

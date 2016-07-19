@@ -3,6 +3,8 @@ package server
 import (
 	"strings"
 	"testing"
+
+	"github.com/cncf/servicebroker/k8s/service_controller/model"
 )
 
 func TestNoBrokers(t *testing.T) {
@@ -10,7 +12,6 @@ func TestNoBrokers(t *testing.T) {
 	l, err := s.ListBrokers()
 	if err != nil {
 		t.Fatalf("ListBrokers failed with: %#v", err)
-
 	}
 	if len(l) != 0 {
 		t.Fatalf("Expected 0 brokers, got %d", len(l))
@@ -27,7 +28,10 @@ func TestNoBrokers(t *testing.T) {
 func TestAddBroker(t *testing.T) {
 	s := CreateInMemServiceStorage()
 	b := &ServiceBroker{Name: "Test"}
-	err := s.AddBroker(b)
+	cat := model.Catalog{
+		Services: []model.Service{},
+	}
+	err := s.AddBroker(b, &cat)
 	if err != nil {
 		t.Fatalf("AddBroker failed with: %#v", err)
 	}
@@ -50,7 +54,10 @@ func TestAddBroker(t *testing.T) {
 func TestAddDuplicateBroker(t *testing.T) {
 	s := CreateInMemServiceStorage()
 	b := &ServiceBroker{Name: "Test"}
-	err := s.AddBroker(b)
+	cat := model.Catalog{
+		Services: []model.Service{},
+	}
+	err := s.AddBroker(b, &cat)
 	if err != nil {
 		t.Fatalf("AddBroker failed with: %#v", err)
 	}
@@ -68,7 +75,7 @@ func TestAddDuplicateBroker(t *testing.T) {
 	if strings.Compare(b2.Name, b.Name) != 0 {
 		t.Fatalf("Names don't match, expected: '%s', got '%s'", b.Name, b2.Name)
 	}
-	err = s.AddBroker(b)
+	err = s.AddBroker(b, &cat)
 	if err == nil {
 		t.Fatalf("AddBroker did not fail with duplicate")
 	}
