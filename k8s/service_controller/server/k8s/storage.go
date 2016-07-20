@@ -19,11 +19,11 @@ func CreateServiceStorage() server.ServiceStorage {
 	return &K8sServiceStorage{}
 }
 
-func (s *K8sServiceStorage) ListBrokers() ([]*server.ServiceBroker, error) {
+func (s *K8sServiceStorage) ListBrokers() ([]*model.ServiceBroker, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
-func (s *K8sServiceStorage) GetBroker(name string) (*server.ServiceBroker, error) {
+func (s *K8sServiceStorage) GetBroker(name string) (*model.ServiceBroker, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
@@ -31,7 +31,7 @@ func (s *K8sServiceStorage) GetInventory(name string) (*model.Catalog, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
-func (s *K8sServiceStorage) AddBroker(broker *server.ServiceBroker, catalog *model.Catalog) error {
+func (s *K8sServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *model.Catalog) error {
 	// create TPR
 	// tpr is
 	//    kind.fqdn

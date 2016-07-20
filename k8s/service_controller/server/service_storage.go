@@ -4,27 +4,12 @@ import (
 	"github.com/cncf/servicebroker/k8s/service_controller/model"
 )
 
-type ServiceBroker struct {
-	// json info from create docs
-	// http://apidocs.cloudfoundry.org/239/service_brokers/create_a_service_broker.html
-	// CF uses name
-	Name string `json:"name"`
-	// CF uses broker_url, and I assume it has the port included
-	// if it is a non standard port
-	Hostname string `json:hostname""`
-	Port     string `json:port""`
-	// CF uses auth_username
-	User string `json:user""`
-	// CF uses auth_password
-	Password string `json:password""`
-}
-
 // The Broker interface provides functions to deal with brokers.
 type Broker interface {
-	ListBrokers() ([]*ServiceBroker, error)
-	GetBroker(string) (*ServiceBroker, error)
+	ListBrokers() ([]*model.ServiceBroker, error)
+	GetBroker(string) (*model.ServiceBroker, error)
 	GetInventory(string) (*model.Catalog, error)
-	AddBroker(*ServiceBroker, *model.Catalog) error
+	AddBroker(*model.ServiceBroker, *model.Catalog) error
 	DeleteBroker(string) error
 }
 

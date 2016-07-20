@@ -15,11 +15,11 @@ func CreateNilServiceStorage() server.ServiceStorage {
 	return &NilServiceStorage{}
 }
 
-func (s *NilServiceStorage) ListBrokers() ([]*server.ServiceBroker, error) {
+func (s *NilServiceStorage) ListBrokers() ([]*model.ServiceBroker, error) {
 	return nil, nil
 }
 
-func (s *NilServiceStorage) GetBroker(name string) (*server.ServiceBroker, error) {
+func (s *NilServiceStorage) GetBroker(name string) (*model.ServiceBroker, error) {
 	return nil, nil
 }
 
@@ -27,7 +27,7 @@ func (s *NilServiceStorage) GetInventory(name string) (*model.Catalog, error) {
 	return nil, nil
 }
 
-func (s *NilServiceStorage) AddBroker(broker *server.ServiceBroker, catalog *model.Catalog) error {
+func (s *NilServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *model.Catalog) error {
 	return nil
 }
 
@@ -79,11 +79,11 @@ func CreateNotImplementedServiceStorage() server.ServiceStorage {
 	return &NotImplementedYetServiceStorage{}
 }
 
-func (s *NotImplementedYetServiceStorage) ListBrokers() ([]*server.ServiceBroker, error) {
+func (s *NotImplementedYetServiceStorage) ListBrokers() ([]*model.ServiceBroker, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
-func (s *NotImplementedYetServiceStorage) GetBroker(name string) (*server.ServiceBroker, error) {
+func (s *NotImplementedYetServiceStorage) GetBroker(name string) (*model.ServiceBroker, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
@@ -91,7 +91,7 @@ func (s *NotImplementedYetServiceStorage) GetInventory(name string) (*model.Cata
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
-func (s *NotImplementedYetServiceStorage) AddBroker(broker *server.ServiceBroker, catalog *model.Catalog) error {
+func (s *NotImplementedYetServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *model.Catalog) error {
 	return fmt.Errorf("Not implemented yet")
 }
 
