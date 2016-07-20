@@ -58,7 +58,7 @@ versions:
 
 		s, e := utils.KubeCreateResource(strings.NewReader(servicebrokerTPRDefYaml))
 		if nil != e {
-			panic(fmt.Sprintf("Error creating k8s TPR [%s]...\n%v", e, s))
+			fmt.Printf("Error creating k8s TPR [%s]...\n%v", e, s)
 		}
 		// s, e = utils.KubeCreateResource(strings.NewReader(serviceinstanceTPRDefYaml))
 		// s, e = utils.KubeCreateResource(strings.NewReader(servicebindingTPRDefYaml))

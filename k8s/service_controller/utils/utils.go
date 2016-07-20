@@ -55,8 +55,9 @@ func ExtractVarFromRequest(r *http.Request, varName string) string {
 }
 
 // KubeCreateResource takes input of resource definitions in the form
-// of a reader. It exists until we vendor a k8s client or figure out
-// how to authenticate directly to apiserver.
+// of a reader. The intermingled output of stdout and stderr is
+// returned as a string. It exists until we vendor a k8s client or
+// figure out how to authenticate directly to apiserver.
 func KubeCreateResource(r io.Reader) (string, error) {
 	c := exec.Command("kubectl", "create", "-oname", "-f", "-")
 	c.Stdin = r
