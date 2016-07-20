@@ -12,9 +12,9 @@ import (
 )
 
 const (
-	CATALOG_URL_FMT_STR             = "http://%s:%s/v2/catalog"
-	CREATE_SERVICE_INSTANCE_FMT_STR = "http://%s:%s/v2/service_instances/%s"
-	BIND_FMT_STR                    = "http://%s:%s/v2/service_instances/%s/service_bindings/%s"
+	CATALOG_URL_FMT_STR             = "%s/v2/catalog"
+	CREATE_SERVICE_INSTANCE_FMT_STR = "%s/v2/service_instances/%s"
+	BIND_FMT_STR                    = "%s/v2/service_instances/%s/service_bindings/%s"
 )
 
 type Controller struct {
@@ -63,7 +63,7 @@ func (c *Controller) Inventory(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request) {
-	var b ServiceBroker
+	var b model.ServiceBroker
 	err := utils.BodyToObject(r, &b)
 	if err != nil {
 		fmt.Printf("Error unmarshaling: %#v", err)
@@ -72,9 +72,9 @@ func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Fetch the catalog from the broker
-	u := fmt.Sprintf(CATALOG_URL_FMT_STR, b.Hostname, b.Port)
+	u := fmt.Sprintf(CATALOG_URL_FMT_STR, b.BrokerURL)
 	req, err := http.NewRequest("GET", u, nil)
-	req.SetBasicAuth(b.User, b.Password)
+	req.SetBasicAuth(b.AuthUsername, b.AuthPassword)
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		fmt.Printf("Failed to fetch catalog from %s", u)
@@ -162,7 +162,7 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	url := fmt.Sprintf(CREATE_SERVICE_INSTANCE_FMT_STR, broker.Hostname, broker.Port, serviceId)
+	url := fmt.Sprintf(CREATE_SERVICE_INSTANCE_FMT_STR, broker.BrokerURL, serviceId)
 
 	// TODO: Handle the auth
 	createHttpReq, err := http.NewRequest("PUT", url, bytes.NewReader(jsonBytes))
@@ -256,7 +256,7 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	url := fmt.Sprintf(BIND_FMT_STR, broker.Hostname, broker.Port, serviceId, bindingId)
+	url := fmt.Sprintf(BIND_FMT_STR, broker.BrokerURL, serviceId, bindingId)
 
 	// TODO: Handle the auth
 	createHttpReq, err := http.NewRequest("PUT", url, bytes.NewReader(jsonBytes))

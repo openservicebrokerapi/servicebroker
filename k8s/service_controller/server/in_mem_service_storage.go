@@ -12,7 +12,7 @@ type BindingPair struct {
 }
 
 type InMemServiceStorage struct {
-	brokerMap map[string]*ServiceBroker
+	brokerMap map[string]*model.ServiceBroker
 	// This gets fetched when a SB is created (or possibly later when refetched).
 	// It's static for now to keep compatibility, seems like this could be more dynamic.
 	catalogs map[string]*model.Catalog
@@ -26,21 +26,21 @@ var _ ServiceStorage = (*InMemServiceStorage)(nil)
 
 func CreateInMemServiceStorage() ServiceStorage {
 	return &InMemServiceStorage{
-		brokerMap:  make(map[string]*ServiceBroker),
+		brokerMap:  make(map[string]*model.ServiceBroker),
 		catalogs:   make(map[string]*model.Catalog),
 		serviceMap: make(map[string][]*model.ServiceInstance),
 		bindingMap: make(map[string][]*BindingPair),
 	}
 }
 
-func (s *InMemServiceStorage) ListBrokers() ([]*ServiceBroker, error) {
-	b := []*ServiceBroker{}
+func (s *InMemServiceStorage) ListBrokers() ([]*model.ServiceBroker, error) {
+	b := []*model.ServiceBroker{}
 	for _, v := range s.brokerMap {
 		b = append(b, v)
 	}
 	return b, nil
 }
-func (s *InMemServiceStorage) GetBroker(name string) (*ServiceBroker, error) {
+func (s *InMemServiceStorage) GetBroker(name string) (*model.ServiceBroker, error) {
 	if b, ok := s.brokerMap[name]; ok {
 		return b, nil
 	}
@@ -54,7 +54,7 @@ func (s *InMemServiceStorage) GetInventory(name string) (*model.Catalog, error) 
 	return nil, fmt.Errorf("No catalog for broker: %s", name)
 }
 
-func (s *InMemServiceStorage) AddBroker(broker *ServiceBroker, catalog *model.Catalog) error {
+func (s *InMemServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *model.Catalog) error {
 	if _, ok := s.brokerMap[broker.Name]; ok {
 		return fmt.Errorf("Broker %s already exists", broker.Name)
 	}

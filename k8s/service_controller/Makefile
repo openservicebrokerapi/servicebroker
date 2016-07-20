@@ -1,9 +1,9 @@
-# .PHONY: all binary test-unit clean server
+# .PHONY: all binary test-unit test clean server
 
 EXE:=service_controller
 IMAGE:=service-controller
 GO_FILES=$(shell find . -name \*.go -print | grep -v _test.go)
-TEST_DIRS=$(shell find . -name \*_test.go -exec dirname {} \; | sort -u)
+TEST_UNIT_DIRS=$(shell find . -name \*_test.go -exec dirname {} \; | grep -v ./tests | sort -u)
 
 all: binary
 
@@ -15,7 +15,7 @@ $(EXE): $(GO_FILES)
 	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/k8s/service_controller \
 	  -e GOPATH=/ \
 	  golang \
-	  sh -c "go get ./... && go build ."
+	  sh -c "go get -d ./... && go build ."
 	docker build -t $(IMAGE):latest .
 
 test-unit: binary
@@ -24,12 +24,25 @@ test-unit: binary
 	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/k8s/service_controller \
 	  -e GOPATH=/ \
 	  golang \
-	  sh -c "go get ./... && make --no-print-directory test-unit-local"
+	  sh -c "go get -d ./... && make --no-print-directory test-unit-local"
 	
 test-unit-local:
-	@TEST_DIRS=$(shell find . -name \*_test.go -exec dirname {} \; | sort -u)
+	@TEST_UNIT_DIRS="$(shell find . -name \*_test.go -exec dirname {} \; | sort -u)"
 	@echo "\n### Running the unit tests"
-	@go test $(TEST_DIRS)
+	@go test $(TEST_UNIT_DIRS)
+
+test: binary
+	docker run \
+	  -w /src/github.com/cncf/servicebroker/k8s/service_controller \
+	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/k8s/service_controller \
+	  -e GOPATH=/ \
+	  --net host \
+	  golang \
+	  sh -c "go get -d ./... && make --no-print-directory test-local"
+
+test-local: binary
+	@echo "\n### Running the integration tests"
+	@go test ./tests
 
 clean:
 	rm -f $(EXE)

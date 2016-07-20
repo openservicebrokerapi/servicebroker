@@ -26,7 +26,7 @@ func (s *Server) Start() {
 	router.HandleFunc("/v2/service_brokers", s.controller.ListServiceBrokers).Methods("GET")
 	router.HandleFunc("/v2/service_brokers/{broker_name}/inventory", s.controller.Inventory).Methods("GET")
 	router.HandleFunc("/v2/service_brokers/{broker_name}", s.controller.GetServiceBroker).Methods("GET")
-	router.HandleFunc("/v2/service_brokers/{broker_name}", s.controller.CreateServiceBroker).Methods("POST")
+	router.HandleFunc("/v2/service_brokers", s.controller.CreateServiceBroker).Methods("POST")
 	router.HandleFunc("/v2/service_brokers/{broker_name}", s.controller.DeleteServiceBroker).Methods("DELETE")
 
 	router.HandleFunc("/v2/service_brokers/{broker_name}/service_instances/", s.controller.ListServiceInstances).Methods("GET")
