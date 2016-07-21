@@ -1,37 +1,68 @@
 # .PHONY: all binary test-unit test clean server
 
-EXE:=service_controller
-IMAGE:=service-controller
-GO_FILES=$(shell find . -name \*.go -print | grep -v _test.go)
+EXE=service_controller
+IMAGE=service-controller
+SRC_FILES=$(shell find . -name \*.go -print | grep -v _test.go)
 TEST_UNIT_DIRS=$(shell find . -name \*_test.go -exec dirname {} \; | grep -v ./tests | sort -u)
 
-all: binary
+all: binary test-unit test
+
+#####################
 
 binary: $(EXE)
 
-$(EXE): $(GO_FILES)
-	docker run \
-	  -w /src/github.com/cncf/servicebroker/k8s/service_controller \
-	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/k8s/service_controller \
-	  -e GOPATH=/ \
-	  golang \
-	  sh -c "go get -d ./... && go build ."
+$(EXE): $(SRC_FILES)
+ifeq (,$(shell which go))
+	@$(MAKE) --no-print-directory binary-docker
+else
+	@$(MAKE) --no-print-directory binary-local
+endif
 	docker build -t $(IMAGE):latest .
 
+binary-docker:
+	docker run \
+  	  -w /src/github.com/cncf/servicebroker/k8s/service_controller \
+  	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/k8s/service_controller \
+  	  -e GOPATH=/ \
+  	  golang \
+  	  sh -c "go get -d ./... && go build ."
+
+binary-local:
+	go build .
+
+#####################
+
 test-unit: binary
+	@echo "\n### Running the unit tests"
+ifeq (,$(shell which go))
+	@$(MAKE) --no-print-directory test-unit-docker
+else
+	@$(MAKE) --no-print-directory test-unit-local
+endif
+
+test-unit-docker:
 	docker run \
 	  -w /src/github.com/cncf/servicebroker/k8s/service_controller \
 	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/k8s/service_controller \
 	  -e GOPATH=/ \
 	  golang \
 	  sh -c "go get -d ./... && make --no-print-directory test-unit-local"
-	
+
 test-unit-local:
 	@TEST_UNIT_DIRS="$(shell find . -name \*_test.go -exec dirname {} \; | sort -u)"
-	@echo "\n### Running the unit tests"
 	@go test $(TEST_UNIT_DIRS)
 
+#####################
+
 test: binary
+	@echo "\n### Running the integration tests"
+ifeq (,$(shell which go))
+	@$(MAKE) --no-print-directory test-docker
+else
+	@$(MAKE) --no-print-directory test-local
+endif
+
+test-docker:
 	docker run \
 	  -w /src/github.com/cncf/servicebroker/k8s/service_controller \
 	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/k8s/service_controller \
@@ -41,8 +72,9 @@ test: binary
 	  sh -c "go get -d ./... && make --no-print-directory test-local"
 
 test-local: binary
-	@echo "\n### Running the integration tests"
 	@go test ./tests
+
+#####################
 
 clean:
 	rm -f $(EXE)
