@@ -16,6 +16,7 @@ func WriteResponse(w http.ResponseWriter, code int, object interface{}) {
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	fmt.Fprintf(w, string(data))
 }
