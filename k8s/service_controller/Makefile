@@ -21,11 +21,11 @@ endif
 
 binary-docker:
 	docker run \
-  	  -w /src/github.com/cncf/servicebroker/k8s/service_controller \
-  	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/k8s/service_controller \
-  	  -e GOPATH=/ \
-  	  golang \
-  	  sh -c "go get -d ./... && go build -o $(EXE) ."
+	  -w /src/github.com/cncf/servicebroker/k8s/service_controller \
+	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/k8s/service_controller \
+	  -e GOPATH=/ \
+	  golang \
+	  sh -c "go get -d ./... && make binary-local"
 
 binary-local:
 	go build -o $(EXE) .
@@ -82,8 +82,8 @@ brokers:
 #####################
 
 clean:
-	rm -f $(EXE)
-	docker rmi -f $(IMAGE) || echo gone
+	-rm -f $(EXE)
+	-docker rmi -f $(IMAGE) 2> /dev/null
 	@$(MAKE) --no-print-directory -C brokers/go clean
 
 server: binary
