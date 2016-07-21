@@ -9,6 +9,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
+func Log(str string) {
+	fmt.Printf("%s\n", str)
+}
+
 func WriteResponse(w http.ResponseWriter, code int, object interface{}) {
 	var err error
 	var data []byte
@@ -28,14 +32,10 @@ func WriteResponse(w http.ResponseWriter, code int, object interface{}) {
 }
 
 func getCatalog(w http.ResponseWriter, r *http.Request) {
+	Log("Got: " + r.URL.String())
 	res := `{ "services": [] }`
 
 	res += "\n"
-	WriteResponse(w, 200, res)
-}
-
-func getRoot(w http.ResponseWriter, r *http.Request) {
-	res := "hello"
 	WriteResponse(w, 200, res)
 }
 

@@ -63,18 +63,26 @@ func (c *Controller) Inventory(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request) {
-	var b model.ServiceBroker
-	err := utils.BodyToObject(r, &b)
+	var sbReq model.CreateServiceBrokerRequest
+	err := utils.BodyToObject(r, &sbReq)
 	if err != nil {
 		fmt.Printf("Error unmarshaling: %#v", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
 
+	sb := model.ServiceBroker{
+		GUID:         "123-123",
+		Name:         sbReq.Name,
+		BrokerURL:    sbReq.BrokerURL,
+		AuthUsername: sbReq.AuthUsername,
+		AuthPassword: sbReq.AuthPassword,
+	}
+
 	// Fetch the catalog from the broker
-	u := fmt.Sprintf(CATALOG_URL_FMT_STR, b.BrokerURL)
+	u := fmt.Sprintf(CATALOG_URL_FMT_STR, sb.BrokerURL)
 	req, err := http.NewRequest("GET", u, nil)
-	req.SetBasicAuth(b.AuthUsername, b.AuthPassword)
+	req.SetBasicAuth(sb.AuthUsername, sb.AuthPassword)
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		fmt.Printf("Failed to fetch catalog from %s", u)
@@ -90,8 +98,18 @@ func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	err = c.serviceStorage.AddBroker(&b, &catalog)
-	utils.WriteResponse(w, 200, b)
+	sbRes := model.CreateServiceBrokerResponse{
+		Metadata: model.ServiceBrokerMetadata{
+			GUID: sb.GUID,
+			// TODO add others
+		},
+		Entity: model.ServiceBrokerEntity{
+			Name: sb.Name,
+		},
+	}
+
+	err = c.serviceStorage.AddBroker(&sb, &catalog)
+	utils.WriteResponse(w, 200, sbRes)
 }
 
 func (c *Controller) DeleteServiceBroker(w http.ResponseWriter, r *http.Request) {
