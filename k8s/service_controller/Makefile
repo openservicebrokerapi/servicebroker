@@ -25,10 +25,10 @@ binary-docker:
   	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/k8s/service_controller \
   	  -e GOPATH=/ \
   	  golang \
-  	  sh -c "go get -d ./... && go build ."
+  	  sh -c "go get -d ./... && go build -o $(EXE) ."
 
 binary-local:
-	go build .
+	go build -o $(EXE) .
 
 #####################
 
@@ -87,7 +87,7 @@ clean:
 	@$(MAKE) --no-print-directory -C brokers/go clean
 
 server: binary
-	docker run -ti -p 10000:10000 $(IMAGE)
+	docker run --net=host -ti -p 10000:10000 $(IMAGE)
 
 broker: brokers
-	docker run -ti -p 9090:9090 gobroker
+	docker run --net=host -ti -p 9090:9090 gobroker

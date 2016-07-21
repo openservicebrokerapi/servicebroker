@@ -2,12 +2,78 @@ package tests
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os/exec"
+	"strings"
+	"testing"
 	"time"
 )
+
+func MaskFields(t *testing.T, input interface{}, paths []string) interface{} {
+	for _, path := range paths {
+		input = MaskField(t, input, path)
+	}
+	return input
+}
+
+func MaskField(t *testing.T, input interface{}, path string) interface{} {
+	var iface interface{}
+
+	if str, ok := input.(string); ok {
+		if err := json.Unmarshal([]byte(str), &iface); err != nil {
+			t.Fatal(fmt.Sprintf("Can't unmarshal json: %s", str))
+		}
+	} else {
+		iface = input
+	}
+
+	path = strings.TrimSpace(path)
+	if path != "" {
+		fields := strings.Split(path, ".")
+		ptr := iface.(map[string]interface{})
+		for i, field := range fields {
+			if i+1 != len(fields) {
+				ptr = ptr[field].(map[string]interface{})
+				continue
+			}
+			ptr[field] = "XXX"
+		}
+	}
+	return iface
+}
+
+func GetField(t *testing.T, inJson string, path string) string {
+	var iface interface{}
+	if err := json.Unmarshal([]byte(inJson), &iface); err != nil {
+		t.Fatal(fmt.Sprintf("Can't unmarshal json: %s", inJson))
+	}
+
+	path = strings.TrimSpace(path)
+	if path == "" {
+		t.Fatal("GetField can't take an empty string")
+	}
+
+	fields := strings.Split(path, ".")
+	ptr := iface.(map[string]interface{})
+	for i, field := range fields {
+		if i+1 != len(fields) {
+			ptr = ptr[field].(map[string]interface{})
+			continue
+		}
+		var s string
+		var ok bool
+		if s, ok = ptr[field].(string); !ok {
+			t.Fatal("Can't find or convert field value into a string: " + field)
+		}
+		return s
+	}
+	t.Fatal("Should never get here")
+	return ""
+}
 
 func ServerGET(url string) (string, error) {
 	resp, err := http.Get(serverURL + url)
@@ -18,7 +84,16 @@ func ServerGET(url string) (string, error) {
 	return string(body), err
 }
 
-var serverURL = "http://localhost:10000/"
+func ServerPOST(url string, cType string, data io.Reader) (string, error) {
+	resp, err := http.Post(serverURL+url, cType, data)
+	if err != nil {
+		return "", err
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	return string(body), err
+}
+
+var serverURL = "http://localhost:10000"
 var serverCmd *exec.Cmd
 var stdout bytes.Buffer
 var stderr bytes.Buffer
@@ -71,7 +146,7 @@ func BrokerGET(url string) (string, error) {
 	return string(body), err
 }
 
-var brokerURL = "http://localhost:9090/"
+var brokerURL = "http://localhost:9090"
 var brokerCmd *exec.Cmd
 var brokerStdout bytes.Buffer
 var brokerStderr bytes.Buffer
