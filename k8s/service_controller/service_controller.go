@@ -6,6 +6,7 @@ import (
 
 	"github.com/cncf/servicebroker/k8s/service_controller/server"
 	"github.com/cncf/servicebroker/k8s/service_controller/server/k8s"
+	"github.com/cncf/servicebroker/k8s/service_controller/server/mem"
 )
 
 type Options struct {
@@ -26,7 +27,7 @@ func main() {
 	var err error
 	switch {
 	case options.Backend == "mem":
-		s, err = server.CreateServer(server.CreateInMemServiceStorage())
+		s, err = server.CreateServer(mem.CreateInMemServiceStorage())
 	case options.Backend == "k8s":
 		s, err = server.CreateServer(k8s.CreateServiceStorage())
 	}

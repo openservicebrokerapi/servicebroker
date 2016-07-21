@@ -1,9 +1,10 @@
-package server
+package mem
 
 import (
 	"fmt"
 
 	"github.com/cncf/servicebroker/k8s/service_controller/model"
+	"github.com/cncf/servicebroker/k8s/service_controller/server"
 )
 
 type BindingPair struct {
@@ -22,9 +23,9 @@ type InMemServiceStorage struct {
 	bindingMap map[string][]*BindingPair
 }
 
-var _ ServiceStorage = (*InMemServiceStorage)(nil)
+var _ server.ServiceStorage = (*InMemServiceStorage)(nil)
 
-func CreateInMemServiceStorage() ServiceStorage {
+func CreateInMemServiceStorage() server.ServiceStorage {
 	return &InMemServiceStorage{
 		brokerMap:  make(map[string]*model.ServiceBroker),
 		catalogs:   make(map[string]*model.Catalog),
