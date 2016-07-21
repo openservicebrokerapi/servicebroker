@@ -15,8 +15,12 @@ along with a Docker image called`service_controller`.
 
 ## Running
 
-`docker run -ti service_controller` should bring up a Service Controller
-listening on port 10000.
+`docker run -ti -p 10000:10000 service_controller` should bring up a Service Controller
+listening on port 10000. So, using:
+```
+curl localhost:10000
+```
+should be able to hit it.
 
 ## Testing
 
