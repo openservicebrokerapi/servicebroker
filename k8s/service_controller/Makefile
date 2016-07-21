@@ -2,8 +2,8 @@
 
 EXE=service_controller
 IMAGE=service-controller
-SRC_FILES=$(shell find . -name \*.go -print | grep -v _test.go)
-TEST_UNIT_DIRS=$(shell find . -name \*_test.go -exec dirname {} \; | grep -v ./tests | sort -u)
+SRC_FILES=$(shell find . -name \*.go -print | grep -v _test.go | grep -v \\./tests)
+TEST_UNIT_DIRS=$(shell find . -name \*_test.go -exec dirname {} \; | grep -v \\./tests | sort -u)
 
 all: binary test-unit test
 
@@ -72,7 +72,7 @@ test-docker:
 	  sh -c "go get -d ./... && make --no-print-directory test-local"
 
 test-local: binary
-	@go test ./tests
+	@go test -v ./tests
 
 #####################
 
