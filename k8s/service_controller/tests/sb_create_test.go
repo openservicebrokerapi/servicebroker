@@ -14,7 +14,13 @@ func TestMain(m *testing.M) {
 		fmt.Printf("Error starting server: %s\n", err)
 		os.Exit(1)
 	}
+	err = StartBroker()
+	if err != nil {
+		fmt.Printf("Error starting broker: %s\n", err)
+		os.Exit(1)
+	}
 	rc := m.Run()
+	StopBroker()
 	StopServer()
 	os.Exit(rc)
 }

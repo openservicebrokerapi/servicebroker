@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: guestbook
+spec:
+  replicas: 1
+  selector:
+    app: guestbook
+  template:
+    metadata:
+      name: guestbook
+      labels:
+        app: guestbook
+    spec:
+      containers:
+      - name: guestbook
+        image: gcr.io/bmelville-test/nodejs-osc
+        ports:
+        - containerPort: 8080
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: guestbook
+spec:
+  type: LoadBalancer
+  selector:
+    app: guestbook
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+
