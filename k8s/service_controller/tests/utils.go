@@ -19,7 +19,7 @@ func ServerGET(url string) (string, error) {
 }
 
 var serverURL = "http://localhost:10000/"
-var cmd *exec.Cmd
+var serverCmd *exec.Cmd
 var stdout bytes.Buffer
 var stderr bytes.Buffer
 
@@ -30,10 +30,10 @@ func StartServer() error {
 	}
 
 	// Should look into running the docker image instead
-	cmd = exec.Command("../service_controller")
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err := cmd.Start()
+	serverCmd = exec.Command("../service_controller")
+	serverCmd.Stdout = &stdout
+	serverCmd.Stderr = &stderr
+	err := serverCmd.Start()
 	if err != nil {
 		StopServer() // cleanup
 		return err
@@ -53,10 +53,63 @@ func StartServer() error {
 }
 
 func StopServer() {
-	if cmd != nil {
-		cmd.Process.Kill()
-		cmd.Wait()
-		cmd = nil
+	if serverCmd != nil {
+		serverCmd.Process.Kill()
+		serverCmd.Wait()
+		serverCmd = nil
+	}
+	stdout.Reset()
+	stderr.Reset()
+}
+
+func BrokerGET(url string) (string, error) {
+	resp, err := http.Get(brokerURL + url)
+	if err != nil {
+		return "", err
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	return string(body), err
+}
+
+var brokerURL = "http://localhost:9090/"
+var brokerCmd *exec.Cmd
+var brokerStdout bytes.Buffer
+var brokerStderr bytes.Buffer
+
+func StartBroker() error {
+	// Make sure some other broker isn't running
+	if _, err := BrokerGET("/v2/catalog"); err == nil {
+		return fmt.Errorf("Broker already running - stop it!")
+	}
+
+	// Should look into running the docker image instead
+	brokerCmd = exec.Command("../brokers/go/gobroker")
+	brokerCmd.Stdout = &brokerStdout
+	brokerCmd.Stderr = &brokerStderr
+	err := brokerCmd.Start()
+	if err != nil {
+		StopBroker() // cleanup
+		return err
+	}
+
+	// Wait for the broker to be available
+	start := time.Now().Unix()
+	for ; time.Now().Unix()-start < 10; time.Sleep(1 * time.Second) {
+		if _, err = BrokerGET("/v2/catalog"); err == nil {
+			return nil
+		}
+	}
+
+	// Return last 'err' we got - it might help debug
+	StopBroker() // cleanup
+	return fmt.Errorf("Timed-out waiting for the broker: %s", err)
+}
+
+func StopBroker() {
+	if brokerCmd != nil {
+		brokerCmd.Process.Kill()
+		brokerCmd.Wait()
+		brokerCmd = nil
 	}
 	stdout.Reset()
 	stderr.Reset()
