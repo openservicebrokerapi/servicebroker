@@ -40,11 +40,11 @@ func (c *Controller) ListServiceBrokers(w http.ResponseWriter, r *http.Request) 
 
 func (c *Controller) GetServiceBroker(w http.ResponseWriter, r *http.Request) {
 	name := utils.ExtractVarFromRequest(r, "broker_name")
-	fmt.Printf("GetServiceBroker: %s", name)
+	fmt.Printf("GetServiceBroker: %s\n", name)
 
 	b, err := c.serviceStorage.GetBroker(name)
 	if err != nil {
-		fmt.Printf("Got Error: %#v", err)
+		fmt.Printf("Got Error: %#v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
@@ -53,11 +53,11 @@ func (c *Controller) GetServiceBroker(w http.ResponseWriter, r *http.Request) {
 
 func (c *Controller) Inventory(w http.ResponseWriter, r *http.Request) {
 	name := utils.ExtractVarFromRequest(r, "broker_name")
-	fmt.Printf("Inventory: %s", name)
+	fmt.Printf("Inventory: %s\n", name)
 
 	i, err := c.serviceStorage.GetInventory(name)
 	if err != nil {
-		fmt.Printf("Got Error: %#v", err)
+		fmt.Printf("Got Error: %#v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
@@ -68,7 +68,7 @@ func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request)
 	var sbReq model.CreateServiceBrokerRequest
 	err := utils.BodyToObject(r, &sbReq)
 	if err != nil {
-		fmt.Printf("Error unmarshaling: %#v", err)
+		fmt.Printf("Error unmarshaling: %#v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
@@ -93,7 +93,7 @@ func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request)
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		fmt.Printf("Failed to fetch catalog from %s\n%v\n", u, resp)
-		fmt.Printf("err %v\n", err)
+		fmt.Printf("err: %#v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
@@ -101,7 +101,7 @@ func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request)
 	var catalog model.Catalog
 	err = utils.ResponseBodyToObject(resp, &catalog)
 	if err != nil {
-		fmt.Printf("Failed to unmarshal catalog: \n", err)
+		fmt.Printf("Failed to unmarshal catalog: %#v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
@@ -133,13 +133,13 @@ func (c *Controller) ListServiceInstances(w http.ResponseWriter, r *http.Request
 }
 
 func (c *Controller) GetServiceInstance(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("Getting Service Instance")
+	fmt.Printf("Getting Service Instance\n")
 	brokerName := utils.ExtractVarFromRequest(r, "broker_name")
 	serviceName := utils.ExtractVarFromRequest(r, "service_name")
 
 	si, err := c.serviceStorage.GetService(brokerName, serviceName)
 	if err != nil {
-		fmt.Printf("Couldn't fetch the service: %#v", err)
+		fmt.Printf("Couldn't fetch the service: %#v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
@@ -148,13 +148,13 @@ func (c *Controller) GetServiceInstance(w http.ResponseWriter, r *http.Request) 
 }
 
 func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("Creating Service Instance")
+	fmt.Printf("Creating Service Instance\n")
 	brokerName := utils.ExtractVarFromRequest(r, "broker_name")
 	serviceName := utils.ExtractVarFromRequest(r, "service_name")
 
 	if c.serviceStorage.ServiceExists(brokerName, serviceName) {
 		err := fmt.Errorf("Service %s:%s already exists", brokerName, serviceName)
-		fmt.Printf("%#v", err)
+		fmt.Printf("%#v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
@@ -162,7 +162,7 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 	// Grab the broker to make sure it exists...
 	broker, err := c.serviceStorage.GetBroker(brokerName)
 	if err != nil {
-		fmt.Printf("Couldn't fetch the broker: %#v", err)
+		fmt.Printf("Couldn't fetch the broker: %#v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
@@ -170,13 +170,13 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 	var req CreateServiceInstanceRequest
 	err = utils.BodyToObject(r, &req)
 	if err != nil {
-		fmt.Printf("Error unmarshaling: %#v", err)
+		fmt.Printf("Error unmarshaling: %#v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
 
 	serviceId, planId, err := c.getServiceAndPlanIds(brokerName, serviceName, req.PlanName)
-	fmt.Printf("Found %s/%s => %s/%s", serviceName, req.PlanName, serviceId, planId)
+	fmt.Printf("Found %s/%s => %s/%s\n", serviceName, req.PlanName, serviceId, planId)
 
 	// Then actually make the request to reify the service instance
 	createReq := &ServiceInstanceRequest{
@@ -187,7 +187,7 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 
 	jsonBytes, err := json.Marshal(createReq)
 	if err != nil {
-		fmt.Printf("Failed to marshal: %#v", err)
+		fmt.Printf("Failed to marshal: %#v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
@@ -200,7 +200,7 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 	fmt.Printf("Doing a request to: %s\n", url)
 	resp, err := client.Do(createHttpReq)
 	if err != nil {
-		fmt.Printf("Failed to PUT: %#v", err)
+		fmt.Printf("Failed to PUT: %#v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
@@ -225,7 +225,7 @@ func (c *Controller) ListServiceBindings(w http.ResponseWriter, r *http.Request)
 }
 
 func (c *Controller) GetServiceBinding(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("Getting Service Binding")
+	fmt.Printf("Getting Service Binding\n")
 	brokerName := utils.ExtractVarFromRequest(r, "broker_name")
 	serviceName := utils.ExtractVarFromRequest(r, "service_name")
 	bindingId := utils.ExtractVarFromRequest(r, "service_binding_guid")
@@ -241,14 +241,14 @@ func (c *Controller) GetServiceBinding(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("Creating Service Binding")
+	fmt.Printf("Creating Service Binding\n")
 	brokerName := utils.ExtractVarFromRequest(r, "broker_name")
 	serviceName := utils.ExtractVarFromRequest(r, "service_name")
 	bindingId := utils.ExtractVarFromRequest(r, "service_binding_guid")
 
 	if !c.serviceStorage.ServiceExists(brokerName, serviceName) {
 		err := fmt.Errorf("Service %s:%s does not exist", brokerName, serviceName)
-		fmt.Printf("%#v", err)
+		fmt.Printf("%#v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
@@ -256,7 +256,7 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 	// Grab the broker to make sure it exists...
 	broker, err := c.serviceStorage.GetBroker(brokerName)
 	if err != nil {
-		fmt.Printf("Couldn't fetch the broker: %#v", err)
+		fmt.Printf("Couldn't fetch the broker: %#v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
@@ -264,13 +264,13 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 	var req CreateServiceInstanceRequest
 	err = utils.BodyToObject(r, &req)
 	if err != nil {
-		fmt.Printf("Error unmarshaling: %#v", err)
+		fmt.Printf("Error unmarshaling: %#v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
 
 	serviceId, planId, err := c.getServiceAndPlanIds(brokerName, serviceName, req.PlanName)
-	fmt.Printf("Found %s/%s => %s/%s", serviceName, req.PlanName, serviceId, planId)
+	fmt.Printf("Found %s/%s => %s/%s\n", serviceName, req.PlanName, serviceId, planId)
 
 	// Then actually make the request to reify the service instance
 	createReq := &BindingRequest{
@@ -281,7 +281,7 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 
 	jsonBytes, err := json.Marshal(createReq)
 	if err != nil {
-		fmt.Printf("Failed to marshal: %#v", err)
+		fmt.Printf("Failed to marshal: %#v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
@@ -294,7 +294,7 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 	fmt.Printf("Doing a request to: %s\n", url)
 	resp, err := client.Do(createHttpReq)
 	if err != nil {
-		fmt.Printf("Failed to PUT: %#v", err)
+		fmt.Printf("Failed to PUT: %#v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
@@ -303,7 +303,7 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 	sbr := model.CreateServiceBindingResponse{}
 	err = utils.ResponseBodyToObject(resp, &sbr)
 	if err != nil {
-		fmt.Printf("Failed to unmarshal: %#v", err)
+		fmt.Printf("Failed to unmarshal: %#v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
