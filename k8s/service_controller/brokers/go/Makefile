@@ -5,10 +5,10 @@ all: $(EXE)
 $(EXE): gobroker.go
 ifeq (,$(shell which go))
 	@$(MAKE) --no-print-directory binary-docker
+	docker build -t gobroker .
 else
 	@$(MAKE) --no-print-directory binary-local
 endif
-	docker build -t gobroker .
 
 binary-docker:
 	docker run \

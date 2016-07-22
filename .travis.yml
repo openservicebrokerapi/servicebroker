@@ -1,12 +1,7 @@
-sudo: required
 language: go
-
-services:
-  - docker
 
 script:
   - make all
-
   
 after_success:
   - bash generate-coverage.sh
