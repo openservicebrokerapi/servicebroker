@@ -75,22 +75,22 @@ func GetField(t *testing.T, inJson string, path string) string {
 	return ""
 }
 
-func ServerGET(url string) (string, error) {
+func ServerGET(url string) (string, *http.Response, error) {
 	resp, err := http.Get(serverURL + url)
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 	body, err := ioutil.ReadAll(resp.Body)
-	return string(body), err
+	return string(body), resp, err
 }
 
-func ServerPOST(url string, cType string, data io.Reader) (string, error) {
+func ServerPOST(url string, cType string, data io.Reader) (string, *http.Response, error) {
 	resp, err := http.Post(serverURL+url, cType, data)
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 	body, err := ioutil.ReadAll(resp.Body)
-	return string(body), err
+	return string(body), resp, err
 }
 
 var serverURL = "http://localhost:10000"
@@ -100,7 +100,7 @@ var stderr bytes.Buffer
 
 func StartServer() error {
 	// Make sure some other server isn't running
-	if _, err := ServerGET("/v2/service_brokers"); err == nil {
+	if _, _, err := ServerGET("/v2/service_brokers"); err == nil {
 		return fmt.Errorf("Server already running - stop it!")
 	}
 
@@ -117,7 +117,7 @@ func StartServer() error {
 	// Wait for the server to be available
 	start := time.Now().Unix()
 	for ; time.Now().Unix()-start < 10; time.Sleep(1 * time.Second) {
-		if _, err = ServerGET("/v2/service_brokers"); err == nil {
+		if _, _, err = ServerGET("/v2/service_brokers"); err == nil {
 			return nil
 		}
 	}

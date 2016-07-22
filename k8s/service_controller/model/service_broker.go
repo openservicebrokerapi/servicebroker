@@ -10,8 +10,9 @@ type ServiceBroker struct {
 	AuthPassword string
 	// SpaceGUID    string
 
-	Created int
-	Updated int
+	Created int64
+	Updated int64
+	SelfURL string
 }
 
 type CreateServiceBrokerRequest struct {
@@ -30,7 +31,7 @@ type CreateServiceBrokerResponse struct {
 type ServiceBrokerMetadata struct {
 	GUID      string `json:"guid"`
 	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
+	UpdatedAt string `json:"updated_at,omitempty"`
 	URL       string `json:"url"`
 }
 

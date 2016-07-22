@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/cncf/servicebroker/k8s/service_controller/model"
 	"github.com/cncf/servicebroker/k8s/service_controller/utils"
+	"github.com/satori/go.uuid"
 )
 
 const (
@@ -72,12 +74,17 @@ func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request)
 	}
 
 	sb := model.ServiceBroker{
-		GUID:         "123-123",
+		GUID:         uuid.NewV4().String(),
 		Name:         sbReq.Name,
 		BrokerURL:    sbReq.BrokerURL,
 		AuthUsername: sbReq.AuthUsername,
 		AuthPassword: sbReq.AuthPassword,
+
+		Created: time.Now().Unix(),
+		Updated: 0,
+		// SelfURL: "/v2/service_brokers/" + sb.GUID,
 	}
+	sb.SelfURL = "/v2/service_brokers/" + sb.GUID
 
 	// Fetch the catalog from the broker
 	u := fmt.Sprintf(CATALOG_URL_FMT_STR, sb.BrokerURL)
@@ -100,11 +107,15 @@ func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request)
 
 	sbRes := model.CreateServiceBrokerResponse{
 		Metadata: model.ServiceBrokerMetadata{
-			GUID: sb.GUID,
-			// TODO add others
+			GUID:      sb.GUID,
+			CreatedAt: time.Unix(sb.Created, 0).Format(time.RFC3339),
+			// UpdatedAt: nil,
+			URL: sb.SelfURL,
 		},
 		Entity: model.ServiceBrokerEntity{
-			Name: sb.Name,
+			Name:         sb.Name,
+			BrokerURL:    sb.BrokerURL,
+			AuthUsername: sb.AuthUsername,
 		},
 	}
 
