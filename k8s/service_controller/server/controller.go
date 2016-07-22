@@ -92,7 +92,8 @@ func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request)
 	req.SetBasicAuth(sb.AuthUsername, sb.AuthPassword)
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		fmt.Printf("Failed to fetch catalog from %s", u)
+		fmt.Printf("Failed to fetch catalog from %s\n%v\n", u, resp)
+		fmt.Printf("err %v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
@@ -100,7 +101,7 @@ func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request)
 	var catalog model.Catalog
 	err = utils.ResponseBodyToObject(resp, &catalog)
 	if err != nil {
-		fmt.Printf("Failed to unmarshal catalog: ", err)
+		fmt.Printf("Failed to unmarshal catalog: \n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}

@@ -3,10 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	"strings"
 
 	"github.com/cncf/servicebroker/k8s/service_controller/server"
 	"github.com/cncf/servicebroker/k8s/service_controller/server/k8s"
 	"github.com/cncf/servicebroker/k8s/service_controller/server/mem"
+	"github.com/cncf/servicebroker/k8s/service_controller/utils"
 )
 
 type Options struct {
@@ -30,6 +32,38 @@ func main() {
 		s, err = server.CreateServer(mem.CreateInMemServiceStorage())
 	case options.Backend == "k8s":
 		s, err = server.CreateServer(k8s.CreateServiceStorage())
+		// define the resources once at startup
+		// results in ServiceBrokers
+		servicebrokerTPRDefYaml := `metadata:
+  name: service-broker.cncf.org
+apiVersion: extensions/v1beta1
+kind: ThirdPartyResource
+versions:
+  - name: v1alpha1`
+
+		// 		// results in ServiceInstances
+		// 		serviceinstanceTPRDefYaml := `metadata:
+		//   name: service-instance.cncf.org
+		// apiVersion: extensions/v1beta1
+		// kind: ThirdPartyResource
+		// versions:
+		// - name: v1alpha1`
+		// 		// results in SericeBindings
+		// 		servicebindingTPRDefYaml := `metadata:
+		//   name: service-binding.cncf.org
+		// apiVersion: extensions/v1beta1
+		// kind: ThirdPartyResource
+		// versions:
+		// - name: v1alpha1`
+
+		s, e := utils.KubeCreateResource(strings.NewReader(servicebrokerTPRDefYaml))
+		if nil != e {
+			fmt.Printf("Error creating k8s TPR [%s]...\n%v", e, s)
+		}
+		// s, e = utils.KubeCreateResource(strings.NewReader(serviceinstanceTPRDefYaml))
+		// s, e = utils.KubeCreateResource(strings.NewReader(servicebindingTPRDefYaml))
+
+		// cleanup afterwards by `kubectl delete thirdpartyresource service-broker.cncf.org`
 	}
 	if err != nil {
 		panic(fmt.Sprintf("Error creating server [%s]...", err.Error))
