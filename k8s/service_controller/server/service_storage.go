@@ -8,27 +8,28 @@ import (
 type Broker interface {
 	ListBrokers() ([]*model.ServiceBroker, error)
 	GetBroker(string) (*model.ServiceBroker, error)
-	GetInventory(string) (*model.Catalog, error)
+	GetBrokerByService(string) (*model.ServiceBroker, error)
+	GetInventory() (*model.Catalog, error)
 	AddBroker(*model.ServiceBroker, *model.Catalog) error
 	DeleteBroker(string) error
 }
 
 // The Instancer interface provides functions to deal with service instances.
 type Instancer interface {
-	ListServices(string) ([]*model.ServiceInstance, error)
-	GetService(string, string) (*model.ServiceInstance, error)
-	ServiceExists(string, string) bool
-	AddService(string, *model.ServiceInstance) error
-	DeleteService(string, string) error
+	ListServices() ([]*model.ServiceInstance, error)
+	GetService(string) (*model.ServiceInstance, error)
+	ServiceExists(string) bool
+	AddService(*model.ServiceInstance) error
+	DeleteService(string) error
 }
 
 // The Binder interface provides functions to deal with service
 // bindings.
 type Binder interface {
-	ListServiceBindings(string, string) ([]*model.ServiceBinding, error)
-	GetServiceBinding(string, string, string) (*model.Credential, error)
-	AddServiceBinding(string, *model.ServiceBinding, *model.Credential) error
-	DeleteServiceBinding(string, string, string) error
+	ListServiceBindings() ([]*model.ServiceBinding, error)
+	GetServiceBinding(string) (*model.Credential, error)
+	AddServiceBinding(*model.ServiceBinding, *model.Credential) error
+	DeleteServiceBinding(string) error
 }
 
 // The ServiceStorage interface provides a comprehensive combined

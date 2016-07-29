@@ -22,22 +22,29 @@ func CreateServer(serviceStorage ServiceStorage) (*Server, error) {
 func (s *Server) Start() {
 	router := mux.NewRouter()
 
+	// TODO: the actual inventory API should be /v2/services[/...] and
+	// /v2/service_plans[/...].
+	router.HandleFunc("/v2/inventory", s.controller.Inventory).Methods("GET")
+
 	// Broker related stuff
 	router.HandleFunc("/v2/service_brokers", s.controller.ListServiceBrokers).Methods("GET")
-	router.HandleFunc("/v2/service_brokers/{broker_name}/inventory", s.controller.Inventory).Methods("GET")
-	router.HandleFunc("/v2/service_brokers/{broker_name}", s.controller.GetServiceBroker).Methods("GET")
 	router.HandleFunc("/v2/service_brokers", s.controller.CreateServiceBroker).Methods("POST")
-	router.HandleFunc("/v2/service_brokers/{broker_name}", s.controller.DeleteServiceBroker).Methods("DELETE")
+	router.HandleFunc("/v2/service_brokers/{broker_id}", s.controller.GetServiceBroker).Methods("GET")
+	router.HandleFunc("/v2/service_brokers/{broker_id}", s.controller.DeleteServiceBroker).Methods("DELETE")
+	// TODO: implement updating a service broker.
+	// router.HandleFunc("/v2/service_brokers/{broker_id}", s.Controller.UpdateServiceBroker).Methods.("PUT")
 
-	router.HandleFunc("/v2/service_brokers/{broker_name}/service_instances/", s.controller.ListServiceInstances).Methods("GET")
-	router.HandleFunc("/v2/service_brokers/{broker_name}/service_instances/{service_name}", s.controller.GetServiceInstance).Methods("GET")
-	router.HandleFunc("/v2/service_brokers/{broker_name}/service_instances/{service_name}", s.controller.CreateServiceInstance).Methods("POST")
-	router.HandleFunc("/v2/service_brokers/{broker_name}/service_instances/{service_name}", s.controller.DeleteServiceInstance).Methods("DELETE")
+	router.HandleFunc("/v2/service_instances", s.controller.ListServiceInstances).Methods("GET")
+	router.HandleFunc("/v2/service_instances", s.controller.CreateServiceInstance).Methods("POST")
+	router.HandleFunc("/v2/service_instances/{service_id}", s.controller.GetServiceInstance).Methods("GET")
+	router.HandleFunc("/v2/service_instances/{service_id}", s.controller.DeleteServiceInstance).Methods("DELETE")
+	// TODO: implement list service bindings for this service instance.
+	// router.HandleFunc("/v2/service_instances/{service_id}/service_bindings", s.controller.ListServiceInstanceBindings).Methods("GET")
 
-	router.HandleFunc("/v2/service_brokers/{broker_name}/service_instances/{service_name}/service_bindings", s.controller.ListServiceBindings).Methods("GET")
-	router.HandleFunc("/v2/service_brokers/{broker_name}/service_instances/{service_name}/service_bindings/{service_binding_guid}", s.controller.GetServiceBinding).Methods("GET")
-	router.HandleFunc("/v2/service_brokers/{broker_name}/service_instances/{service_name}/service_bindings/{service_binding_guid}", s.controller.CreateServiceBinding).Methods("POST")
-	router.HandleFunc("/v2/service_brokers/{broker_name}/service_instances/{service_name}/service_bindings/{service_binding_guid}", s.controller.DeleteServiceBinding).Methods("DELETE")
+	router.HandleFunc("/v2service_bindings", s.controller.ListServiceBindings).Methods("GET")
+	router.HandleFunc("/v2/service_bindings", s.controller.CreateServiceBinding).Methods("POST")
+	router.HandleFunc("/v2service_bindings/{binding_id}", s.controller.GetServiceBinding).Methods("GET")
+	router.HandleFunc("/v2/service_bindings/{binding_id}", s.controller.DeleteServiceBinding).Methods("DELETE")
 
 	http.Handle("/", router)
 

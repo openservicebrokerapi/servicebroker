@@ -27,9 +27,9 @@ func TestNoBrokers(t *testing.T) {
 
 func TestAddBroker(t *testing.T) {
 	s := CreateInMemServiceStorage()
-	b := &model.ServiceBroker{Name: "Test"}
+	b := &model.ServiceBroker{GUID: "Test"}
 	cat := model.Catalog{
-		Services: []model.Service{},
+		Services: []*model.Service{},
 	}
 	err := s.AddBroker(b, &cat)
 	if err != nil {
@@ -53,9 +53,9 @@ func TestAddBroker(t *testing.T) {
 
 func TestAddDuplicateBroker(t *testing.T) {
 	s := CreateInMemServiceStorage()
-	b := &model.ServiceBroker{Name: "Test"}
+	b := &model.ServiceBroker{GUID: "Test"}
 	cat := model.Catalog{
-		Services: []model.Service{},
+		Services: []*model.Service{},
 	}
 	err := s.AddBroker(b, &cat)
 	if err != nil {
