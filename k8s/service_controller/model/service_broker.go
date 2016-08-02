@@ -10,7 +10,7 @@ type ServiceBroker struct {
 	AuthPassword string
 	// SpaceGUID    string
 
-	Created int64
+	Created int64 `json:",string"`
 	Updated int64
 	SelfURL string
 }

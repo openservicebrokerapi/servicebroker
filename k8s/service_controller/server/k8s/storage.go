@@ -29,10 +29,11 @@ func CreateServiceStorage() server.ServiceStorage {
 // listSB is only used for unmarshalling the list of service brokers
 // for returning to the client
 type listSB struct {
-	Items []*model.ServiceBroker
+	Items []*k8sServiceBroker `json:"items"`
 }
 
 func (kss *K8sServiceStorage) ListBrokers() ([]*model.ServiceBroker, error) {
+	fmt.Println("listing all brokers")
 	// get the ServiceBroker
 
 	c := exec.Command("kubectl", "get", "ServiceBrokers", "-ojson")
@@ -44,16 +45,36 @@ func (kss *K8sServiceStorage) ListBrokers() ([]*model.ServiceBroker, error) {
 		return nil, fmt.Errorf("couldn't get the service brokers. %v, [%v]", e, s)
 	}
 
+	fmt.Println("returned json: ", s)
+
 	var lsb listSB
 	e = json.Unmarshal(b, &lsb)
 	if nil != e { // wrong json format error
+		fmt.Println("json not unmarshalled:", e, s)
 		return nil, e
 	}
-	return lsb.Items, nil
+	fmt.Println("Got", len(lsb.Items), "brokers.")
+	ret := make([]*model.ServiceBroker, 0, len(lsb.Items))
+	for _, v := range lsb.Items {
+		ret = append(ret, v.ServiceBroker)
+	}
+	return ret, nil
 }
 
-func (kss *K8sServiceStorage) GetBroker(id string) (*model.ServiceBroker, error) {
-	return nil, fmt.Errorf("Not implemented yet")
+func (kss *K8sServiceStorage) GetBroker(name string) (*model.ServiceBroker, error) {
+	c := exec.Command("kubectl", "get", "-ojson", "ServiceBrokers", name)
+	b, e := c.CombinedOutput()
+	s := string(b)
+	if nil != e {
+		return nil, fmt.Errorf("couldn't get the service broker. %v, [%v]", e, s)
+	}
+	fmt.Println("returned json: ", s)
+	var sb k8sServiceBroker
+	e = json.Unmarshal(b, &sb)
+	if nil != e { // wrong json format error
+		return nil, e
+	}
+	return sb.ServiceBroker, nil
 }
 
 func (kss *K8sServiceStorage) GetBrokerByService(id string) (*model.ServiceBroker, error) {
@@ -81,7 +102,7 @@ func NewK8sSB() *k8sServiceBroker {
 }
 
 func (kss *K8sServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *model.Catalog) error {
-	fmt.Println("adding broker to k8s")
+	fmt.Println("adding broker to k8s", broker)
 	// create TPR
 	// tpr is
 	//    kind.fqdn
@@ -107,6 +128,7 @@ func (kss *K8sServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *mo
 	ksb.ServiceBroker = broker
 
 	b, e := json.Marshal(ksb)
+	fmt.Println(string(b))
 	if nil != e { // wrong json format error
 		return e
 	}
