@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os/exec"
+	"strings"
 
 	"github.com/cncf/servicebroker/k8s/service_controller/model"
 	"github.com/cncf/servicebroker/k8s/service_controller/server"
@@ -120,7 +121,18 @@ func (kss *K8sServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *mo
 }
 
 func (kss *K8sServiceStorage) DeleteBroker(id string) error {
-	return fmt.Errorf("Not implemented yet")
+	c := exec.Command("kubectl", "delete", "-oname", "ServiceBrokers", id)
+	b, e := c.CombinedOutput()
+	if nil != e { // some kind of exec error
+		return e
+	}
+	s := string(b)
+	fmt.Println("deleted: ", s)
+	lookingFor := "servicebroker/" + id
+	if strings.Contains(s, lookingFor) {
+		return nil
+	}
+	return fmt.Errorf("didn't work right: %v", s)
 }
 
 func (kss *K8sServiceStorage) ServiceExists(id string) bool {

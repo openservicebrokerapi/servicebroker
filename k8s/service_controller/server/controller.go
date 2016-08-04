@@ -132,7 +132,16 @@ func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request)
 }
 
 func (c *Controller) DeleteServiceBroker(w http.ResponseWriter, r *http.Request) {
-	utils.WriteResponse(w, 400, "IMPLEMENT ME")
+	id := utils.ExtractVarFromRequest(r, "broker_id")
+	fmt.Printf("DeleteServiceBroker: %s\n", id)
+
+	err := c.storage.DeleteBroker(id)
+	if err != nil {
+		fmt.Printf("Got Error: %#v\n", err)
+		utils.WriteResponse(w, 400, err)
+		return
+	}
+	w.WriteHeader(204)
 }
 
 //
