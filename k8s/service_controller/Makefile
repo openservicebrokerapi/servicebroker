@@ -1,11 +1,11 @@
-.PHONY: all binary brokers test-unit test clean server
+.PHONY: all binary brokers test-unit test clean server validate
 
 EXE=service_controller
 IMAGE=service-controller
 SRC_FILES=$(shell find . -name \*.go -print | grep -v _test.go | grep -v \\./tests | grep -v ./brokers/ )
 TEST_UNIT_DIRS=$(shell find . -name \*_test.go -exec dirname {} \; | grep -v \\./tests | sort -u)
 
-all: binary brokers test-unit test
+all: validate binary brokers test-unit test
 
 #####################
 
@@ -49,7 +49,6 @@ test-unit-docker:
 	  sh -c "go get -d ./... && make --no-print-directory test-unit-local"
 
 test-unit-local:
-	@TEST_UNIT_DIRS="$(shell find . -name \*_test.go -exec dirname {} \; | sort -u)"
 	@go test $(TEST_UNIT_DIRS)
 
 #####################
@@ -91,3 +90,27 @@ server: binary
 
 broker: brokers
 	docker run --net=host -ti -p 9090:9090 gobroker
+
+
+#####################
+
+validate: 
+ifeq (,$(shell which go))
+	@$(MAKE) --no-print-directory validate-docker
+else
+	@$(MAKE) --no-print-directory validate-local
+endif
+
+validate-docker:
+	docker run \
+	  -w /src/github.com/cncf/servicebroker/k8s/service_controller \
+	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/k8s/service_controller \
+	  -e GOPATH=/ \
+	  golang \
+	  sh -c "go get -d ./... && make --no-print-directory validate-local"
+
+validate-local:
+	@if ! [ "`find . -name \*.go -exec gofmt -s -l {} \;`" = "" ]; then \
+		echo Please gofmt the following files: \\n$(shell find . -name \*.go -exec gofmt -s -l {} \;) \\n ; \
+		exit 1 ; \
+	fi
