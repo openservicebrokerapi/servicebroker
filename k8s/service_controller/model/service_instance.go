@@ -1,11 +1,12 @@
 package model
 
+//
 type ServiceInstance struct {
-	Id               string `json:"id"`
-	DashboardUrl     string `json:"dashboard_url"`
-	InternalId       string `json:"internalId, omitempty"`
-	ServiceId        string `json:"service_id"`
-	PlanId           string `json:"plan_id"`
+	ID               string `json:"id"`
+	DashboardURL     string `json:"dashboard_url"`
+	InternalID       string `json:"internal_id, omitempty"`
+	ServiceID        string `json:"service_id"`
+	PlanID           string `json:"plan_id"`
 	OrganizationGuid string `json:"organization_guid"`
 	SpaceGuid        string `json:"space_guid"`
 
@@ -20,7 +21,16 @@ type LastOperation struct {
 	AsyncPollIntervalSeconds int    `json:"async_poll_interval_seconds, omitempty"`
 }
 
+type CreateServiceInstanceRequest struct {
+	OrgID             string                 `json:"organization_guid"`
+	PlanID            string                 `json:"plan_id"`
+	ServiceID         string                 `json:"service_id"`
+	SpaceID           string                 `json:"space_guid"`
+	Parameters        map[string]interface{} `json:"parameters"`
+	AcceptsIncomplete bool                   `json:"accepts_incomplete"`
+}
+
 type CreateServiceInstanceResponse struct {
-	DashboardUrl  string         `json:"dashboard_url, omitempty"`
+	DashboardURL  string         `json:"dashboard_url, omitempty"`
 	LastOperation *LastOperation `json:"last_operation, omitempty"`
 }

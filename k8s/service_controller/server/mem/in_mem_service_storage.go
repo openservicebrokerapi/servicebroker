@@ -61,7 +61,7 @@ func (s *InMemServiceStorage) GetBroker(id string) (*model.ServiceBroker, error)
 func (s *InMemServiceStorage) GetBrokerByService(id string) (*model.ServiceBroker, error) {
 	for k, v := range s.catalogs {
 		for _, service := range v.Services {
-			if service.Id == id {
+			if service.ID == id {
 				return s.brokers[k], nil
 			}
 		}
@@ -106,11 +106,11 @@ func (s *InMemServiceStorage) GetService(id string) (*model.ServiceInstance, err
 }
 
 func (s *InMemServiceStorage) AddService(si *model.ServiceInstance) error {
-	if s.ServiceExists(si.Id) {
-		return fmt.Errorf("Service %s already exists", si.Id)
+	if s.ServiceExists(si.ID) {
+		return fmt.Errorf("Service %s already exists", si.ID)
 	}
 
-	s.services[si.Id] = si
+	s.services[si.ID] = si
 	return nil
 }
 
@@ -133,12 +133,12 @@ func (s *InMemServiceStorage) GetServiceBinding(id string) (*model.Credential, e
 }
 
 func (s *InMemServiceStorage) AddServiceBinding(binding *model.ServiceBinding, cred *model.Credential) error {
-	_, err := s.GetServiceBinding(binding.Id)
+	_, err := s.GetServiceBinding(binding.ID)
 	if err == nil {
-		return fmt.Errorf("Binding %s already exists", binding.Id)
+		return fmt.Errorf("Binding %s already exists", binding.ID)
 	}
 
-	s.bindings[binding.Id] = &BindingPair{Binding: binding, Credential: cred}
+	s.bindings[binding.ID] = &BindingPair{Binding: binding, Credential: cred}
 	return nil
 }
 

@@ -177,7 +177,7 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	serviceId, err := c.getServiceId(req.ServicePlanGUID)
+	serviceID, err := c.getServiceID(req.ServicePlanGUID)
 	if err != nil {
 		fmt.Printf("Error fetching service ID: %v\n", err)
 		utils.WriteResponse(w, 400, err)
@@ -186,8 +186,8 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 
 	// Then actually make the request to reify the service instance
 	createReq := &ServiceInstanceRequest{
-		ServiceId:  serviceId,
-		PlanId:     req.ServicePlanGUID,
+		ServiceID:  serviceID,
+		PlanID:     req.ServicePlanGUID,
 		Parameters: req.Parameters,
 	}
 
@@ -198,16 +198,16 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	instanceId := uuid.NewV4().String()
+	instanceID := uuid.NewV4().String()
 
-	broker, err := c.getBroker(serviceId)
+	broker, err := c.getBroker(serviceID)
 	if err != nil {
 		fmt.Printf("Error fetching service: %v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
 
-	url := fmt.Sprintf(CREATE_SERVICE_INSTANCE_FMT_STR, broker.BrokerURL, instanceId)
+	url := fmt.Sprintf(CREATE_SERVICE_INSTANCE_FMT_STR, broker.BrokerURL, instanceID)
 
 	// TODO: Handle the auth
 	createHttpReq, err := http.NewRequest("PUT", url, bytes.NewReader(jsonBytes))
@@ -225,9 +225,9 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 	si := model.ServiceInstance{}
 	err = utils.ResponseBodyToObject(resp, &si)
 
-	si.Id = instanceId
-	si.ServiceId = serviceId
-	si.PlanId = req.ServicePlanGUID
+	si.ID = instanceID
+	si.ServiceID = serviceID
+	si.PlanID = req.ServicePlanGUID
 
 	c.storage.AddService(&si)
 	utils.WriteResponse(w, 200, si)
@@ -275,8 +275,8 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 
 	// Then actually make the request to create the binding
 	createReq := &BindingRequest{
-		ServiceId:  si.ServiceId,
-		PlanId:     si.PlanId,
+		ServiceID:  si.ServiceID,
+		PlanID:     si.PlanID,
 		Parameters: req.Parameters,
 	}
 
@@ -287,15 +287,15 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	bindingId := uuid.NewV4().String()
+	bindingID := uuid.NewV4().String()
 
-	broker, err := c.getBroker(si.ServiceId)
+	broker, err := c.getBroker(si.ServiceID)
 	if err != nil {
 		fmt.Printf("Error fetching service: %v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
-	url := fmt.Sprintf(BIND_FMT_STR, broker.BrokerURL, si.Id, bindingId)
+	url := fmt.Sprintf(BIND_FMT_STR, broker.BrokerURL, si.ID, bindingID)
 
 	// TODO: Handle the auth
 	createHttpReq, err := http.NewRequest("PUT", url, bytes.NewReader(jsonBytes))
@@ -319,10 +319,10 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 
 	// TODO: get broker to actually return these values as part of response.
 	sb := model.ServiceBinding{
-		Id:                bindingId,
-		ServiceInstanceId: si.Id,
-		ServiceId:         si.ServiceId,
-		ServicePlanId:     si.PlanId,
+		ID:                bindingID,
+		ServiceInstanceID: si.ID,
+		ServiceID:         si.ServiceID,
+		ServicePlanID:     si.PlanID,
 	}
 
 	c.storage.AddServiceBinding(&sb, &sbr.Credentials)
@@ -333,7 +333,7 @@ func (c *Controller) DeleteServiceBinding(w http.ResponseWriter, r *http.Request
 	utils.WriteResponse(w, 400, "IMPLEMENT ME")
 }
 
-func (c *Controller) getServiceId(planId string) (string, error) {
+func (c *Controller) getServiceID(planID string) (string, error) {
 	i, err := c.storage.GetInventory()
 	if err != nil {
 		return "", err
@@ -341,17 +341,17 @@ func (c *Controller) getServiceId(planId string) (string, error) {
 
 	for _, s := range i.Services {
 		for _, p := range s.Plans {
-			if strings.Compare(planId, p.Id) == 0 {
-				return s.Id, nil
+			if strings.Compare(planID, p.ID) == 0 {
+				return s.ID, nil
 			}
 		}
 	}
 
-	return "", fmt.Errorf("Plan ID %s was not found", planId)
+	return "", fmt.Errorf("Plan ID %s was not found", planID)
 }
 
-func (c *Controller) getBroker(serviceId string) (*model.ServiceBroker, error) {
-	broker, err := c.storage.GetBrokerByService(serviceId)
+func (c *Controller) getBroker(serviceID string) (*model.ServiceBroker, error) {
+	broker, err := c.storage.GetBrokerByService(serviceID)
 	if err != nil {
 		return nil, err
 	}
@@ -372,18 +372,18 @@ type CreateServiceBindingRequest struct {
 }
 
 type ServiceInstanceRequest struct {
-	OrgId             string                 `json:"organization_guid,omitempty"`
-	PlanId            string                 `json:"plan_id,omitempty"`
-	ServiceId         string                 `json:"service_id,omitempty"`
-	SpaceId           string                 `json:"space_id,omitempty"`
+	OrgID             string                 `json:"organization_guid,omitempty"`
+	PlanID            string                 `json:"plan_id,omitempty"`
+	ServiceID         string                 `json:"service_id,omitempty"`
+	SpaceID           string                 `json:"space_id,omitempty"`
 	Parameters        map[string]interface{} `json:"parameters,omitempty"`
 	AcceptsIncomplete bool                   `json:"accepts_incomplete,omitempty"`
 }
 
 type BindingRequest struct {
 	AppGUID      string                 `json:"app_guid,omitempty"`
-	PlanId       string                 `json:"plan_id,omitempty"`
-	ServiceId    string                 `json:"service_id,omitempty"`
+	PlanID       string                 `json:"plan_id,omitempty"`
+	ServiceID    string                 `json:"service_id,omitempty"`
 	BindResource map[string]interface{} `json:"bind_resource,omitempty"`
 	Parameters   map[string]interface{} `json:"parameters,omitempty"`
 }
