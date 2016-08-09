@@ -1,16 +1,16 @@
 package model
 
 type ServiceBinding struct {
-	Id                string `json:"id"`
-	ServiceId         string `json:"service_id"`
-	AppId             string `json:"app_id"`
-	ServicePlanId     string `json:"service_plan_id"`
+	ID                string `json:"id"`
+	ServiceID         string `json:"service_id"`
+	AppID             string `json:"app_id"`
+	ServicePlanID     string `json:"service_plan_id"`
 	PrivateKey        string `json:"private_key"`
-	ServiceInstanceId string `json:"service_instance_id"`
+	ServiceInstanceID string `json:"service_instance_id"`
 }
 
 type CreateServiceBindingResponse struct {
-	// SyslogDrainUrl string      `json:"syslog_drain_url, omitempty"`
+	// SyslogDrainURL string      `json:"syslog_drain_url, omitempty"`
 	Credentials Credential `json:"credentials"`
 }
 
