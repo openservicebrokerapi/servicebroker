@@ -20,7 +20,7 @@ endif
 	docker build -t $(IMAGE):latest .
 
 binary-docker:
-	docker run \
+	docker run -ti \
 	  -w /src/github.com/cncf/servicebroker/k8s/service_controller \
 	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/k8s/service_controller \
 	  -e GOPATH=/ \
@@ -41,7 +41,7 @@ else
 endif
 
 test-unit-docker:
-	docker run \
+	docker run -ti \
 	  -w /src/github.com/cncf/servicebroker/k8s/service_controller \
 	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/k8s/service_controller \
 	  -e GOPATH=/ \
@@ -62,7 +62,7 @@ else
 endif
 
 test-docker:
-	docker run \
+	docker run -ti \
 	  -w /src/github.com/cncf/servicebroker/k8s/service_controller \
 	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/k8s/service_controller \
 	  -e GOPATH=/ \
@@ -102,7 +102,7 @@ else
 endif
 
 validate-docker:
-	docker run \
+	docker run -ti \
 	  -w /src/github.com/cncf/servicebroker/k8s/service_controller \
 	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/k8s/service_controller \
 	  -e GOPATH=/ \
