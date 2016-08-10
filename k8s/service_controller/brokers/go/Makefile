@@ -11,9 +11,9 @@ endif
 	docker build -t gobroker .
 
 binary-docker:
-	docker run \
-	  -w /tmp \
-	  -v ${CURDIR}:/tmp \
+	docker run -ti \
+	  -w /src/github.com/cncf/servicebroker/k8s/service_controller/brokers/go \
+	  -v $(shell cd ../.. && pwd):/src/github.com/cncf/servicebroker/k8s/service_controller \
 	  -e GOPATH=/ \
 	  golang \
 	  sh -c "go get -d ./... && make binary-local"
