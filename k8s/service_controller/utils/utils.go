@@ -12,15 +12,28 @@ import (
 )
 
 func WriteResponse(w http.ResponseWriter, code int, object interface{}) {
-	data, err := json.Marshal(object)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+	var data []byte
+	var err error
+
+	if str, ok := object.(string); ok {
+		data = []byte(str)
+	} else if err, ok = object.(error); ok {
+		if jerr, ok := err.(*json.SyntaxError); ok {
+			data = []byte(fmt.Sprintf("%s - offset: %d", err, jerr.Offset))
+		} else {
+			data = []byte(err.Error())
+		}
+	} else {
+		data, err = json.Marshal(object)
+		if err != nil {
+			code = http.StatusInternalServerError
+			data = []byte(fmt.Sprintf("%s", err))
+		}
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
-	fmt.Fprintf(w, string(data))
+	fmt.Fprintf(w, string(data)+"\n")
 }
 
 func BodyToObject(r *http.Request, object interface{}) error {

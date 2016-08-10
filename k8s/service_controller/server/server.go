@@ -52,7 +52,7 @@ func (s *Server) Start() {
 	if cfPort == "" {
 		cfPort = "10000"
 	}
-	fmt.Println("Server started on port " + cfPort)
+	fmt.Println("Service Controller started on port " + cfPort)
 	err := http.ListenAndServe(":"+cfPort, nil)
 	fmt.Println(err.Error())
 }
