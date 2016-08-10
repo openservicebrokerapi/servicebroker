@@ -1,8 +1,8 @@
-sudo: required
-language: bash
-
-services:
-  - docker
+language: go
 
 script:
   - make all
+  
+after_success:
+  - bash generate-coverage.sh
+  - bash <(curl -s https://codecov.io/bash)

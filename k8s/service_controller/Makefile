@@ -14,10 +14,10 @@ binary: $(EXE)
 $(EXE): $(SRC_FILES)
 ifeq (,$(shell which go))
 	@$(MAKE) --no-print-directory binary-docker
+	docker build -t $(IMAGE):latest .
 else
 	@$(MAKE) --no-print-directory binary-local
 endif
-	docker build -t $(IMAGE):latest .
 
 binary-docker:
 	docker run -ti \
@@ -28,6 +28,7 @@ binary-docker:
 	  sh -c "go get -d ./... && make binary-local"
 
 binary-local:
+	go get -v -d ./...
 	go build -o $(EXE) .
 
 #####################
