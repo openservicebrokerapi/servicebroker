@@ -4,12 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"os/exec"
-	"strings"
+	"net/http"
 
 	"github.com/cncf/servicebroker/k8s/service_controller/model"
 	"github.com/cncf/servicebroker/k8s/service_controller/server"
-	"github.com/cncf/servicebroker/k8s/service_controller/utils"
 )
 
 type K8sServiceStorage struct {
@@ -17,6 +15,8 @@ type K8sServiceStorage struct {
 
 const serviceDomain string = "cncf.org"
 const apiVersion string = "v1alpha1"
+const brokerResource string = "servicebrokers"
+const defaultUri string = "http://localhost:8080/apis/" + serviceDomain + "/" + apiVersion + "/namespaces/default/" + brokerResource
 
 // The k8s implementation should leverage Third Party Resources
 // https://github.com/kubernetes/kubernetes/blob/master/docs/design/extending-api.md
@@ -37,21 +37,15 @@ func (kss *K8sServiceStorage) ListBrokers() ([]*model.ServiceBroker, error) {
 	fmt.Println("listing all brokers")
 	// get the ServiceBroker
 
-	c := exec.Command("kubectl", "get", "ServiceBrokers", "-ojson")
-	b, e := c.CombinedOutput()
-	// b is json, an object, with an 'items' entry, which is an
-	// array of service brokers.
-	s := string(b)
+	r, e := http.Get(defaultUri)
 	if nil != e {
-		return nil, fmt.Errorf("couldn't get the service brokers. %v, [%v]", e, s)
+		return nil, fmt.Errorf("couldn't get the service brokers. %v, [%v]", e, r)
 	}
 
-	fmt.Println("returned json: ", s)
-
 	var lsb listSB
-	e = json.Unmarshal(b, &lsb)
+	e = json.NewDecoder(r.Body).Decode(&lsb)
 	if nil != e { // wrong json format error
-		fmt.Println("json not unmarshalled:", e, s)
+		fmt.Println("json not unmarshalled:", e, r)
 		return nil, e
 	}
 	fmt.Println("Got", len(lsb.Items), "brokers.")
@@ -63,18 +57,19 @@ func (kss *K8sServiceStorage) ListBrokers() ([]*model.ServiceBroker, error) {
 }
 
 func (kss *K8sServiceStorage) GetBroker(name string) (*model.ServiceBroker, error) {
-	c := exec.Command("kubectl", "get", "-ojson", "ServiceBrokers", name)
-	b, e := c.CombinedOutput()
-	s := string(b)
+	uri := defaultUri + "/" + name
+	fmt.Println("uri is:", uri)
+	r, e := http.Get(uri)
 	if nil != e {
-		return nil, fmt.Errorf("couldn't get the service broker. %v, [%v]", e, s)
+		return nil, fmt.Errorf("couldn't get the service broker. %v, [%v]", e, r)
 	}
-	fmt.Println("returned json: ", s)
+	defer r.Body.Close()
 	var sb k8sServiceBroker
-	e = json.Unmarshal(b, &sb)
+	e = json.NewDecoder(r.Body).Decode(&sb)
 	if nil != e { // wrong json format error
 		return nil, e
 	}
+	fmt.Printf("returned json: %+v\n", sb)
 	return sb.ServiceBroker, nil
 }
 
@@ -128,33 +123,28 @@ func (kss *K8sServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *mo
 	ksb.Metadata = Meta{Name: broker.Name}
 	ksb.ServiceBroker = broker
 
-	b, e := json.Marshal(ksb)
-	fmt.Println(string(b))
-	if nil != e { // wrong json format error
-		return e
-	}
-	s, e := utils.KubeCreateResource(bytes.NewReader(b))
-	fmt.Sprintf("result: %v", s)
-	if nil != e {
-		fmt.Printf("Error creating k8s TPR [%s]...\n%v\n", e, s)
+	b := new(bytes.Buffer)
+	json.NewEncoder(b).Encode(&ksb)
+	r, e := http.Post(defaultUri, "application/json", b)
+	fmt.Sprintf("result: %v", r)
+	if nil != e || 201 != r.StatusCode {
+		fmt.Printf("Error creating k8s TPR [%s]...\n%v\n", e, r)
 		return e
 	}
 	return nil
 }
 
-func (kss *K8sServiceStorage) DeleteBroker(id string) error {
-	c := exec.Command("kubectl", "delete", "-oname", "ServiceBrokers", id)
-	b, e := c.CombinedOutput()
-	if nil != e { // some kind of exec error
-		return e
+func (kss *K8sServiceStorage) DeleteBroker(name string) error {
+	uri := defaultUri + "/" + name
+	fmt.Println("uri is:", uri)
+
+	// utter failure of an http API
+	req, _ := http.NewRequest("DELETE", uri, nil)
+	_, e := http.DefaultClient.Do(req)
+	if nil != e {
+		return fmt.Errorf("couldn't nuke %v, [%v]", name, e)
 	}
-	s := string(b)
-	fmt.Println("deleted: ", s)
-	lookingFor := "servicebroker/" + id
-	if strings.Contains(s, lookingFor) {
-		return nil
-	}
-	return fmt.Errorf("didn't work right: %v", s)
+	return nil
 }
 
 func (kss *K8sServiceStorage) ServiceExists(id string) bool {
