@@ -41,9 +41,9 @@ func (s *Server) Start() {
 	// TODO: implement list service bindings for this service instance.
 	// router.HandleFunc("/v2/service_instances/{service_id}/service_bindings", s.controller.ListServiceInstanceBindings).Methods("GET")
 
-	router.HandleFunc("/v2service_bindings", s.controller.ListServiceBindings).Methods("GET")
+	router.HandleFunc("/v2/service_bindings", s.controller.ListServiceBindings).Methods("GET")
 	router.HandleFunc("/v2/service_bindings", s.controller.CreateServiceBinding).Methods("POST")
-	router.HandleFunc("/v2service_bindings/{binding_id}", s.controller.GetServiceBinding).Methods("GET")
+	router.HandleFunc("/v2/service_bindings/{binding_id}", s.controller.GetServiceBinding).Methods("GET")
 	router.HandleFunc("/v2/service_bindings/{binding_id}", s.controller.DeleteServiceBinding).Methods("DELETE")
 
 	http.Handle("/", router)
