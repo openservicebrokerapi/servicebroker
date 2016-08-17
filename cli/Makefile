@@ -97,6 +97,7 @@ validate-docker:
 
 validate-local:
 	@if ! [ "`find . -name \*.go -exec gofmt -s -l {} \;`" = "" ]; then \
-		echo Please gofmt the following files: \\n$(shell find . -name \*.go -exec gofmt -s -l {} \;) \\n ; \
+		echo Please fix the following gofmt issues: ; \
+		find . -name \*.go -exec gofmt -s -d {} \; ; \
 		exit 1 ; \
 	fi
