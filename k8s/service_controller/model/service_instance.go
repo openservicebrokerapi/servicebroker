@@ -22,9 +22,9 @@ type LastOperation struct {
 }
 
 type CreateServiceInstanceRequest struct {
+	Name              string                 `json:"name"`
 	OrgID             string                 `json:"organization_guid"`
-	PlanID            string                 `json:"plan_id"`
-	ServiceID         string                 `json:"service_id"`
+	ServicePlanGUID   string                 `json:"service_plan_guid"`
 	SpaceID           string                 `json:"space_guid"`
 	Parameters        map[string]interface{} `json:"parameters"`
 	AcceptsIncomplete bool                   `json:"accepts_incomplete"`

@@ -169,7 +169,7 @@ func (c *Controller) GetServiceInstance(w http.ResponseWriter, r *http.Request) 
 func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Creating Service Instance\n")
 
-	var req CreateServiceInstanceRequest
+	var req model.CreateServiceInstanceRequest
 	err := utils.BodyToObject(r, &req)
 	if err != nil {
 		fmt.Printf("Error unmarshaling: %v\n", err)
@@ -360,11 +360,9 @@ func (c *Controller) getBroker(serviceID string) (*model.ServiceBroker, error) {
 }
 
 // This is what we get sent to us
-type CreateServiceInstanceRequest struct {
-	Name            string                 `json:"name"`
-	ServicePlanGUID string                 `json:"service_plan_guid"`
-	Parameters      map[string]interface{} `json:"parameters,omitempty"`
-}
+// TODO: Get rid of these and use the ones from:
+//	"github.com/cncf/servicebroker/k8s/service_controller/model"
+// it's really confusing...
 
 type CreateServiceBindingRequest struct {
 	ServiceInstanceGUID string                 `json:"service_instance_guid"`

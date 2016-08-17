@@ -18,6 +18,9 @@ func callService(path, method, action string, reader io.ReadCloser) error {
 	if err != nil {
 		return err
 	}
+	if len(resp) == 0 {
+		return nil
+	}
 	var j interface{}
 	if err := json.Unmarshal([]byte(resp), &j); err != nil {
 		return fmt.Errorf("Failed to parse JSON response from service: %s : %v", resp, err)
@@ -34,6 +37,10 @@ func callService(path, method, action string, reader io.ReadCloser) error {
 
 func callHttp(path, method, action string, reader io.ReadCloser) (string, error) {
 	request, err := http.NewRequest(method, path, reader)
+	if err != nil {
+		return "", err
+	}
+
 	request.Header.Add("Content-Type", "application/json")
 
 	client := http.Client{
