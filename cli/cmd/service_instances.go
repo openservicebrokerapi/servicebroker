@@ -11,7 +11,8 @@ import (
 )
 
 const (
-	SERVICE_INSTANCES_URL = "/v2/service_instances"
+	SERVICE_INSTANCES_URL     = "/v2/service_instances"
+	SERVICE_INSTANCES_FMT_STR = "/v2/service_instances/%s"
 )
 
 var (
