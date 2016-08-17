@@ -26,6 +26,7 @@ cli-docker:
 	sh -c "go get -d ./... && make cli-local"
 
 cli-local:
+	go get -d ./...
 	go build -o $(EXE) .
 
 #####################
