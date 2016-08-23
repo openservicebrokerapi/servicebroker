@@ -79,8 +79,16 @@ func (s *InMemServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *mo
 	return nil
 }
 
-func (s *InMemServiceStorage) DeleteBroker(string) error {
-	return fmt.Errorf("Not implemented yet")
+func (s *InMemServiceStorage) DeleteBroker(id string) error {
+	_, err := s.GetBroker(id)
+	if err != nil {
+		return fmt.Errorf("Broker %s does not exist", id)
+	}
+	delete(s.brokers, id)
+	delete(s.catalogs, id)
+
+	// TODO(vaikas): Delete bindings too.
+	return nil
 }
 
 func (s *InMemServiceStorage) ServiceExists(id string) bool {
