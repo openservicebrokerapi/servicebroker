@@ -1,10 +1,8 @@
 package cmd
 
 import (
-	"crypto/rand"
 	"encoding/json"
 	"fmt"
-	"io"
 
 	"github.com/cncf/servicebroker/k8s/service_controller/model"
 )
