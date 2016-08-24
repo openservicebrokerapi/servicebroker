@@ -4,5 +4,10 @@ language: bash
 services:
   - docker
 
+before_install:
+  - make clean
+  
 script:
+  - go env
+  - go version
   - make all

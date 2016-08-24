@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/cncf/servicebroker/cli/cmd"
+	"github.com/servicebroker/servicebroker/cli/cmd"
 )
 
 func main() {

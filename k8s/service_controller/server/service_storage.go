@@ -1,7 +1,7 @@
 package server
 
 import (
-	model "github.com/cncf/servicebroker/model/service_controller"
+	model "github.com/servicebroker/servicebroker/model/service_controller"
 )
 
 // The Broker interface provides functions to deal with brokers.

@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/cncf/servicebroker/k8s/service_controller/model"
 	"github.com/gorilla/mux"
+	"github.com/servicebroker/servicebroker/k8s/service_controller/model"
 )
 
 type Service struct {

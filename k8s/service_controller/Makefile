@@ -21,8 +21,8 @@ endif
 
 binary-docker:
 	docker run -ti \
-	  -w /src/github.com/cncf/servicebroker/k8s/service_controller \
-	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/k8s/service_controller \
+	  -w /src/github.com/servicebroker/servicebroker/k8s/service_controller \
+	  -v ${CURDIR}:/src/github.com/servicebroker/servicebroker/k8s/service_controller \
 	  -e GOPATH=/ \
 	  golang \
 	  sh -c "go get -d ./... && make binary-local"
@@ -43,14 +43,14 @@ endif
 
 test-unit-docker:
 	docker run -ti \
-	  -w /src/github.com/cncf/servicebroker/k8s/service_controller \
-	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/k8s/service_controller \
+	  -w /src/github.com/servicebroker/servicebroker/k8s/service_controller \
+	  -v ${CURDIR}:/src/github.com/servicebroker/servicebroker/k8s/service_controller \
 	  -e GOPATH=/ \
 	  golang \
 	  sh -c "go get -d ./... && make --no-print-directory test-unit-local"
 
 test-unit-local:
-	@go test $(TEST_UNIT_DIRS)
+	@go test -v -x $(TEST_UNIT_DIRS)
 
 #####################
 
@@ -64,8 +64,8 @@ endif
 
 test-docker:
 	docker run -ti \
-	  -w /src/github.com/cncf/servicebroker/k8s/service_controller \
-	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/k8s/service_controller \
+	  -w /src/github.com/servicebroker/servicebroker/k8s/service_controller \
+	  -v ${CURDIR}:/src/github.com/servicebroker/servicebroker/k8s/service_controller \
 	  -e GOPATH=/ \
 	  --net host \
 	  golang \
@@ -104,8 +104,8 @@ endif
 
 validate-docker:
 	docker run -ti \
-	  -w /src/github.com/cncf/servicebroker/k8s/service_controller \
-	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/k8s/service_controller \
+	  -w /src/github.com/servicebroker/servicebroker/k8s/service_controller \
+	  -v ${CURDIR}:/src/github.com/servicebroker/servicebroker/k8s/service_controller \
 	  -e GOPATH=/ \
 	  golang \
 	  sh -c "go get -d ./... && make --no-print-directory validate-local"

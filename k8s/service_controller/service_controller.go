@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/cncf/servicebroker/k8s/service_controller/server"
-	"github.com/cncf/servicebroker/k8s/service_controller/server/k8s"
-	"github.com/cncf/servicebroker/k8s/service_controller/server/mem"
+	"github.com/servicebroker/servicebroker/k8s/service_controller/server"
+	"github.com/servicebroker/servicebroker/k8s/service_controller/server/k8s"
+	"github.com/servicebroker/servicebroker/k8s/service_controller/server/mem"
 )
 
 type Options struct {

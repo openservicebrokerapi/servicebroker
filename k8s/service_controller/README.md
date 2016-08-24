@@ -4,6 +4,14 @@ The service controller is a prototype open implementation of the parts of the
 Cloud Foundry Cloud Controller which pertain to service management and
 consumption.
 
+## Build
+
+`go build service_controller.go`
+
+OR
+
+`make`
+
 ## Prototype
 
 Note that the node portion of this prototype does not work locally, as it is
