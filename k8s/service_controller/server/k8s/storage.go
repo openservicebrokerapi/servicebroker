@@ -10,6 +10,10 @@ import (
 	"github.com/cncf/servicebroker/k8s/service_controller/model"
 	"github.com/cncf/servicebroker/k8s/service_controller/server"
 	"github.com/cncf/servicebroker/k8s/service_controller/utils"
+	//"k8s.io/kubernetes/pkg/client/restclient"
+	k8sclient "k8s.io/kubernetes/pkg/client/unversioned"
+	defaultClient "k8s.io/kubernetes/pkg/client/unversioned/clientcmd"
+	//	configFactory "k8s.io/kubernetes/pkg/kubectl/cmd/util"
 )
 
 type K8sServiceStorage struct {
@@ -62,7 +66,38 @@ func (kss *K8sServiceStorage) ListBrokers() ([]*model.ServiceBroker, error) {
 	return ret, nil
 }
 
+const (
+	defaultHost string = "http://127.0.0.1:8080"
+)
+
+func printVersion(name string) {
+	// poc that this works by getting the server version
+	cfg, _ := defaultClient.DefaultClientConfig.ClientConfig()
+	c, err := k8sclient.New(cfg)
+	info, err := c.Discovery().ServerVersion()
+	if nil != err {
+		fmt.Printf("Error %v\n", err)
+	}
+	fmt.Printf("server API version information: %s\n", info)
+
+	// nope
+	tpr, err := c.Extensions().ThirdPartyResources().Get("service-broker.cncf.org")
+	if nil != err {
+		fmt.Printf("Error %v\n", err)
+	}
+	fmt.Printf("maybe tpr?: %v\n", tpr)
+
+	// nope
+	ep, err := c.Endpoints("default").Get("ServiceBrokers")
+	if nil != err {
+		fmt.Printf("Error %v\n", err)
+	}
+	fmt.Printf("maybe all brokers?: %v\n", ep)
+}
+
 func (kss *K8sServiceStorage) GetBroker(name string) (*model.ServiceBroker, error) {
+	printVersion(name)
+
 	c := exec.Command("kubectl", "get", "-ojson", "ServiceBrokers", name)
 	b, e := c.CombinedOutput()
 	s := string(b)
