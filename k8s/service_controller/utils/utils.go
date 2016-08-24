@@ -3,10 +3,8 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
-	"os/exec"
 
 	"github.com/gorilla/mux"
 )
@@ -66,16 +64,4 @@ func ResponseBodyToObject(r *http.Response, object interface{}) error {
 
 func ExtractVarFromRequest(r *http.Request, varName string) string {
 	return mux.Vars(r)[varName]
-}
-
-// KubeCreateResource takes input of resource definitions in the form
-// of a reader. The intermingled output of stdout and stderr is
-// returned as a string. It exists until we vendor a k8s client or
-// figure out how to authenticate directly to apiserver.
-func KubeCreateResource(r io.Reader) (string, error) {
-	c := exec.Command("kubectl", "create", "-oname", "-f", "-")
-	c.Stdin = r
-	b, e := c.CombinedOutput()
-	s := string(b)
-	return s, e
 }
