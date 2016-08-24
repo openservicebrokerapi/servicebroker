@@ -11,20 +11,72 @@ import (
 )
 
 type K8sServiceStorage struct {
+	// Host is the location where we'll talk to k8s
+	Host string
 }
 
 const serviceDomain string = "cncf.org"
 const apiVersion string = "v1alpha1"
 const brokerResource string = "servicebrokers"
-const defaultUri string = "http://localhost:8080/apis/" + serviceDomain + "/" + apiVersion + "/namespaces/default/" + brokerResource
+const defaultUri string = "http://%v/apis/" + serviceDomain + "/" + apiVersion + "/namespaces/default/" + brokerResource
 
 // The k8s implementation should leverage Third Party Resources
 // https://github.com/kubernetes/kubernetes/blob/master/docs/design/extending-api.md
 
 var _ server.ServiceStorage = (*K8sServiceStorage)(nil)
 
-func CreateServiceStorage() server.ServiceStorage {
-	return &K8sServiceStorage{}
+type Meta struct {
+	Name string `json:"name"`
+}
+
+type k8sServiceBroker struct {
+	*model.ServiceBroker
+	ApiVersion string `json:"apiVersion"`
+	Kind       string `json:"kind"`
+	Metadata   Meta   `json:"metadata"`
+}
+
+type VName struct {
+	Name string `json:"name"`
+}
+
+type TPR struct {
+	Meta       `json:"metadata"`
+	ApiVersion string  `json:"apiVersion"`
+	kind       string  `json:"kind"`
+	Versions   []VName `json:"versions"`
+}
+
+const TPRapiVersion string = "extensions/v1beta1"
+const thirdPartyResourceString string = "ThirdPartyResource"
+
+var versionMap []VName = []VName{{"v1alpha1"}}
+var serviceBrokerMeta Meta = Meta{"service-broker.cncf.org"}
+var serviceBindingMeta Meta = Meta{"service-binding.cncf.org"}
+var serviceInstanceMeta Meta = Meta{"service-instance.cncf.org"}
+var serviceBrokerDefinition TPR = TPR{serviceBrokerMeta, TPRapiVersion, thirdPartyResourceString, versionMap}
+var serviceBindingDefinition TPR = TPR{serviceBindingMeta, TPRapiVersion, thirdPartyResourceString, versionMap}
+var serviceInstanceDefinition TPR = TPR{serviceInstanceMeta, TPRapiVersion, thirdPartyResourceString, versionMap}
+
+func CreateServiceStorage(host string) server.ServiceStorage {
+
+	// define the resources once at startup
+	// results in ServiceBrokers
+
+	b := new(bytes.Buffer)
+	json.NewEncoder(b).Encode(&serviceBrokerDefinition)
+	fmt.Printf("encoded bytes: %v\n", b.String())
+	r, e := http.Post("http://"+host+"/apis/extensions/v1beta1/thirdpartyresources", "application/json", b)
+	fmt.Printf("result: %v\n", r)
+	if nil != e || 201 != r.StatusCode {
+		fmt.Printf("Error creating k8s TPR [%s]...\n%v\n", e, r)
+	}
+	// serviceBindingDefinition
+	// serviceInstanceDefinition
+
+	// cleanup afterwards by `kubectl delete thirdpartyresource service-broker.cncf.org`
+
+	return &K8sServiceStorage{Host: host}
 }
 
 // listSB is only used for unmarshalling the list of service brokers
@@ -33,11 +85,15 @@ type listSB struct {
 	Items []*k8sServiceBroker `json:"items"`
 }
 
+func (kss *K8sServiceStorage) defaultUri() string {
+	return fmt.Sprintf(defaultUri, kss.Host)
+}
+
 func (kss *K8sServiceStorage) ListBrokers() ([]*model.ServiceBroker, error) {
 	fmt.Println("listing all brokers")
 	// get the ServiceBroker
 
-	r, e := http.Get(defaultUri)
+	r, e := http.Get(kss.defaultUri())
 	if nil != e {
 		return nil, fmt.Errorf("couldn't get the service brokers. %v, [%v]", e, r)
 	}
@@ -57,7 +113,7 @@ func (kss *K8sServiceStorage) ListBrokers() ([]*model.ServiceBroker, error) {
 }
 
 func (kss *K8sServiceStorage) GetBroker(name string) (*model.ServiceBroker, error) {
-	uri := defaultUri + "/" + name
+	uri := kss.defaultUri() + "/" + name
 	fmt.Println("uri is:", uri)
 	r, e := http.Get(uri)
 	if nil != e {
@@ -79,17 +135,6 @@ func (kss *K8sServiceStorage) GetBrokerByService(id string) (*model.ServiceBroke
 
 func (kss *K8sServiceStorage) GetInventory() (*model.Catalog, error) {
 	return nil, fmt.Errorf("Not implemented yet")
-}
-
-type Meta struct {
-	Name string `json:"name"`
-}
-
-type k8sServiceBroker struct {
-	*model.ServiceBroker
-	ApiVersion string `json:"apiVersion"`
-	Kind       string `json:"kind"`
-	Metadata   Meta   `json:"metadata"`
 }
 
 func NewK8sSB() *k8sServiceBroker {
@@ -125,7 +170,7 @@ func (kss *K8sServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *mo
 
 	b := new(bytes.Buffer)
 	json.NewEncoder(b).Encode(&ksb)
-	r, e := http.Post(defaultUri, "application/json", b)
+	r, e := http.Post(kss.defaultUri(), "application/json", b)
 	fmt.Sprintf("result: %v", r)
 	if nil != e || 201 != r.StatusCode {
 		fmt.Printf("Error creating k8s TPR [%s]...\n%v\n", e, r)
@@ -135,7 +180,7 @@ func (kss *K8sServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *mo
 }
 
 func (kss *K8sServiceStorage) DeleteBroker(name string) error {
-	uri := defaultUri + "/" + name
+	uri := kss.defaultUri() + "/" + name
 	fmt.Println("uri is:", uri)
 
 	// utter failure of an http API
