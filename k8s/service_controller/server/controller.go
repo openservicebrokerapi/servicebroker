@@ -74,7 +74,7 @@ func (c *Controller) GetServiceBroker(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request) {
-	var sbReq sbmodel.CreateServiceBrokerRequest
+	var sbReq scmodel.CreateServiceBrokerRequest
 	err := utils.BodyToObject(r, &sbReq)
 	if err != nil {
 		fmt.Printf("Error unmarshaling: %#v\n", err)
