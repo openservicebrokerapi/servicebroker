@@ -1,7 +1,17 @@
 package model
 
-//
+type ServiceInstanceData struct {
+	Instance *ServiceInstance
+
+	// Bindings to pass to broker when instantiating the instance. If this is
+	// not set at instance creation time, no bindings will ever be passed.
+	//
+	// Map of service name being bound to to credentials.
+	Bindings map[string]*Credential
+}
+
 type ServiceInstance struct {
+	Name             string `json:"name"`
 	ID               string `json:"id"`
 	DashboardURL     string `json:"dashboard_url"`
 	InternalID       string `json:"internal_id, omitempty"`

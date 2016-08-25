@@ -18,7 +18,7 @@ type InMemServiceStorage struct {
 	// It's static for now to keep compatibility, seems like this could be more dynamic.
 	catalogs map[string]*model.Catalog
 	// maps instance ID to instance
-	services map[string]*model.ServiceInstance
+	services map[string]*model.ServiceInstanceData
 	// maps binding ID to binding
 	// TODO: support looking up all bindings for a service instance.
 	bindings map[string]*BindingPair
@@ -30,7 +30,7 @@ func CreateInMemServiceStorage() server.ServiceStorage {
 	return &InMemServiceStorage{
 		brokers:  make(map[string]*model.ServiceBroker),
 		catalogs: make(map[string]*model.Catalog),
-		services: make(map[string]*model.ServiceInstance),
+		services: make(map[string]*model.ServiceInstanceData),
 		bindings: make(map[string]*BindingPair),
 	}
 }
@@ -96,29 +96,34 @@ func (s *InMemServiceStorage) ServiceExists(id string) bool {
 	return err == nil
 }
 
-func (s *InMemServiceStorage) ListServices() ([]*model.ServiceInstance, error) {
-	services := []*model.ServiceInstance{}
+func (s *InMemServiceStorage) ListServices() ([]*model.ServiceInstanceData, error) {
+	services := []*model.ServiceInstanceData{}
 	for _, v := range s.services {
 		services = append(services, v)
 	}
 	return services, nil
 }
 
-func (s *InMemServiceStorage) GetService(id string) (*model.ServiceInstance, error) {
+func (s *InMemServiceStorage) GetService(id string) (*model.ServiceInstanceData, error) {
 	service, ok := s.services[id]
 	if !ok {
-		return &model.ServiceInstance{}, fmt.Errorf("Service %s does not exist", id)
+		return &model.ServiceInstanceData{}, fmt.Errorf("Service %s does not exist", id)
 	}
 
 	return service, nil
 }
 
-func (s *InMemServiceStorage) AddService(si *model.ServiceInstance) error {
-	if s.ServiceExists(si.ID) {
-		return fmt.Errorf("Service %s already exists", si.ID)
+func (s *InMemServiceStorage) AddService(si *model.ServiceInstanceData) error {
+	if s.ServiceExists(si.Instance.ID) {
+		return fmt.Errorf("Service %s already exists", si.Instance.ID)
 	}
 
-	s.services[si.ID] = si
+	s.services[si.Instance.ID] = si
+	return nil
+}
+
+func (s *InMemServiceStorage) SetService(si *model.ServiceInstanceData) error {
+	s.services[si.Instance.ID] = si
 	return nil
 }
 
@@ -127,17 +132,20 @@ func (s *InMemServiceStorage) DeleteService(id string) error {
 }
 
 func (s *InMemServiceStorage) ListServiceBindings() ([]*model.ServiceBinding, error) {
-	return []*model.ServiceBinding{}, fmt.Errorf("Not implemented yet")
+	bindings := []*model.ServiceBinding{}
+	for _, v := range s.bindings {
+		bindings = append(bindings, v.Binding)
+	}
+	return bindings, nil
 }
 
-func (s *InMemServiceStorage) GetServiceBinding(id string) (*model.Credential, error) {
+func (s *InMemServiceStorage) GetServiceBinding(id string) (*model.ServiceBinding, error) {
 	b, ok := s.bindings[id]
 	if !ok {
-		// TODO: this should return binding rather than credential.
-		return &model.Credential{}, fmt.Errorf("Binding %s does not exist", id)
+		return &model.ServiceBinding{}, fmt.Errorf("Binding %s does not exist", id)
 	}
 
-	return b.Credential, nil
+	return b.Binding, nil
 }
 
 func (s *InMemServiceStorage) AddServiceBinding(binding *model.ServiceBinding, cred *model.Credential) error {

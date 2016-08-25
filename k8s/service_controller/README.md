@@ -47,13 +47,13 @@ curl localhost:10000/v2/inventory
 ### Create Service Instances of sql for our default SB
 
 ```
-curl -X POST -d '{"service_plan_guid":"2222", "parameters":{"name": "guestbook-mysql", "zone":"us-central1-a"}}' localhost:10000/v2/service_instances
+curl -X POST -d '{"name": "guestbook-mysql", "service_plan_guid":"2222", "parameters":{"zone":"us-central1-a"}}' localhost:10000/v2/service_instances
 ```
 
 ### Create Binding of sql for our default SB
 
 ```
-curl -X POST -d '{"service_instance_guid":"<GUID>", "parameters":{"username":"admin","password":"mypassword"}}' localhost:10000/v2/service_bindings
+curl -X POST -d '{"from_service_instance_name": "guestbook-nodejs", "service_instance_guid":"<GUID>", "parameters":{"username":"admin","password":"mypassword"}}' localhost:10000/v2/service_bindings
 ```
 
 ### Get the creds for the binding
