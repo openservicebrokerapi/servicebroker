@@ -8,8 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cncf/servicebroker/k8s/service_controller/model"
 	"github.com/cncf/servicebroker/k8s/service_controller/utils"
+	sbmodel "github.com/cncf/servicebroker/model/service_broker"
+	scmodel "github.com/cncf/servicebroker/model/service_controller"
 	"github.com/satori/go.uuid"
 )
 
@@ -73,7 +74,7 @@ func (c *Controller) GetServiceBroker(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request) {
-	var sbReq model.CreateServiceBrokerRequest
+	var sbReq scmodel.CreateServiceBrokerRequest
 	err := utils.BodyToObject(r, &sbReq)
 	if err != nil {
 		fmt.Printf("Error unmarshaling: %#v\n", err)
@@ -81,7 +82,7 @@ func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	sb := model.ServiceBroker{
+	sb := scmodel.ServiceBroker{
 		GUID:         uuid.NewV4().String(),
 		Name:         sbReq.Name,
 		BrokerURL:    sbReq.BrokerURL,
@@ -106,7 +107,9 @@ func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	var catalog model.Catalog
+	// TODO: the model from SB is fetched and stored directly as the one in the SC model (which the
+	// storage operates on). We should convert it from the SB model to SC model before storing.
+	var catalog scmodel.Catalog
 	err = utils.ResponseBodyToObject(resp, &catalog)
 	if err != nil {
 		fmt.Printf("Failed to unmarshal catalog: %#v\n", err)
@@ -114,13 +117,13 @@ func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	sbRes := model.CreateServiceBrokerResponse{
-		Metadata: model.ServiceBrokerMetadata{
+	sbRes := scmodel.CreateServiceBrokerResponse{
+		Metadata: scmodel.ServiceBrokerMetadata{
 			GUID:      sb.GUID,
 			CreatedAt: time.Unix(sb.Created, 0).Format(time.RFC3339),
 			URL:       sb.SelfURL,
 		},
-		Entity: model.ServiceBrokerEntity{
+		Entity: scmodel.ServiceBrokerEntity{
 			Name:         sb.Name,
 			BrokerURL:    sb.BrokerURL,
 			AuthUsername: sb.AuthUsername,
@@ -156,7 +159,7 @@ func (c *Controller) ListServiceInstances(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	var instances []*model.ServiceInstance
+	var instances []*scmodel.ServiceInstance
 	for _, i := range si {
 		instances = append(instances, i.Instance)
 	}
@@ -181,7 +184,7 @@ func (c *Controller) GetServiceInstance(w http.ResponseWriter, r *http.Request) 
 func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Creating Service Instance\n")
 
-	var req model.CreateServiceInstanceRequest
+	var req scmodel.CreateServiceInstanceRequest
 	err := utils.BodyToObject(r, &req)
 	if err != nil {
 		fmt.Printf("Error unmarshaling: %v\n", err)
@@ -198,7 +201,7 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 
 	siData, err := c.getServiceInstanceByName(req.Name)
 	if err != nil {
-		siData = &model.ServiceInstanceData{Instance: &model.ServiceInstance{
+		siData = &scmodel.ServiceInstanceData{Instance: &scmodel.ServiceInstance{
 			ID: uuid.NewV4().String(),
 		}}
 	}
@@ -216,7 +219,7 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 	}
 
 	// Then actually make the request to reify the service instance
-	createReq := &ServiceInstanceRequest{
+	createReq := &sbmodel.ServiceInstanceRequest{
 		ServiceID:  serviceID,
 		PlanID:     req.ServicePlanGUID,
 		Parameters: req.Parameters,
@@ -251,7 +254,7 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 	defer resp.Body.Close()
 
 	// TODO: Align this with the actual response model.
-	si := model.ServiceInstance{}
+	si := scmodel.ServiceInstance{}
 	err = utils.ResponseBodyToObject(resp, &si)
 
 	si.Name = req.Name
@@ -301,7 +304,7 @@ func (c *Controller) GetServiceBinding(w http.ResponseWriter, r *http.Request) {
 func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Creating Service Binding\n")
 
-	var req CreateServiceBindingRequest
+	var req scmodel.CreateServiceBindingRequest
 	err := utils.BodyToObject(r, &req)
 	if err != nil {
 		fmt.Printf("Error unmarshaling: %#v\n", err)
@@ -312,12 +315,12 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 	// Validate that from service has not been instantiated yet.
 	fromSI, err := c.getServiceInstanceByName(req.FromServiceInstanceName)
 	if err != nil {
-		fromSI = &model.ServiceInstanceData{
-			Instance: &model.ServiceInstance{
+		fromSI = &scmodel.ServiceInstanceData{
+			Instance: &scmodel.ServiceInstance{
 				Name: req.FromServiceInstanceName,
 				ID:   uuid.NewV4().String(),
 			},
-			Bindings: make(map[string]*model.Credential),
+			Bindings: make(map[string]*scmodel.Credential),
 		}
 		c.storage.AddService(fromSI)
 	}
@@ -337,7 +340,7 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 	}
 
 	// Then actually make the request to create the binding
-	createReq := &BindingRequest{
+	createReq := &sbmodel.BindingRequest{
 		ServiceID:  si.Instance.ServiceID,
 		PlanID:     si.Instance.PlanID,
 		Parameters: req.Parameters,
@@ -372,7 +375,7 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 	}
 	defer resp.Body.Close()
 
-	sbr := model.CreateServiceBindingResponse{}
+	sbr := scmodel.CreateServiceBindingResponse{}
 	err = utils.ResponseBodyToObject(resp, &sbr)
 	if err != nil {
 		fmt.Printf("Failed to unmarshal: %#v\n", err)
@@ -381,7 +384,7 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 	}
 
 	// TODO: get broker to actually return these values as part of response.
-	sb := model.ServiceBinding{
+	sb := scmodel.ServiceBinding{
 		ID: bindingID,
 		FromServiceInstanceName: req.FromServiceInstanceName,
 		ServiceInstanceGUID:     req.ServiceInstanceGUID,
@@ -444,7 +447,8 @@ func (c *Controller) getServiceName(instanceId string) (string, error) {
 
 	return "", fmt.Errorf("Service ID %s was not found for instance %s", si.Instance.ServiceID, instanceId)
 }
-func (c *Controller) getBroker(serviceID string) (*model.ServiceBroker, error) {
+
+func (c *Controller) getBroker(serviceID string) (*scmodel.ServiceBroker, error) {
 	broker, err := c.storage.GetBrokerByService(serviceID)
 	if err != nil {
 		return nil, err
@@ -453,7 +457,7 @@ func (c *Controller) getBroker(serviceID string) (*model.ServiceBroker, error) {
 	return broker, nil
 }
 
-func (c *Controller) getServiceInstanceByName(name string) (*model.ServiceInstanceData, error) {
+func (c *Controller) getServiceInstanceByName(name string) (*scmodel.ServiceInstanceData, error) {
 	siList, err := c.storage.ListServices()
 	if err != nil {
 		return nil, err
@@ -466,33 +470,4 @@ func (c *Controller) getServiceInstanceByName(name string) (*model.ServiceInstan
 	}
 
 	return nil, fmt.Errorf("Service instance %s was not found", name)
-}
-
-// This is what we get sent to us
-// TODO: Get rid of these and use the ones from:
-//	"github.com/cncf/servicebroker/k8s/service_controller/model"
-// it's really confusing...
-
-type CreateServiceBindingRequest struct {
-	FromServiceInstanceName string                 `json:"from_service_instance_name"`
-	ServiceInstanceGUID     string                 `json:"service_instance_guid"`
-	Parameters              map[string]interface{} `json:"parameters,omitempty"`
-}
-
-// Requests to the service broker
-type ServiceInstanceRequest struct {
-	OrgID             string                 `json:"organization_guid,omitempty"`
-	PlanID            string                 `json:"plan_id,omitempty"`
-	ServiceID         string                 `json:"service_id,omitempty"`
-	SpaceID           string                 `json:"space_id,omitempty"`
-	Parameters        map[string]interface{} `json:"parameters,omitempty"`
-	AcceptsIncomplete bool                   `json:"accepts_incomplete,omitempty"`
-}
-
-type BindingRequest struct {
-	AppGUID      string                 `json:"app_guid,omitempty"`
-	PlanID       string                 `json:"plan_id,omitempty"`
-	ServiceID    string                 `json:"service_id,omitempty"`
-	BindResource map[string]interface{} `json:"bind_resource,omitempty"`
-	Parameters   map[string]interface{} `json:"parameters,omitempty"`
 }

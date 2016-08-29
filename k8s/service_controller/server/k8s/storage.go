@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/cncf/servicebroker/k8s/service_controller/model"
 	"github.com/cncf/servicebroker/k8s/service_controller/server"
+	model "github.com/cncf/servicebroker/model/service_controller"
 )
 
 type K8sServiceStorage struct {
