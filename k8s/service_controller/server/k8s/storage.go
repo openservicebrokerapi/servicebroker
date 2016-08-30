@@ -120,7 +120,7 @@ func (kss *K8sServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *mo
 	// versions:
 	// - name: v1alpha1
 	ksb := NewK8sSB()
-	ksb.Metadata = Meta{Name: broker.Name}
+	ksb.Metadata = Meta{Name: broker.GUID}
 	ksb.ServiceBroker = broker
 
 	b := new(bytes.Buffer)
