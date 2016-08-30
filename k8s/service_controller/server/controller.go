@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cncf/servicebroker/k8s/service_controller/utils"
-	sbmodel "github.com/cncf/servicebroker/model/service_broker"
-	scmodel "github.com/cncf/servicebroker/model/service_controller"
 	"github.com/satori/go.uuid"
+	"github.com/servicebroker/servicebroker/k8s/service_controller/utils"
+	sbmodel "github.com/servicebroker/servicebroker/model/service_broker"
+	scmodel "github.com/servicebroker/servicebroker/model/service_controller"
 )
 
 const (
@@ -462,7 +462,6 @@ func (c *Controller) getServiceInstanceByName(name string) (*scmodel.ServiceInst
 	if err != nil {
 		return nil, err
 	}
-
 	for _, si := range siList {
 		if strings.Compare(si.Instance.Name, name) == 0 {
 			return si, nil

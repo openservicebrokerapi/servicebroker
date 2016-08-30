@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cncf/servicebroker/k8s/service_controller/model"
+	"github.com/servicebroker/servicebroker/k8s/service_controller/model"
 )
 
 // TODO(vaikas): Move these into a ../lib or ../../lib?

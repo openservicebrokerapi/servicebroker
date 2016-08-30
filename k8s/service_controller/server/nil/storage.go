@@ -3,8 +3,8 @@ package nil
 import (
 	"fmt"
 
-	"github.com/cncf/servicebroker/k8s/service_controller/model"
-	"github.com/cncf/servicebroker/k8s/service_controller/server"
+	"github.com/servicebroker/servicebroker/k8s/service_controller/model"
+	"github.com/servicebroker/servicebroker/k8s/service_controller/server"
 )
 
 // when you absolutely have to have storage, but you don't really care what happens.
@@ -75,6 +75,10 @@ func (s *NilServiceStorage) DeleteServiceBinding(id string) error {
 	return nil
 }
 
+func (s *NilServiceStorage) GetBrokerByService(id string) (*model.ServiceBroker, error) {
+	return nil, nil
+}
+
 // NotImplementedYetServiceStorage behaves appropriately, in that it always returns an error if possible.
 type NotImplementedYetServiceStorage struct {
 }
@@ -95,7 +99,7 @@ func (s *NotImplementedYetServiceStorage) GetBrokerByService(id string) (*model.
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
-func (s *NotImplementedYetServiceStorage) GetInventory(id string) (*model.Catalog, error) {
+func (s *NotImplementedYetServiceStorage) GetInventory() (*model.Catalog, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
 

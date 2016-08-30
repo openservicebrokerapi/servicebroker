@@ -3,8 +3,8 @@ package mem
 import (
 	"fmt"
 
-	"github.com/cncf/servicebroker/k8s/service_controller/server"
-	model "github.com/cncf/servicebroker/model/service_controller"
+	"github.com/servicebroker/servicebroker/k8s/service_controller/server"
+	model "github.com/servicebroker/servicebroker/model/service_controller"
 )
 
 type BindingPair struct {

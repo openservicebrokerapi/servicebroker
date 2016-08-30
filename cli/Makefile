@@ -19,8 +19,8 @@ endif
 
 cli-docker:
 	docker run -ti \
-	  -w /src/github.com/cncf/servicebroker/cli \
-	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/cli \
+	  -w /src/github.com/servicebroker/servicebroker/cli \
+	  -v ${CURDIR}:/src/github.com/servicebroker/servicebroker/cli \
 	  -e GOPATH=/ \
 	  golang \
 	sh -c "go get -d ./... && make cli-local"
@@ -41,8 +41,8 @@ endif
 
 test-unit-docker:
 	docker run -ti \
-	  -w /src/github.com/cncf/servicebroker/cli \
-	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/cli \
+	  -w /src/github.com/servicebroker/servicebroker/cli \
+	  -v ${CURDIR}:/src/github.com/servicebroker/servicebroker/cli \
 	  -e GOPATH=/ \
 	  golang \
 	sh -c "go get -d ./... && make --no-print-directory test-unit-local"
@@ -62,8 +62,8 @@ endif
 
 test-docker:
 	docker run -ti \
-	  -w /src/github.com/cncf/servicebroker/cli \
-	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/cli \
+	  -w /src/github.com/servicebroker/servicebroker/cli \
+	  -v ${CURDIR}:/src/github.com/servicebroker/servicebroker/cli \
 	  -e GOPATH=/ \
 	  --net host \
 	  golang \
@@ -89,8 +89,8 @@ endif
 
 validate-docker:
 	docker run -ti \
-	  -w /src/github.com/cncf/servicebroker/cli \
-	  -v ${CURDIR}:/src/github.com/cncf/servicebroker/cli \
+	  -w /src/github.com/servicebroker/servicebroker/cli \
+	  -v ${CURDIR}:/src/github.com/servicebroker/servicebroker/cli \
 	  -e GOPATH=/ \
 	  golang \
 	sh -c "go get -d ./... && make --no-print-directory validate-local"

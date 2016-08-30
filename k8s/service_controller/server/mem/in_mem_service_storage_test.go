@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	model "github.com/cncf/servicebroker/model/service_controller"
+	model "github.com/servicebroker/servicebroker/model/service_controller"
 )
 
 const (
