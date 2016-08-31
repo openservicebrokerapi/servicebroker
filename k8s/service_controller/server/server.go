@@ -22,8 +22,7 @@ func CreateServer(serviceStorage ServiceStorage) (*Server, error) {
 func (s *Server) Start() {
 	router := mux.NewRouter()
 
-	// TODO: the actual inventory API should be /v2/services[/...] and
-	// /v2/service_plans[/...].
+	router.HandleFunc("/v2/services", s.controller.Services).Methods("GET")
 	router.HandleFunc("/v2/service_plans", s.controller.Inventory).Methods("GET")
 
 	// Broker related stuff

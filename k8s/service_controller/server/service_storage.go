@@ -40,4 +40,7 @@ type ServiceStorage interface {
 	Broker
 	Instancer
 	Binder
+	// This provides access to the available services provided by
+	// all known brokers. Equivalent to `cf marketplace`.
+	GetServices() ([]*model.Service, error)
 }

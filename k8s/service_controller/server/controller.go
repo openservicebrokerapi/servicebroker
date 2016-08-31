@@ -46,6 +46,18 @@ func (c *Controller) Inventory(w http.ResponseWriter, r *http.Request) {
 	utils.WriteResponse(w, 200, i)
 }
 
+func (c *Controller) Services(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("Services\n")
+
+	i, err := c.storage.GetServices()
+	if err != nil {
+		fmt.Printf("Got Error: %#v\n", err)
+		utils.WriteResponse(w, 400, err)
+		return
+	}
+	utils.WriteResponse(w, 200, i)
+}
+
 //
 // Service Broker.
 //

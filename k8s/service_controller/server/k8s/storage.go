@@ -200,6 +200,10 @@ func (kss *K8sServiceStorage) ListServices() ([]*model.ServiceInstanceData, erro
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
+func (s *K8sServiceStorage) GetServices() ([]*model.Service, error) {
+	return nil, fmt.Errorf("Not implemented yet")
+}
+
 func (kss *K8sServiceStorage) GetService(id string) (*model.ServiceInstanceData, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
