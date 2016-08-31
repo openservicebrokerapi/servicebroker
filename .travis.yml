@@ -10,4 +10,6 @@ before_install:
 script:
   - go env
   - go version
+  - mkdir -p /home/travis/gopath/src/github.com/servicebroker
+  - ln -s $PWD /home/travis/gopath/src/github.com/servicebroker/servicebroker
   - make all
