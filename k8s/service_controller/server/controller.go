@@ -215,6 +215,9 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 	//     <service-name>:
 	//       <credential>
 	if siData.Bindings != nil {
+		if req.Parameters == nil {
+			req.Parameters = make(map[string]interface{})
+		}
 		req.Parameters["bindings"] = siData.Bindings
 	}
 
