@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	model "github.com/cncf/servicebroker/model/service_controller"
+	model "github.com/servicebroker/servicebroker/model/service_controller"
 	"github.com/spf13/cobra"
 )
 
