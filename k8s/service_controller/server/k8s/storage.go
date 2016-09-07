@@ -53,7 +53,7 @@ const thirdPartyResourceString string = "ThirdPartyResource"
 
 var versionMap []VName = []VName{{"v1alpha1"}}
 var serviceBrokerMeta Meta = Meta{"service-broker.cncf.org"}
-var serviceMeta Meta = Meta{"service.cncf.org"}
+var serviceMeta Meta = Meta{"sbservice.cncf.org"} // sbservice so it does not conflict with the built in Service
 var serviceBindingMeta Meta = Meta{"service-binding.cncf.org"}
 var serviceInstanceMeta Meta = Meta{"service-instance.cncf.org"}
 var serviceBrokerDefinition TPR = TPR{serviceBrokerMeta, TPRapiVersion, thirdPartyResourceString, versionMap}
@@ -186,6 +186,12 @@ func (kss *K8sServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *mo
 		fmt.Printf("Error creating k8s TPR [%s]...\n%v\n", e, r)
 		return e
 	}
+
+	fmt.Println("installing the", len(catalog.Services), "services for this broker")
+	for i, service := range catalog.Services {
+		fmt.Println(i, service)
+	}
+
 	return nil
 }
 
