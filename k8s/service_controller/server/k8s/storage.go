@@ -12,7 +12,8 @@ import (
 
 type K8sServiceStorage struct {
 	// Host is the location where we'll talk to k8s
-	Host string
+	host            string
+	defaultResource string
 }
 
 const serviceDomain string = "cncf.org"
@@ -52,31 +53,28 @@ const thirdPartyResourceString string = "ThirdPartyResource"
 
 var versionMap []VName = []VName{{"v1alpha1"}}
 var serviceBrokerMeta Meta = Meta{"service-broker.cncf.org"}
+var serviceMeta Meta = Meta{"service.cncf.org"}
 var serviceBindingMeta Meta = Meta{"service-binding.cncf.org"}
 var serviceInstanceMeta Meta = Meta{"service-instance.cncf.org"}
 var serviceBrokerDefinition TPR = TPR{serviceBrokerMeta, TPRapiVersion, thirdPartyResourceString, versionMap}
+var serviceDefinition TPR = TPR{serviceMeta, TPRapiVersion, thirdPartyResourceString, versionMap}
 var serviceBindingDefinition TPR = TPR{serviceBindingMeta, TPRapiVersion, thirdPartyResourceString, versionMap}
 var serviceInstanceDefinition TPR = TPR{serviceInstanceMeta, TPRapiVersion, thirdPartyResourceString, versionMap}
 
 func CreateServiceStorage(host string) server.ServiceStorage {
-
+	k := &K8sServiceStorage{host: host,
+		defaultResource: fmt.Sprintf(defaultUri, host)}
+	fmt.Println(" root host is:", k.defaultUri())
 	// define the resources once at startup
 	// results in ServiceBrokers
 
-	b := new(bytes.Buffer)
-	json.NewEncoder(b).Encode(&serviceBrokerDefinition)
-	fmt.Printf("encoded bytes: %v\n", b.String())
-	r, e := http.Post("http://"+host+"/apis/extensions/v1beta1/thirdpartyresources", "application/json", b)
-	fmt.Printf("result: %v\n", r)
-	if nil != e || 201 != r.StatusCode {
-		fmt.Printf("Error creating k8s TPR [%s]...\n%v\n", e, r)
-	}
-	// serviceBindingDefinition
-	// serviceInstanceDefinition
-
+	k.createTPR(serviceBrokerDefinition)
+	k.createTPR(serviceDefinition)
+	k.createTPR(serviceBindingDefinition)
+	k.createTPR(serviceInstanceDefinition)
 	// cleanup afterwards by `kubectl delete thirdpartyresource service-broker.cncf.org`
 
-	return &K8sServiceStorage{Host: host}
+	return k
 }
 
 // listSB is only used for unmarshalling the list of service brokers
@@ -86,7 +84,18 @@ type listSB struct {
 }
 
 func (kss *K8sServiceStorage) defaultUri() string {
-	return fmt.Sprintf(defaultUri, kss.Host)
+	return kss.defaultResource
+}
+
+func (kss *K8sServiceStorage) createTPR(tpr TPR) {
+	b := new(bytes.Buffer)
+	json.NewEncoder(b).Encode(&tpr)
+	fmt.Printf("encoded bytes: %v\n", b.String())
+	r, e := http.Post("http://"+kss.host+"/apis/extensions/v1beta1/thirdpartyresources", "application/json", b)
+	fmt.Printf("result: %v\n", r)
+	if nil != e || 201 != r.StatusCode {
+		fmt.Printf("Error creating k8s TPR [%s]...\n%v\n", e, r)
+	}
 }
 
 func (kss *K8sServiceStorage) ListBrokers() ([]*model.ServiceBroker, error) {
@@ -170,6 +179,7 @@ func (kss *K8sServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *mo
 
 	b := new(bytes.Buffer)
 	json.NewEncoder(b).Encode(&ksb)
+	fmt.Printf("sending: %v", b)
 	r, e := http.Post(kss.defaultUri(), "application/json", b)
 	fmt.Sprintf("result: %v", r)
 	if nil != e || 201 != r.StatusCode {
