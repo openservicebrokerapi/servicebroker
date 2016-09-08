@@ -1,11 +1,11 @@
-.PHONY: all binary brokers test-unit test clean server validate
+.PHONY: all binary test-unit test clean server validate
 
 EXE=service_controller
 IMAGE=service-controller
-SRC_FILES=$(shell find . -name \*.go -print | grep -v _test.go | grep -v \\./tests | grep -v ./brokers/ )
+SRC_FILES=$(shell find . -name \*.go -print | grep -v _test.go | grep -v \\./tests )
 TEST_UNIT_DIRS=$(shell find . -name \*_test.go -exec dirname {} \; | grep -v \\./tests | sort -u)
 
-all: validate binary brokers test-unit test
+all: validate binary test-unit test
 
 #####################
 
@@ -76,20 +76,14 @@ test-local: binary
 
 #####################
 
-brokers:
-	@$(MAKE) --no-print-directory -C brokers/go all
-
-#####################
-
 clean:
 	-rm -f $(EXE)
 	-docker rmi -f $(IMAGE) 2> /dev/null
-	@$(MAKE) --no-print-directory -C brokers/go clean
 
 server: binary
 	docker run --net=host -ti -p 10000:10000 $(IMAGE)
 
-broker: brokers
+broker:
 	docker run --net=host -ti -p 9090:9090 gobroker
 
 
