@@ -30,8 +30,21 @@ type Meta struct {
 	Name string `json:"name"`
 }
 
+type KubeData struct {
+	ApiVersion string `json:"apiVersion"`
+	Kind       string `json:"kind"`
+	Metadata   Meta   `json:"metadata"`
+}
+
 type k8sServiceBroker struct {
 	*model.ServiceBroker
+	ApiVersion string `json:"apiVersion"`
+	Kind       string `json:"kind"`
+	Metadata   Meta   `json:"metadata"`
+}
+
+type k8sService struct {
+	*model.Service
 	ApiVersion string `json:"apiVersion"`
 	Kind       string `json:"kind"`
 	Metadata   Meta   `json:"metadata"`
@@ -151,6 +164,11 @@ func NewK8sSB() *k8sServiceBroker {
 		Kind: "ServiceBroker"}
 }
 
+func NewK8sService() *k8sService {
+	return &k8sService{ApiVersion: serviceDomain + "/" + apiVersion,
+		Kind: "Sbservice"}
+}
+
 func (kss *K8sServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *model.Catalog) error {
 	fmt.Println("adding broker to k8s", broker)
 	// create TPR
@@ -183,13 +201,31 @@ func (kss *K8sServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *mo
 	r, e := http.Post(kss.defaultUri(), "application/json", b)
 	fmt.Sprintf("result: %v", r)
 	if nil != e || 201 != r.StatusCode {
-		fmt.Printf("Error creating k8s TPR [%s]...\n%v\n", e, r)
+		fmt.Printf("Error creating k8s service broker TPR [%s]...\n%v\n", e, r)
 		return e
 	}
 
 	fmt.Println("installing the", len(catalog.Services), "services for this broker")
 	for i, service := range catalog.Services {
 		fmt.Println(i, service)
+
+		ks := NewK8sService()
+		ks.Metadata = Meta{Name: service.ID}
+		ks.Service = service
+
+		b := new(bytes.Buffer)
+		if err := json.NewEncoder(b).Encode(&ks); nil != err {
+			fmt.Println("failed to encode")
+			return err
+		}
+		defaultUri := "http://%v/apis/" + serviceDomain + "/" + apiVersion + "/namespaces/default/" + "sbservices"
+		fmt.Printf("sending: %v\n to %v", b, defaultUri)
+		r, e := http.Post(fmt.Sprintf(defaultUri, kss.host), "application/json", b)
+		fmt.Sprintf("result: %v", r)
+		if nil != e || 201 != r.StatusCode {
+			fmt.Printf("Error creating k8s service TPR [%s]...\n%v\n", e, r)
+			return e
+		}
 	}
 
 	return nil
