@@ -158,7 +158,7 @@ func StartBroker() error {
 	}
 
 	// Should look into running the docker image instead
-	brokerCmd = exec.Command("../brokers/go/gobroker")
+	brokerCmd = exec.Command("../../../brokers/go/gobroker")
 	brokerCmd.Stdout = &brokerStdout
 	brokerCmd.Stderr = &brokerStderr
 	err := brokerCmd.Start()

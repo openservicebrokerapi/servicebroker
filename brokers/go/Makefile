@@ -19,8 +19,18 @@ binary-docker:
 	  sh -c "go get -d ./... && make binary-local"
 
 binary-local:
+	go get -d ./...
 	go build -o $(EXE) -tags netgo -installsuffix netgo gobroker.go
+
+broker:
+	docker run --net-host -ti -p 9090:9090 gobroker
 
 clean:
 	-rm -f $(EXE)
 	-docker rmi -f gobroker 2> /dev/null
+
+test:
+	echo nothing yet
+
+test-unit:
+	echo nothing yet
