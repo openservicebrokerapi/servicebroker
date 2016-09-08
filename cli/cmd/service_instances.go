@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/servicebroker/servicebroker/k8s/service_controller/model"
+	scmodel "github.com/servicebroker/servicebroker/model/service_controller"
 	"github.com/spf13/cobra"
 )
 
@@ -52,7 +52,7 @@ var createServiceInstancesCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		req := model.CreateServiceInstanceRequest{
+		req := scmodel.CreateServiceInstanceRequest{
 			Name:            name,
 			ServicePlanGUID: servicePlanGUID,
 			SpaceID:         spaceGUID,

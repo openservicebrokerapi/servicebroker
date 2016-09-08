@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
+	model "github.com/servicebroker/servicebroker/k8s/service_controller/model"
 	"github.com/servicebroker/servicebroker/k8s/service_controller/server"
-	model "github.com/servicebroker/servicebroker/model/service_controller"
 )
 
 type K8sServiceStorage struct {
@@ -276,7 +276,7 @@ func (kss *K8sServiceStorage) GetServiceBinding(id string) (*model.ServiceBindin
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
-func (kss *K8sServiceStorage) AddServiceBinding(binding *model.ServiceBinding, cred *model.Credential) error {
+func (kss *K8sServiceStorage) AddServiceBinding(binding *model.ServiceBinding, cred *interface{}) error {
 	return fmt.Errorf("Not implemented yet")
 }
 

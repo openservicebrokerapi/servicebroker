@@ -67,7 +67,7 @@ func (s *NilServiceStorage) GetServiceBinding(id string) (*model.ServiceBinding,
 	return nil, nil
 }
 
-func (s *NilServiceStorage) AddServiceBinding(binding *model.ServiceBinding, cred *model.Credential) error {
+func (s *NilServiceStorage) AddServiceBinding(binding *model.ServiceBinding, cred *interface{}) error {
 	return nil
 }
 
@@ -139,7 +139,7 @@ func (s *NotImplementedYetServiceStorage) GetServiceBinding(id string) (*model.C
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
-func (s *NotImplementedYetServiceStorage) AddServiceBinding(binding *model.ServiceBinding, cred *model.Credential) error {
+func (s *NotImplementedYetServiceStorage) AddServiceBinding(binding *model.ServiceBinding, cred *interface{}) error {
 	return fmt.Errorf("Not implemented yet")
 }
 

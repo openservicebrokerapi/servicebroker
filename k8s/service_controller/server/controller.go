@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/satori/go.uuid"
+	model "github.com/servicebroker/servicebroker/k8s/service_controller/model"
 	"github.com/servicebroker/servicebroker/k8s/service_controller/utils"
 	sbmodel "github.com/servicebroker/servicebroker/model/service_broker"
 	scmodel "github.com/servicebroker/servicebroker/model/service_controller"
@@ -82,7 +83,7 @@ func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	sb := scmodel.ServiceBroker{
+	sb := model.ServiceBroker{
 		GUID:         uuid.NewV4().String(),
 		Name:         sbReq.Name,
 		BrokerURL:    sbReq.BrokerURL,
@@ -109,13 +110,14 @@ func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request)
 
 	// TODO: the model from SB is fetched and stored directly as the one in the SC model (which the
 	// storage operates on). We should convert it from the SB model to SC model before storing.
-	var catalog scmodel.Catalog
+	var catalog model.Catalog
 	err = utils.ResponseBodyToObject(resp, &catalog)
 	if err != nil {
 		fmt.Printf("Failed to unmarshal catalog: %#v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
+	fmt.Printf("CATALOG: %#q\n", catalog)
 
 	sbRes := scmodel.CreateServiceBrokerResponse{
 		Metadata: scmodel.ServiceBrokerMetadata{
@@ -159,7 +161,7 @@ func (c *Controller) ListServiceInstances(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	var instances []*scmodel.ServiceInstance
+	var instances []*model.ServiceInstance
 	for _, i := range si {
 		instances = append(instances, i.Instance)
 	}
@@ -201,7 +203,7 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 
 	siData, err := c.getServiceInstanceByName(req.Name)
 	if err != nil {
-		siData = &scmodel.ServiceInstanceData{Instance: &scmodel.ServiceInstance{
+		siData = &model.ServiceInstanceData{Instance: &model.ServiceInstance{
 			ID: uuid.NewV4().String(),
 		}}
 	}
@@ -222,7 +224,7 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 	}
 
 	// Then actually make the request to reify the service instance
-	createReq := &sbmodel.ServiceInstanceRequest{
+	createReq := &sbmodel.CreateServiceInstanceRequest{
 		ServiceID:  serviceID,
 		PlanID:     req.ServicePlanGUID,
 		Parameters: req.Parameters,
@@ -257,8 +259,10 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 	defer resp.Body.Close()
 
 	// TODO: Align this with the actual response model.
-	si := scmodel.ServiceInstance{}
+	si := model.ServiceInstance{}
 	err = utils.ResponseBodyToObject(resp, &si)
+
+	fmt.Printf("Response: %#q\n", si)
 
 	si.Name = req.Name
 	si.ID = siData.Instance.ID
@@ -318,12 +322,12 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 	// Validate that from service has not been instantiated yet.
 	fromSI, err := c.getServiceInstanceByName(req.FromServiceInstanceName)
 	if err != nil {
-		fromSI = &scmodel.ServiceInstanceData{
-			Instance: &scmodel.ServiceInstance{
+		fromSI = &model.ServiceInstanceData{
+			Instance: &model.ServiceInstance{
 				Name: req.FromServiceInstanceName,
 				ID:   uuid.NewV4().String(),
 			},
-			Bindings: make(map[string]*scmodel.Credential),
+			Bindings: make(map[string]*interface{}), // Credentials
 		}
 		c.storage.AddService(fromSI)
 	}
@@ -343,7 +347,7 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 	}
 
 	// Then actually make the request to create the binding
-	createReq := &sbmodel.BindingRequest{
+	createReq := &sbmodel.CreateServiceBindingRequest{
 		ServiceID:  si.Instance.ServiceID,
 		PlanID:     si.Instance.PlanID,
 		Parameters: req.Parameters,
@@ -387,7 +391,7 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 	}
 
 	// TODO: get broker to actually return these values as part of response.
-	sb := scmodel.ServiceBinding{
+	sb := model.ServiceBinding{
 		ID: bindingID,
 		FromServiceInstanceName: req.FromServiceInstanceName,
 		ServiceInstanceGUID:     req.ServiceInstanceGUID,
@@ -451,7 +455,7 @@ func (c *Controller) getServiceName(instanceId string) (string, error) {
 	return "", fmt.Errorf("Service ID %s was not found for instance %s", si.Instance.ServiceID, instanceId)
 }
 
-func (c *Controller) getBroker(serviceID string) (*scmodel.ServiceBroker, error) {
+func (c *Controller) getBroker(serviceID string) (*model.ServiceBroker, error) {
 	broker, err := c.storage.GetBrokerByService(serviceID)
 	if err != nil {
 		return nil, err
@@ -460,7 +464,7 @@ func (c *Controller) getBroker(serviceID string) (*scmodel.ServiceBroker, error)
 	return broker, nil
 }
 
-func (c *Controller) getServiceInstanceByName(name string) (*scmodel.ServiceInstanceData, error) {
+func (c *Controller) getServiceInstanceByName(name string) (*model.ServiceInstanceData, error) {
 	siList, err := c.storage.ListServices()
 	if err != nil {
 		return nil, err

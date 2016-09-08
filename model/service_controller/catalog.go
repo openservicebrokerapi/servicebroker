@@ -1,5 +1,5 @@
 package model
 
-type Catalog struct {
+type GetCatalogResponse struct {
 	Services []*Service `json:"services"`
 }

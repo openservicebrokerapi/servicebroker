@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	model "github.com/servicebroker/servicebroker/model/service_controller"
+	scmodel "github.com/servicebroker/servicebroker/model/service_controller"
 	"github.com/spf13/cobra"
 )
 
@@ -48,7 +48,7 @@ var createServiceBindingsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		req := model.CreateServiceBindingRequest{
+		req := scmodel.CreateServiceBindingRequest{
 			FromServiceInstanceName: from,
 			ServiceInstanceGUID:     toServiceInstanceGUID,
 		}
@@ -96,7 +96,7 @@ var describeServiceBindingsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		var sb model.ServiceBinding
+		var sb scmodel.ServiceBinding
 		err = json.Unmarshal([]byte(i), &sb)
 		if err != nil {
 			return err
@@ -108,7 +108,7 @@ var describeServiceBindingsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		var si model.ServiceInstance
+		var si scmodel.ServiceInstance
 		err = json.Unmarshal([]byte(i), &si)
 		if err != nil {
 			return err

@@ -1,7 +1,7 @@
 package server
 
 import (
-	model "github.com/servicebroker/servicebroker/model/service_controller"
+	model "github.com/servicebroker/servicebroker/k8s/service_controller/model"
 )
 
 // The Broker interface provides functions to deal with brokers.
@@ -29,7 +29,7 @@ type Instancer interface {
 type Binder interface {
 	ListServiceBindings() ([]*model.ServiceBinding, error)
 	GetServiceBinding(string) (*model.ServiceBinding, error)
-	AddServiceBinding(*model.ServiceBinding, *model.Credential) error
+	AddServiceBinding(*model.ServiceBinding, *interface{}) error
 	DeleteServiceBinding(string) error
 }
 

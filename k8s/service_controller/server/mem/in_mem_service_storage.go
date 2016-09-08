@@ -3,13 +3,13 @@ package mem
 import (
 	"fmt"
 
+	model "github.com/servicebroker/servicebroker/k8s/service_controller/model"
 	"github.com/servicebroker/servicebroker/k8s/service_controller/server"
-	model "github.com/servicebroker/servicebroker/model/service_controller"
 )
 
 type BindingPair struct {
 	Binding    *model.ServiceBinding
-	Credential *model.Credential
+	Credential *interface{}
 }
 
 type InMemServiceStorage struct {
@@ -148,7 +148,7 @@ func (s *InMemServiceStorage) GetServiceBinding(id string) (*model.ServiceBindin
 	return b.Binding, nil
 }
 
-func (s *InMemServiceStorage) AddServiceBinding(binding *model.ServiceBinding, cred *model.Credential) error {
+func (s *InMemServiceStorage) AddServiceBinding(binding *model.ServiceBinding, cred *interface{}) error {
 	_, err := s.GetServiceBinding(binding.ID)
 	if err == nil {
 		return fmt.Errorf("Binding %s already exists", binding.ID)

@@ -5,18 +5,18 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/servicebroker/servicebroker/k8s/service_controller/model"
+	scmodel "github.com/servicebroker/servicebroker/model/service_controller"
 )
 
 // TODO(vaikas): Move these into a ../lib or ../../lib?
 
-func fetchInventory() (*model.Catalog, error) {
+func fetchInventory() (*scmodel.GetCatalogResponse, error) {
 	u := fmt.Sprintf("%s%s", controller, SERVICE_PLANS_URL)
 	i, err := callHttp(u, "GET", "inventory", nil)
 	if err != nil {
 		return nil, err
 	}
-	var c model.Catalog
+	var c scmodel.GetCatalogResponse
 	err = json.Unmarshal([]byte(i), &c)
 	if err != nil {
 		return nil, err
@@ -32,7 +32,7 @@ func fetchBrokerGUID(broker string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var brokers []model.ServiceBroker
+	var brokers []scmodel.ServiceBroker
 	err = json.Unmarshal([]byte(b), &brokers)
 	if err != nil {
 		return "", err
@@ -51,7 +51,7 @@ func fetchPrettyBindings() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var bindings []model.ServiceBinding
+	var bindings []scmodel.ServiceBinding
 	err = json.Unmarshal([]byte(i), &bindings)
 	if err != nil {
 		return "", err
@@ -65,7 +65,7 @@ func fetchPrettyBindings() (string, error) {
 		if err != nil {
 			return "", err
 		}
-		var si model.ServiceInstance
+		var si scmodel.ServiceInstance
 		err = json.Unmarshal([]byte(i), &si)
 		if err != nil {
 			return "", err
@@ -84,7 +84,7 @@ func fetchServicePlanGUID(service string, plan string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var c model.Catalog
+	var c scmodel.GetCatalogResponse
 	err = json.Unmarshal([]byte(i), &c)
 	if err != nil {
 		return "", err
@@ -110,7 +110,7 @@ func fetchServiceInstanceGUID(serviceInstance string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var services []*model.ServiceInstance
+	var services []*scmodel.ServiceInstance
 	err = json.Unmarshal([]byte(s), &services)
 	if err != nil {
 		return "", err
