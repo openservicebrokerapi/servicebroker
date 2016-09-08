@@ -7,7 +7,7 @@ type ServiceInstanceData struct {
 	// not set at instance creation time, no bindings will ever be passed.
 	//
 	// Map of service name being bound to to credentials.
-	Bindings map[string]*Credential
+	Bindings map[string]*interface{} // Credentials
 }
 
 //

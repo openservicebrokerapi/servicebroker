@@ -22,8 +22,8 @@ binary-local:
 	go get -d ./...
 	go build -o $(EXE) -tags netgo -installsuffix netgo gobroker.go
 
-broker:
-	docker run --net-host -ti -p 9090:9090 gobroker
+broker: $(EXE)
+	docker run --net=host -ti gobroker
 
 clean:
 	-rm -f $(EXE)
