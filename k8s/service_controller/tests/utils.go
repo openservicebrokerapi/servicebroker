@@ -34,13 +34,31 @@ func MaskField(t *testing.T, input interface{}, path string) interface{} {
 	path = strings.TrimSpace(path)
 	if path != "" {
 		fields := strings.Split(path, ".")
-		ptr := iface.(map[string]interface{})
-		for i, field := range fields {
-			if i+1 != len(fields) {
-				ptr = ptr[field].(map[string]interface{})
-				continue
+		if ptr, ok := iface.(map[string]interface{}); ok {
+			for i, field := range fields {
+				if ptr[field] == nil {
+					break
+				}
+				if i+1 != len(fields) {
+					ptr = ptr[field].(map[string]interface{})
+					continue
+				}
+				ptr[field] = "XXX"
 			}
-			ptr[field] = "XXX"
+		} else if array, ok := iface.([]interface{}); ok {
+			for _, item := range array {
+				ptr := item.(map[string]interface{})
+				for i, field := range fields {
+					if ptr[field] == nil {
+						break
+					}
+					if i+1 != len(fields) {
+						ptr = ptr[field].(map[string]interface{})
+						continue
+					}
+					ptr[field] = "XXX"
+				}
+			}
 		}
 	}
 	return iface

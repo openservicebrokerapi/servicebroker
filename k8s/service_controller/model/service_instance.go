@@ -1,28 +1,22 @@
 package model
 
-type ServiceInstanceData struct {
-	Instance *ServiceInstance
-
-	// Bindings to pass to broker when instantiating the instance. If this is
-	// not set at instance creation time, no bindings will ever be passed.
-	//
-	// Map of service name being bound to to credentials.
-	Bindings map[string]*interface{} // Credentials
-}
-
 type ServiceInstance struct {
-	Name             string `json:"name"`
-	ID               string `json:"id"`
-	DashboardURL     string `json:"dashboard_url"`
-	InternalID       string `json:"internal_id, omitempty"`
-	ServiceID        string `json:"service_id"`
-	PlanID           string `json:"plan_id"`
-	OrganizationGuid string `json:"organization_guid"`
-	SpaceGuid        string `json:"space_guid"`
+	// Fields from the CLI
+	ID                string
+	Name              string
+	PlanGUID          string
+	SpaceGUID         string
+	Parameters        map[string]interface{}
+	Tags              []string
+	AcceptsIncomplete bool
 
-	LastOperation *LastOperation `json:"last_operation, omitempty"`
+	// Fields from the SB
+	DashboardURL  string
+	LastOperation *LastOperation
 
-	Parameters interface{} `json:"parameters, omitempty"`
+	// Internals
+	Bindings map[string]*interface{}
+	Service  *Service
 }
 
 type LastOperation struct {

@@ -39,19 +39,19 @@ func (s *NilServiceStorage) ServiceExists(id string) bool {
 	return false
 }
 
-func (s *NilServiceStorage) ListServices() ([]*model.ServiceInstanceData, error) {
+func (s *NilServiceStorage) ListServices() ([]*model.ServiceInstance, error) {
 	return nil, nil
 }
 
-func (s *NilServiceStorage) GetService(id string) (*model.ServiceInstanceData, error) {
+func (s *NilServiceStorage) GetService(id string) (*model.ServiceInstance, error) {
 	return nil, nil
 }
 
-func (s *NilServiceStorage) AddService(si *model.ServiceInstanceData) error {
+func (s *NilServiceStorage) AddService(si *model.ServiceInstance) error {
 	return nil
 }
 
-func (s *NilServiceStorage) SetService(si *model.ServiceInstanceData) error {
+func (s *NilServiceStorage) SetService(si *model.ServiceInstance) error {
 	return nil
 }
 

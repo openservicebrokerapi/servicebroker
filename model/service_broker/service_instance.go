@@ -1,10 +1,5 @@
 package model
 
-type GetLastOperationResponse struct {
-	State       string `json:"state"`
-	Description string `json:"description"`
-}
-
 type CreateServiceInstanceRequest struct {
 	OrgID             string                 `json:"organization_guid,omitempty"`
 	PlanID            string                 `json:"plan_id,omitempty"`
@@ -17,6 +12,11 @@ type CreateServiceInstanceRequest struct {
 type CreateServiceInstanceResponse struct {
 	DashboardURL  string         `json:"dashboard_url, omitempty"`
 	LastOperation *LastOperation `json:"last_operation, omitempty"`
+}
+
+type GetLastOperationResponse struct {
+	State       string `json:"state"`
+	Description string `json:"description"`
 }
 
 type LastOperation struct {

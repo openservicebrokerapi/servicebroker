@@ -32,6 +32,9 @@ func WriteResponse(w http.ResponseWriter, code int, object interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	fmt.Fprintf(w, string(data)+"\n")
+	if code > 299 {
+		fmt.Printf("Error: %s\n", string(data))
+	}
 }
 
 func BodyToObject(r *http.Request, object interface{}) error {
@@ -40,12 +43,7 @@ func BodyToObject(r *http.Request, object interface{}) error {
 		return err
 	}
 
-	err = json.Unmarshal(body, object)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return json.Unmarshal(body, object)
 }
 
 func ResponseBodyToObject(r *http.Response, object interface{}) error {
@@ -54,12 +52,7 @@ func ResponseBodyToObject(r *http.Response, object interface{}) error {
 		return err
 	}
 
-	err = json.Unmarshal(body, object)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return json.Unmarshal(body, object)
 }
 
 func ExtractVarFromRequest(r *http.Request, varName string) string {

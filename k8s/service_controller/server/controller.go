@@ -129,7 +129,6 @@ func (c *Controller) CreateServiceBroker(w http.ResponseWriter, r *http.Request)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
-	fmt.Printf("CATALOG: %#q\n", catalog)
 
 	sbRes := scmodel.CreateServiceBrokerResponse{
 		Metadata: scmodel.ServiceBrokerMetadata{
@@ -175,7 +174,7 @@ func (c *Controller) ListServiceInstances(w http.ResponseWriter, r *http.Request
 
 	var instances []*model.ServiceInstance
 	for _, i := range si {
-		instances = append(instances, i.Instance)
+		instances = append(instances, i)
 	}
 
 	utils.WriteResponse(w, 200, instances)
@@ -192,34 +191,48 @@ func (c *Controller) GetServiceInstance(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	utils.WriteResponse(w, 200, si.Instance)
+	utils.WriteResponse(w, 200, si)
 }
 
 func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Creating Service Instance\n")
 
 	var req scmodel.CreateServiceInstanceRequest
-	err := utils.BodyToObject(r, &req)
-	if err != nil {
-		fmt.Printf("Error unmarshaling: %v\n", err)
+	if err := utils.BodyToObject(r, &req); err != nil {
+		fmt.Printf("Error unmarshaling CreateServiceInstanceRequest: %v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
 
 	serviceID, err := c.getServiceID(req.ServicePlanGUID)
 	if err != nil {
-		fmt.Printf("Error fetching service ID: %v\n", err)
+		err = fmt.Errorf("Error fetching service ID: %v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
 
-	siData, err := c.getServiceInstanceByName(req.Name)
+	si, err := c.getServiceInstanceByName(req.Name)
 	if err != nil {
-		siData = &model.ServiceInstanceData{Instance: &model.ServiceInstance{
-			ID: uuid.NewV4().String(),
-		}}
+		err = fmt.Errorf("Error fetching service ID: %v", err)
+		utils.WriteResponse(w, 400, err)
+		return
 	}
-	existed := (err == nil)
+
+	existed := (si != nil)
+	if si == nil {
+		si = &model.ServiceInstance{
+			ID: uuid.NewV4().String(),
+		}
+	}
+
+	si.Name = req.Name
+	si.PlanGUID = req.ServicePlanGUID
+	si.SpaceGUID = req.SpaceID
+	si.Parameters = req.Parameters
+	si.Tags = req.Tags
+	si.AcceptsIncomplete = r.URL.Query().Get("accepts_incomplete") == "true"
+
+	/* WHAT IS THIS? -Dug
 
 	// Binding data is passed to the service broker right now as part of the
 	// parameters in the form:
@@ -228,23 +241,26 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 	//   bindings:
 	//     <service-name>:
 	//       <credential>
-	if siData.Bindings != nil {
+	if si.Bindings != nil {
 		if req.Parameters == nil {
 			req.Parameters = make(map[string]interface{})
 		}
 		req.Parameters["bindings"] = siData.Bindings
 	}
+	*/
 
 	// Then actually make the request to reify the service instance
 	createReq := &sbmodel.CreateServiceInstanceRequest{
-		ServiceID:  serviceID,
-		PlanID:     req.ServicePlanGUID,
-		Parameters: req.Parameters,
+		OrgID:             "",
+		PlanID:            req.ServicePlanGUID,
+		ServiceID:         serviceID,
+		Parameters:        si.Parameters,
+		AcceptsIncomplete: si.AcceptsIncomplete,
 	}
 
 	jsonBytes, err := json.Marshal(createReq)
 	if err != nil {
-		fmt.Printf("Failed to marshal: %#v\n", err)
+		err = fmt.Errorf("Failed to marshal CreateRequest: %#v", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
@@ -256,37 +272,40 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	url := fmt.Sprintf(CREATE_SERVICE_INSTANCE_FMT_STR, broker.BrokerURL, siData.Instance.ID)
+	url := fmt.Sprintf(CREATE_SERVICE_INSTANCE_FMT_STR, broker.BrokerURL, si.ID)
 
 	// TODO: Handle the auth
 	createHttpReq, err := http.NewRequest("PUT", url, bytes.NewReader(jsonBytes))
 	client := &http.Client{}
 	fmt.Printf("Doing a request to: %s\n", url)
 	resp, err := client.Do(createHttpReq)
+	defer resp.Body.Close()
 	if err != nil {
-		fmt.Printf("Failed to PUT: %#v\n", err)
+		err = fmt.Errorf("Failed to PUT: %#v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
-	defer resp.Body.Close()
 
-	// TODO: Align this with the actual response model.
-	si := model.ServiceInstance{}
-	err = utils.ResponseBodyToObject(resp, &si)
+	sir := sbmodel.CreateServiceInstanceResponse{}
+	if err = utils.ResponseBodyToObject(resp, &sir); err != nil {
+		err = fmt.Errorf("Failed to PUT: %#v\n", err)
+		utils.WriteResponse(w, 400, err)
+		return
+	}
+	fmt.Printf("Response: %#v\n", sir)
 
-	fmt.Printf("Response: %#q\n", si)
-
-	si.Name = req.Name
-	si.ID = siData.Instance.ID
-	si.ServiceID = serviceID
-	si.PlanID = req.ServicePlanGUID
-
-	siData.Instance = &si
+	si.DashboardURL = sir.DashboardURL
+	if sir.LastOperation != nil {
+		si.LastOperation = &model.LastOperation{
+			State:       sir.LastOperation.State,
+			Description: sir.LastOperation.Description,
+		}
+	}
 
 	if existed {
-		c.storage.SetService(siData)
+		c.storage.SetService(si)
 	} else {
-		c.storage.AddService(siData)
+		c.storage.AddService(si)
 	}
 
 	utils.WriteResponse(w, 200, si)
@@ -334,18 +353,16 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 	// Validate that from service has not been instantiated yet.
 	fromSI, err := c.getServiceInstanceByName(req.FromServiceInstanceName)
 	if err != nil {
-		fromSI = &model.ServiceInstanceData{
-			Instance: &model.ServiceInstance{
-				Name: req.FromServiceInstanceName,
-				ID:   uuid.NewV4().String(),
-			},
+		fromSI = &model.ServiceInstance{
+			Name:     req.FromServiceInstanceName,
+			ID:       uuid.NewV4().String(),
 			Bindings: make(map[string]*interface{}), // Credentials
 		}
 		c.storage.AddService(fromSI)
 	}
 
-	if fromSI.Instance.ServiceID != "" {
-		err = fmt.Errorf("Cannot bind from instantiated service: %s (%s)", req.FromServiceInstanceName, fromSI.Instance.ID)
+	if fromSI.Service.ID != "" {
+		err = fmt.Errorf("Cannot bind from instantiated service: %s (%s)", req.FromServiceInstanceName, fromSI.ID)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
@@ -360,8 +377,8 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 
 	// Then actually make the request to create the binding
 	createReq := &sbmodel.CreateServiceBindingRequest{
-		ServiceID:  si.Instance.ServiceID,
-		PlanID:     si.Instance.PlanID,
+		ServiceID:  si.Service.ID,
+		PlanID:     si.PlanGUID,
 		Parameters: req.Parameters,
 	}
 
@@ -374,25 +391,25 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 
 	bindingID := uuid.NewV4().String()
 
-	broker, err := c.getBroker(si.Instance.ServiceID)
+	broker, err := c.getBroker(si.Service.ID)
 	if err != nil {
 		fmt.Printf("Error fetching service: %v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
-	url := fmt.Sprintf(BIND_FMT_STR, broker.BrokerURL, si.Instance.ID, bindingID)
+	url := fmt.Sprintf(BIND_FMT_STR, broker.BrokerURL, si.ID, bindingID)
 
 	// TODO: Handle the auth
 	createHttpReq, err := http.NewRequest("PUT", url, bytes.NewReader(jsonBytes))
 	client := &http.Client{}
 	fmt.Printf("Doing a request to: %s\n", url)
 	resp, err := client.Do(createHttpReq)
+	defer resp.Body.Close()
 	if err != nil {
 		fmt.Printf("Failed to PUT: %#v\n", err)
 		utils.WriteResponse(w, 400, err)
 		return
 	}
-	defer resp.Body.Close()
 
 	sbr := scmodel.CreateServiceBindingResponse{}
 	err = utils.ResponseBodyToObject(resp, &sbr)
@@ -413,7 +430,7 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 	c.storage.AddServiceBinding(&sb, &sbr.Credentials)
 
 	// Set binding credential information in from service instance.
-	serviceName, err := c.getServiceName(si.Instance.ID)
+	serviceName, err := c.getServiceName(si.ID)
 	if err != nil {
 		fmt.Printf("Error retrieving service name: %v\n", err)
 		utils.WriteResponse(w, 400, err)
@@ -459,12 +476,12 @@ func (c *Controller) getServiceName(instanceId string) (string, error) {
 	}
 
 	for _, s := range i.Services {
-		if strings.Compare(si.Instance.ServiceID, s.ID) == 0 {
+		if strings.Compare(si.Service.ID, s.ID) == 0 {
 			return s.Name, nil
 		}
 	}
 
-	return "", fmt.Errorf("Service ID %s was not found for instance %s", si.Instance.ServiceID, instanceId)
+	return "", fmt.Errorf("Service ID %s was not found for instance %s", si.Service.ID, instanceId)
 }
 
 func (c *Controller) getBroker(serviceID string) (*model.ServiceBroker, error) {
@@ -476,16 +493,16 @@ func (c *Controller) getBroker(serviceID string) (*model.ServiceBroker, error) {
 	return broker, nil
 }
 
-func (c *Controller) getServiceInstanceByName(name string) (*model.ServiceInstanceData, error) {
+func (c *Controller) getServiceInstanceByName(name string) (*model.ServiceInstance, error) {
 	siList, err := c.storage.ListServices()
 	if err != nil {
 		return nil, err
 	}
 	for _, si := range siList {
-		if strings.Compare(si.Instance.Name, name) == 0 {
+		if strings.Compare(si.Name, name) == 0 {
 			return si, nil
 		}
 	}
 
-	return nil, fmt.Errorf("Service instance %s was not found", name)
+	return nil, nil
 }

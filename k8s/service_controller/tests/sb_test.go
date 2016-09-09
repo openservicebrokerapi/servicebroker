@@ -79,4 +79,22 @@ func Test_SB_Create(t *testing.T) {
 	if !reflect.DeepEqual(d1, d2) {
 		t.Fatal(fmt.Sprintf("Wrong results.\nExpected: %q\nGot: %q\n", d1, d2))
 	}
+
+	// Now make sure its there
+	/*
+		rbody, resp, err := ServerGET("/v2/service_brokers")
+		if err != nil {
+			t.Fatalf("Error getting list of brokers: %s", err)
+		}
+		if resp.Header["Content-Type"][0] != "application/json" {
+			t.Fatalf("Wrong Content-Type. Got %q expected 'application/json", resp.Header["Content-Type"])
+		}
+
+		d1 = MaskFields(t, "["+expected+"]", maskFields)
+		d2 = MaskFields(t, rbody, maskFields)
+
+		if !reflect.DeepEqual(d1, d2) {
+			t.Fatal(fmt.Sprintf("Wrong results.\nExpected: %q\nGot: %q\n", d1, d2))
+		}
+	*/
 }
