@@ -18,7 +18,7 @@ type InMemServiceStorage struct {
 	// It's static for now to keep compatibility, seems like this could be more dynamic.
 	catalogs map[string]*model.Catalog
 	// maps instance ID to instance
-	services map[string]*model.ServiceInstanceData
+	services map[string]*model.ServiceInstance
 	// maps binding ID to binding
 	// TODO: support looking up all bindings for a service instance.
 	bindings map[string]*BindingPair
@@ -30,7 +30,7 @@ func CreateInMemServiceStorage() server.ServiceStorage {
 	return &InMemServiceStorage{
 		brokers:  make(map[string]*model.ServiceBroker),
 		catalogs: make(map[string]*model.Catalog),
-		services: make(map[string]*model.ServiceInstanceData),
+		services: make(map[string]*model.ServiceInstance),
 		bindings: make(map[string]*BindingPair),
 	}
 }
@@ -96,8 +96,8 @@ func (s *InMemServiceStorage) ServiceExists(id string) bool {
 	return err == nil
 }
 
-func (s *InMemServiceStorage) ListServices() ([]*model.ServiceInstanceData, error) {
-	services := []*model.ServiceInstanceData{}
+func (s *InMemServiceStorage) ListServices() ([]*model.ServiceInstance, error) {
+	services := []*model.ServiceInstance{}
 	for _, v := range s.services {
 		services = append(services, v)
 	}
@@ -108,26 +108,26 @@ func (s *InMemServiceStorage) GetServices() ([]*model.Service, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
-func (s *InMemServiceStorage) GetService(id string) (*model.ServiceInstanceData, error) {
+func (s *InMemServiceStorage) GetService(id string) (*model.ServiceInstance, error) {
 	service, ok := s.services[id]
 	if !ok {
-		return &model.ServiceInstanceData{}, fmt.Errorf("Service %s does not exist", id)
+		return &model.ServiceInstance{}, fmt.Errorf("Service %s does not exist", id)
 	}
 
 	return service, nil
 }
 
-func (s *InMemServiceStorage) AddService(si *model.ServiceInstanceData) error {
-	if s.ServiceExists(si.Instance.ID) {
-		return fmt.Errorf("Service %s already exists", si.Instance.ID)
+func (s *InMemServiceStorage) AddService(si *model.ServiceInstance) error {
+	if s.ServiceExists(si.ID) {
+		return fmt.Errorf("Service %s already exists", si.ID)
 	}
 
-	s.services[si.Instance.ID] = si
+	s.services[si.ID] = si
 	return nil
 }
 
-func (s *InMemServiceStorage) SetService(si *model.ServiceInstanceData) error {
-	s.services[si.Instance.ID] = si
+func (s *InMemServiceStorage) SetService(si *model.ServiceInstance) error {
+	s.services[si.ID] = si
 	return nil
 }
 

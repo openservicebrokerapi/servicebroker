@@ -22,10 +22,12 @@ var (
 
 func init() {
 	RootCmd.AddCommand(brokersCmd)
+
 	brokersCmd.AddCommand(createBrokersCmd)
 	brokersCmd.AddCommand(describeBrokersCmd)
 	brokersCmd.AddCommand(listBrokersCmd)
 	brokersCmd.AddCommand(deleteBrokersCmd)
+
 	createBrokersCmd.Flags().StringVarP(&user, "user", "u", "", "user name to use for broker auth")
 	createBrokersCmd.Flags().StringVarP(&password, "password", "p", "", "password to use for broker auth")
 	createBrokersCmd.Flags().StringVarP(&spaceGUID, "spaceGUID", "s", "default", "Space GUID to use for broker")

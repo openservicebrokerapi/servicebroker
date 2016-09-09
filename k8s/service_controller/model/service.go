@@ -12,4 +12,6 @@ type Service struct {
 	Metadata        interface{}   `json:"metadata, omitempty"`
 	Plans           []ServicePlan `json:"plans"`
 	DashboardClient interface{}   `json:"dashboard_client"`
+
+	Instances []*ServiceInstance
 }

@@ -24,7 +24,10 @@ var (
 
 func init() {
 	RootCmd.AddCommand(serviceInstancesCmd)
+
 	serviceInstancesCmd.AddCommand(createServiceInstancesCmd)
+	serviceInstancesCmd.AddCommand(listServiceInstancesCmd)
+
 	createServiceInstancesCmd.Flags().StringVarP(&spaceGUID, "space_guid", "s", "default", "Space GUID on which to instantiate the service to")
 	createServiceInstancesCmd.Flags().StringVarP(&parameters, "parameters", "p", "", "Parameters to pass to the service broker for creation (must be JSON object)")
 
@@ -71,5 +74,14 @@ var createServiceInstancesCmd = &cobra.Command{
 		}
 		fmt.Printf("Sending body: %s\n\n", string(body))
 		return callService(SERVICE_INSTANCES_URL, "POST", "create service instance", ioutil.NopCloser(bytes.NewReader(body)))
+	},
+}
+
+var listServiceInstancesCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List service instances",
+	Long:  "List service instances",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return callService(SERVICE_INSTANCES_URL, "GET", "list service instances", nil)
 	},
 }

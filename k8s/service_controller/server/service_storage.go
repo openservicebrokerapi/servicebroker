@@ -16,11 +16,11 @@ type Broker interface {
 
 // The Instancer interface provides functions to deal with service instances.
 type Instancer interface {
-	ListServices() ([]*model.ServiceInstanceData, error)
-	GetService(string) (*model.ServiceInstanceData, error)
+	ListServices() ([]*model.ServiceInstance, error)
+	GetService(string) (*model.ServiceInstance, error)
 	ServiceExists(string) bool
-	AddService(*model.ServiceInstanceData) error
-	SetService(*model.ServiceInstanceData) error
+	AddService(*model.ServiceInstance) error
+	SetService(*model.ServiceInstance) error
 	DeleteService(string) error
 }
 

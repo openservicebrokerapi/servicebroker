@@ -18,7 +18,7 @@ func init() {
 }
 
 var RootCmd = &cobra.Command{
-	Use:   "sc-cli",
+	Use:   "sc",
 	Short: "CLI for Service Controller operations",
 	Long:  "Command Line Interface for the Service Controller",
 }

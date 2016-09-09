@@ -97,6 +97,7 @@ func WriteResponse(w http.ResponseWriter, code int, object interface{}) {
 	}
 
 	w.WriteHeader(code)
+	Log("Response(" + fmt.Sprintf("%d", code) + "): " + string(data) + "\n")
 	fmt.Fprintf(w, string(data)+"\n")
 }
 
@@ -132,7 +133,6 @@ func getCatalog(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	res := string(data) + "\n"
-	Log("Reponse: " + res)
 	WriteResponse(w, 200, res)
 }
 

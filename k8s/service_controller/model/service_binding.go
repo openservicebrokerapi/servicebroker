@@ -11,10 +11,3 @@ type CreateServiceBindingResponse struct {
 	// SyslogDrainURL string      `json:"syslog_drain_url, omitempty"`
 	Credentials *interface{} `json:"credentials"`
 }
-
-type Credential struct {
-	Hostname string `json:"hostname"`
-	Port     string `json:"port"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
