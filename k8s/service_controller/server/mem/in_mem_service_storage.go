@@ -104,6 +104,10 @@ func (s *InMemServiceStorage) ListServices() ([]*model.ServiceInstanceData, erro
 	return services, nil
 }
 
+func (s *InMemServiceStorage) GetServices() ([]*model.Service, error) {
+	return nil, fmt.Errorf("Not implemented yet")
+}
+
 func (s *InMemServiceStorage) GetService(id string) (*model.ServiceInstanceData, error) {
 	service, ok := s.services[id]
 	if !ok {

@@ -119,6 +119,10 @@ func (s *NotImplementedYetServiceStorage) ListServices() ([]*model.ServiceInstan
 	return nil, fmt.Errorf("Not implemented yet")
 }
 
+func (s *NotImplementedYetServiceStorage) GetServices() ([]*model.Service, error) {
+	return nil, fmt.Errorf("Not implemented yet")
+}
+
 func (s *NotImplementedYetServiceStorage) GetService(id string) (*model.ServiceInstance, error) {
 	return nil, fmt.Errorf("Not implemented yet")
 }
