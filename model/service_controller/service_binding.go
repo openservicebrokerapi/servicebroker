@@ -1,16 +1,21 @@
+// model/service_controller
+
 package model
 
 type ServiceBinding struct {
-	ID                      string                 `json:"id"`
-	FromServiceInstanceName string                 `json:"from_service_instance_name"`
-	ServiceInstanceGUID     string                 `json:"service_instance_guid"`
-	Parameters              map[string]interface{} `json:"parameters,omitempty"`
+	ID                  string                 `json:"id"`
+	AppName             string                 `json:"app_name"`
+	ServiceInstanceName string                 `json:"service_instance_name"`
+	ServiceInstanceGUID string                 `json:"service_instance_guid"`
+	Parameters          map[string]interface{} `json:"parameters,omitempty"`
+	Credentials         interface{}            `json:"credentials"`
 }
 
 type CreateServiceBindingRequest struct {
-	FromServiceInstanceName string                 `json:"from_service_instance_name"`
-	ServiceInstanceGUID     string                 `json:"service_instance_guid"`
-	Parameters              map[string]interface{} `json:"parameters,omitempty"`
+	AppName             string                 `json:"app_name,omitempty"`
+	ServiceInstanceName string                 `json:"service_instance_name"`
+	ServiceInstanceGUID string                 `json:"service_instance_guid"`
+	Parameters          map[string]interface{} `json:"parameters,omitempty"`
 }
 
 type CreateServiceBindingResponse struct {

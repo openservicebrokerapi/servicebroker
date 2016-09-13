@@ -1,18 +1,18 @@
 package model
 
 type ServiceInstance struct {
-	// From CF spec
-	Name            string          `json:"name"`
-	Credentials     string          `json:"credentials"`
-	ServicePlanGUID string          `json:"service_plan_guid"`
-	SpaceGUID       string          `json:"space_guid"`
-	DashboardURL    string          `json:"dashboard_url"`
-	Type            string          `json:"type"`
-	LastOperation   *LastOperation1 `json:"last_operation, omitempty"`
-	SpaceURL        string          `json:"space_url"`
-	ServicePlanURL  string          `json:"service_plan_url"`
-	RoutesURL       string          `json:"routes_url"`
-	Tags            []string        `json:"tags"`
+	// From CF spec - from SB.CreateServiceInstanceResponse()
+	Name            string        `json:"name"`
+	Credentials     string        `json:"credentials"`
+	ServicePlanGUID string        `json:"service_plan_guid"`
+	SpaceGUID       string        `json:"space_guid"`
+	DashboardURL    string        `json:"dashboard_url"`
+	Type            string        `json:"type"`
+	LastOperation   LastOperation `json:"last_operation, omitempty"`
+	SpaceURL        string        `json:"space_url"`
+	ServicePlanURL  string        `json:"service_plan_url"`
+	RoutesURL       string        `json:"routes_url"`
+	Tags            []string      `json:"tags"`
 
 	Parameters interface{} `json:"parameters, omitempty"`
 
@@ -21,7 +21,7 @@ type ServiceInstance struct {
 	ServiceID string `json:"service_id"`
 }
 
-type LastOperation1 struct {
+type LastOperation struct {
 	Type        string `json:"state"`
 	State       string `json:"state"`
 	Description string `json:"description"`

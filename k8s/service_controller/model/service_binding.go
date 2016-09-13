@@ -1,13 +1,18 @@
 package model
 
 type ServiceBinding struct {
-	ID                      string                 `json:"id"`
-	FromServiceInstanceName string                 `json:"from_service_instance_name"`
-	ServiceInstanceGUID     string                 `json:"service_instance_guid"`
-	Parameters              map[string]interface{} `json:"parameters,omitempty"`
-}
+	// From Broker
+	Credentials     interface{}
+	SyslogDrainURL  string
+	RouteServiceURL string
+	VolumeMounts    []interface{}
 
-type CreateServiceBindingResponse struct {
-	// SyslogDrainURL string      `json:"syslog_drain_url, omitempty"`
-	Credentials *interface{} `json:"credentials"`
+	// From CLI
+	AppName             string
+	ServiceInstanceName string                 `json:"service_instance_name"`
+	ServiceInstanceID   string                 `json:"service_instance_id"`
+	Parameters          map[string]interface{} `json:"parameters,omitempty"`
+
+	// Our extras
+	ID string
 }

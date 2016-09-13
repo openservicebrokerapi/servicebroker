@@ -7,8 +7,9 @@ import (
 	"net/http"
 
 	model "github.com/servicebroker/servicebroker/k8s/service_controller/model"
-	"github.com/servicebroker/servicebroker/k8s/service_controller/server"
 )
+
+var _ model.ServiceStorage = (*K8sServiceStorage)(nil)
 
 type K8sServiceStorage struct {
 	// Host is the location where we'll talk to k8s
@@ -24,7 +25,7 @@ const defaultUri string = "http://%v/apis/" + serviceDomain + "/" + apiVersion +
 // The k8s implementation should leverage Third Party Resources
 // https://github.com/kubernetes/kubernetes/blob/master/docs/design/extending-api.md
 
-var _ server.ServiceStorage = (*K8sServiceStorage)(nil)
+var _ model.ServiceStorage = (*K8sServiceStorage)(nil)
 
 type Meta struct {
 	Name string `json:"name"`
@@ -45,6 +46,13 @@ type k8sServiceBroker struct {
 
 type k8sService struct {
 	*model.Service
+	ApiVersion string `json:"apiVersion"`
+	Kind       string `json:"kind"`
+	Metadata   Meta   `json:"metadata"`
+}
+
+type k8sPlan struct {
+	*model.ServicePlan
 	ApiVersion string `json:"apiVersion"`
 	Kind       string `json:"kind"`
 	Metadata   Meta   `json:"metadata"`
@@ -74,7 +82,7 @@ var serviceDefinition TPR = TPR{serviceMeta, TPRapiVersion, thirdPartyResourceSt
 var serviceBindingDefinition TPR = TPR{serviceBindingMeta, TPRapiVersion, thirdPartyResourceString, versionMap}
 var serviceInstanceDefinition TPR = TPR{serviceInstanceMeta, TPRapiVersion, thirdPartyResourceString, versionMap}
 
-func CreateServiceStorage(host string) server.ServiceStorage {
+func CreateServiceStorage(host string) model.ServiceStorage {
 	k := &K8sServiceStorage{host: host,
 		defaultResource: fmt.Sprintf(defaultUri, host)}
 	fmt.Println(" root host is:", k.defaultUri())
@@ -111,7 +119,10 @@ func (kss *K8sServiceStorage) createTPR(tpr TPR) {
 	}
 }
 
-func (kss *K8sServiceStorage) ListBrokers() ([]*model.ServiceBroker, error) {
+/* BROKER */
+/**********/
+
+func (kss *K8sServiceStorage) ListBrokers() ([]string, error) {
 	fmt.Println("listing all brokers")
 	// get the ServiceBroker
 
@@ -127,49 +138,14 @@ func (kss *K8sServiceStorage) ListBrokers() ([]*model.ServiceBroker, error) {
 		return nil, e
 	}
 	fmt.Println("Got", len(lsb.Items), "brokers.")
-	ret := make([]*model.ServiceBroker, 0, len(lsb.Items))
+	ret := make([]string, 0, len(lsb.Items))
 	for _, v := range lsb.Items {
-		ret = append(ret, v.ServiceBroker)
+		ret = append(ret, v.ServiceBroker.ID)
 	}
 	return ret, nil
 }
 
-func (kss *K8sServiceStorage) GetBroker(name string) (*model.ServiceBroker, error) {
-	uri := kss.defaultUri() + "/" + name
-	fmt.Println("uri is:", uri)
-	r, e := http.Get(uri)
-	if nil != e {
-		return nil, fmt.Errorf("couldn't get the service broker. %v, [%v]", e, r)
-	}
-	defer r.Body.Close()
-	var sb k8sServiceBroker
-	e = json.NewDecoder(r.Body).Decode(&sb)
-	if nil != e { // wrong json format error
-		return nil, e
-	}
-	fmt.Printf("returned json: %+v\n", sb)
-	return sb.ServiceBroker, nil
-}
-
-func (kss *K8sServiceStorage) GetBrokerByService(id string) (*model.ServiceBroker, error) {
-	return nil, fmt.Errorf("Not implemented yet")
-}
-
-func (kss *K8sServiceStorage) GetInventory() (*model.Catalog, error) {
-	return nil, fmt.Errorf("Not implemented yet")
-}
-
-func NewK8sSB() *k8sServiceBroker {
-	return &k8sServiceBroker{ApiVersion: serviceDomain + "/" + apiVersion,
-		Kind: "ServiceBroker"}
-}
-
-func NewK8sService() *k8sService {
-	return &k8sService{ApiVersion: serviceDomain + "/" + apiVersion,
-		Kind: "Sbservice"}
-}
-
-func (kss *K8sServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *model.Catalog) error {
+func (kss *K8sServiceStorage) AddBroker(broker *model.ServiceBroker) error {
 	fmt.Println("adding broker to k8s", broker)
 	// create TPR
 	// tpr is
@@ -192,7 +168,7 @@ func (kss *K8sServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *mo
 	// versions:
 	// - name: v1alpha1
 	ksb := NewK8sSB()
-	ksb.Metadata = Meta{Name: broker.GUID}
+	ksb.Metadata = Meta{Name: broker.ID}
 	ksb.ServiceBroker = broker
 
 	b := new(bytes.Buffer)
@@ -205,13 +181,12 @@ func (kss *K8sServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *mo
 		return e
 	}
 
-	fmt.Println("installing the", len(catalog.Services), "services for this broker")
-	for i, service := range catalog.Services {
-		fmt.Println(i, service)
+	fmt.Println("installing the", len(broker.Services), "services for this broker")
+	for i, serviceID := range broker.Services {
+		fmt.Println(i, serviceID)
 
 		ks := NewK8sService()
-		ks.Metadata = Meta{Name: service.ID}
-		ks.Service = service
+		ks.Metadata = Meta{Name: serviceID}
 
 		b := new(bytes.Buffer)
 		if err := json.NewEncoder(b).Encode(&ks); nil != err {
@@ -231,6 +206,27 @@ func (kss *K8sServiceStorage) AddBroker(broker *model.ServiceBroker, catalog *mo
 	return nil
 }
 
+func (kss *K8sServiceStorage) GetBroker(name string) (*model.ServiceBroker, error) {
+	uri := kss.defaultUri() + "/" + name
+	fmt.Println("uri is:", uri)
+	r, e := http.Get(uri)
+	if nil != e {
+		return nil, fmt.Errorf("couldn't get the service broker. %v, [%v]", e, r)
+	}
+	defer r.Body.Close()
+	var sb k8sServiceBroker
+	e = json.NewDecoder(r.Body).Decode(&sb)
+	if nil != e { // wrong json format error
+		return nil, e
+	}
+	fmt.Printf("returned json: %+v\n", sb)
+	return sb.ServiceBroker, nil
+}
+
+func (kss *K8sServiceStorage) SetBroker(si *model.ServiceBroker) error {
+	return fmt.Errorf("SetBroker: Not implemented yet")
+}
+
 func (kss *K8sServiceStorage) DeleteBroker(name string) error {
 	uri := kss.defaultUri() + "/" + name
 	fmt.Println("uri is:", uri)
@@ -244,46 +240,115 @@ func (kss *K8sServiceStorage) DeleteBroker(name string) error {
 	return nil
 }
 
-func (kss *K8sServiceStorage) ServiceExists(id string) bool {
-	return false
+func NewK8sSB() *k8sServiceBroker {
+	return &k8sServiceBroker{ApiVersion: serviceDomain + "/" + apiVersion,
+		Kind: "ServiceBroker"}
 }
 
-func (kss *K8sServiceStorage) ListServices() ([]*model.ServiceInstance, error) {
-	return nil, fmt.Errorf("Not implemented yet")
+/* Service */
+/***********/
+
+func NewK8sService() *k8sService {
+	return &k8sService{ApiVersion: serviceDomain + "/" + apiVersion,
+		Kind: "Sbservice"}
+}
+
+func (kss *K8sServiceStorage) ListServices() ([]string, error) {
+	return nil, fmt.Errorf("ListServices: Not implemented yet")
 }
 
 func (s *K8sServiceStorage) GetServices() ([]*model.Service, error) {
-	return nil, fmt.Errorf("Not implemented yet")
+	return nil, fmt.Errorf("GetServices: Not implemented yet")
 }
 
-func (kss *K8sServiceStorage) GetService(id string) (*model.ServiceInstance, error) {
-	return nil, fmt.Errorf("Not implemented yet")
+func (kss *K8sServiceStorage) GetService(id string) (*model.Service, error) {
+	return nil, fmt.Errorf("GetService: Not implemented yet")
 }
 
-func (kss *K8sServiceStorage) AddService(si *model.ServiceInstance) error {
-	return fmt.Errorf("Not implemented yet")
+func (kss *K8sServiceStorage) AddService(si *model.Service) error {
+	return fmt.Errorf("AddService: Not implemented yet")
 }
 
-func (kss *K8sServiceStorage) SetService(si *model.ServiceInstance) error {
-	return fmt.Errorf("Not implemented yet")
+func (kss *K8sServiceStorage) SetService(si *model.Service) error {
+	return fmt.Errorf("SetService: Not implemented yet")
 }
 
 func (kss *K8sServiceStorage) DeleteService(id string) error {
-	return fmt.Errorf("Not implemented yet")
+	return fmt.Errorf("DeleteService: Not implemented yet")
 }
 
-func (kss *K8sServiceStorage) ListServiceBindings() ([]*model.ServiceBinding, error) {
-	return nil, fmt.Errorf("Not implemented yet")
+/* Plan */
+/********/
+
+func (kss *K8sServiceStorage) ListPlans() ([]string, error) {
+	return nil, fmt.Errorf("ListPlans: Not implemented yet")
 }
 
-func (kss *K8sServiceStorage) GetServiceBinding(id string) (*model.ServiceBinding, error) {
-	return nil, fmt.Errorf("Not implemented yet")
+func (s *K8sServiceStorage) GetPlans() ([]*model.ServicePlan, error) {
+	return nil, fmt.Errorf("GetPlans: Not implemented yet")
 }
 
-func (kss *K8sServiceStorage) AddServiceBinding(binding *model.ServiceBinding, cred *interface{}) error {
-	return fmt.Errorf("Not implemented yet")
+func (kss *K8sServiceStorage) GetPlan(id string) (*model.ServicePlan, error) {
+	return nil, fmt.Errorf("GetPlan: Not implemented yet")
 }
 
-func (kss *K8sServiceStorage) DeleteServiceBinding(id string) error {
-	return fmt.Errorf("Not implemented yet")
+func (kss *K8sServiceStorage) AddPlan(plan *model.ServicePlan) error {
+	return fmt.Errorf("AddPlan: Not implemented yet")
+}
+
+func (kss *K8sServiceStorage) SetPlan(si *model.ServicePlan) error {
+	return fmt.Errorf("SetPlan: Not implemented yet")
+}
+
+func (kss *K8sServiceStorage) DeletePlan(id string) error {
+	return fmt.Errorf("DeletePlan: Not implemented yet")
+}
+
+/* Instance */
+/************/
+
+func (kss *K8sServiceStorage) ListInstances() ([]string, error) {
+	return nil, fmt.Errorf("ListInstances: Not implemented yet")
+}
+
+func (s *K8sServiceStorage) GetInstances() ([]*model.Service, error) {
+	return nil, fmt.Errorf("GetInstances: Not implemented yet")
+}
+
+func (kss *K8sServiceStorage) GetInstance(id string) (*model.ServiceInstance, error) {
+	return nil, fmt.Errorf("GetInstance: Not implemented yet")
+}
+
+func (kss *K8sServiceStorage) AddInstance(si *model.ServiceInstance) error {
+	return fmt.Errorf("AddInstance: Not implemented yet")
+}
+
+func (kss *K8sServiceStorage) SetInstance(si *model.ServiceInstance) error {
+	return fmt.Errorf("SetInstance: Not implemented yet")
+}
+
+func (kss *K8sServiceStorage) DeleteInstance(id string) error {
+	return fmt.Errorf("DeleteInstance: Not implemented yet")
+}
+
+/* Binding */
+/***********/
+func (kss *K8sServiceStorage) ListBindings() ([]string, error) {
+	return nil, fmt.Errorf("ListBindings: Not implemented yet")
+}
+
+func (kss *K8sServiceStorage) GetBinding(id string) (*model.ServiceBinding, error) {
+	return nil, fmt.Errorf("GetBinding: Not implemented yet")
+}
+
+func (kss *K8sServiceStorage) AddBinding(binding *model.ServiceBinding) error {
+	return fmt.Errorf("AddBinding: Not implemented yet")
+}
+
+func (kss *K8sServiceStorage) SetBinding(binding *model.ServiceBinding) error {
+	return fmt.Errorf("SetBinding: Not implemented yet")
+}
+
+func (kss *K8sServiceStorage) DeleteBinding(id string) error {
+	return fmt.Errorf("DeleteBinding: Not implemented yet")
 }

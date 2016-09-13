@@ -9,8 +9,10 @@ type CreateServiceBindingRequest struct {
 }
 
 type CreateServiceBindingResponse struct {
-	// SyslogDrainURL string      `json:"syslog_drain_url, omitempty"`
-	Credentials interface{} `json:"credentials"`
+	Credentials     interface{}   `json:"credentials"`
+	SyslogDrainURL  string        `json:"syslog_drain_url, omitempty"`
+	RouteServiceURL string        `json:route_service_url, omitempty"`
+	VolumeMounts    []interface{} `json:volume_mounts,omitempty"`
 }
 
 type Credential struct {

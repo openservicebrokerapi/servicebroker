@@ -36,11 +36,18 @@ type Instance struct {
 }
 
 type Binding struct {
+	// From Request
+	InstanceID   string
+	ID           string
+	AppGUID      string
+	PlanID       string
+	ServiceID    string
+	BindResource map[string]interface{}
+	Parameters   map[string]interface{}
+
+	// Our extras
+	Credentials map[string]string
 	Instance    *Instance
-	ID          string
-	AppGUID     string
-	PlanID      string
-	Credentials string
 }
 
 var Services = map[string]*Service{}
@@ -63,7 +70,7 @@ func init() {
 	Service := Service{
 		Name:           "myService1",
 		ID:             "12345678-abcd-1234-bcde-1234567890ab",
-		Description:    "something cool",
+		Description:    "very cool",
 		Bindable:       true,
 		PlanUpdateable: false,
 		Plans:          []*Plan{&plan1, &plan2},
@@ -124,7 +131,7 @@ func getCatalog(w http.ResponseWriter, r *http.Request) {
 			}
 			service.Plans = append(service.Plans, plan)
 		}
-		catalog.Services = append(catalog.Services, &service)
+		catalog.Services = append(catalog.Services, service)
 	}
 
 	data, err := json.Marshal(catalog)
@@ -188,9 +195,13 @@ func createBinding(w http.ResponseWriter, r *http.Request) {
 	instanceID := mux.Vars(r)["iid"]
 	bindingID := mux.Vars(r)["bid"]
 
+	if _, ok := Bindings[bindingID]; ok {
+		WriteResponse(w, 500, fmt.Sprintf("Binding with that ID already exists: %s", bindingID))
+		return
+	}
+
 	var bindingReq sbmodel.CreateServiceBindingRequest
-	err := json.NewDecoder(r.Body).Decode(&bindingReq)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&bindingReq); err != nil {
 		WriteResponse(w, 500, err)
 		return
 	}
@@ -208,15 +219,19 @@ func createBinding(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if instance.Service != service {
-		WriteResponse(w, 500, fmt.Sprintf("Wrong ServiceID provided: %q", bindingReq.ServiceID))
+		WriteResponse(w, 500, fmt.Sprintf("ServiceID provided doesn't match the service instance's service: %q", bindingReq.ServiceID))
 		return
 	}
 
 	binding := Binding{
-		ID:          bindingID,
-		AppGUID:     bindingReq.AppGUID,
-		PlanID:      bindingReq.PlanID,
-		Credentials: `{"password":"letmein"}`,
+		InstanceID:   instanceID,
+		ID:           bindingID,
+		AppGUID:      bindingReq.AppGUID,
+		PlanID:       bindingReq.PlanID,
+		BindResource: bindingReq.BindResource,
+		Parameters:   bindingReq.Parameters,
+
+		Credentials: map[string]string{"password": "letmein"},
 		Instance:    instance,
 	}
 
@@ -225,9 +240,12 @@ func createBinding(w http.ResponseWriter, r *http.Request) {
 
 	bindingRes := sbmodel.CreateServiceBindingResponse{
 		Credentials: binding.Credentials,
+		// SyslogDrainURL: ""
+		// RouteServiceURL: ""
+		// VolumeMounts:nil
 	}
 
-	WriteResponse(w, 200, bindingRes)
+	WriteResponse(w, 201, bindingRes)
 }
 
 func main() {

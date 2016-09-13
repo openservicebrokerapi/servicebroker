@@ -52,7 +52,11 @@ func ResponseBodyToObject(r *http.Response, object interface{}) error {
 		return err
 	}
 
-	return json.Unmarshal(body, object)
+	err = json.Unmarshal(body, object)
+	if err != nil {
+		fmt.Printf("Can't unmarshal %s\nErr: %v\n", body, err)
+	}
+	return err
 }
 
 func ExtractVarFromRequest(r *http.Request, varName string) string {
