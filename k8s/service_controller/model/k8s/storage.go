@@ -73,14 +73,20 @@ const TPRapiVersion string = "extensions/v1beta1"
 const thirdPartyResourceString string = "ThirdPartyResource"
 
 var versionMap []VName = []VName{{"v1alpha1"}}
-var serviceBrokerMeta Meta = Meta{"service-broker.cncf.org"}
-var serviceMeta Meta = Meta{"sbservice.cncf.org"} // sbservice so it does not conflict with the built in Service
-var serviceBindingMeta Meta = Meta{"service-binding.cncf.org"}
-var serviceInstanceMeta Meta = Meta{"service-instance.cncf.org"}
-var serviceBrokerDefinition TPR = TPR{serviceBrokerMeta, TPRapiVersion, thirdPartyResourceString, versionMap}
-var serviceDefinition TPR = TPR{serviceMeta, TPRapiVersion, thirdPartyResourceString, versionMap}
-var serviceBindingDefinition TPR = TPR{serviceBindingMeta, TPRapiVersion, thirdPartyResourceString, versionMap}
-var serviceInstanceDefinition TPR = TPR{serviceInstanceMeta, TPRapiVersion, thirdPartyResourceString, versionMap}
+
+// Kubernetes ThirdPartyResources definitions
+var serviceBrokerDefinition TPR = TPR{Meta{"service-broker.cncf.org"},
+	TPRapiVersion, thirdPartyResourceString, versionMap}
+
+// sbservice so it does not conflict with the built in Service
+var serviceDefinition TPR = TPR{Meta{"sbservice.cncf.org"},
+	TPRapiVersion, thirdPartyResourceString, versionMap}
+var servicePlanDefinition TPR = TPR{Meta{"service-plan.cncf.org"},
+	TPRapiVersion, thirdPartyResourceString, versionMap}
+var serviceInstanceDefinition TPR = TPR{Meta{"service-instance.cncf.org"},
+	TPRapiVersion, thirdPartyResourceString, versionMap}
+var serviceBindingDefinition TPR = TPR{Meta{"service-binding.cncf.org"},
+	TPRapiVersion, thirdPartyResourceString, versionMap}
 
 func CreateServiceStorage(host string) model.ServiceStorage {
 	k := &K8sServiceStorage{host: host,
@@ -91,6 +97,7 @@ func CreateServiceStorage(host string) model.ServiceStorage {
 
 	k.createTPR(serviceBrokerDefinition)
 	k.createTPR(serviceDefinition)
+	k.createTPR(servicePlanDefinition)
 	k.createTPR(serviceBindingDefinition)
 	k.createTPR(serviceInstanceDefinition)
 	// cleanup afterwards by `kubectl delete thirdpartyresource service-broker.cncf.org`
