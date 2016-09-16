@@ -35,22 +35,24 @@ var serviceBindingsCmd = &cobra.Command{
 }
 
 var createServiceBindingsCmd = &cobra.Command{
-	Use:   "create <FROM_SERVICE_NAME> <TO_SERVICE_NAME>",
+	Use:   "create <APP_NAME> <SERVICE_NAME>",
 	Short: "Create a service binding",
 	Long:  "Create a service binding",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 2 {
-			return fmt.Errorf("need FROM_SERVICE_NAME and TO_SERVICE_NAME")
+			return fmt.Errorf("need APP_NAME and SERVICE_NAME")
 		}
-		from := args[0]
-		to := args[1]
-		toServiceInstanceGUID, err := fetchServiceInstanceGUID(to)
+		app := args[0]
+		service := args[1]
+		ServiceInstanceGUID, err := fetchServiceInstanceGUID(service)
 		if err != nil {
 			return err
 		}
 		req := scmodel.CreateServiceBindingRequest{
-			FromServiceInstanceName: from,
-			ServiceInstanceGUID:     toServiceInstanceGUID,
+			AppName:             app,
+			ServiceInstanceName: service,
+			ServiceInstanceGUID: ServiceInstanceGUID,
+			Parameters:          nil,
 		}
 		if len(bindingParameters) > 0 {
 			var m interface{}
@@ -114,7 +116,7 @@ var describeServiceBindingsCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Printf("%s -> %s\n\t%+v\n", sb.FromServiceInstanceName, si.Name, sb.Parameters)
+		fmt.Printf("%s -> %s\n\t%+v\n", sb.ServiceInstanceName, si.Name, sb.Parameters)
 		return nil
 	},
 }

@@ -4,9 +4,9 @@ import (
 	"flag"
 	"fmt"
 
+	"github.com/servicebroker/servicebroker/k8s/service_controller/model/k8s"
+	"github.com/servicebroker/servicebroker/k8s/service_controller/model/mem"
 	"github.com/servicebroker/servicebroker/k8s/service_controller/server"
-	"github.com/servicebroker/servicebroker/k8s/service_controller/server/k8s"
-	"github.com/servicebroker/servicebroker/k8s/service_controller/server/mem"
 )
 
 type Options struct {

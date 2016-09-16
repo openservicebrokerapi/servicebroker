@@ -1,9 +1,10 @@
 package cmd
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"strings"
+	"text/tabwriter"
 
 	scmodel "github.com/servicebroker/servicebroker/model/service_controller"
 )
@@ -56,24 +57,20 @@ func fetchPrettyBindings() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var ret []string
 
-	for _, sb := range bindings {
-		bar := fmt.Sprintf(SERVICE_INSTANCES_FMT_STR, sb.ServiceInstanceGUID)
-		u = fmt.Sprintf("%s%s", controller, bar)
-		i, err = callHttp(u, "GET", "describe service instance", nil)
-		if err != nil {
-			return "", err
-		}
-		var si scmodel.ServiceInstance
-		err = json.Unmarshal([]byte(i), &si)
-		if err != nil {
-			return "", err
+	w := new(tabwriter.Writer)
+	var buf bytes.Buffer
+
+	for t, sb := range bindings {
+		if t == 0 {
+			w.Init(&buf, 0, 8, 2, ' ', 0)
+			fmt.Fprintln(w, "Instance\tAppName\tCredentials")
 		}
 
-		ret = append(ret, fmt.Sprintf("%s -> %s\n\t%+v\n", sb.FromServiceInstanceName, si.Name, sb.Parameters))
+		fmt.Fprintln(w, fmt.Sprintf("%s\t%s\t%s", sb.ServiceInstanceName, sb.AppName, sb.Credentials))
 	}
-	return strings.Join(ret, "\n"), nil
+	w.Flush()
+	return buf.String(), nil
 }
 
 // Fetches the inventory from the SC and maps service:plan to the unique ID of the service plan

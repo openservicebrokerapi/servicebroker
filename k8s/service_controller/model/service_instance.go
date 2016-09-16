@@ -4,23 +4,24 @@ type ServiceInstance struct {
 	// Fields from the CLI
 	ID                string
 	Name              string
-	PlanGUID          string
-	SpaceGUID         string
+	Plan              string
+	SpaceID           string
 	Parameters        map[string]interface{}
 	Tags              []string
 	AcceptsIncomplete bool
 
 	// Fields from the SB
 	DashboardURL  string
-	LastOperation *LastOperation
+	LastOperation LastOperation
 
 	// Internals
-	Bindings map[string]*interface{}
-	Service  *Service
+	Service  string            // Service ID
+	Bindings map[string]string // key=bindingID, binding ID - switch to {}
 }
 
 type LastOperation struct {
-	State                    string `json:"state"`
-	Description              string `json:"description"`
-	AsyncPollIntervalSeconds int    `json:"async_poll_interval_seconds, omitempty"`
+	UpdatedAt                string
+	State                    string
+	Description              string
+	AsyncPollIntervalSeconds int
 }

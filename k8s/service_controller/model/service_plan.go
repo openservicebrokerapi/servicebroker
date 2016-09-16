@@ -7,5 +7,8 @@ type ServicePlan struct {
 	Description string      `json:"description"`
 	Metadata    interface{} `json:"metadata, omitempty"`
 	Free        bool        `json:"free, omitempty"`
-	Schemas     *Schemas    `json:"schemas, omitempty"`
+	Schemas     Schemas     `json:"schemas, omitempty"`
+
+	// Extras
+	Service string // ID
 }

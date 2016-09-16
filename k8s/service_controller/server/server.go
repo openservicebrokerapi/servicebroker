@@ -1,19 +1,20 @@
 package server
 
 import (
-	//	"errors"
 	"fmt"
 	"net/http"
 	"os"
 
 	"github.com/gorilla/mux"
+
+	"github.com/servicebroker/servicebroker/k8s/service_controller/model"
 )
 
 type Server struct {
 	controller *Controller
 }
 
-func CreateServer(serviceStorage ServiceStorage) (*Server, error) {
+func CreateServer(serviceStorage model.ServiceStorage) (*Server, error) {
 	return &Server{
 		controller: CreateController(serviceStorage),
 	}, nil
