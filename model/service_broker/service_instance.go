@@ -4,7 +4,7 @@ type CreateServiceInstanceRequest struct {
 	OrgID             string                 `json:"organization_guid,omitempty"`
 	PlanID            string                 `json:"plan_id,omitempty"`
 	ServiceID         string                 `json:"service_id,omitempty"`
-	SpaceID           string                 `json:"space_id,omitempty"`
+	SpaceID           string                 `json:"space_guid,omitempty"`
 	Parameters        map[string]interface{} `json:"parameters,omitempty"`
 	AcceptsIncomplete bool                   `json:"accepts_incomplete,omitempty"`
 }

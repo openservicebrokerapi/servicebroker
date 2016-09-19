@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	sbmodel "github.com/servicebroker/servicebroker/model/service_broker"
+	scmodel "github.com/servicebroker/servicebroker/model/service_controller"
 	"github.com/spf13/cobra"
 )
 
@@ -48,7 +48,7 @@ var createBrokersCmd = &cobra.Command{
 		if len(args) != 2 {
 			return fmt.Errorf("need NAME and BROKER_URL")
 		}
-		req := sbmodel.CreateServiceBrokerRequest{
+		req := scmodel.CreateServiceBrokerRequest{
 			Name:      args[0],
 			BrokerURL: args[1],
 		}
