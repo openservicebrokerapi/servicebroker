@@ -188,28 +188,6 @@ func (kss *K8sServiceStorage) AddBroker(broker *model.ServiceBroker) error {
 		return e
 	}
 
-	fmt.Println("installing the", len(broker.Services), "services for this broker")
-	for i, serviceID := range broker.Services {
-		fmt.Println(i, serviceID)
-
-		ks := NewK8sService()
-		ks.Metadata = Meta{Name: serviceID}
-
-		b := new(bytes.Buffer)
-		if err := json.NewEncoder(b).Encode(&ks); nil != err {
-			fmt.Println("failed to encode")
-			return err
-		}
-		defaultUri := "http://%v/apis/" + serviceDomain + "/" + apiVersion + "/namespaces/default/" + "sbservices"
-		fmt.Printf("sending: %v\n to %v", b, defaultUri)
-		r, e := http.Post(fmt.Sprintf(defaultUri, kss.host), "application/json", b)
-		fmt.Sprintf("result: %v", r)
-		if nil != e || 201 != r.StatusCode {
-			fmt.Printf("Error creating k8s service TPR [%s]...\n%v\n", e, r)
-			return e
-		}
-	}
-
 	return nil
 }
 
@@ -273,7 +251,25 @@ func (kss *K8sServiceStorage) GetService(id string) (*model.Service, error) {
 }
 
 func (kss *K8sServiceStorage) AddService(si *model.Service) error {
-	return fmt.Errorf("AddService: Not implemented yet")
+	fmt.Println(si, si.ID)
+
+	ks := NewK8sService()
+	ks.Metadata = Meta{Name: si.ID}
+
+	b := new(bytes.Buffer)
+	if err := json.NewEncoder(b).Encode(&ks); nil != err {
+		fmt.Println("failed to encode", si, "as", ks)
+		return err
+	}
+	defaultUri := "http://%v/apis/" + serviceDomain + "/" + apiVersion + "/namespaces/default/" + "sbservices"
+	fmt.Printf("sending: %v\n to %v", b, defaultUri)
+	r, e := http.Post(fmt.Sprintf(defaultUri, kss.host), "application/json", b)
+	fmt.Sprintf("result: %v", r)
+	if nil != e || 201 != r.StatusCode {
+		fmt.Printf("Error creating k8s service TPR [%s]...\n%v\n", e, r)
+		return e
+	}
+	return nil
 }
 
 func (kss *K8sServiceStorage) SetService(si *model.Service) error {
@@ -286,6 +282,11 @@ func (kss *K8sServiceStorage) DeleteService(id string) error {
 
 /* Plan */
 /********/
+
+func NewK8sPlan() *k8sPlan {
+	return &k8sPlan{ApiVersion: serviceDomain + "/" + apiVersion,
+		Kind: "ServicePlan"}
+}
 
 func (kss *K8sServiceStorage) ListPlans() ([]string, error) {
 	return nil, fmt.Errorf("ListPlans: Not implemented yet")
@@ -300,7 +301,25 @@ func (kss *K8sServiceStorage) GetPlan(id string) (*model.ServicePlan, error) {
 }
 
 func (kss *K8sServiceStorage) AddPlan(plan *model.ServicePlan) error {
-	return fmt.Errorf("AddPlan: Not implemented yet")
+	fmt.Println(plan, plan.ID)
+
+	ks := NewK8sPlan()
+	ks.Metadata = Meta{Name: plan.ID}
+
+	b := new(bytes.Buffer)
+	if err := json.NewEncoder(b).Encode(&ks); nil != err {
+		fmt.Println("failed to encode", plan, "as", ks)
+		return err
+	}
+	defaultUri := "http://%v/apis/" + serviceDomain + "/" + apiVersion + "/namespaces/default/" + "serviceplans"
+	fmt.Printf("sending: %v\n to %v\n", b, defaultUri)
+	r, e := http.Post(fmt.Sprintf(defaultUri, kss.host), "application/json", b)
+	fmt.Sprintf("result: %v", r)
+	if nil != e || 201 != r.StatusCode {
+		fmt.Printf("Error creating k8s service TPR [%s]...\n%v\n", e, r)
+		return e
+	}
+	return nil
 }
 
 func (kss *K8sServiceStorage) SetPlan(si *model.ServicePlan) error {
