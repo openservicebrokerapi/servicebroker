@@ -2,7 +2,7 @@
 
 ## Table of Contents
   - [API Overview](#api-overview)
-  - [Notational Conventions](#notational-conventions)
+  - [Notations and Terminology](#notations-and-terminology)
   - [Changes](#changes)
     - [Change Policy](#change-policy)
     - [Changes Since v2.10](#changes-since-v210)
@@ -36,11 +36,42 @@ What a binding represents MAY also vary by service. In general creation of a bin
 
 A platform marketplace MAY expose services from one or many service brokers, and an individual service broker MAY support one or many platform marketplaces using different URL prefixes and credentials.
 
-## Notational Conventions
+## Notations and Terminology
+
+### Notational Conventions
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to
 be interpreted as described in [RFC 2119](https://tools.ietf.org/html/rfc2119).
+
+### Terminology
+
+This specification defines the following terms:
+
+- *Platform*: The software that will manage the cloud environment into which
+  Applications and Service Brokers are provisioned.  Users will not directly
+  provision Services from Service Brokers, rather they will ask the Platform
+  (ie. their cloud provider) to manage Services and interact with the
+  Service Brokers for them.
+
+- *Service*: A managed software offering that can be used by an Application.
+  Typically, Services will expose some API that can be invoked to perform
+  some action. However, there can also be non-interactive Services that can
+  perform the desired actions without direct prompting from the Application.
+
+- *Service Broker*: Service Brokers manage the lifecycle of Services. Platforms
+  interact with Service Brokers to provision, and manage, Service Instances
+  and Service Bindings.
+
+- *Service Instance*: An instantiation of a Service offering.
+
+- *Service Binding*: The representation of an association between an
+  Application and a Service Instance. Often, Service Bindings, will
+  contain the credentials that the Application will use to communicate
+  with the Service Instance.
+
+- *Application*: The software that will make use of, be bound to, a Service
+  Instance.
 
 ## Changes
 
@@ -122,7 +153,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 | description* | string | A short description of the service. MUST be a non-empty string. |
 | tags | array-of-strings | Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp. |
 | requires | array-of-strings | A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are `syslog_drain`, `route_forwarding` and `volume_mount`. |
-| bindable* | boolean | Specifies whether instances of the service can be bound to applications. This specifies the default for all plans of this service. Plans can override this field (see [Plan Object](#plan-object)). |
+| bindable* | boolean | Specifies whether service instances of the service can be bound to applications. This specifies the default for all plans of this service. Plans can override this field (see [Plan Object](#plan-object)). |
 | metadata | JSON object | An opaque object of metadata for a service offering. Controller treats this as a blob. Note that there are [conventions](https://docs.cloudfoundry.org/services/catalog-metadata.html) in existing brokers and controllers for fields that aid in the display of catalog data. |
 | [dashboard_client](#dashboard-client-object) | object | Contains the data necessary to activate the Dashboard SSO feature for this service. |
 | plan_updateable | boolean | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute `plan_updatable` to `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. |
@@ -145,8 +176,8 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 | name* | string | The CLI-friendly name of the plan. MUST be unique within the service. All lowercase, no spaces. MUST be a non-empty string. |
 | description* | string | A short description of the plan. MUST be a non-empty string. |
 | metadata | JSON object | An opaque object of metadata for a service plan. Controller treats this as a blob. Note that there are [conventions](https://docs.cloudfoundry.org/services/catalog-metadata.html) in existing brokers and controllers for fields that aid in the display of catalog data. |
-| free | boolean | When false, instances of this plan have a cost. The default is true. |
-| bindable | boolean | Specifies whether instances of the service plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
+| free | boolean | When false, service instances of this plan have a cost. The default is true. |
+| bindable | boolean | Specifies whether service instances of the service plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
 
 
 \* Fields with an asterisk are REQUIRED.
@@ -270,7 +301,7 @@ An asynchronous response triggers the platform marketplace to poll the endpoint 
 
 #### Blocking Operations
 
-The marketplace MUST ensure that service brokers do not receive requests for an instance while an asynchronous operation is in progress. For example, if a broker is in the process of provisioning an instance asynchronously, the marketplace can not allow any update, bind, unbind, or deprovision requests to be made through the platform. A user who attempts to perform one of these actions while an operation is already in progress MUST receive a `400 Bad Request` response with the error message: `Another operation for this service instance is in progress`.
+The marketplace MUST ensure that service brokers do not receive requests for a service instance while an asynchronous operation is in progress. For example, if a broker is in the process of provisioning a service instance asynchronously, the marketplace can not allow any update, bind, unbind, or deprovision requests to be made through the platform. A user who attempts to perform one of these actions while an operation is already in progress MUST receive a `400 Bad Request` response with the error message: `Another operation for this service instance is in progress`.
 
 ## Polling Last Operation
 
@@ -347,21 +378,26 @@ The `:instance_id` of a service instance is provided by the platform. This ID wi
 #### Parameters
 | Parameter name | Type | Description |
 | --- | --- | --- |
-| accepts_incomplete | boolean | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
+| accepts_incomplete | boolean | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision a service instance of the requested plan asynchronously, the broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
 ##### Body
 | Request field | Type | Description |
 | --- | --- | --- |
 | service_id* | string | The ID of the service (from the catalog). MUST be globally unique. MUST be a non-empty string. |
 | plan_id* | string | The ID of the plan (from the catalog) for which the service instance has been requested. MUST be unique to a service. MUST be a non-empty string. |
-| organization_guid* | string | The platform GUID for the organization under which the service is to be provisioned. Although most brokers will not use this field, it might be helpful for executing operations on a user's behalf. |
-| space_guid* | string | The identifier for the project space within the platform organization. Although most brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
+| context | object | Platform specific contextual information under which the service instance is to be provisioned. Although most brokers will not use this field, it could be helpful in determining data placement or applying custom business rules. `context` will replace `organization_guid` and `space_guid` in future versions of the specification - in the interim both SHOULD be used to ensure interoperability with old and new implementations. |
+| organization_guid* | string | Deprecated in favor of `context`. The platform GUID for the organization under which the service instance is to be provisioned. Although most brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
+| space_guid* | string | Deprecated in favor of `context`. The identifier for the project space within the platform organization. Although most brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | parameters | JSON object | Configuration options for the service instance. Controller treats this as a blob. Note that there are [conventions](https://docs.cloudfoundry.org/services/catalog-metadata.html) in existing brokers and controllers for fields that aid in the display of catalog data. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
 
 \* Fields with an asterisk are REQUIRED.
 
 ```
 {
+  "context": {
+    "platform": "cloudfoundry",
+    "some_field": "some-contextual-data"
+  },
   "service_id": "service-guid-here",
   "plan_id": "plan-guid-here",
   "organization_guid": "org-guid-here",
@@ -376,6 +412,10 @@ The `:instance_id` of a service instance is provided by the platform. This ID wi
 ##### cURL
 ```
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id?accepts_incomplete=true -d '{
+  "context": {
+    "platform": "cloudfoundry",
+    "some_field": "some-contextual-data"
+  },
   "service_id": "service-guid-here",
   "plan_id": "plan-guid-here",
   "organization_guid": "org-guid-here",
@@ -436,25 +476,30 @@ Not all permutations of plan changes are expected to be supported. For example, 
 #### Parameters
 | Parameter name | Type | Description |
 | --- | --- | --- |
-| accepts_incomplete | boolean | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker SHOULD reject the request with a `422 Unprocessable Entity` as described below. |
+| accepts_incomplete | boolean | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision a service instance of the requested plan asynchronously, the broker SHOULD reject the request with a `422 Unprocessable Entity` as described below. |
 
 ##### Body
 
 | Request Field | Type | Description |
 | --- | --- | --- |
+| context | object | Contextual data under which the service instance is created. |
 | service_id* | string | The ID of the service (from the catalog). MUST be globally unique. MUST be a non-empty string. |
 | plan_id | string | The ID of the plan (from the catalog) for which the service instance has been requested. MUST be unique to a service. If present, MUST be a non-empty string. If this field is not present in the request message, then the broker MUST NOT change the plan of the instance as a result of this request. |
 | parameters | JSON object | Configuration options for the service instance. An opaque object, controller treats this as a blob. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. If this field is not present in the request message, then the broker MUST NOT change the parameters of the instance as a result of this request. |
-| previous_values | object | Information about the instance prior to the update. |
-| previous_values.service_id | string | ID of the service for the instance. If present, MUST be a non-empty string. |
+| previous_values | object | Information about the service instance prior to the update. |
+| previous_values.service_id | string | Deprecated; determined to be unnecessary as the value is immutable. ID of the service for the service instance. If present, MUST be a non-empty string. |
 | previous_values.plan_id | string | ID of the plan prior to the update. If present, MUST be a non-empty string. |
-| previous_values.organization_id | string | ID of the organization specified for the instance. If present, MUST be a non-empty string. |
-| previous_values.space_id | string | ID of the space specified for the instance. If present, MUST be a non-empty string. |
+| previous_values.organization_id | string | Deprecated as it was redundant information. Organization for the service instance MUST be provided by platforms in the top-level field `context`. ID of the organization specified for the service instance. If present, MUST be a non-empty string. |
+| previous_values.space_id | string | Deprecated as it was redundant information. Space for the service instance MUST be provided by platforms in the top-level field `context`. ID of the space specified for the service instance. If present, MUST be a non-empty string. |
 
 \* Fields with an asterisk are REQUIRED.
 
 ```
 {
+  "context": {
+    "platform": "cloudfoundry",
+    "some_field": "some-contextual-data"
+  },
   "service_id": "service-guid-here",
   "plan_id": "plan-guid-here",
   "parameters": {
@@ -473,6 +518,10 @@ Not all permutations of plan changes are expected to be supported. For example, 
 ##### cURL
 ```
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id?accepts_incomplete=true -d '{
+  "context": {
+    "platform": "cloudfoundry",
+    "some_field": "some-contextual-data"
+  },
   "service_id": "service-guid-here",
   "plan_id": "plan-guid-here",
   "parameters": {
@@ -494,7 +543,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
 | --- | --- |
 | 200 OK | MUST be returned if the request's changes have been applied. The expected response body is `{}`. |
 | 202 Accepted | MUST be returned if the service instance update is in progress. This triggers the platform marketplace to poll the [Last Operation](#polling-last-operation) for operation status. Note that a re-sent `PATCH` request MUST return a `202 Accepted`, not a `200 OK`, if the requested update has not yet completed. |
-| 422 Unprocessable entity | MUST be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the instance (e.g. instance utilization is over the quota of the requested plan). Brokers SHOULD include a user-facing message in the body; for details see [Broker Errors](#broker-errors). Additionally, a `422 Unprocessable Entity` can also be returned if the broker only supports asynchronous update for the requested plan and the request did not include `?accepts_incomplete=true`; in this case the expected response body is: `{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }` |
+| 422 Unprocessable entity | MUST be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the service instance (e.g. service instance utilization is over the quota of the requested plan). Brokers SHOULD include a user-facing message in the body; for details see [Broker Errors](#broker-errors). Additionally, a `422 Unprocessable Entity` can also be returned if the broker only supports asynchronous update for the requested plan and the request did not include `?accepts_incomplete=true`; in this case the expected response body is: `{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }` |
 
 Responses with any other status code will be interpreted as a failure. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
@@ -663,7 +712,7 @@ When a broker receives an unbind request from the marketplace, it MUST delete an
 ##### Route
 `DELETE /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
-The `:instance_id` is the ID of a previously provisioned service instance. The `:binding_id` is the ID of a previously provisioned binding for that instance.
+The `:instance_id` is the ID of a previously provisioned service instance. The `:binding_id` is the ID of a previously provisioned binding for that service instance.
 
 ##### Parameters
 
@@ -709,7 +758,7 @@ provisions.
 ##### Route
 `DELETE /v2/service_instances/:instance_id`
 
-`:instance_id` is the identifier of a previously provisioned instance.
+`:instance_id` is the identifier of a previously provisioned service instance.
 
 ##### Parameters
 
@@ -719,7 +768,7 @@ The request provides these query string parameters as useful hints for brokers.
 | --- | --- | --- |
 | service_id* | string | ID of the service from the catalog. MUST be a non-empty string. |
 | plan_id* | string | ID of the plan from the catalog. MUST be a non-empty string. |
-| accepts_incomplete | boolean | A value of true indicates that both the marketplace and the requesting client support asynchronous deprovisioning. If this parameter is not included in the request, and the broker can only deprovision an instance of the requested plan asynchronously, the broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
+| accepts_incomplete | boolean | A value of true indicates that both the marketplace and the requesting client support asynchronous deprovisioning. If this parameter is not included in the request, and the broker can only deprovision a service instance of the requested plan asynchronously, the broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
 \* Query parameters with an asterisk are REQUIRED.
 
@@ -784,11 +833,11 @@ For error responses, the following fields are valid. Others will be ignored. If 
 
 ## Orphans
 
-The platform marketplace is the source of truth for service instances and bindings. Service brokers are expected to have successfully provisioned all the instances and bindings that the marketplace knows about, and none that it doesn't.
+The platform marketplace is the source of truth for service instances and bindings. Service brokers are expected to have successfully provisioned all the service instances and bindings that the marketplace knows about, and none that it doesn't.
 
-Orphans can result if the broker does not return a response before a request from the marketplace times out (typically 60 seconds). For example, if a broker does not return a response to a provision request before the request times out, the broker might eventually succeed in provisioning an instance after the marketplace considers the request a failure. This results in an orphan instance on the broker's side.
+Orphans can result if the broker does not return a response before a request from the marketplace times out (typically 60 seconds). For example, if a broker does not return a response to a provision request before the request times out, the broker might eventually succeed in provisioning a service instance after the marketplace considers the request a failure. This results in an orphan service instance on the broker's side.
 
-To mitigate orphan instances and bindings, the marketplace SHOULD attempt to delete resources it cannot be sure were successfully created, and SHOULD keep trying to delete them until the broker responds with a success.
+To mitigate orphan service instances and bindings, the marketplace SHOULD attempt to delete resources it cannot be sure were successfully created, and SHOULD keep trying to delete them until the broker responds with a success.
 
 Platforms SHOULD initiate orphan mitigation in the following scenarios:
 
@@ -804,4 +853,4 @@ Platforms SHOULD initiate orphan mitigation in the following scenarios:
 | 5xx | Broker error | Yes |
 | Timeout | Failure | Yes |
 
-If the platform marketplace encounters an internal error provisioning an instance or binding (for example, saving to the database fails), then it MUST at least send a single delete or unbind request to the service broker to prevent creation of an orphan.
+If the platform marketplace encounters an internal error provisioning a service instance or binding (for example, saving to the database fails), then it MUST at least send a single delete or unbind request to the service broker to prevent creation of an orphan.
