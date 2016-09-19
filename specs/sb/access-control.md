@@ -282,9 +282,10 @@ $ cf curl /v2/service_plan_visibilities -X 'POST' -d '{"service_plan_guid":"1113
     },
     "entity": {
         "service_plan_guid": "1113aa0-124e-4af2-1526-6bfacf61b111",
-        "organization_guid": "aaaa1234-da91-4f12-8ffa-b51d0336aaaa",
         "service_plan_url": "/v2/service_plans/1113aa0-124e-4af2-1526-6bfacf61b111",
-        "organization_url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc"
+        "context": {
+            "dept": "abc123"
+		}
     }
 }
 </pre>
