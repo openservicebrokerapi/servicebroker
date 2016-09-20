@@ -609,6 +609,10 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 	}
 
 	si.Service = service.ID
+
+	if service.Instances == nil {
+		service.Instances = map[string]string{}
+	}
 	service.Instances[si.ID] = si.ID // TODO: do we really need map??
 
 	err = c.storage.AddInstance(si)
@@ -815,6 +819,9 @@ func (c *Controller) CreateServiceBinding(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	if instance.Bindings == nil {
+		instance.Bindings = map[string]string{}
+	}
 	instance.Bindings[binding.ID] = binding.ID
 	err = c.storage.SetInstance(instance)
 	if err != nil {
