@@ -52,6 +52,11 @@ func (c *Controller) Inventory(w http.ResponseWriter, r *http.Request) {
 			utils.WriteResponse(w, 500, err)
 			return
 		}
+		if svc == nil {
+			utils.WriteResponse(w, 500, fmt.Errorf("Can't find service %q", svcID))
+			return
+		}
+
 		newSvc := scmodel.Service{
 			Name:            svc.Name,
 			ID:              svc.ID,
@@ -70,6 +75,10 @@ func (c *Controller) Inventory(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				err = fmt.Errorf("Error getting plan %q: %#v", planID, err)
 				utils.WriteResponse(w, 500, err)
+				return
+			}
+			if plan == nil {
+				utils.WriteResponse(w, 500, fmt.Errorf("Can't find plan %q", planID))
 				return
 			}
 
@@ -107,6 +116,11 @@ func (c *Controller) Services(w http.ResponseWriter, r *http.Request) {
 			utils.WriteResponse(w, 500, err)
 			return
 		}
+		if svc == nil {
+			utils.WriteResponse(w, 500, fmt.Errorf("Can't find service %q", serviceID))
+			return
+		}
+
 		service := scmodel.Service{
 			Name:           svc.Name,
 			ID:             svc.ID,
@@ -126,6 +140,10 @@ func (c *Controller) Services(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				err = fmt.Errorf("Error getting plan %q: %#v", planID, err)
 				utils.WriteResponse(w, 500, err)
+				return
+			}
+			if plan == nil {
+				utils.WriteResponse(w, 500, fmt.Errorf("Can't find plan %q", planID))
 				return
 			}
 
@@ -172,6 +190,10 @@ func (c *Controller) ListServiceBrokers(w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			err = fmt.Errorf("Error getting bindings: %#v", err)
 			utils.WriteResponse(w, 500, err)
+			return
+		}
+		if broker == nil {
+			utils.WriteResponse(w, 500, fmt.Errorf("Can't find broker %q", bID))
 			return
 		}
 
@@ -353,6 +375,7 @@ func (c *Controller) DeleteServiceBroker(w http.ResponseWriter, r *http.Request)
 			utils.WriteResponse(w, 500, err)
 			return
 		}
+
 		c.storage.DeleteService(service.ID)
 	}
 	broker.Services = []string{}
@@ -381,6 +404,11 @@ func (c *Controller) ListServiceInstances(w http.ResponseWriter, r *http.Request
 			utils.WriteResponse(w, 500, err)
 			return
 		}
+		if instance == nil {
+			utils.WriteResponse(w, 500, fmt.Errorf("Can't find instance %q", iID))
+			return
+		}
+
 		instances = append(instances, scmodel.ServiceInstance{
 			Name: instance.Name,
 			// Credentials: ??? TODO FIX
@@ -462,7 +490,6 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 		utils.WriteResponse(w, 500, err)
 		return
 	}
-
 	if plan == nil {
 		err = fmt.Errorf("Can't find plan %q", req.ServicePlanGUID)
 		utils.WriteResponse(w, 404, err)
@@ -473,6 +500,10 @@ func (c *Controller) CreateServiceInstance(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		err = fmt.Errorf("Error fetching service %q: %#v", plan.Service, err)
 		utils.WriteResponse(w, 500, err)
+		return
+	}
+	if service == nil {
+		utils.WriteResponse(w, 500, fmt.Errorf("Can't find service %q", plan.Service))
 		return
 	}
 
@@ -642,6 +673,11 @@ func (c *Controller) ListServiceBindings(w http.ResponseWriter, r *http.Request)
 			utils.WriteResponse(w, 500, err)
 			return
 		}
+		if b == nil {
+			utils.WriteResponse(w, 500, fmt.Errorf("Can't find binding %q", bID))
+			return
+		}
+
 		binding := scmodel.ServiceBinding{
 			ID:                  b.ID,
 			AppName:             b.AppName,
@@ -814,6 +850,10 @@ func (c *Controller) getServiceInstanceByName(name string) (*model.ServiceInstan
 		if err != nil {
 			return nil, fmt.Errorf("Error getting instance %q: %#v", instanceID, err)
 		}
+		if instance == nil {
+			return nil, fmt.Errorf("Can't find instance %q", instanceID)
+		}
+
 		if instance.Name == name {
 			return instance, nil
 		}
