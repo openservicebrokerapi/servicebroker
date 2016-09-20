@@ -72,7 +72,7 @@ type TPR struct {
 const TPRapiVersion string = "extensions/v1beta1"
 const thirdPartyResourceString string = "ThirdPartyResource"
 
-var versionMap []VName = []VName{{"v1alpha1"}}
+var versionMap []VName = []VName{{apiVersion}}
 
 // Kubernetes ThirdPartyResources definitions
 var serviceBrokerDefinition TPR = TPR{Meta{"service-broker.cncf.org"},
@@ -81,8 +81,16 @@ var serviceBrokerDefinition TPR = TPR{Meta{"service-broker.cncf.org"},
 // sbservice so it does not conflict with the built in Service
 var serviceDefinition TPR = TPR{Meta{"sbservice.cncf.org"},
 	TPRapiVersion, thirdPartyResourceString, versionMap}
+
+const serviceResource string = "sbservices"
+const defaultServiceFormatUri string = "http://%v/apis/" + serviceDomain + "/" + apiVersion + "/namespaces/default/" + serviceResource
+
 var servicePlanDefinition TPR = TPR{Meta{"service-plan.cncf.org"},
 	TPRapiVersion, thirdPartyResourceString, versionMap}
+
+const servicePlanResource string = "serviceplans"
+const defaultServicePlanFormatUri string = "http://%v/apis/" + serviceDomain + "/" + apiVersion + "/namespaces/default/" + servicePlanResource
+
 var serviceInstanceDefinition TPR = TPR{Meta{"service-instance.cncf.org"},
 	TPRapiVersion, thirdPartyResourceString, versionMap}
 var serviceBindingDefinition TPR = TPR{Meta{"service-binding.cncf.org"},
@@ -113,6 +121,14 @@ type listSB struct {
 
 func (kss *K8sServiceStorage) defaultUri() string {
 	return kss.defaultResource
+}
+
+func (kss *K8sServiceStorage) defaultServiceUri() string {
+	return fmt.Sprintf(defaultServiceFormatUri, kss.host)
+}
+
+func (kss *K8sServiceStorage) defaultPlanUri() string {
+	return fmt.Sprintf(defaultServicePlanFormatUri, kss.host)
 }
 
 func (kss *K8sServiceStorage) createTPR(tpr TPR) {
@@ -233,13 +249,37 @@ func NewK8sSB() *k8sServiceBroker {
 /* Service */
 /***********/
 
+// listSB is only used for unmarshalling the list of service brokers
+// for returning to the client
+type listS struct {
+	Items []*k8sService `json:"items"`
+}
+
 func NewK8sService() *k8sService {
 	return &k8sService{ApiVersion: serviceDomain + "/" + apiVersion,
 		Kind: "Sbservice"}
 }
 
 func (kss *K8sServiceStorage) ListServices() ([]string, error) {
-	return nil, fmt.Errorf("ListServices: Not implemented yet")
+	fmt.Println("listing all services")
+	r, e := http.Get(kss.defaultServiceUri())
+	if nil != e {
+		return nil, fmt.Errorf("couldn't get the services. %v, [%v]", e, r)
+	}
+
+	var ls listS
+	e = json.NewDecoder(r.Body).Decode(&ls)
+	if nil != e { // wrong json format error
+		fmt.Println("json not unmarshalled:", e, r)
+		return nil, e
+	}
+	fmt.Println("Got", len(ls.Items), "services.")
+	ret := make([]string, 0, len(ls.Items))
+	for i, v := range ls.Items {
+		fmt.Println("service", i, v)
+		ret = append(ret, v.Service.ID)
+	}
+	return ret, nil
 }
 
 func (s *K8sServiceStorage) GetServices() ([]*model.Service, error) {
@@ -247,7 +287,21 @@ func (s *K8sServiceStorage) GetServices() ([]*model.Service, error) {
 }
 
 func (kss *K8sServiceStorage) GetService(id string) (*model.Service, error) {
-	return nil, fmt.Errorf("GetService: Not implemented yet")
+	fmt.Println("getting a single service")
+	r, e := http.Get(kss.defaultServiceUri() + "/" + id)
+	if nil != e {
+		return nil, fmt.Errorf("couldn't get the service. %v, [%v]", e, r)
+	}
+
+	var s k8sService
+	e = json.NewDecoder(r.Body).Decode(&s)
+	if nil != e { // wrong json format error
+		fmt.Println("json not unmarshalled:", e, r)
+		return nil, e
+	}
+	fmt.Println("Got a service!", s)
+
+	return s.Service, nil
 }
 
 func (kss *K8sServiceStorage) AddService(si *model.Service) error {
@@ -255,6 +309,7 @@ func (kss *K8sServiceStorage) AddService(si *model.Service) error {
 
 	ks := NewK8sService()
 	ks.Metadata = Meta{Name: si.ID}
+	ks.Service = si
 
 	b := new(bytes.Buffer)
 	if err := json.NewEncoder(b).Encode(&ks); nil != err {
@@ -292,12 +347,26 @@ func (kss *K8sServiceStorage) ListPlans() ([]string, error) {
 	return nil, fmt.Errorf("ListPlans: Not implemented yet")
 }
 
-func (s *K8sServiceStorage) GetPlans() ([]*model.ServicePlan, error) {
+func (kss *K8sServiceStorage) GetPlans() ([]*model.ServicePlan, error) {
 	return nil, fmt.Errorf("GetPlans: Not implemented yet")
 }
 
 func (kss *K8sServiceStorage) GetPlan(id string) (*model.ServicePlan, error) {
-	return nil, fmt.Errorf("GetPlan: Not implemented yet")
+	fmt.Println("getting a single plan")
+	r, e := http.Get(kss.defaultPlanUri() + "/" + id)
+	if nil != e {
+		return nil, fmt.Errorf("couldn't get the plan. %v, [%v]", e, r)
+	}
+
+	var s k8sPlan
+	e = json.NewDecoder(r.Body).Decode(&s)
+	if nil != e { // wrong json format error
+		fmt.Println("json not unmarshalled:", e, r)
+		return nil, e
+	}
+	fmt.Println("Got a plan!", r.Body, s)
+
+	return s.ServicePlan, nil
 }
 
 func (kss *K8sServiceStorage) AddPlan(plan *model.ServicePlan) error {
@@ -305,6 +374,7 @@ func (kss *K8sServiceStorage) AddPlan(plan *model.ServicePlan) error {
 
 	ks := NewK8sPlan()
 	ks.Metadata = Meta{Name: plan.ID}
+	ks.ServicePlan = plan
 
 	b := new(bytes.Buffer)
 	if err := json.NewEncoder(b).Encode(&ks); nil != err {
