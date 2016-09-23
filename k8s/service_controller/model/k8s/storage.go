@@ -244,16 +244,16 @@ func (kss *K8sServiceStorage) SetBroker(si *model.ServiceBroker) error {
 }
 
 func (kss *K8sServiceStorage) DeleteBroker(name string) error {
-	uri := kss.defaultUri() + "/" + name
-	fmt.Println("uri is:", uri)
+	return deleteResource(kss.defaultUri() + "/" + name)
+}
+
+func deleteResource(resource string) error {
+	fmt.Println("resource is:", resource)
 
 	// utter failure of an http API
-	req, _ := http.NewRequest("DELETE", uri, nil)
+	req, _ := http.NewRequest("DELETE", resource, nil)
 	_, e := http.DefaultClient.Do(req)
-	if nil != e {
-		return fmt.Errorf("couldn't nuke %v, [%v]", name, e)
-	}
-	return nil
+	return e
 }
 
 func NewK8sSB() *k8sServiceBroker {
@@ -366,7 +366,7 @@ func (kss *K8sServiceStorage) SetService(si *model.Service) error {
 }
 
 func (kss *K8sServiceStorage) DeleteService(id string) error {
-	return fmt.Errorf("DeleteService: Not implemented yet")
+	return deleteResource(kss.defaultServiceUri() + "/" + id)
 }
 
 /* Plan */
@@ -431,7 +431,7 @@ func (kss *K8sServiceStorage) SetPlan(si *model.ServicePlan) error {
 }
 
 func (kss *K8sServiceStorage) DeletePlan(id string) error {
-	return fmt.Errorf("DeletePlan: Not implemented yet")
+	return deleteResource(kss.defaultPlanUri() + "/" + id)
 }
 
 /* Instance */
@@ -546,7 +546,7 @@ func (kss *K8sServiceStorage) SetInstance(si *model.ServiceInstance) error {
 }
 
 func (kss *K8sServiceStorage) DeleteInstance(id string) error {
-	return fmt.Errorf("DeleteInstance: Not implemented yet")
+	return deleteResource(kss.defaultServiceInstanceUri() + "/" + id)
 }
 
 /* Binding */
@@ -636,5 +636,5 @@ func (kss *K8sServiceStorage) SetBinding(binding *model.ServiceBinding) error {
 }
 
 func (kss *K8sServiceStorage) DeleteBinding(id string) error {
-	return fmt.Errorf("DeleteBinding: Not implemented yet")
+	return deleteResource(kss.defaultServiceBindingUri() + "/" + id)
 }
