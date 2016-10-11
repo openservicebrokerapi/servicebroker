@@ -299,7 +299,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 <tr>
   <td><a href="#SchemasObject">&nbsp;&nbsp;&nbsp;schemas</a></td>
   <td>object</td>
-  <td>The schema definitions for the input properties for service instances and bindings of the plan.</td>
+  <td>The schema definitions for the input and output properties for service instances and bindings of the plan.</td>
 </tr>
 </tbody>
 </table>
@@ -318,12 +318,12 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 <tr>
   <td><a href="#SchemaObject">&nbsp;&nbsp;&nbsp;service_instances</a></td>
   <td>object</td>
-  <td>The schema definitions for the input properties for a service instance.</td>
+  <td>The schema definitions for the input and output properties for a service instance.</td>
 </tr>
 <tr>
   <td><a href="#SchemaObject">&nbsp;&nbsp;&nbsp;service_bindings</a></td>
   <td>object</td>
-  <td>The schema definitions for the input properties for a service binding. Used only if the service is bindable.</td>
+  <td>The schema definitions for the input and output properties for a service binding. Used only if the service is bindable.</td>
 </tr>
 </tbody>
 </table>
@@ -343,6 +343,11 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
   <td>&nbsp;&nbsp;&nbsp;parameters</td>
   <td>object</td>
   <td>The schema definitions for the input parameters. Schema definitions must be valid <a href="http://json-schema.org/">JSON Schema draft v4</a></td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;outputs</td>
+  <td>object</td>
+  <td>The schema definitions for the output properties, currently only defined for bindings. Schema definitions must be valid <a href="http://json-schema.org/">JSON Schema draft v4</a></td>
 </tr>
 </tbody>
 </table>
@@ -402,12 +407,29 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
                 "type": "string"
               }
             }
+           }
           }
         },
         "service_bindings": {
           "parameters": {
             "properties": {
               "fake_binding_property": {
+                "type": "string"
+              }
+            }
+          },
+          "outputs": {
+            "properties": {
+              "hostname": {
+                "type": "string"
+              },
+              "port": {
+                "type": "integer"
+              },
+              "username": {
+                "type": "string"
+              },
+              "password": {
                 "type": "string"
               }
             }
@@ -453,6 +475,22 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
           "parameters": {
             "properties": {
               "fake_binding_property": {
+                "type": "string"
+              }
+            }
+          },
+          "outputs": {
+            "properties": {
+              "hostname": {
+                "type": "string"
+              },
+              "port": {
+                "type": "integer"
+              },
+              "username": {
+                "type": "string"
+              },
+              "password": {
                 "type": "string"
               }
             }
