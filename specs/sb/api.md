@@ -316,12 +316,12 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 </thead>
 <tbody>
 <tr>
-  <td><a href="#SchemaObject">&nbsp;&nbsp;&nbsp;service_instance</a></td>
+  <td><a href="#SchemaObject">&nbsp;&nbsp;&nbsp;service_instances</a></td>
   <td>object</td>
   <td>The schema definitions for the input properties for a service instance.</td>
 </tr>
 <tr>
-  <td><a href="#SchemaObject">&nbsp;&nbsp;&nbsp;service_binding</a></td>
+  <td><a href="#SchemaObject">&nbsp;&nbsp;&nbsp;service_bindings</a></td>
   <td>object</td>
   <td>The schema definitions for the input properties for a service binding. Used only if the service is bindable.</td>
 </tr>
@@ -392,7 +392,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
         }]
       },
       "schemas": {
-        "service_instance": {
+        "service_instances": {
           "parameters": {
             "required": [
               "fake_required_property"
@@ -404,7 +404,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
             }
           }
         },
-        "service_binding": {
+        "service_bindings": {
           "parameters": {
             "properties": {
               "fake_binding_property": {
@@ -437,7 +437,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
         }]
       },
       "schemas": {
-        "service_instance": {
+        "service_instances": {
           "parameters": {
             "required": [
               "fake_required_property"
@@ -449,7 +449,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
             }
           }
         },
-        "service_binding": {
+        "service_bindings": {
           "parameters": {
             "properties": {
               "fake_binding_property": {
