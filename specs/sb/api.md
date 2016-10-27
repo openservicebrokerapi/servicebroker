@@ -296,6 +296,59 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
   <td>boolean</td>
   <td>This field allows the plan to be limited by the non_basic_services_allowed field in a Cloud Foundry Quota, see <a href="http://docs.cloudfoundry.org/running/managing-cf/quota-plans.md">Quota Plans</a>. Default: true</td>
 </tr>
+<tr>
+  <td><a href="#SchemasObject">&nbsp;&nbsp;&nbsp;schemas</a></td>
+  <td>object</td>
+  <td>The schema definitions for the input and output properties for service instances and bindings of the plan.</td>
+</tr>
+</tbody>
+</table>
+
+<h5> Schemas Object <a name="SchemasObject"></a> </h5>
+
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Response field</th>
+  <th>Type</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="#SchemaObject">&nbsp;&nbsp;&nbsp;service_instances</a></td>
+  <td>object</td>
+  <td>The schema definitions for the input and output properties for a service instance.</td>
+</tr>
+<tr>
+  <td><a href="#SchemaObject">&nbsp;&nbsp;&nbsp;service_bindings</a></td>
+  <td>object</td>
+  <td>The schema definitions for the input and output properties for a service binding. Used only if the service is bindable.</td>
+</tr>
+</tbody>
+</table>
+
+<h5> Schema Object <a name="SchemaObject"></a> </h5>
+
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Response field</th>
+  <th>Type</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;parameters</td>
+  <td>object</td>
+  <td>The schema definitions for the input parameters. Schema definitions must be valid <a href="http://json-schema.org/">JSON Schema draft v4</a></td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;outputs</td>
+  <td>object</td>
+  <td>The schema definitions for the output properties, currently only defined for bindings. Schema definitions must be valid <a href="http://json-schema.org/">JSON Schema draft v4</a></td>
+</tr>
 </tbody>
 </table>
 
@@ -342,6 +395,46 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
         }, {
           "content": "40 concurrent connections"
         }]
+      },
+      "schemas": {
+        "service_instances": {
+          "parameters": {
+            "required": [
+              "fake_required_property"
+            ],
+            "properties": {
+              "fake_required_property": {
+                "type": "string"
+              }
+            }
+           }
+          }
+        },
+        "service_bindings": {
+          "parameters": {
+            "properties": {
+              "fake_binding_property": {
+                "type": "string"
+              }
+            }
+          },
+          "outputs": {
+            "properties": {
+              "hostname": {
+                "type": "string"
+              },
+              "port": {
+                "type": "integer"
+              },
+              "username": {
+                "type": "string"
+              },
+              "password": {
+                "type": "string"
+              }
+            }
+          }
+        }
       }
     }, {
       "name": "fake-async-plan",
@@ -364,6 +457,45 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
         "bullets": [{
           "content": "40 concurrent connections"
         }]
+      },
+      "schemas": {
+        "service_instances": {
+          "parameters": {
+            "required": [
+              "fake_required_property"
+            ],
+            "properties": {
+              "fake_required_property": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "service_bindings": {
+          "parameters": {
+            "properties": {
+              "fake_binding_property": {
+                "type": "string"
+              }
+            }
+          },
+          "outputs": {
+            "properties": {
+              "hostname": {
+                "type": "string"
+              },
+              "port": {
+                "type": "integer"
+              },
+              "username": {
+                "type": "string"
+              },
+              "password": {
+                "type": "string"
+              }
+            }
+          }
+        }
       }
     }]
   }]
