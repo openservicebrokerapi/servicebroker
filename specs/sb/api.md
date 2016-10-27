@@ -573,9 +573,9 @@ existing system.
 </thead>
 <tbody>
 <tr>
-  <td>organization_guid*</td>
-  <td>string</td>
-  <td>The Cloud Controller GUID of the organization under which the service is to be provisioned. Although most brokers will not use this field, it could be helpful in determining data placement or applying custom business rules.</td>
+  <td>context*</td>
+  <td>object</td>
+  <td>Platform specific contextual information under which the service is to be provisioned. Although most brokers will not use this field, it could be helpful in determining data placement or applying custom business rules.</td>
 </tr>
 <tr>
   <td>plan_id*</td>
@@ -586,11 +586,6 @@ existing system.
   <td>service_id*</td>
   <td>string</td>
   <td>The ID of the service within the catalog above.</td>
-</tr>
-<tr>
-  <td>space_guid*</td>
-  <td>string</td>
-  <td>Similar to organization_guid, but for the space.</td>
 </tr>
 <tr>
   <td>parameters</td>
@@ -609,11 +604,12 @@ existing system.
 
 <pre class="terminal">
 {
-  "organization_guid": "org-guid-here",
-  "plan_id":           "plan-guid-here",
-  "service_id":        "service-guid-here",
-  "space_guid":        "space-guid-here",
-  "parameters":        {
+  "context": {
+    "some_field": "some-contextual-data"
+  },
+  "plan_id":      "plan-guid-here",
+  "service_id":   "service-guid-here",
+  "parameters":   {
     "parameter1": 1,
     "parameter2": "value"
   }
@@ -623,11 +619,12 @@ existing system.
 ##### cURL #####
 <pre class="terminal">
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d '{
-  "organization_guid": "org-guid-here",
-  "plan_id":           "plan-guid-here",
-  "service_id":        "service-guid-here",
-  "space_guid":        "space-guid-here",
-  "parameters":        {
+  "context": {
+    "some_field": "some-contextual-data"
+  },
+  "plan_id":      "plan-guid-here",
+  "service_id":   "service-guid-here",
+  "parameters":   {
     "parameter1": 1,
     "parameter2": "value"
   }
@@ -766,14 +763,9 @@ To enable this functionality, a broker declares support for each service by incl
   <td>ID of the service for the instance.</td>
 </tr>
 <tr>
-  <td>previous_values.organization_id</td>
-  <td>string</td>
-  <td>ID of the organization containing the instance.</td>
-</tr>
-<tr>
-  <td>previous_values.space_id</td>
-  <td>string</td>
-  <td>ID of the space containing the instance..</td>
+  <td>previous_values.context</td>
+  <td>object</td>
+  <td>Contextual data under which the instance is created.</td>
 </tr>
 <tr>
   <td>accepts_incomplete</td>
@@ -796,8 +788,9 @@ To enable this functionality, a broker declares support for each service by incl
   "previous_values": {
     "plan_id": "old-plan-guid-here",
     "service_id": "service-guid-here",
-    "organization_id": "org-guid-here",
-    "space_id": "space-guid-here"
+    "context": {
+      "some_field": "some-contextual-data"
+    },
   }
 }
 </pre>
@@ -814,8 +807,9 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d 
   "previous_values": {
     "plan_id": "old-plan-guid-here",
     "service_id": "service-guid-here",
-    "organization_id": "org-guid-here",
-    "space_id": "space-guid-here"
+    "context": {
+      "some_field": "some-contextual-data"
+    },
   }
 }' -X PATCH -H "X-Broker-API-Version: 2.9" -H "Content-Type: application/json"
 </pre>
