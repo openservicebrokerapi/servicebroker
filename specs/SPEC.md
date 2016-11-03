@@ -24,7 +24,6 @@ To develop Managed Services for Cloud Foundry, you'll need a Cloud Foundry insta
 - [Manage Application Requests with Route Services](#manage-application-requests-with-route-services)
 - [Supporting Multiple Cloud Foundry Instances](#supporting-multiple-cloud-foundry-instances)
 - [Volume Services (Experimental)](#volume-services-experimental)
-- [Volume Services (Experimental/Obsolete)](#volume-services-experimentalobsolete)
   
 # Overview
 
