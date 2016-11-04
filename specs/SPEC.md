@@ -4,7 +4,6 @@
 
 <!-- **TODO 'managed services' terminology is different from everywhere else** -->
 
-
 The documentation in this section is intended for developers and operators interested in creating Managed Services for Cloud Foundry. Managed Services are defined as having been integrated with Cloud Foundry via APIs, and enable end users to provision reserved resources and credentials on demand. For documentation targeted at end users, such as how to provision services and integrate them with applications, see [Services Overview](../devguide/services/index.html).
 
 To develop Managed Services for Cloud Foundry, you'll need a Cloud Foundry instance to test your service broker with as you are developing it. You must have admin access to your CF instance to manage service brokers and the services marketplace catalog. For local development, we recommend using [BOSH Lite](https://github.com/cloudfoundry/bosh-lite) to deploy your own local instance of Cloud Foundry.
@@ -24,7 +23,6 @@ To develop Managed Services for Cloud Foundry, you'll need a Cloud Foundry insta
 - [Manage Application Requests with Route Services](#manage-application-requests-with-route-services)
 - [Supporting Multiple Cloud Foundry Instances](#supporting-multiple-cloud-foundry-instances)
 - [Volume Services (Experimental)](#volume-services-experimental)
-- [Volume Services (Experimental/Obsolete)](#volume-services-experimentalobsolete)
   
 # Overview
 
@@ -134,6 +132,37 @@ Multiple Cloud Foundry instances can be supported by a single broker using
 different URL prefixes and credentials.
 
 <image src="images/v2services-new.png" width="960" height="720" style='background-color:#fff'>
+
+## <a id='api-version-header'></a>API Version Header ##
+
+Requests from the Cloud Controller to the broker contain a header that defines
+the version number of the Broker API that Cloud Controller will use.
+This header will be useful in future minor revisions of the API to allow
+brokers to reject requests from Cloud Controllers that they do not understand.
+While minor API revisions will always be additive, it is possible that brokers
+will come to depend on a feature that was added after 2.0, so they may use this
+header to reject the request.
+Error messages from the broker in this situation should inform the operator of
+what the required and actual version numbers are so that an operator can go
+upgrade Cloud Controller and resolve the issue.
+A broker should respond with a `412 Precondition Failed` message when rejecting
+a request.
+
+The version numbers are in the format `MAJOR.MINOR`, using semantic versioning
+such that 2.9 comes before 2.10.
+An example of this header as of publication time is:
+
+`X-Broker-Api-Version: 2.10`
+
+## <a id='authentication'></a>Authentication ##
+
+Cloud Controller (final release v145+) authenticates with the Broker using HTTP
+basic authentication (the `Authorization:` header) on every request and will
+reject any broker registrations that do not contain a username and password.
+The broker is responsible for checking the username and password and returning
+a `401 Unauthorized` message if credentials are invalid.
+Cloud Controller supports connecting to a broker using SSL if additional
+security is desired.
 
 ## <a id='catalog-mgmt'></a>Catalog Management ##
 
@@ -781,7 +810,7 @@ For success responses, the following fields are supported. Others will be ignore
 \* Fields with an asterisk are required.
 <pre class="terminal">
 {
- "dashboard\_url": "<span>http</span>://example-dashboard.example.com/9189kdfsk0vfnku",
+ "dashboard_url": "<span>http</span>://example-dashboard.example.com/9189kdfsk0vfnku",
  "operation": "task_10"
 }
 </pre>
@@ -789,7 +818,7 @@ For success responses, the following fields are supported. Others will be ignore
 
 ## <a id='updating_service_instance'></a>Updating a Service Instance ##
 
-Brokers that implement this endpoint can enable users to modify attributes of an existing service instance. The first attribute Cloud Foundry supports users modifying is the service plan. This effectively enables users to upgrade or downgrade their service instance to other plans. To see how users make these requests, see [Managing Services](../devguide/services/managing-services.html#update_service).
+By implementing this endpoint, broker authors can enable users to modify two attributes of an existing service instance; the service plan and parameters. By changing the service plan, users can upgrade or downgrade their service instance to other plans. By modifying properties, users can change configuration options that are specific to a service or plan. To see how Cloud Foundry users make these requests, see [Managing Services](../devguide/services/managing-services.html#update_service).
 
 To enable this functionality, a broker declares support for each service by including `plan_updateable: true` in its [catalog endpoint](#catalog-mgmt). If this optional field is not included, Cloud Foundry will return a meaningful error to users for any plan change request, and will not make an API call to the broker. If this field is included and configured as true, Cloud Foundry will make API calls to the broker for all plan change requests, and it is up to the broker to validate whether a particular permutation of plan change is supported. Not all permutations of plan changes are expected to be supported. For example, a service may support upgrading from plan "shared small" to "shared large" but not to plan "dedicated". If a particular plan change is not supported, the broker should return a meaningful error message in response.
 
@@ -2021,33 +2050,12 @@ All new service plans from standard private brokers are private by default. This
 
 Space-scoped private brokers are registered to a specific space, and all users within that space can automatically access the broker's service plans. With space-scoped brokers, service visibility is not managed separately.
 
-## <a id='cli'></a>Using the CLI ##
-
-If your CLI and/or deployment of cf-release do not meet the following prerequisites, you can manage access control with [cf curl](#curl).
-
-### <a id='prerequisites'></a>Prerequisites ###
+## <a id='prerequisites'></a>Prerequisites ###
 - CLI v6.4.0
 - Cloud Controller API v2.9.0 (cf-release v179)
 - Admin user access; the following commands can be run only by an admin user
 
-To determine your API version, curl `/v2/info` and look for `api_version`.
-
-<pre class="terminal">
-$ cf curl /v2/info
-{
-   "name": "vcap",
-   "build": "2222",
-   "support": "http://support.cloudfoundry.com",
-   "version": 2,
-   "description": "Cloud Foundry sponsored by Pivotal",
-   "authorization_endpoint": "https://login.system-domain.example.com",
-   "token_endpoint": "https://uaa.system-domain.example.com",
-   "api_version": "2.13.0",
-   "logging_endpoint": "wss://loggregator.system-domain.example.com:443"
-}
-</pre>
-
-### <a id='display-access'></a>Display Access to Service Plans ###
+## <a id='display-access'></a>Display Access to Service Plans ###
 
 The `service-access` CLI command enables an admin to see the current access control setting for every service plan in the marketplace, across all service brokers.
 
@@ -2081,7 +2089,7 @@ OPTIONS:
    -o     plans accessible by a particular organization
 </pre>
 
-### <a id='enable-access'></a>Enable Access to Service Plans ###
+## <a id='enable-access'></a>Enable Access to Service Plans ###
 
 Service access is managed at the granularity of service plans, though CLI commands allow an admin to modify all plans of a service at once.
 
@@ -2119,7 +2127,7 @@ OPTIONS:
    -o     Enable access to a particular organization
 </pre>
 
-### <a id='disable-access'></a>Disable Access to Service Plans ###
+## <a id='disable-access'></a>Disable Access to Service Plans ###
 
 <pre class="terminal">
 $ cf disable-service-access p-riakcs
@@ -2153,205 +2161,10 @@ OPTIONS:
    -o     Disable access to a particular organization
 </pre>
 
-#### Limitations ####
+### Limitations ####
 
 - You cannot disable access to a service plan for an organization if the plan is currently available to all organizations. You must first disable access for all organizations; then you can enable access for a  particular organization.
 
-## <a id='curl'></a>Using cf curl ##
-
-The following commands must be run as a system admin user.
-
-### <a id='enable-access-curl'></a>Enable Access to Service Plans ###
-
-Access can be enabled for users of all organizations, or for users of particular organizations. Service plans which are available to all users are said to be "public". Plans that are available to no organizations, or to particular organizations, are said to be "private".
-
-#### Enable access to a plan for all organizations ####
-
-Once made public, the service plan can be seen by all users in the list of available services. See [Managing Services](../devguide/services/managing-services.html) for more information.
-
-To make a service plan public, you need the service plan GUID. To find the service plan GUID, run:
-
-`cf curl /v2/service_plans -X 'GET'`
-
-This command returns a filtered JSON response listing every service plan. Data about each plan shows in two sections: `metadata` and `entity.` The `metadata` section shows the service plan GUID, while the `entity` section lists the name of the plan. Note: Because `metadata` is listed before `entity` for each service plan, the GUID of a plan is shown six lines above the name.
-
-Example:
-
-<pre class="terminal">
-$ cf curl /v2/service_plans
-...
-{
-    "metadata": {
-        "guid": "1afd5050-664e-4be2-9389-6bf0c967c0c6",
-        "url": "/v2/service_plans/1afd5050-664e-4be2-9389-6bf0c967c0c6",
-        "created_at": "2014-02-12T06:24:04+00:00",
-        "updated_at": "2014-02-12T18:46:52+00:00"
-    },
-    "entity": {
-        "name": "plan-name-1",
-        "free": true,
-        "description": "plan-desc-1",
-        "service_guid": "d9011411-1463-477c-b223-82e04996b91f",
-        "extra": "{\"bullets\":[\"bullet1\",\"bullet2\"]}",
-        "unique_id": "plan-id-1",
-        "public": false,
-        "service_url": "/v2/services/d9011411-1463-477c-b223-82e04996b91f",
-        "service_instances_url": "/v2/service_plans/1afd5050-664e-4be2-9389-6bf0c967c0c6/service_instances"
-    }
-}
-</pre>
-
-In this example, the GUID of plan-name-1 is 1afd5050-664e-4be2-9389-6bf0c967c0c6.
-
-To make a service plan public, run:
-`cf curl /v2/service_plans/SERVICE_PLAN_GUID -X 'PUT' -d '{"public":true}'`
-
-As verification, the "entity" section of the JSON response shows the `"public":true` key-value pair.
-
-<pre class="terminal">
-$ cf curl /v2/service_plans/1113aa0-124e-4af2-1526-6bfacf61b111 -X 'PUT' -d '{"public":true}'
-
-{
-    "metadata": {
-        "guid": "1113aa0-124e-4af2-1526-6bfacf61b111",
-        "url": "/v2/service_plans/1113aa0-124e-4af2-1526-6bfacf61b111",
-        "created_at": "2014-02-12T06:24:04+00:00",
-        "updated_at": "2014-02-12T20:55:10+00:00"
-    },
-    "entity": {
-        "name": "plan-name-1",
-        "free": true,
-        "description": "plan-desc-1",
-        "service_guid": "d9011411-1463-477c-b223-82e04996b91f",
-        "extra": "{\"bullets\":[\"bullet1\",\"bullet2\"]}",
-        "unique_id": "plan-id-1",
-        "public": true,
-        "service_url": "/v2/services/d9011411-1463-477c-b223-82e04996b91f",
-        "service_instances_url": "/v2/service_plans/1113aa0-124e-4af2-1526-6bfacf61b111/service_instances"
-    }
-}
-</pre>
-
-#### Enable access to a private plan for a particular organization ####
-
-Users have access to private plans that have been enabled for an organization only when targeting a space of  that organization. See [Managing Services](../devguide/services/managing-services.html) for more information.
-
-To make a service plan available to users of a specific organization, you need the GUID of both the organization and the service plan. To get the GUID of the service plan, run the same command described above for [enabling access to a plan for all organizations](#enable-access-curl):
-
-`cf curl -X 'GET' /v2/service_plans`
-
-To find the organization GUIDs, run:
-
-`cf curl /v2/organizations?q=name:YOUR-ORG-NAME`
-
-The `metadata` section shows the organization GUID, while the `entity` section lists the name of the organization. Note: Because `metadata` is listed before `entity` for each organization, the GUID of an organization is shown six lines above the name.
-
-Example:
-
-<pre class="terminal">
-$ cf curl /v2/organizations?q=name:my-org
-
-{
-    "metadata": {
-        "guid": "c54bf317-d791-4d12-89f0-b56d0936cfdc",
-        "url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc",
-        "created_at": "2013-05-06T16:34:56+00:00",
-        "updated_at": "2013-09-25T18:44:35+00:00"
-    },
-    "entity": {
-        "name": "my-org",
-        "billing_enabled": true,
-        "quota_definition_guid": "52c5413c-869f-455a-8873-7972ecb85ca8",
-        "status": "active",
-        "quota_definition_url": "/v2/quota_definitions/52c5413c-869f-455a-8873-7972ecb85ca8",
-        "spaces_url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc/spaces",
-        "domains_url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc/domains",
-        "private_domains_url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc/private_domains",
-        "users_url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc/users",
-        "managers_url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc/managers",
-        "billing_managers_url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc/billing_managers",
-        "auditors_url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc/auditors",
-        "app_events_url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc/app_events"
-    }
-}
-</pre>
-
-In this example, the GUID of my-org is c54bf317-d791-4d12-89f0-b56d0936cfdc.
-
-To make a private plan available to a specific organization, run:
-
-`cf curl /v2/service_plan_visibilities -X POST -d '{"service_plan_guid":"SERVICE_PLAN_GUID","organization_guid":"ORG_GUID"}'`
-
-Example:
-
-<pre class="terminal">
-$ cf curl /v2/service_plan_visibilities -X 'POST' -d '{"service_plan_guid":"1113aa0-124e-4af2-1526-6bfacf61b111","organization_guid":"aaaa1234-da91-4f12-8ffa-b51d0336aaaa"}'
-
-{
-    "metadata": {
-        "guid": "99993789-a368-483e-ae7c-ebe79e199999",
-        "url": "/v2/service_plan_visibilities/99993789-a368-483e-ae7c-ebe79e199999",
-        "created_at": "2014-02-12T21:03:42+00:00",
-        "updated_at": null
-    },
-    "entity": {
-        "service_plan_guid": "1113aa0-124e-4af2-1526-6bfacf61b111",
-        "organization_guid": "aaaa1234-da91-4f12-8ffa-b51d0336aaaa",
-        "service_plan_url": "/v2/service_plans/1113aa0-124e-4af2-1526-6bfacf61b111",
-        "organization_url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc"
-    }
-}
-</pre>
-
-Members of my-org can now see the plan-name-1 service plan in the list of available services when a space of my-org is targeted.
-
-Note: The `guid` field in the `metadata` section of this JSON response is the id of the "service plan visibility", and can be used to revoke access to the plan for the organization as described below.
-
-### <a id='disable-access-curl'></a>Disable Access to Service Plans ###
-
-#### Disable access to a plan for all organizations
-
-To make a service plan private, follow the instructions above for [Enable Access](#enable-access-curl), but replace `"public":true` with `"public":false`.
-
-Note: organizations that have explicitly been granted access will retain access once a plan is private. To be sure access is removed for all organizations, access must be explicitly revoked for organizations to which access has been explicitly granted. For details see below.
-
-Example making plan-name-1 private:
-
-<pre class="terminal">
-$ cf curl /v2/service_plans/1113aa0-124e-4af2-1526-6bfacf61b111 -X 'PUT' -d '{"public":false}'
-
-{
-    "metadata": {
-        "guid": "1113aa0-124e-4af2-1526-6bfacf61b111",
-        "url": "/v2/service_plans/1113aa0-124e-4af2-1526-6bfacf61b111",
-        "created_at": "2014-02-12T06:24:04+00:00",
-        "updated_at": "2014-02-12T20:55:10+00:00"
-    },
-    "entity": {
-        "name": "plan-name-1",
-        "free": true,
-        "description": "plan-desc-1",
-        "service_guid": "d9011411-1463-477c-b223-82e04996b91f",
-        "extra": "{\"bullets\":[\"bullet1\",\"bullet2\"]}",
-        "unique_id": "plan-id-1",
-        "public": false,
-        "service_url": "/v2/services/d9011411-1463-477c-b223-82e04996b91f",
-        "service_instances_url": "/v2/service_plans/1113aa0-124e-4af2-1526-6bfacf61b111/service_instances"
-    }
-}
-</pre>
-
-#### Disable access to a private plan for a particular organization ####
-
-To revoke access to a service plan for a particular organization, run:
-
-`cf curl /v2/service_plan_visibilities/SERVICE_PLAN_VISIBILITIES_GUID -X 'DELETE'`
-
-Example:
-
-<pre class="terminal">
-$ cf curl /v2/service_plan_visibilities/99993789-a368-483e-ae7c-ebe79e199999 -X DELETE
-</pre>
 
 # Dashboard Single Sign-On
 
@@ -2733,71 +2546,6 @@ Requires CLI version 6.16 or above.
     $ curl spring-music.cf.example.com
     </pre>
 
-
-
-
-
-
-
-
-# Manage Application Requests with Route Services
-
-<!-- **TODO again cf specific. drop.**  -->
-
-
-This topic describes how to bind a service instance to a route for the purpose of adding preprocessing to application requests.
-
-Route services are a class of [marketplace services](../services/managing-services.html) that perform filtering or content transformation on application requests and responses. This helps to remove the burden on developers who would otherwise have to implement these functions themselves. Popular use cases for route services include rate limiting, authorization, and caching. A route service may reject requests or after some transformation pass the request on to applications.
-
-To use route services, developers must first create a service instance, choosing from compatible Marketplace services. For more information, see the [Managing Services](../services/managing-services.html) and [User-provided Service Instances](./user-provided.html) topics. Developers then bind this service instance to a route, and all requests for the route will be preprocessed by the service instance. While some services may support instances being bound to both routes and apps, these operations have different effects. For application requests and responses to be routed through a route service, the service instance must be bound to the route.
-
-A video demonstrating use of a sample route service can be found on [Youtube](https://youtu.be/VaaZJE2E4jI).
-
-## <a id='bind'></a> Bind a Route to a Service Instance ##
-
-Binding a route to a service instance can be accomplished using the [cf bind-route-service](http://cli.cloudfoundry.org/en-US/cf/bind-route-service.html) command:
-
-<pre class="terminal">
-$ cf bind-route-service <%=vars.app_domain%> my-route-service --hostname my-app
-
-Binding route my-app.<%=vars.app_domain%> to service instance my-route-service in org my-org / space my-space as developer...
-OK
-</pre>
-
-<p class="note"><strong>Note</strong>: When binding a service instance to a route, Cloud Foundry may proxy requests for the route to the service instance, or configure a network component already in the request path.</p>
-
-<a id='bind-arbitrary-parameters'></a>
-Some services support additional configuration parameters with the bind request. These parameters are passed in a valid JSON object containing service-specific configuration parameters, provided either in-line or in a file. For a list of supported configuration parameters, see documentation for the particular service offering.
-
-<pre class="terminal">
-$ cf bind-route-service <%=vars.app_domain%> my-route-service --hostname my-app -c '{"rate_limit_threshold_rps":10000}'
-
-Binding service my-db to app rails-sample in org console / space development as user@example.com...
-OK
-</pre>
-
-<pre class="terminal">
-$ cf bind-route-service <%=vars.app_domain%> my-route-service --hostname my-app -c /tmp/config.json
-
-Binding route my-app.<%=vars.app_domain%> to service instance my-route-service in org my-org / space my-space as developer...
-OK
-</pre>
-
-## <a id='unbind'></a> Unbind a Route from a Service Instance ##
-
-Unbinding a route to a service instance from an application can be accomplished using the [cf unbind-route-service](http://cli.cloudfoundry.org/en-US/cf/unbind-route-service.html) command:
-
-<pre class="terminal">
-$ cf unbind-route-service <%=vars.app_domain%> my-route-service --hostname my-app
-
-Unbinding may leave apps mapped to route myapp.superman.cf-app.com vulnerable; e.g. if service instance myspringlogger provides authentication. Do you want to proceed?> y
-Unbinding route my-app.<%=vars.app_domain%> from service instance my-route-service in org my-org / space my-space as developer...
-OK
-</pre>
-
-
-
-
 # Supporting Multiple Cloud Foundry Instances
 
 <!-- **TODO the concept is sound, but I'm not sure how it generalizes.** -->
@@ -2897,109 +2645,3 @@ A `shared_device` is a subtype of a device. It represents a distributed file sys
 }
 ```
 
-# Volume Services (Experimental/Obsolete) #
-
-<!-- **TODO obsolete version of an experimental extension. definitely drop.** -->
-
-## <a id='introduction'></a>Introduction ##
-
-Cloud Foundry application developers may want their applications to mount one or more volumes in order to write to a reliable, non-ephemeral file system. By integrating with service brokers and the Cloud Foundry runtime, providers can offer these services to developers through an automated, self-service, and on-demand user experience.
-
-<p class="note"><strong>Note</strong>: This feature is experimental.</p>
-
-<p class="note"><strong>Note</strong>: The v2.9 version of this experimental feature is no longer supported as of Cloud Foundry v240. If you are using a newer Cloud Foundry version and your service broker returns volume mounts, you must update your service broker to use the new <a href="volume-services-v2.10.md">service broker v2.10 format for volume mounts</a>.</p>
-
-## <a id='schema'></a>Schema ##
-
-### Service Broker Bind Response ###
-
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>volume_mounts*</td>
-  <td>volume_mount[]</td>
-  <td>An array of <i>volume_mount</i> JSON objects</td>
-</tr>
-</tbody>
-</table>
-
-### volume_mount ###
-<table border="1" class="nice">
- <thead>
- <tr>
-   <th>Field</th>
-   <th>Type</th>
-   <th>Description</th>
- </tr>
- </thead>
- <tbody>
- <tr>
-   <td>container_path</td>
-   <td>string</td>
-   <td>The path to mount inside the application container</td>
- </tr>
- <tr>
-   <td>mode</td>
-   <td>string</td>
-   <td>Indicates whether the volume should be read-only or read-write</td>
- </tr>
- <tr>
-   <td>private</td>
-   <td>private</td>
-   <td>A <i>private</i> JSON object</td>
- </tr>
- </tbody>
- </table>
-
-### private ###
-<table border="1" class="nice">
- <thead>
- <tr>
-   <th>Field</th>
-   <th>Type</th>
-   <th>Description</th>
- </tr>
- </thead>
- <tbody>
- <tr>
-   <td>driver</td>
-   <td>string</td>
-   <td>The path to mount inside the application container</td>
- </tr>
- <tr>
-   <td>group_id</td>
-   <td>string</td>
-   <td>Indicates whether the volume should be read-only or read-write</td>
- </tr>
- <tr>
-   <td>config</td>
-   <td>string</td>
-   <td>A configuration string associated with a particular broker/driver pair.  The broker is free to return any string here and it will be passed through the volume driver identified in the `driver` field</td>
- </tr>
- </tbody>
- </table>
-
-### Example ###
-<pre class="terminal">
-{
-  ...
-  "volume_mounts": [
-    {
-      "container_path": "/data/images",
-      "mode": "r",
-      "private": {
-        "driver": "cephdriver",
-        "group_id": "bc2c1eab-05b9-482d-b0cf-750ee07de311",
-        "config": "Some arbitrary configuration string. Could be a marshalled json"
-      }
-    }
-  ]
-}
-</pre>
