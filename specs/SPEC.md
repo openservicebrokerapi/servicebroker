@@ -4,7 +4,6 @@
 
 <!-- **TODO 'managed services' terminology is different from everywhere else** -->
 
-
 The documentation in this section is intended for developers and operators interested in creating Managed Services for Cloud Foundry. Managed Services are defined as having been integrated with Cloud Foundry via APIs, and enable end users to provision reserved resources and credentials on demand. For documentation targeted at end users, such as how to provision services and integrate them with applications, see [Services Overview](../devguide/services/index.html).
 
 To develop Managed Services for Cloud Foundry, you'll need a Cloud Foundry instance to test your service broker with as you are developing it. You must have admin access to your CF instance to manage service brokers and the services marketplace catalog. For local development, we recommend using [BOSH Lite](https://github.com/cloudfoundry/bosh-lite) to deploy your own local instance of Cloud Foundry.
