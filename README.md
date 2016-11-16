@@ -1,27 +1,15 @@
-# Service Broker POC 
+# Open Service Broker API
 
-[![Build Status](https://travis-ci.org/servicebroker/servicebroker.svg?branch=master)](https://travis-ci.org/servicebroker/servicebroker)
-[![Go Report Card](https://goreportcard.com/badge/github.com/servicebroker/servicebroker)](https://goreportcard.com/report/github.com/servicebroker/servicebroker)
+This repo contains the Open Service Broker API specification.
 
-This repo has the PoC code the CNCF Service Broker WG.
+The specification can be found [here](spec.md).
 
-All PRs must be signed with a DCO.
+## Communications
 
-## Building
+- [Slack Channel](https://openservicebrokerapi.slack.com)
+- [Mailing List/Google Group](https://groups.google.com/forum/#!forum/open-service-broker-api)
+- We have weekly meetings, please ping the mailing list for details as it might be changing soon...
 
-To build everything just run: `make` and that should leave you with a
-`service_controller` executable in the `k8s/service_controller/` directory
-along with a Docker image called`service_controller`.
+## Contributing
 
-## Running
-
-`docker run -ti -p 10000:10000 service_controller` should bring up a Service Controller
-listening on port 10000. So, using:
-```
-curl localhost:10000
-```
-should be able to hit it.
-
-## Testing
-
-`make test-unit`
+- See [CONTRIBUTING](CONTRIBUTING.md)
