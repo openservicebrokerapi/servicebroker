@@ -1,15 +1,11 @@
-sudo: required
+# Not really used right now but if we ever do some auto-generation/verification
+# of things then we can use travis for that.
+
 language: bash
 
 services:
-  - docker
 
 before_install:
-  - make clean
   
 script:
-  - go env
-  - go version
-  - mkdir -p /home/travis/gopath/src/github.com/servicebroker
-  - ln -s $PWD /home/travis/gopath/src/github.com/servicebroker/servicebroker
-  - make all
+

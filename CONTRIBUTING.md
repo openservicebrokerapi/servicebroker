@@ -1,6 +1,8 @@
 # Contributing
 
-### Sign your work
+## Sign your work
+
+All Pull Requests (PRs) must be signed with a DCO.
 
 The sign-off is a simple line at the end of the explanation for the patch. Your
 signature certifies that you wrote the patch or otherwise have the right to pass
