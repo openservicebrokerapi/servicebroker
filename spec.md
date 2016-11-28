@@ -791,7 +791,7 @@ existing system.
 <tr>
   <td>parameters</td>
   <td>JSON object</td>
-  <td>Cloud Foundry API clients can provide a JSON object of configuration parameters with their request and this value will be passed through to the service broker. Brokers are responsible for validation.</td>
+  <td>Cloud Foundry API clients can provide a JSON object of configuration parameters with their request and this value will be passed through to the service broker. Brokers are responsible for validation. Valid parameters for a request may be specified by the broker catalog for each plan in [schemas.service_instances](#SchemaObject).</td>
 </tr>
 <tr>
   <td>accepts_incomplete</td>
@@ -942,7 +942,7 @@ To enable this functionality, a broker declares support for each service by incl
 <tr>
   <td>parameters</td>
   <td>JSON object</td>
-  <td>Cloud Foundry API clients can provide a JSON object of configuration parameters with their request and this value will be passed through to the service broker. Brokers are responsible for validation.</td>
+  <td>Cloud Foundry API clients can provide a JSON object of configuration parameters with their request and this value will be passed through to the service broker. Brokers are responsible for validation. Valid parameters for a request may be specified by the broker catalog for each plan in [schemas.service_instances](#SchemaObject).</td>
 </tr>
 <tr>
   <td>previous_values</td>
@@ -1145,7 +1145,7 @@ the resource it creates.</p>
 <tr>
   <td>parameters</td>
   <td>JSON object</td>
-  <td>Cloud Foundry API clients can provide a JSON object of configuration parameters with their request and this value will be passed through to the service broker. Brokers are responsible for validation.</td>
+  <td>Cloud Foundry API clients can provide a JSON object of configuration parameters with their request and this value will be passed through to the service broker. Brokers are responsible for validation. Valid parameters for a request may be specified by the broker catalog for each plan in [schemas.service_bindings](#SchemaObject).</td>
 </tr>
 </tbody>
 </table>
