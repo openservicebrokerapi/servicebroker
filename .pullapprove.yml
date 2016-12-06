@@ -3,11 +3,15 @@ approve_regex: '(?i)LGTM'
 reject_regex: '(?i)NOT LGTM'
 reset_on_push: true
 signed_off_by:
-  required: true
+  required: false
 reviewers:
   required: 1
   members:
     - duglin
-    - mhbauer
-    - vaikas-google
     - bmelville
+    - benlaplanche
+    - shalako
+    - angarg12
+    - pmorie
+    - petereberlein
+    - SocalNick
