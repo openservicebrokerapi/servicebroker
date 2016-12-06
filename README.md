@@ -6,7 +6,7 @@ The specification can be found [here](spec.md).
 
 ## Communications
 
-- [Slack Channel](https://openservicebrokerapi.slack.com)
+- [Slack Channel](http://slack.openservicebrokerapi.org)
 - [Mailing List/Google Group](https://groups.google.com/forum/#!forum/open-service-broker-api)
 - We have weekly meetings, please ping the mailing list for details as it might be changing soon...
 
