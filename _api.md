@@ -1,9 +1,3 @@
----
-title: Service Broker API v2.11
----
-
-<strong><%= modified_date %></strong>
-
 ## <a id='release-notes'></a>API Release Notes ##
 
 [Service Broker API Release Notes](release-notes.html)
