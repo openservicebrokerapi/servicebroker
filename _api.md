@@ -69,20 +69,9 @@ The following sections describe catalog requests and responses in the Service Br
 
 ### Response ###
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Status Code</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>200 OK</td>
-  <td>The expected response body is below.</td>
-</tr>
-</tbody>
-</table>
+| Status Code  | Description  |
+|---|---|
+| 200 OK  | The expected response body is below. |
 
 #### Body - Schema of Service Objects ####
 
@@ -92,164 +81,45 @@ Keep it short -- imagine a user having to type it as an argument for a longer
 command.
 A web-friendly display name is camel-cased with spaces and punctuation supported.
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Response field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>services*</td>
-  <td>array-of-service-objects</td>
-  <td>Schema of service objects defined below.</td>
-</tr>
-</tbody>
-</table>
+|  Response field | Type  | Description  |
+|---|---|---|
+|  services* |  array-of-service-objects |  Schema of service objects defined below. |
 
 <h5> Service Objects </h5>
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Response field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;name*</td>
-  <td>string</td>
-  <td>A CLI-friendly name of the service. All lowercase, no spaces. This must be globally unique within a platform marketplace.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;id*</td>
-  <td>string</td>
-  <td>An identifier used to correlate this service in future requests to the broker. This must be globally unique within a platform marketplace. Using a GUID is recommended. </td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;description*</td>
-  <td>string</td>
-  <td>A short description of the service.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;tags</td>
-  <td>array-of-strings</td>
-  <td>Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;requires</td>
-  <td>array-of-strings</td>
-  <td>A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are <code>syslog_drain</code>, <code>route_forwarding</code> and <code>volume_mount</code>.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;bindable*</td>
-  <td>boolean</td>
-  <td>Specifies whether instances of the service can be bound to applications. This specifies the default for all plans of this service. Plans can override this field (see <a href="#PObject">Plan Object</a>).</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;metadata</td>
-  <td>object</td>
-  <td>A list of metadata for a service offering.</td>
-</tr>
-<tr>
-  <td><a href="#DObject">&nbsp;&nbsp;&nbsp;dashboard_client</a></td>
-  <td>object</td>
-  <td>Contains the data necessary to activate the Dashboard SSO feature for this service</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;plan_updateable</td>
-  <td>boolean</td>
-  <td>
-    Whether the service supports upgrade/downgrade for some plans.
-    <br/>
-    Please note that the misspelling of the attribute <code>plan_updatable</code> to <code>plan_updateable</code> was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility.
-  </td>
-</tr>
-<tr>
-  <td><a href="#PObject">&nbsp;&nbsp;&nbsp;plans*</a></td>
-  <td>array-of-objects</td>
-  <td>A list of plans for this service, schema is defined below.</td>
-</tr>
-</tbody>
-</table>
+|  Response field |  Type | Description  |
+|---|---|---|
+|  name* | string  |  A CLI-friendly name of the service. All lowercase, no spaces. This must be globally unique within a platform marketplace. |
+| id*  |  string | An identifier used to correlate this service in future requests to the broker. This must be globally unique within a platform marketplace. Using a GUID is recommended.  |
+|  description* |  string | A short description of the service.  |
+| tags  |  array-of-strings | Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp.  |
+|  requires | array-of-strings  | A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are <code>syslog\_drain</code>, <code>route\_forwarding</code> and <code>volume\_mount</code>.  |
+| bindable*  | boolean  | Specifies whether instances of the service can be bound to applications. This specifies the default for all plans of this service. Plans can override this field (see [Plan Object](#PObject)).  |
+| metadata  |  object | A list of metadata for a service offering.  |
+| [dashboard_client](#DObject)  |  object |  Contains the data necessary to activate the Dashboard SSO feature for this service |
+| plan\_updateable  | boolean  |  Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute <code>plan\_updatable</code> to <code>plan\_updateable</code> was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility.  |
+| [plans*](#PObject) | array-of-objects | A list of plans for this service, schema is defined below.|  |
 
 <h5> Dashboard Client Object <a name="DObject"></a> </h5>
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Response field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;id</td>
-  <td>string</td>
-  <td>The id of the Oauth client that the dashboard will use.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;secret</td>
-  <td>string</td>
-  <td>A secret for the dashboard client</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;redirect_uri</td>
-  <td>string</td>
-  <td>A URI for the service dashboard. Validated by the OAuth token server when the dashboard requests a token.</td>
-</tr>
-</tbody>
-</table>
+| Response field  | Type  | Description  |
+|---|---|---|
+| id  | string  | The id of the Oauth client that the dashboard will use.  |
+|  secret | string  | A secret for the dashboard client  |
+|  redirect_uri |  string | A URI for the service dashboard. Validated by the OAuth token server when the dashboard requests a token.  |
 
 
 <h5> Plan Object <a name="PObject"></a> </h5>
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Response field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;id*</td>
-  <td>string</td>
-  <td>An identifier used to correlate this plan in future requests to the broker. This must be globally unique within a platform marketplace. Using a GUID is recommended.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;name*</td>
-  <td>string</td>
-  <td>The CLI-friendly name of the plan. Must be unique within the service. All lowercase, no spaces.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;description*</td>
-  <td>string</td>
-  <td>A short description of the plan.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;metadata</td>
-  <td>object</td>
-  <td>A list of metadata for a service plan.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;free</td>
-  <td>boolean</td>
-  <td>When false, instances of this plan have a cost. The default is true</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;bindable</td>
-  <td>boolean</td>
-  <td>Specifies whether instances of the service plan can be bound to applications. This field is optional. If specified, this takes precedence over the <tt>bindable</tt> attribute of the service. If not specified, the default is derived from the service.</td>
-</tr>
-</tbody>
-</table>
+|  Response field | Type  | Description  |
+|---|---|---|
+| id*  | string  | An identifier used to correlate this plan in future requests to the broker. This must be globally unique within a platform marketplace. Using a GUID is recommended.  |
+| name*  | string  | The CLI-friendly name of the plan. Must be unique within the service. All lowercase, no spaces.  |
+| description*  | string  | A short description of the plan.  |
+|  metadata | object  | A list of metadata for a service plan.  |
+| free  | boolean  | When false, instances of this plan have a cost. The default is true  |
+|  bindable | boolean  |  Specifies whether instances of the service plan can be bound to applications. This field is optional. If specified, this takes precedence over the <tt>bindable</tt> attribute of the service. If not specified, the default is derived from the service. |
+
 
 \* Fields with an asterisk are required.
 
@@ -377,32 +247,11 @@ Valid values for `state` are `in progress`, `succeeded`, and `failed`. The platf
 
 The request provides these query string parameters as useful hints for brokers.
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Query-String Field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>service_id</td>
-  <td>string</td>
-  <td>ID of the service from the catalog.</td>
-</tr>
-<tr>
-  <td>plan_id</td>
-  <td>string</td>
-  <td>ID of the plan from the catalog.</td>
-</tr>
-<tr>
-  <td>operation</td>
-  <td>string</td>
-  <td>A broker-provided identifier for the operation. When a value for <code>operation</code> is included with asynchronous responses for <a href="#provisioning">Provision</a>, <a href="#updating_service_instance">Update</a>, and <a href="#deprovisioning">Deprovision</a> requests, the broker client should provide the same value using this query parameter as a URL-encoded string.</td>
-</tr>
-</tbody>
-</table>
+|  Query-String Field | Type  | Description  |
+|---|---|---|
+| service_id  |  string | ID of the service from the catalog.  |
+| plan_id  | string  | ID of the plan from the catalog.  |
+| operation  |  string | A broker-provided identifier for the operation. When a value for <code>operation</code> is included with asynchronous responses for <a href="#provisioning">Provision</a>, <a href="#updating_service_instance">Update</a>, and <a href="#deprovisioning">Deprovision</a> requests, the broker client should provide the same value using this query parameter as a URL-encoded string.  |
 
 <p class="note"><strong>Note:</strong> Although the request query parameters <code>service_id</code> and <code>plan_id</code> are not required, the platform should include them on all <code>last_operation</code> requests it makes to service brokers.</p>
 
@@ -413,24 +262,10 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id/las
 
 ### Response ###
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Status Code</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>200 OK</td>
-  <td>The expected response body is below.</td>
-</tr>
-<tr>
-  <td>410 GONE</td>
-  <td>Appropriate only for asynchronous delete operations. The platform should consider this response a success and remove the resource from its database. The expected response body is <code>{}</code>. Returning this while the platform is polling for create or update operations should be interpreted as an invalid response and the platform should continue polling.</td>
-</tr>
-</tbody>
-</table>
+| Status Code  |  Description |
+|---|---|
+| 200 OK |  The expected response body is below. |
+|  410 GONE | Appropriate only for asynchronous delete operations. The platform should consider this response a success and remove the resource from its database. The expected response body is <code>{}</code>. Returning this while the platform is polling for create or update operations should be interpreted as an invalid response and the platform should continue polling.  |
 
 Responses with any other status code should be interpreted as an error or invalid response. The platform should continue polling until the broker returns a valid response or the [maximum polling duration](#max-polling-duration) is reached. Brokers may use the `description` field to expose user-facing error messages about the operation state; for more info see [Broker Errors](api.html#broker-errors).
 
@@ -440,27 +275,10 @@ All response bodies must be a valid JSON Object (`{}`). This is for future compa
 
 For success responses, the following fields are valid.
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Response field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>state*</td>
-  <td>string</td>
-  <td>Valid values are <code>in progress</code>, <code>succeeded</code>, and <code>failed</code>. While <code>"state": "in progress"</code>, the platform should continue polling. A response with <code>"state": "succeeded"</code> or <code>"state": "failed"</code> should cause the platform to cease polling.</td>
-</tr>
-<tr>
-  <td>description</td>
-  <td>string</td>
-  <td>Optional field. A user-facing message displayed to the platform API client. Can be used to tell the user details about the status of the operation.</td>
-</tr>
-</tboby>
-</table>
+|  Response field | Type  | Description  |
+|---|---|---|
+| state*  | string  | Valid values are <code>in progress</code>, <code>succeeded</code>, and <code>failed</code>. While <code>"state": "in progress"</code>, the platform should continue polling. A response with <code>"state": "succeeded"</code> or <code>"state": "failed"</code> should cause the platform to cease polling.  |
+|  description |  string | Optional field. A user-facing message displayed to the platform API client. Can be used to tell the user details about the status of the operation.  |
 
 \* Fields with an asterisk are required.
 
@@ -486,48 +304,14 @@ When the broker receives a provision request from the platform, it should take w
 The `:instance_id` of a service instance is provided by the platform. This ID will be used for future requests (bind and deprovision), so the broker must use it to correlate the resource it creates.
 
 ##### Body #####
-
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Request field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-  <tr>
-    <td>service_id*</td>
-    <td>string</td>
-    <td>The ID of the service (from the catalog). Must be globally unique.</td>
-  </tr>
-<tr>
-  <td>plan_id*</td>
-  <td>string</td>
-  <td>The ID of the plan (from the catalog) for which the service instance has been requested. Must be unique to a service.</td>
-</tr>
-<tr>
-  <td>parameters</td>
-  <td>JSON object</td>
-  <td>Configuration options for the service instance.</td>
-</tr>
-<tr>
-  <td>accepts_incomplete</td>
-  <td>boolean</td>
-  <td>A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.</td>
-</tr>
-<tr>
-  <td>organization_guid*</td>
-  <td>string</td>
-  <td>The platform GUID for the organization under which the service is to be provisioned. Although most brokers will not use this field, it may be helpful for executing operations on a user's behalf.</td>
-</tr>
-<tr>
-  <td>space_guid*</td>
-  <td>string</td>
-  <td>The identifier for the project space within the platform organization. Although most brokers will not use this field, it may be helpful for executing operations on a user's behalf.</td>
-</tr>
-</tbody>
-</table>
+| Request field  | Type  |  Description |
+|---|---|---|
+| service_id*  | string  | The ID of the service (from the catalog). Must be globally unique.  |
+| plan_id*  | string  | The ID of the plan (from the catalog) for which the service instance has been requested. Must be unique to a service.  |
+|  parameters |  JSON object | Configuration options for the service instance.  |
+|  accepts_incomplete | boolean  | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.  |
+| organization_guid*  | string  | The platform GUID for the organization under which the service is to be provisioned. Although most brokers will not use this field, it may be helpful for executing operations on a user's behalf.  |
+|  space_guid* |  string |  The identifier for the project space within the platform organization. Although most brokers will not use this field, it may be helpful for executing operations on a user's behalf. |
 
 \* Fields with an asterisk are required.
 
@@ -560,39 +344,14 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d 
 
 ### Response ###
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Status Code</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>201 Created</td>
-  <td>Service instance has been provisioned. The expected response body is below.</td>
-</tr>
-<tr>
-  <td>200 OK</td>
-  <td>
-    May be returned if the service instance already exists and the requested parameters are identical to the existing service instance.
-    The expected response body is below.
-  </td>
-</tr>
-<tr>
-  <td>202 Accepted</td>
-  <td>Service instance provisioning is in progress. This triggers the platform marketplace to poll the <a href="#polling">Service Instance Last Operation Endpoint</a> for operation status.</td>
-</tr>
-<tr>
-  <td>409 Conflict</td>
-  <td>Should be returned if a service instance with the same id already exists but with different attributes. The expected response body is <code>{}</code>.</td>
-</tr>
-<tr>
-  <td>422 Unprocessable Entity</td>
-  <td>Should be returned if the broker only supports asynchronous provisioning for the requested plan and the request did not include <code>?accepts_incomplete=true</code>. The expected response body is: <code>{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }</code>, as described below.</td>
-</tr>
-</tbody>
-</table>
+| Status Code  | Description  |
+|---|---|
+| 201 Created  | Service instance has been provisioned. The expected response body is below.  |
+| 200 OK  |  May be returned if the service instance already exists and the requested parameters are identical to the existing service instance. The expected response body is below. |
+| 202 Accepted  | Service instance provisioning is in progress. This triggers the platform marketplace to poll the <a href="#polling">Service Instance Last Operation Endpoint</a> for operation status.  |
+| 409 Conflict  | Should be returned if a service instance with the same id already exists but with different attributes. The expected response body is <code>{}</code>.  |
+| 422 Unprocessable Entity  | Should be returned if the broker only supports asynchronous provisioning for the requested plan and the request did not include <code>?accepts_incomplete=true</code>. The expected response body is: <code>{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }</code>, as described below.  |
+
 
 Responses with any other status code will be interpreted as a failure. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
@@ -602,28 +361,13 @@ All response bodies must be a valid JSON Object (`{}`). This is for future compa
 
 For success responses, a broker may return the following fields. For error responses, see [Broker Errors](#broker-errors).
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Response field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>dashboard_url</td>
-  <td>string</td>
-  <td>The URL of a web-based management user interface for the service instance; we refer to this as a service dashboard. The URL should contain enough information for the dashboard to identify the resource being accessed (<code>9189kdfsk0vfnku</code> in the example below).</td>
-</tr>
-<tr>
-  <td>operation</td>
-  <td>string</td>
-  <td>For asynchronous responses, service brokers may return an identifier representing the operation. The value of this field should be provided by the broker client with requests to the <a href="#polling">Last Operation</a> endpoint in a URL encoded query parameter.</td>
-</tr>
-</tboby>
-</table>
+| Response field  |  Type | Description  |
+|---|---|---|
+|  dashboard_url | string  |  The URL of a web-based management user interface for the service instance; we refer to this as a service dashboard. The URL should contain enough information for the dashboard to identify the resource being accessed (<code>9189kdfsk0vfnku</code> in the example below). |
+|  operation |  string | For asynchronous responses, service brokers may return an identifier representing the operation. The value of this field should be provided by the broker client with requests to the [Last Operation](#polling) endpoint in a URL encoded query parameter.  |
+
 \* Fields with an asterisk are required.
+
 <pre class="terminal">
 {
  "dashboard\_url": "<span>http</span>://example-dashboard.example.com/9189kdfsk0vfnku",
@@ -648,62 +392,17 @@ Not all permutations of plan changes are expected to be supported. For example, 
 
 ##### Body #####
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Request Field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>service_id*</td>
-  <td>string</td>
-  <td>The ID of the service (from the catalog). Must be globally unique.</td>
-</tr>
-<tr>
-  <td>plan_id</td>
-  <td>string</td>
-  <td>The ID of the plan (from the catalog) for which the service instance has been requested. Must be unique to a service.</td>
-</tr>
-<tr>
-  <td>parameters</td>
-  <td>JSON object</td>
-  <td>Configuration options for the service instance.</td>
-</tr>
-<tr>
-  <td>accepts_incomplete</td>
-  <td>boolean</td>
-  <td>A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.</td>
-</tr>
-<tr>
-  <td>previous_values</td>
-  <td>object</td>
-  <td>Information about the instance prior to the update.</td>
-</tr>
-<tr>
-  <td>previous_values.service_id</td>
-  <td>string</td>
-  <td>ID of the service for the instance.</td>
-</tr>
-<tr>
-  <td>previous_values.plan_id</td>
-  <td>string</td>
-  <td>ID of the plan prior to the update.</td>
-</tr>
-<tr>
-  <td>previous_values.organization_id</td>
-  <td>string</td>
-  <td>ID of the organization specified for the instance.</td>
-</tr>
-<tr>
-  <td>previous_values.space_id</td>
-  <td>string</td>
-  <td>ID of the space specified for the instance.</td>
-</tr>
-</tbody>
-</table>
+| Request Field  | Type  |  Description |
+|---|---|---|
+| service\_id*  | string  | The ID of the service (from the catalog). Must be globally unique.  |
+| plan\_id  | string  | The ID of the plan (from the catalog) for which the service instance has been requested. Must be unique to a service.  |
+| parameters  | JSON object  | Configuration options for the service instance.  |
+| accepts\_incomplete  |  boolean | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.  |
+| previous\_values  | object  |  Information about the instance prior to the update. |
+| previous\_values.service_id  | string  | ID of the service for the instance.  |
+| previous\_values.plan_id  |  string | ID of the plan prior to the update.  |
+| previous\_values.organization_id  | string  | ID of the organization specified for the instance.  |
+| previous\_values.space_id  | string  | ID of the space specified for the instance.  |
 
 \* Fields with an asterisk are required.
 
@@ -744,30 +443,11 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d 
 
 ### Response ###
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Status Code</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>200 OK</td>
-  <td>The requests changes have been applied. The expected response body is <code>{}</code>.</td>
-</tr>
-<tr>
-  <td>202 Accepted</td>
-  <td>Service instance update is in progress. This triggers the platform marketplace to poll the <a href="#polling">Service Instance Last Operation Endpoint</a> for operation status.</td>
-</tr>
-<tr>
-  <td>422 Unprocessable entity</td>
-  <td>
-    May be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the instance (e.g. instance utilization is over the quota of the requested plan). Broker should include a user-facing message in the body; for details see <a href="#broker-errors">Broker Errors</a>.  Additionally, a 422 can also be returned if the broker only supports asynchronous update for the requested plan and the request did not include <code>?accepts_incomplete=true</code>; in this case the expected response body is: <code>{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }</code>.
-  </td>
-</tr>
-</tbody>
-</table>
+| Status Code  | Description  |
+|---|---|
+| 200 OK  | The requests changes have been applied. The expected response body is <code>{}</code>.  |
+| 202 Accepted  |  Service instance update is in progress. This triggers the platform marketplace to poll the [Service Instance Last Operation Endpoint](#polling) for operation status. |
+| 422 Unprocessable entity  | May be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the instance (e.g. instance utilization is over the quota of the requested plan). Broker should include a user-facing message in the body; for details see [Broker Errors](#broker-errors).  Additionally, a 422 can also be returned if the broker only supports asynchronous update for the requested plan and the request did not include <code>?accepts_incomplete=true</code>; in this case the expected response body is: <code>{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }</code>  |
 
 Responses with any other status code will be interpreted as a failure. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
@@ -777,23 +457,12 @@ All response bodies must be a valid JSON Object (`{}`). This is for future compa
 
 For success responses, a broker may return the following field. Others will be ignored. For error responses, see [Broker Errors](#broker-errors).
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Response field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>operation</td>
-  <td>string</td>
-  <td>For asynchronous responses, service brokers may return an identifier representing the operation. The value of this field should be provided by the broker client with requests to the <a href="#polling">Last Operation</a> endpoint in a URL encoded query parameter.</td>
-</tr>
-</tboby>
-</table>
+| Response field  | Type  | Description  |
+|---|---|---|
+| operation  | string  |  For asynchronous responses, service brokers may return an identifier representing the operation. The value of this field should be provided by the broker client with requests to the [Last Operation](#polling) endpoint in a URL encoded query parameter. |
+
 \* Fields with an asterisk are required.
+
 <pre class="terminal">
 {
  "operation": "task_10"
@@ -843,42 +512,13 @@ the resource it creates.
 
 ##### Body #####
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Request Field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>service_id*</td>
-  <td>string</td>
-  <td>ID of the service from the catalog.</td>
-</tr>
-<tr>
-  <td>plan_id*</td>
-  <td>string</td>
-  <td>ID of the plan from the catalog.</td>
-</tr>
-<tr>
-  <td>app_guid</td>
-  <td>string</td>
-  <td>Deprecated in favor of <code>bind_resource.app_guid</code>. GUID of an application associated with the binding to be created.</td>
-</tr>
-<tr>
-  <td>bind_resource</td>
-  <td>JSON object</td>
-  <td>A JSON object that contains data for platform resources associated with the binding to be created. Current valid values include <code>app_guid</code> for <a href="#binding-credentials">credentials</a> and <code>route</code> for <a href="#binding-route-services">route services</a>.</td>
-</tr>
-<tr>
-  <td>parameters</td>
-  <td>JSON object</td>
-  <td>Configuration options for the service binding.</td>
-</tr>
-</tbody>
-</table>
+| Request Field  | Type  | Description  |
+|---|---|---|
+| service_id*  | string  | ID of the service from the catalog.  |
+| plan_id*  | string  | ID of the plan from the catalog.  |
+| app_guid  | string  | Deprecated in favor of <code>bind\_resource.app\_guid</code>. GUID of an application associated with the binding to be created.  |
+| bind_resource  | JSON object  | A JSON object that contains data for platform resources associated with the binding to be created. Current valid values include <code>app\_guid</code> for [credentials](#binding-credentials) and <code>route</code> for [route services](#binding-route-services).  |
+| parameters | JSON object  |  Configuration options for the service binding. |   |
 
 \* Fields with an asterisk are required.
 
@@ -914,35 +554,12 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id/ser
 
 ### Response ###
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Status Code</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>201 Created</td>
-  <td>Binding has been created. The expected response body is below.</td>
-</tr>
-<tr>
-  <td>200 OK</td>
-  <td>
-    May be returned if the binding already exists and the requested parameters are identical to the existing binding.
-    The expected response body is below.
-  </td>
-</tr>
-<tr>
-  <td>409 Conflict</td>
-  <td>Should be returned if the requested binding already exists. The expected response body is <code>{}</code>, though the description field can be used to return a user-facing error message, as described in <a href="#broker-errors">Broker Errors</a>.</td>
-</tr>
-<tr>
-  <td>422 Unprocessable Entity</td>
-  <td>Should be returned if the broker requires that <code>app_guid</code> be included in the request body. The expected response body is: <code>{ "error": "RequiresApp", "description": "This service supports generation of credentials through binding an application only." }</code></td>
-</tr>
-</tbody>
-</table>
+| Status Code  | Description  |
+|---|---|
+| 201 Created  |  Binding has been created. The expected response body is below. |
+| 200 OK  |  May be returned if the binding already exists and the requested parameters are identical to the existing binding. The expected response body is below. |
+| 409 Conflict  | Should be returned if the requested binding already exists. The expected response body is <code>{}</code>, though the description field can be used to return a user-facing error message, as described in [Broker Errors](#broker-errors).  |
+| 422 Unprocessable Entity  | Should be returned if the broker requires that <code>app_guid</code> be included in the request body. The expected response body is: <code>{ "error": "RequiresApp", "description": "This service supports generation of credentials through binding an application only." }</code>  |
 
 Responses with any other status code will be interpreted as a failure and an unbind request will be sent to the broker to prevent an orphan being created on the broker. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
@@ -952,37 +569,12 @@ All response bodies must be a valid JSON Object (`{}`). This is for future compa
 
 For success responses, the following fields are supported. Others will be ignored. For error responses, see [Broker Errors](#broker-errors).
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Response Field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>credentials</td>
-  <td>object</td>
-  <td>A free-form hash of credentials that may be used by applications or users to access the service.</td>
-</tr>
-<tr>
-  <td>syslog_drain_url</td>
-  <td>string</td>
-  <td>A URL to which logs may be streamed. <code>"requires":["syslog_drain"]</code> must be declared in the <a href="#catalog-mgmt">Catalog</a> endpoint or the platform should consider the response invalid.</td>
-</tr>
-<tr>
-  <td>route_service_url</td>
-  <td>string</td>
-  <td>A URL to which the platform may proxy requests for the address sent with <code>bind_resource.route</code> in the request body. <code>"requires":["route_forwarding"]</code> must be declared in the <a href="#catalog-mgmt">Catalog</a> endpoint or the platform should consider the response invalid.</td>
-</tr>
-<tr>
-  <td>volume_mounts</td>
-  <td>array-of-objects</td>
-  <td>An array of configuration for mounting volumes. <code>"requires":["volume_mount"]</code> must be declared in the <a href="#catalog-mgmt">Catalog</a> endpoint or the platform should consider the response invalid.</td>
-</tr>
-</tbody>
-</table>
+|  Response Field | Type  | Description  |
+|---|---|---|
+| credentials  | object  |  A free-form hash of credentials that may be used by applications or users to access the service. |
+| syslog\_drain_url  | string  | A URL to which logs may be streamed. <code>"requires":["syslog\_drain"]</code> must be declared in the [Catalog](#catalog-mgmt) endpoint or the platform should consider the response invalid.  |
+| route\_service_url  | string  |  A URL to which the platform may proxy requests for the address sent with <code>bind\_resource.route</code> in the request body. <code>"requires":["route\_forwarding"]</code> must be declared in the [Catalog](#catalog-mgmt) endpoint or the platform should consider the response invalid. |
+| volume\_mounts  | array-of-objects  | An array of configuration for mounting volumes. <code>"requires":["volume_mount"]</code> must be declared in the [Catalog](#catalog-mgmt) endpoint or the platform should consider the response invalid.  |
 
 <pre class="terminal">
     {
@@ -1014,27 +606,10 @@ The `:instance_id` is the ID of a previously-provisioned service instance. The `
 
 The request provides these query string parameters as useful hints for brokers.
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Query-String Field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>service_id*</td>
-  <td>string</td>
-  <td>ID of the service from the catalog.</td>
-</tr>
-<tr>
-  <td>plan_id*</td>
-  <td>string</td>
-  <td>ID of the plan from the catalog.</td>
-</tr>
-</tbody>
-</table>
+| Query-String Field  | Type  | Description |
+|---|---|---|
+| service_id*  | string | ID of the service from the catalog. |
+| plan_id*  | string  | ID of the plan from the catalog. |
 
 \* Query parameters with an asterisk are required.
 
@@ -1046,24 +621,10 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
 
 ### Response ###
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Status Code</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>200 OK</td>
-  <td>Binding was deleted. The expected response body is <code>{}</code>.</td>
-</tr>
-<tr>
-  <td>410 Gone</td>
-  <td>Should be returned if the binding does not exist. The expected response body is <code>{}</code>.</td>
-</tr>
-</tbody>
-</table>
+| Status Code  | Description  |
+|---|---|
+| 200 OK  | Binding was deleted. The expected response body is <code>{}</code>.  |
+| 410 Gone  | Should be returned if the binding does not exist. The expected response body is <code>{}</code>.  |
 
 Responses with any other status code will be interpreted as a failure and the binding will remain in the marketplace database. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
@@ -1091,32 +652,11 @@ provisions.
 
 The request provides these query string parameters as useful hints for brokers.
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Query-String Field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>service_id*</td>
-  <td>string</td>
-  <td>ID of the service from the catalog.</td>
-</tr>
-<tr>
-  <td>plan_id*</td>
-  <td>string</td>
-  <td>ID of the plan from the catalog.</td>
-</tr>
-<tr>
-  <td>accepts_incomplete</td>
-  <td>boolean</td>
-  <td>A value of true indicates that both the marketplace and the requesting client support asynchronous deprovisioning. If this parameter is not included in the request, and the broker can only deprovision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.</td>
-</tr>
-</tbody>
-</table>
+| Query-String Field | Type | Description |
+|---|---|---|
+| service_id* | string | ID of the service from the catalog. |
+| plan_id* | string | ID of the plan from the catalog. |
+| accepts_incomplete  | boolean | A value of true indicates that both the marketplace and the requesting client support asynchronous deprovisioning. If this parameter is not included in the request, and the broker can only deprovision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below. |
 
 \* Query parameters with an asterisk are required.
 
@@ -1128,32 +668,12 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?se
 
 ### Response ###
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Status Code</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>200 OK</td>
-  <td>Service instance was deleted. The expected response body is <code>{}</code>.</td>
-</tr>
-<tr>
-  <td>202 Accepted</td>
-  <td>Service instance deletion is in progress. This triggers the marketplace to poll the <a href="#polling">Service Instance Last Operation Endpoint</a> for operation status.</td>
-</tr>
-<tr>
-  <td>410 Gone</td>
-  <td>Should be returned if the service instance does not exist. The expected response body is <code>{}</code>.</td>
-</tr>
-<tr>
-  <td>422 Unprocessable Entity</td>
-  <td>Should be returned if the broker only supports asynchronous deprovisioning for the requested plan and the request did not include <code>?accepts_incomplete=true</code>. The expected response body is: <code>{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }</code>, as described below.</td>
-</tr>
-</tbody>
-</table>
+| Status Code | Description |
+|---|---|
+| 200 OK | Service instance was deleted. The expected response body is <code>{}</code>. |
+| 202 Accepted | Service instance deletion is in progress. This triggers the marketplace to poll the [Service Instance Last Operation Endpoint](#polling) for operation status.  |
+| 410 Gone | Should be returned if the service instance does not exist. The expected response body is <code>{}</code>.  |
+| 422 Unprocessable Entity | Should be returned if the broker only supports asynchronous deprovisioning for the requested plan and the request did not include <code>?accepts_incomplete=true</code>. The expected response body is: <code>{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }</code>, as described below.  |
 
 Responses with any other status code will be interpreted as a failure and the service instance will remain in the marketplace database. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
@@ -1163,23 +683,13 @@ All response bodies must be a valid JSON Object (`{}`). This is for future compa
 
 For success responses, the following fields are supported. Others will be ignored. For error responses, see [Broker Errors](#broker-errors).
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Response field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>operation</td>
-  <td>string</td>
-  <td>For asynchronous responses, service brokers may return an identifier representing the operation. The value of this field should be provided by the broker client with requests to the <a href="#polling">Last Operation</a> endpoint in a URL encoded query parameter.</td>
-</tr>
-</tboby>
-</table>
+
+|  Response field | Type | Description |
+|---|---|---|
+| operation  | string  | For asynchronous responses, service brokers may return an identifier representing the operation. The value of this field should be provided by the broker client with requests to the [Last Operation](#polling) endpoint in a URL encoded query parameter. |
+
 \* Fields with an asterisk are required.
+
 <pre class="terminal">
 {
  "operation": "task_10"
@@ -1200,23 +710,9 @@ All response bodies must be a valid JSON Object (`{}`). This is for future compa
 
 For error responses, the following fields are valid. Others will be ignored. If an empty JSON object is returned in the body `{}`, a generic message containing the HTTP response code returned by the broker will be displayed to the requester.
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Response Field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>description</td>
-  <td>string</td>
-  <td>A meaningful error message explaining why the request failed.
-</td>
-</tr>
-</tbody>
-</table>
+| Response Field | Type | Description |
+|---|---|---|
+| description | string |  A meaningful error message explaining why the request failed. |
 
 <pre class="terminal">
 {
@@ -1234,61 +730,16 @@ To mitigate orphan instances and bindings, the marketplace should attempt to del
 
 Platforms should initiate orphan mitigation in the following scenarios:
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Status code of broker response</th>
-  <th>Platform interpretation of response</th>
-  <th>Platform initiates orphan mitigation?</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>200</td>
-  <td>Success</td>
-  <td>No</td>
-</tr>
-<tr>
-  <td>200 with malformed response</td>
-  <td>Failure</td>
-  <td>No</td>
-</tr>
-<tr>
-  <td>201</td>
-  <td>Success</td>
-  <td>No</td>
-</tr>
-<tr>
-  <td>201 with malformed response</td>
-  <td>Failure</td>
-  <td>Yes</td>
-</tr>
-<tr>
-  <td>All other 2xx</td>
-  <td>Failure</td>
-  <td>Yes</td>
-</tr>
-<tr>
-  <td>408</td>
-  <td>Failure due to timeout</td>
-  <td>Yes</td>
-</tr>
-<tr>
-  <td>All other 4xx</td>
-  <td>Broker rejected request</td>
-  <td>No</td>
-</tr>
-<tr>
-  <td>5xx</td>
-  <td>Broker error</td>
-  <td>Yes</td>
-</tr>
-<tr>
-  <td>Timeout</td>
-  <td>Failure</td>
-  <td>Yes</td>
-</tr>
-</tbody>
-</table>
+| Status code of broker response | Platform interpretation of response | Platform initiates orphan mitigation? |
+|---|---|---|
+| 200 | Success | No |
+| 200 with malformed response |  Failure | No |
+| 201 | Success | No |
+| 201 with malformed response | Failure | Yes |
+| All other 2xx | Failure | Yes |
+| 408 | Failure due to timeout | Yes |
+| All other 4xx | Broker rejected request | No |
+| 5xx | Broker error | Yes |
+| Timeout | Failure | Yes |
 
 If the platform marketplace encounters an internal error provisioning an instance or binding (for example, saving to the database fails), then it should at least send a single delete or unbind request to the service broker to prevent creation of an orphan.
