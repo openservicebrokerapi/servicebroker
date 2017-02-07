@@ -2,7 +2,7 @@
 
 This repo contains the Open Service Broker API specification.
 
-The specification can be found [here](spec.md).
+The specification can be found [here](_spec.md).
 
 ## Communications
 
