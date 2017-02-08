@@ -1,4 +1,3 @@
-
 #Table of Contents#
   - [API Release Notes](#release-notes)
   - [Changes](#changes)
@@ -22,10 +21,6 @@
   - [Deprovisioning](#deprovisioning)
   - [Broker Errors](#broker-errors)
   - [Orphans](#orphans)
-
-<div id="release-notes"/>
-##API Release Notes##
-[Service Broker API Release Notes](release-notes.html)
 
 <div id="changes"/> 
 ## Changes ##

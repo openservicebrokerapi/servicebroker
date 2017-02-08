@@ -1,8 +1,7 @@
 ![Open Service Broker API](https://www.openservicebrokerapi.org/wp-content/uploads/2016/12/osbapi_logo_concept3_wtm.png)
 
-This repo contains the Open Service Broker API specification.
-
-The specification can be found [here](_spec.md).
+[The Open Service Broker API specification](_spec.md)
+[Release Notes for past versions](_release_notes.md)
 
 ## Communications
 
