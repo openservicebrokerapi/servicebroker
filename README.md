@@ -1,6 +1,7 @@
 ![Open Service Broker API](https://www.openservicebrokerapi.org/wp-content/uploads/2016/12/osbapi_logo_concept3_wtm.png)
 
 [The Open Service Broker API specification](_spec.md)
+
 [Release Notes for past versions](_release-notes.md)
 
 ## Communications
