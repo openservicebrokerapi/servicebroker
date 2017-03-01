@@ -5,7 +5,7 @@ reset_on_push: true
 signed_off_by:
   required: false
 reviewers:
-  required: 1
+  required: 4
   members:
     - duglin
     - bmelville
