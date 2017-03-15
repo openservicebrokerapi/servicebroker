@@ -158,7 +158,6 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
     "description": "fake service",
     "tags": ["no-sql", "relational"],
     "requires": ["route_forwarding"],
-    "max_db_per_node": 5,
     "bindable": true,
     "metadata": {
       "provider": {
