@@ -1,5 +1,4 @@
 # Table of Contents
-  - [API Release Notes](#release-notes)
   - [Changes](#changes)
     - [Change Policy](#change-policy)
     - [Changes Since v2.10](#since-v2.10)
