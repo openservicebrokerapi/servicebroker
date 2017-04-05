@@ -122,7 +122,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 | tags  |  array-of-strings | Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp.  |
 |  requires | array-of-strings  | A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are <code>syslog\_drain</code>, <code>route\_forwarding</code> and <code>volume\_mount</code>.  |
 | bindable*  | boolean  | Specifies whether instances of the service can be bound to applications. This specifies the default for all plans of this service. Plans can override this field (see [Plan Object](#PObject)).  |
-| metadata  |  object | A list of metadata for a service offering.  |
+| metadata  |  JSON object | An opaque object of metadata for a service offering. Controller treats this as a blob. Note that there are (conventions)[https://docs.cloudfoundry.org/services/catalog-metadata.html] in existing brokers and controllers for fields that aid in the display of catalog data. |
 | [dashboard_client](#DObject)  |  object |  Contains the data necessary to activate the Dashboard SSO feature for this service |
 | plan\_updateable  | boolean  |  Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute <code>plan\_updatable</code> to <code>plan\_updateable</code> was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility.  |
 | [plans*](#PObject) | array-of-objects | A list of plans for this service, schema is defined below.|  |
@@ -143,7 +143,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 | id*  | string  | An identifier used to correlate this plan in future requests to the broker. This must be globally unique within a platform marketplace. Using a GUID is recommended.  |
 | name*  | string  | The CLI-friendly name of the plan. Must be unique within the service. All lowercase, no spaces.  |
 | description*  | string  | A short description of the plan.  |
-|  metadata | object  | A list of metadata for a service plan.  |
+|  metadata | JSON object  | An opaque object of metadata for a service plan. Controller treats this as a blob. Note that there are (conventions)[https://docs.cloudfoundry.org/services/catalog-metadata.html] in existing brokers and controllers for fields that aid in the display of catalog data. |
 | free  | boolean  | When false, instances of this plan have a cost. The default is true  |
 |  bindable | boolean  |  Specifies whether instances of the service plan can be bound to applications. This field is optional. If specified, this takes precedence over the <tt>bindable</tt> attribute of the service. If not specified, the default is derived from the service. |
 
@@ -197,13 +197,11 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
                "unit":"1GB of messages over 20GB"
             }
          ],
-        "bullets": [{
-            "content": "Shared fake server"
-          }, {
-            "content": "5 TB storage"
-          }, {
-            "content": "40 concurrent connections"
-        }]
+        "bullets": [
+            "Shared fake server",
+            "5 TB storage",
+            "40 concurrent connections"
+        ],
       }
     }, {
       "name": "fake-plan-2",
@@ -225,9 +223,9 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
                "unit":"1GB of messages over 20GB"
             }
          ],
-        "bullets": [{
-          "content": "40 concurrent connections"
-        }]
+        "bullets": [
+          "40 concurrent connections"
+        ]
       }
     }]
   }]
@@ -358,7 +356,7 @@ The `:instance_id` of a service instance is provided by the platform. This ID wi
 |---|---|---|
 | service_id*  | string  | The ID of the service (from the catalog). Must be globally unique.  |
 | plan_id*  | string  | The ID of the plan (from the catalog) for which the service instance has been requested. Must be unique to a service.  |
-|  parameters |  JSON object | Configuration options for the service instance.  |
+|  parameters |  JSON object | Configuration options for the service instance. Controller treats this as a blob. Note that there are (conventions)[https://docs.cloudfoundry.org/services/catalog-metadata.html] in existing brokers and controllers for fields that aid in the display of catalog data. |
 |  accepts_incomplete | boolean  | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.  |
 | organization_guid*  | string  | The platform GUID for the organization under which the service is to be provisioned. Although most brokers will not use this field, it may be helpful for executing operations on a user's behalf.  |
 |  space_guid* |  string |  The identifier for the project space within the platform organization. Although most brokers will not use this field, it may be helpful for executing operations on a user's behalf. |
@@ -447,7 +445,7 @@ Not all permutations of plan changes are expected to be supported. For example, 
 |---|---|---|
 | service\_id*  | string  | The ID of the service (from the catalog). Must be globally unique.  |
 | plan\_id  | string  | The ID of the plan (from the catalog) for which the service instance has been requested. Must be unique to a service.  |
-| parameters  | JSON object  | Configuration options for the service instance.  |
+| parameters  | JSON object  | Configuration options for the service instance. An opaque object, controller treats this as a blob. |
 | accepts\_incomplete  |  boolean | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.  |
 | previous\_values  | object  |  Information about the instance prior to the update. |
 | previous\_values.service_id  | string  | ID of the service for the instance.  |
@@ -572,7 +570,7 @@ the resource it creates.
 | plan_id*  | string  | ID of the plan from the catalog.  |
 | app_guid  | string  | Deprecated in favor of <code>bind\_resource.app\_guid</code>. GUID of an application associated with the binding to be created.  |
 | bind_resource  | JSON object  | A JSON object that contains data for platform resources associated with the binding to be created. Current valid values include <code>app\_guid</code> for [credentials](#types-of-binding) and <code>route</code> for [route services](#route_services).  |
-| parameters | JSON object  |  Configuration options for the service binding. |   |
+| parameters | JSON object  |  Configuration options for the service binding. An opaque object, controller treats this as a blob.  |   |
 
 \* Fields with an asterisk are required.
 
