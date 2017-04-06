@@ -1,4 +1,4 @@
-#Table of Contents#
+# Table of Contents
   - [API Release Notes](#release-notes)
   - [Changes](#changes)
     - [Change Policy](#change-policy)
@@ -22,11 +22,11 @@
   - [Broker Errors](#broker-errors)
   - [Orphans](#orphans)
 
+## Changes
 <div id="changes"/> 
-## Changes ##
 
+### Change Policy 
 <div id="change-policy"/>
-###Change Policy 
 
 * Existing endpoints and fields will not be removed or renamed.
 * New optional endpoints, or new HTTP methods for existing endpoints, may be
@@ -36,12 +36,12 @@ These fields must be optional and should be ignored by clients and servers
 that do not understand them.
 
 <div id="since-v2.10"/>
-##Changes Since v2.10 ##
+## Changes Since v2.10
 
 * Add <tt>bindable</tt> field to [Plan Object](#PObject) to allow services to have both bindable and non-bindable plans.
 
 <div id="api-overview"/> 
-##API Overview 
+## API Overview 
 
 The Service Broker API defines an HTTP interface between the services marketplace of a platform and service brokers.
 
