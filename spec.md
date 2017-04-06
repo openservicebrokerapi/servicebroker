@@ -356,7 +356,7 @@ The `:instance_id` of a service instance is provided by the platform. This ID wi
 |---|---|---|
 | service_id*  | string  | The ID of the service (from the catalog). Must be globally unique.  |
 | plan_id*  | string  | The ID of the plan (from the catalog) for which the service instance has been requested. Must be unique to a service.  |
-|  parameters |  JSON object | Configuration options for the service instance. Controller treats this as a blob. Note that there are [conventions](https://docs.cloudfoundry.org/services/catalog-metadata.html) in existing brokers and controllers for fields that aid in the display of catalog data. Brokers must validate these parameters to ensure that they are valid. |
+|  parameters |  JSON object | Configuration options for the service instance. Controller treats this as a blob. Note that there are [conventions](https://docs.cloudfoundry.org/services/catalog-metadata.html) in existing brokers and controllers for fields that aid in the display of catalog data. Brokers should ensure that the client has provided valid configuration parameters and values for the operation. |
 |  accepts_incomplete | boolean  | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.  |
 | organization_guid*  | string  | The platform GUID for the organization under which the service is to be provisioned. Although most brokers will not use this field, it may be helpful for executing operations on a user's behalf.  |
 |  space_guid* |  string |  The identifier for the project space within the platform organization. Although most brokers will not use this field, it may be helpful for executing operations on a user's behalf. |
@@ -445,7 +445,7 @@ Not all permutations of plan changes are expected to be supported. For example, 
 |---|---|---|
 | service\_id*  | string  | The ID of the service (from the catalog). Must be globally unique.  |
 | plan\_id  | string  | The ID of the plan (from the catalog) for which the service instance has been requested. Must be unique to a service.  |
-| parameters  | JSON object  | Configuration options for the service instance. An opaque object, controller treats this as a blob. Brokers must validate these parameters to ensure that they are valid. |
+| parameters  | JSON object  | Configuration options for the service instance. An opaque object, controller treats this as a blob. Brokers should ensure that the client has provided valid configuration parameters and values for the operation. |
 | accepts\_incomplete  |  boolean | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.  |
 | previous\_values  | object  |  Information about the instance prior to the update. |
 | previous\_values.service_id  | string  | ID of the service for the instance.  |
@@ -570,7 +570,7 @@ the resource it creates.
 | plan_id*  | string  | ID of the plan from the catalog.  |
 | app_guid  | string  | Deprecated in favor of <code>bind\_resource.app\_guid</code>. GUID of an application associated with the binding to be created.  |
 | bind_resource  | JSON object  | A JSON object that contains data for platform resources associated with the binding to be created. Current valid values include <code>app\_guid</code> for [credentials](#types-of-binding) and <code>route</code> for [route services](#route_services).  |
-| parameters | JSON object  |  Configuration options for the service binding. An opaque object, controller treats this as a blob. Brokers must validate these parameters to ensure that they are valid. |   |
+| parameters | JSON object  |  Configuration options for the service binding. An opaque object, controller treats this as a blob. Brokers should ensure that the client has provided valid configuration parameters and values for the operation. |   |
 
 \* Fields with an asterisk are required.
 
