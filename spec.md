@@ -41,7 +41,7 @@ that do not understand them.
 * Add <tt>bindable</tt> field to [Plan Object](#PObject) to allow services to have both bindable and non-bindable plans.
 
 <div id="api-overview"/> 
-## API Overview 
+## API Overview
 
 The Service Broker API defines an HTTP interface between the services marketplace of a platform and service brokers.
 
