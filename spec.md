@@ -1,20 +1,19 @@
-#Table of Contents#
-  - [API Release Notes](#release-notes)
+# Table of Contents
   - [Changes](#changes)
     - [Change Policy](#change-policy)
-    - [Changes Since v2.10](#since-v2.10)
+    - [Changes Since v2.10](#changes-since-v210)
   - [API Overview](#api-overview)
-  - [API Version Header](#version-header)
+  - [API Version Header](#api-version-header)
   - [Authentication](#authentication)
-  - [Catalog Management](#catalog-mgmt)
-    - [Adding a Broker to the Platform](#adding-broker-platform)
-  - [Synchronous and Asynchronous Operations](#synchronous-asynchronous)
+  - [Catalog Management](#catalog-management)
+    - [Adding a Broker to the Platform](#adding-a-broker-to-the-platform)
+  - [Synchronous and Asynchronous Operations](#synchronous-and-asynchronous-operations)
     - [Synchronous Operations](#synchronous-operations)
     - [Asynchronous Operations](#asynchronous-operations)
-  - [Polling Last Operation](#polling)
+  - [Polling Last Operation](#polling-last-operation)
     - [Polling Interval and Duration](#polling-interval-and-duration)
   - [Provisioning](#provisioning)
-  - [Updating a Service Instance](#updating_service_instance)
+  - [Updating a Service Instance](#updating-a-service-instance)
   - [Binding](#binding)
     - [Types of Binding](#types-of-binding)
   - [Unbinding](#unbinding)
@@ -22,11 +21,9 @@
   - [Broker Errors](#broker-errors)
   - [Orphans](#orphans)
 
-<div id="changes"/> 
-## Changes ##
+## Changes
 
-<div id="change-policy"/>
-###Change Policy 
+### Change Policy 
 
 * Existing endpoints and fields will not be removed or renamed.
 * New optional endpoints, or new HTTP methods for existing endpoints, may be
@@ -35,13 +32,11 @@ added to enable support for new features.
 These fields must be optional and should be ignored by clients and servers
 that do not understand them.
 
-<div id="since-v2.10"/>
-##Changes Since v2.10 ##
+## Changes Since v2.10
 
 * Add <tt>bindable</tt> field to [Plan Object](#PObject) to allow services to have both bindable and non-bindable plans.
 
-<div id="api-overview"/> 
-##API Overview 
+## API Overview 
 
 The Service Broker API defines an HTTP interface between the services marketplace of a platform and service brokers.
 
@@ -53,7 +48,6 @@ What a binding represents may also vary by service. In general creation of a bin
 
 A platform marketplace may expose services from one or many service brokers, and an individual service broker may support one or many platform marketplaces using different URL prefixes and credentials.
 
-<div id="version-header"/>  
 ## API Version Header
 
 Requests from the platform to the service broker must contain a header that declares the version number of the Service Broker API that the marketplace will use:
@@ -64,13 +58,11 @@ The version numbers are in the format `MAJOR.MINOR`, using semantic versioning s
 
 This header allows brokers to reject requests from marketplaces for versions they do not support. While minor API revisions will always be additive, it is possible that brokers depend on a feature from a newer version of the API that is supported by the platform. In this scenario the broker may reject the request with `412 Precondition Failed` and provide a message that informs the operator of the required API version.
 
-<div id="authentication"/> 
 ## Authentication
 
 The marketplace must authenticate with the service broker using HTTP
 basic authentication (the `Authorization:` header) on every request. The broker is responsible for validating the username and password and returning a `401 Unauthorized` message if credentials are invalid. It is recommended that brokers support secure communication from platform marketplaces over TLS.
 
-<div id="catalog-mgmt"/>
 ## Catalog Management 
 
 The first endpoint that a broker must implement is the service catalog.
@@ -122,7 +114,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 | tags  |  array-of-strings | Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp.  |
 |  requires | array-of-strings  | A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are <code>syslog\_drain</code>, <code>route\_forwarding</code> and <code>volume\_mount</code>.  |
 | bindable*  | boolean  | Specifies whether instances of the service can be bound to applications. This specifies the default for all plans of this service. Plans can override this field (see [Plan Object](#PObject)).  |
-| metadata  |  object | A list of metadata for a service offering.  |
+| metadata  |  JSON object | An opaque object of metadata for a service offering. Controller treats this as a blob. Note that there are (conventions)[https://docs.cloudfoundry.org/services/catalog-metadata.html] in existing brokers and controllers for fields that aid in the display of catalog data. |
 | [dashboard_client](#DObject)  |  object |  Contains the data necessary to activate the Dashboard SSO feature for this service |
 | plan\_updateable  | boolean  |  Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute <code>plan\_updatable</code> to <code>plan\_updateable</code> was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility.  |
 | [plans*](#PObject) | array-of-objects | A list of plans for this service, schema is defined below.|  |
@@ -143,7 +135,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 | id*  | string  | An identifier used to correlate this plan in future requests to the broker. This must be globally unique within a platform marketplace. Using a GUID is recommended.  |
 | name*  | string  | The CLI-friendly name of the plan. Must be unique within the service. All lowercase, no spaces.  |
 | description*  | string  | A short description of the plan.  |
-|  metadata | object  | A list of metadata for a service plan.  |
+|  metadata | JSON object  | An opaque object of metadata for a service plan. Controller treats this as a blob. Note that there are (conventions)[https://docs.cloudfoundry.org/services/catalog-metadata.html] in existing brokers and controllers for fields that aid in the display of catalog data. |
 | free  | boolean  | When false, instances of this plan have a cost. The default is true  |
 |  bindable | boolean  |  Specifies whether instances of the service plan can be bound to applications. This field is optional. If specified, this takes precedence over the <tt>bindable</tt> attribute of the service. If not specified, the default is derived from the service. |
 
@@ -158,7 +150,6 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
     "description": "fake service",
     "tags": ["no-sql", "relational"],
     "requires": ["route_forwarding"],
-    "max_db_per_node": 5,
     "bindable": true,
     "metadata": {
       "provider": {
@@ -197,13 +188,11 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
                "unit":"1GB of messages over 20GB"
             }
          ],
-        "bullets": [{
-            "content": "Shared fake server"
-          }, {
-            "content": "5 TB storage"
-          }, {
-            "content": "40 concurrent connections"
-        }]
+        "bullets": [
+            "Shared fake server",
+            "5 TB storage",
+            "40 concurrent connections"
+        ],
       }
     }, {
       "name": "fake-plan-2",
@@ -225,9 +214,9 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
                "unit":"1GB of messages over 20GB"
             }
          ],
-        "bullets": [{
-          "content": "40 concurrent connections"
-        }]
+        "bullets": [
+          "40 concurrent connections"
+        ]
       }
     }]
   }]
@@ -235,12 +224,10 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 </pre>
 
 
-<div id="adding-broker-platform"/>
 ### Adding a Broker to the Platform 
 
 After implementing the first endpoint `GET /v2/catalog` documented [above](#catalog-mgmt), you must register the service broker with your platform to make your services and plans available to end users.
 
-<div id="synchronous-asynchronous"</a>
 ## Synchronous and Asynchronous Operations 
 
 Broker clients expect prompt responses to all API requests in order to provide users with fast feedback. Service broker authors should implement their brokers to respond promptly to all requests but must decide whether to implement synchronous or asynchronous responses. Brokers that can guarantee completion of the requested operation with the response should return the synchronous response. Brokers that cannot guarantee completion of the operation with the response should implement the asynchronous response.
@@ -249,14 +236,12 @@ Providing a synchronous response for a provision, update, or bind operation befo
 
 Support for synchronous or asynchronous responses may vary by service offering, even by service plan.
 
-<div id="synchronous-operations"/>
 ### Synchronous Operations 
 
 To execute a request synchronously, the broker need only return the usual status codes: `201 CREATED` for provision and bind, and `200 OK` for update, unbind, and deprovision.
 
 Brokers that support sychronous responses for provision, update, and delete can ignore the `accepts_incomplete=true` query parameter if it is provided by the client.
 
-<div id="asynchronous-operations"/>
 ### Asynchronous Operations 
 
 <p class='note'><strong>Note:</strong> Asynchronous operations are currently supported only for provision, update, and deprovision.</p>
@@ -278,7 +263,6 @@ An asynchronous response triggers the platform marketplace to poll the endpoint 
 
 The marketplace must ensure that service brokers do not receive requests for an instance while an asynchronous operation is in progress. For example, if a broker is in the process of provisioning an instance asynchronously, the marketplace must not allow any update, bind, unbind, or deprovision requests to be made through the platform. A user who attempts to perform one of these actions while an operation is already in progress must receive an HTTP 400 response with the error message: `Another operation for this service instance is in progress`.
 
-<div id="polling"/>
 ## Polling Last Operation 
 
 When a broker returns status code `202 ACCEPTED` for [provision](#provisioning), [update](#updating_service_instance), or [deprovision](#deprovisioning), the platform will begin polling the `/v2/service_instances/:guid/last_operation` endpoint to obtain the state of the last requested operation. The broker response must contain the field `state` and an optional field `description`.
@@ -336,12 +320,10 @@ For success responses, the following fields are valid.
 }
 </pre>
 
-<div id="polling-interval-and-duration"/>
 ### Polling Interval and Duration    
 
 The frequency and maximum duration of polling may vary by platform client. If a platform has a max polling duration and this limit is reached, the platform will cease polling and the operation state will be considered `failed`.
 
-<div id="provisioning"/> 
 ## Provisioning
 
 When the broker receives a provision request from the platform, it should take whatever action is necessary to create a new resource. What provisioning represents varies by service and plan, although there are several common use cases. For a MySQL service, provisioning could result in an empty dedicated database server running on its own VM or an empty schema on a shared database server. For non-data services, provisioning could just mean an account on an multi-tenant SaaS application.
@@ -430,7 +412,6 @@ For success responses, a broker may return the following fields. For error respo
 }
 </pre>
 
-<div id="updating_service_instance"/>
 ## Updating a Service Instance 
 
 By implementing this endpoint, service broker authors can enable users to modify two attributes of an existing service instance: the service plan and parameters. By changing the service plan, users can upgrade or downgrade their service instance to other plans. By modifying properties, users can change configuration options that are specific to a service or plan.
@@ -530,14 +511,12 @@ For success responses, a broker may return the following field. Others will be i
 </pre>
 
 
-<div id="binding"/>
 ## Binding 
 
 If `bindable:true` is declared for a service or plan in the [Catalog](#catalog-mgmt) endpoint, broker clients may request generation of a service binding. 
 
 <p class="note"><strong>Note</strong>: Not all services must be bindable --- some deliver value just from being provisioned. Brokers that offer services that are bindable should declare them as such using <code>bindable: true</code> in the <a href="#catalog-mgmt">Catalog</a>. Brokers that do not offer any bindable services do not need to implement the endpoint for bind requests.</p>
 
-<div id="types-of-binding"/>
 ### Types of Binding 
 
 #### Credentials ####
@@ -550,7 +529,6 @@ There are a class of service offerings that provide aggregation, indexing, and a
 
 The `requires` field in the [Catalog](#catalog-mgmt) endpoint enables a platform marketplace to validate a response for create binding that includes a `syslog_drain_url`. Platform marketplaces should consider a broker's response invalid if it includes a `syslog_drain_url` and `"requires":["syslog_drain"]` is not present in the [Catalog](#catalog-mgmt) endpoint.
 
-<div id= "route_services"/>
 #### Route Services 
 
 There are a class of service offerings that intermediate requests to applications, performing functions such as rate limiting or authorization. To configure a service instance with behavior specific to an application's routable address, a broker client may send the address along with the request to create a binding using `"bind_resource":{"route":"some-address.com"}`.
@@ -581,7 +559,7 @@ the resource it creates.
 | plan_id*  | string  | ID of the plan from the catalog.  |
 | app_guid  | string  | Deprecated in favor of <code>bind\_resource.app\_guid</code>. GUID of an application associated with the binding to be created.  |
 | bind_resource  | JSON object  | A JSON object that contains data for platform resources associated with the binding to be created. Current valid values include <code>app\_guid</code> for [credentials](#types-of-binding) and <code>route</code> for [route services](#route_services).  |
-| parameters | JSON object  |  Configuration options for the service binding. |   |
+| parameters | JSON object  |  Configuration options for the service binding. An opaque object, controller treats this as a blob.  |   |
 
 \* Fields with an asterisk are required.
 
@@ -652,7 +630,6 @@ For success responses, the following fields are supported. Others will be ignore
     }
 </pre>
 
-<div id="unbinding"/>
 ## Unbinding 
 
 <p class="note"><strong>Note</strong>: Brokers that do not provide any bindable services or plans do not need to implement this endpoint.</p>
@@ -698,7 +675,6 @@ All response bodies must be a valid JSON Object (`{}`). This is for future compa
 
 For a success response, the expected response body is `{}`.
 
-<div id="deprovisioning"/>
 ## Deprovisioning 
 
 When a broker receives a deprovision request from the marketplace, it should
@@ -761,7 +737,6 @@ For success responses, the following fields are supported. Others will be ignore
 }
 </pre>
 
-<div id="broker-errors"/>
 ## Broker Errors 
 
 ### Response ###
@@ -786,7 +761,6 @@ For error responses, the following fields are valid. Others will be ignored. If 
 }
 </pre>
 
-<div id="orphans"/> 
 ## Orphans
 
 The platform marketplace is the source of truth for service instances and bindings. Service brokers are expected to have successfully provisioned all the instances and bindings that the marketplace knows about, and none that it doesn't.
