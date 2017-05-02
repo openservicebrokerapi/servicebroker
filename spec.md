@@ -400,7 +400,7 @@ For success responses, a broker may return the following fields. For error respo
 
 | Response field  |  Type | Description  |
 |---|---|---|
-|  dashboard_url | string  |  The URL of a web-based management user interface for the service instance; we refer to this as a service dashboard. The URL should contain enough information for the dashboard to identify the resource being accessed (<code>9189kdfsk0vfnku</code> in the example below). |
+|  dashboard_url | string  |  The URL of a web-based management user interface for the service instance; we refer to this as a service dashboard. The URL should contain enough information for the dashboard to identify the resource being accessed (<code>9189kdfsk0vfnku</code> in the example below).  Note: a broker that wishes to return `dashboard_url` for a service instance must return it with the initial response to the provision request, even if the service is provisioned asynchronously. |
 |  operation |  string | For asynchronous responses, service brokers may return an identifier representing the operation. The value of this field should be provided by the broker client with requests to the [Last Operation](#polling) endpoint in a URL encoded query parameter.  |
 
 \* Fields with an asterisk are required.
