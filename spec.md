@@ -335,15 +335,20 @@ When the broker receives a provision request from the platform, it should take w
 
 The `:instance_id` of a service instance is provided by the platform. This ID will be used for future requests (bind and deprovision), so the broker must use it to correlate the resource it creates.
 
+#### Parameters ####
+| Parameter name  | Type  |  Description |
+|---|---|---|
+|  accepts_incomplete | boolean  | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.  |
+
+
 ##### Body #####
 | Request field  | Type  |  Description |
 |---|---|---|
 | service_id*  | string  | The ID of the service (from the catalog). Must be globally unique.  |
 | plan_id*  | string  | The ID of the plan (from the catalog) for which the service instance has been requested. Must be unique to a service.  |
-|  parameters |  JSON object | Configuration options for the service instance. Controller treats this as a blob. Note that there are (conventions)[https://docs.cloudfoundry.org/services/catalog-metadata.html] in existing brokers and controllers for fields that aid in the display of catalog data. |
-|  accepts_incomplete | boolean  | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.  |
 | organization_guid*  | string  | The platform GUID for the organization under which the service is to be provisioned. Although most brokers will not use this field, it may be helpful for executing operations on a user's behalf.  |
 |  space_guid* |  string |  The identifier for the project space within the platform organization. Although most brokers will not use this field, it may be helpful for executing operations on a user's behalf. |
+|  parameters |  JSON object | Configuration options for the service instance.  |
 
 \* Fields with an asterisk are required.
 
@@ -362,7 +367,7 @@ The `:instance_id` of a service instance is provided by the platform. This ID wi
 
 ##### cURL #####
 <pre class="terminal">
-$ curl http://username:password@broker-url/v2/service_instances/:instance_id -d '{
+$ curl http://username:password@broker-url/v2/service_instances/:instance_id?accepts_incomplete=true -d '{
   "service_id": "service-guid-here",
   "plan_id": "plan-guid-here",
   "organization_guid": "org-guid-here",
@@ -422,14 +427,18 @@ Not all permutations of plan changes are expected to be supported. For example, 
 
 `:instance_id` is the global unique ID of a previously-provisioned service instance.
 
+#### Parameters ####
+| Parameter name | Type | Description |
+|---|---|---|
+| accepts\_incomplete | boolean | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.  |
+
 ##### Body #####
 
 | Request Field  | Type  |  Description |
 |---|---|---|
 | service\_id*  | string  | The ID of the service (from the catalog). Must be globally unique.  |
 | plan\_id  | string  | The ID of the plan (from the catalog) for which the service instance has been requested. Must be unique to a service.  |
-| parameters  | JSON object  | Configuration options for the service instance. An opaque object, controller treats this as a blob. |
-| accepts\_incomplete  |  boolean | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.  |
+| parameters  | JSON object  | Configuration options for the service instance.  |
 | previous\_values  | object  |  Information about the instance prior to the update. |
 | previous\_values.service_id  | string  | ID of the service for the instance.  |
 | previous\_values.plan_id  |  string | ID of the plan prior to the update.  |
@@ -457,7 +466,7 @@ Not all permutations of plan changes are expected to be supported. For example, 
 
 ##### cURL #####
 <pre class="terminal">
-$ curl http://username:password@broker-url/v2/service_instances/:instance_id -d '{
+$ curl http://username:password@broker-url/v2/service_instances/:instance_id?accepts_incomplete=true -d '{
   "service_id": "service-guid-here",
   "plan_id": "plan-guid-here",
   "parameters": {
@@ -694,8 +703,8 @@ The request provides these query string parameters as useful hints for brokers.
 
 ##### cURL #####
 <pre class="terminal">
-$ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?service_id=
-    service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.11"
+$ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?accepts_incomplete=true
+  &service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.11"
 </pre>
 
 ### Response ###
