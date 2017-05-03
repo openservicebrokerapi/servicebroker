@@ -291,7 +291,7 @@ The request provides these query string parameters as useful hints for brokers.
 |---|---|---|
 | service_id  |  string | ID of the service from the catalog.  |
 | plan_id  | string  | ID of the plan from the catalog.  |
-| operation  |  string | A broker-provided identifier for the operation. When a value for <code>operation</code> is included with asynchronous responses for [Provision](#provisioning), [Update](#updating_service_instance), and [Deprovision](#deprovisioning) requests, the broker client SHOULD provide the same value using this query parameter as a URL-encoded string.  |
+| operation  |  string | A broker-provided identifier for the operation. When a value for <code>operation</code> is included with asynchronous responses for [Provision](#provisioning), [Update](#updating_service_instance), and [Deprovision](#deprovisioning) requests, the broker client MUST provide the same value using this query parameter as a URL-encoded string.  |
 
 <p class="note"><strong>Note:</strong> Although the request query parameters <code>service_id</code> and <code>plan_id</code> are not mandatory, the platform SHOULD include them on all <code>last_operation</code> requests it makes to service brokers.</p>
 
@@ -509,7 +509,7 @@ For success responses, a broker MUST return the following field. Others will be 
 
 | Response field  | Type  | Description  |
 |---|---|---|
-| operation  | string  |  For asynchronous responses, service brokers MAY return an identifier representing the operation. The value of this field SHOULD be provided by the broker client with requests to the [Last Operation](#polling) endpoint in a URL encoded query parameter. |
+| operation  | string  |  For asynchronous responses, service brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the broker client with requests to the [Last Operation](#polling) endpoint in a URL encoded query parameter. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -736,7 +736,7 @@ For success responses, the following fields are supported. Others will be ignore
 
 |  Response field | Type | Description |
 |---|---|---|
-| operation  | string  | For asynchronous responses, service brokers MAY return an identifier representing the operation. The value of this field SHOULD be provided by the broker client with requests to the [Last Operation](#polling) endpoint in a URL encoded query parameter. |
+| operation  | string  | For asynchronous responses, service brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the broker client with requests to the [Last Operation](#polling) endpoint in a URL encoded query parameter. |
 
 \* Fields with an asterisk are REQUIRED.
 
