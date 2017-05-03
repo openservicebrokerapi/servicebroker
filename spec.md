@@ -534,9 +534,16 @@ Credentials are a set of information used by an application or a user to utilize
 
 #### Log Drain ####
 
-There are a class of service offerings that provide aggregation, indexing, and analysis of log data. To utilize these services an application that generates logs needs information for the location to which it will stream logs. If a broker represents one of these services, it MAY return a `syslog_drain_url` in the response for a request to create a service binding, to which logs MUST be streamed.
+There are a class of service offerings that provide aggregation, indexing, and
+analysis of log data. To utilize these services an application that generates
+logs needs information for the location to which it will stream logs. A
+create binding response from one of these services MUST include a
+`syslog_drain_url`. Applications MUST use this URL when sending logs to the
+service.
 
-The `requires` field in the [Catalog](#catalog-mgmt) endpoint enables a platform marketplace to validate a response for create binding that includes a `syslog_drain_url`. Platform marketplaces can consider a broker's response invalid if it includes a `syslog_drain_url` and `"requires":["syslog_drain"]` is not present in the [Catalog](#catalog-mgmt) endpoint.
+Brokers MUST NOT include a `syslog_drain_url` in a create binding response
+if it did not include a `"requires":["syslog_drain"]` property in its
+[Catalog](#catalog-mgmt) endpoint.
 
 #### Route Services
 
@@ -546,11 +553,19 @@ Some platforms MAY support proxying of application requests to service instances
 
 The `requires` field in the [Catalog](#catalog-mgmt) endpoint enables a platform marketplace to validate requests to create bindings. A platform MAY reject requests to create bindings when a broker has declared `"requires":["route_forwarding"]` for a service in the catalog endpoint.
 
+Brokers MUST NOT include a `route_service_url` in a create binding response
+if it did not include a `"requires":["route_forwarding"]` property in its
+[Catalog](#catalog-mgmt) endpoint.
+
 #### Volume Services ####
 
-There are a class of services that provide network storage to applications via volume mounts in the application container. A service broker MUST return data needed for this configuration with `volume_mount` in response to the request to create a binding.
+There are a class of services that provide network storage to applications
+via volume mounts in the application container. A create binding response
+from one of these services MUST include a `volume_mount`.
 
-The `requires` field in the [Catalog](#catalog-mgmt) endpoint enables a platform marketplace to validate a response for create binding that includes a `volume_mounts`. Platform marketplaces can consider a broker's response invalid if it includes a `volume_mounts` and `"requires":["volume_mount"]` is not present in the [Catalog](#catalog-mgmt) endpoint.
+Brokers MUST NOT include a `volume_mounts` in a create binding response
+if it did not include a `"requires":["volume_mount"]` in its
+[Catalog](#catalog-mgmt) endpoint.
 
 ### Request ###
 
