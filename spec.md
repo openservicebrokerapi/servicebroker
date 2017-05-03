@@ -447,7 +447,7 @@ Not all permutations of plan changes are expected to be supported. For example, 
 |---|---|---|
 | service\_id*  | string  | The ID of the service (from the catalog). MUST be globally unique.  |
 | plan\_id  | string  | The ID of the plan (from the catalog) for which the service instance has been requested. MUST be unique to a service.  |
-| parameters  | JSON object  | Configuration options for the service instance. An opaque object, controller treats this as a blob. Brokers should ensure that the client has provided valid configuration parameters and values for the operation. |
+| parameters  | JSON object  | Configuration options for the service instance. An opaque object, controller treats this as a blob. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
 | previous\_values  | object  |  Information about the instance prior to the update. |
 | previous\_values.service_id  | string  | ID of the service for the instance.  |
 | previous\_values.plan_id  |  string | ID of the plan prior to the update.  |
@@ -568,7 +568,7 @@ the resource it creates.
 | plan_id*  | string  | ID of the plan from the catalog.  |
 | app_guid  | string  | Deprecated in favor of <code>bind\_resource.app\_guid</code>. GUID of an application associated with the binding to be created.  |
 | bind_resource  | JSON object  | A JSON object that contains data for platform resources associated with the binding to be created. Current valid values include <code>app\_guid</code> for [credentials](#types-of-binding) and <code>route</code> for [route services](#route_services).  |
-| parameters | JSON object  |  Configuration options for the service binding. An opaque object, controller treats this as a blob. Brokers should ensure that the client has provided valid configuration parameters and values for the operation. |   |
+| parameters | JSON object  |  Configuration options for the service binding. An opaque object, controller treats this as a blob. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |   |
 
 \* Fields with an asterisk are REQUIRED.
 
