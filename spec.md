@@ -201,7 +201,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
             "Shared fake server",
             "5 TB storage",
             "40 concurrent connections"
-        ],
+        ]
       }
     }, {
       "name": "fake-plan-2",
