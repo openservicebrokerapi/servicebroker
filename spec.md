@@ -109,8 +109,22 @@ This header allows brokers to reject requests from marketplaces for versions the
 
 ## Authentication
 
-The marketplace MUST authenticate with the service broker using HTTP
-basic authentication (the `Authorization:` header) on every request. The broker is responsible for validating the username and password and returning a `401 Unauthorized` message if credentials are invalid. It is RECOMMENDED that brokers support secure communication from platform marketplaces over TLS.
+While the communication between a platform and broker
+MAY be unsecure, it is RECOMMENDED that all communications between a
+platform and a broker are secured via TLS and authenticated.
+
+Unless there is some out of band communication and agreement between a
+platform and a service broker, the marketplace MUST authenticate with the
+service broker using HTTP basic authentication (the `Authorization:` header)
+on every request. This specification does not specify how platform and brokers
+agree on other methods of authentication.
+
+If authentication is used, the broker MUST authenticate the request using the
+predetermined authentication mechanism and MUST return a `401 Unauthorized`
+response if the authentication fails.
+
+Note: using an authentication mechanism that is agreed to via out of band
+communications could lead to interoperability issues with other platforms.
 
 ## Catalog Management
 
