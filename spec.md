@@ -9,6 +9,7 @@
   - [API Version Header](#api-version-header)
   - [Authentication](#authentication)
   - [URL Properties](#url-properties)
+  - [Originating Identity](#originating-identity)
   - [Catalog Management](#catalog-management)
     - [Adding a Broker to the Platform](#adding-a-broker-to-the-platform)
   - [Synchronous and Asynchronous Operations](#synchronous-and-asynchronous-operations)
@@ -148,6 +149,58 @@ If a character outside of the "Unreserved Characters" set is used, then
 it SHOULD be percent-encoded prior to being used as part of the HTTP request,
 per [RFC3986](https://tools.ietf.org/html/rfc3986#section-2.1).
 
+## Originating Identity
+
+Often a service broker will need to know the identity of the user that
+initiated the request from the platform. For example, this might be needed
+for auditing or authorization purposes. In order to facilitate this, the
+platform will need to provide this identification information to the broker
+on each request. Platforms MAY support this feature, and if they do, they
+MUST adhere to the following:
+- For any OSB API request that is the result of an action taken by
+  a platform's user, there MUST be an associated `OriginatingIdentity` header
+  on that HTTP request.
+- Any OSB API request that is not associated with an action from a platform's
+  user, such as the platform querying the marketplace, MAY
+  exclude the header from that HTTP request.
+- If present on a request, the `OriginatingIdentity` header MUST contain
+  the identify information for the platform's user that took the action
+  to cause the request to be sent.
+
+The format of the header MUST be:
+
+```
+X-Broker-API-Originating-Identity: platform value
+```
+
+`platform` MUST be a non-empty string indicating the platform from which
+the request is being sent. The specific value SHOULD match the values
+defined in the [profile](profile.md) document for the `context.platform`
+property. When `context` is sent as part of a message, this value MUST
+be the same as the `context.platform` value.
+
+`value` MUST be a Base64 encoded string. The string MUST be a serialized
+JSON object. The specific properties will be platform specific - see
+the [profile](profile.md) document for more information.
+
+For example:
+```
+X-Broker-API-Originating-Identity: cloudfoundry eyANCiAgInVzZXJfaWQiOiAiNjgzZWE3NDgtMzA5Mi00ZmY0LWI2NTYtMzljYWNjNGQ1MzYwIiwNCiAgInVzZXJfbmFtZSI6ICJqb2VAZXhhbXBsZS5jb20iDQp9
+```
+
+Where the `value`, when decoded, is:
+```
+{
+  "user_id": "683ea748-3092-4ff4-b656-39cacc4d5360"
+}
+```
+
+Note that not all messages sent to a broker are initiated by an end-user
+of the platform. For example, during orphan mitigation or during the
+querying of the broker's catalog, the platform might not have an end-user
+with which to associate the request, therefore in those cases the
+originating identity header would not be included in those messages.
+
 ## Catalog Management
 
 The first endpoint that a platform will interact with on the broker is the
@@ -183,6 +236,16 @@ Broker API.
 
 #### Route
 `GET /v2/catalog`
+
+#### Headers
+
+The following HTTP Headers are defined for this operation:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
+
+\* Headers with an asterisk are REQUIRED.
 
 #### cURL
 ```
@@ -496,6 +559,16 @@ The request provides these query string parameters as useful hints for brokers.
 
 Note: Although the request query parameters `service_id` and `plan_id` are not mandatory, the platform SHOULD include them on all `last_operation` requests it makes to service brokers.
 
+#### Headers
+
+The following HTTP Headers are defined for this operation:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
+
+\* Headers with an asterisk are REQUIRED.
+
 #### cURL
 ```
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id/last_operation
@@ -552,6 +625,17 @@ broker will use it to correlate the resource it creates.
 | Parameter name | Type | Description |
 | --- | --- | --- |
 | accepts_incomplete | boolean | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision a service instance of the requested plan asynchronously, the broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
+
+#### Headers
+
+The following HTTP Headers are defined for this operation:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
+| X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
+
+\* Headers with an asterisk are REQUIRED.
 
 #### Body
 | Request field | Type | Description |
@@ -653,6 +737,17 @@ It MUST be the ID a previously provisioned service instance.
 | Parameter name | Type | Description |
 | --- | --- | --- |
 | accepts_incomplete | boolean | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision a service instance of the requested plan asynchronously, the broker SHOULD reject the request with a `422 Unprocessable Entity` as described below. |
+
+#### Headers
+
+The following HTTP Headers are defined for this operation:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
+| X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
+
+\* Headers with an asterisk are REQUIRED.
 
 #### Body
 
@@ -812,6 +907,17 @@ It MUST be the ID of a previously provisioned service instance.
 `:binding_id` MUST be a globally unique non-empty string.
 This ID will be used for future unbind requests, so the broker will use
 it to correlate the resource it creates.
+
+#### Headers
+
+The following HTTP Headers are defined for this operation:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
+| X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
+
+\* Headers with an asterisk are REQUIRED.
 
 #### Body
 
@@ -992,6 +1098,17 @@ The request provides these query string parameters as useful hints for brokers.
 
 \* Query parameters with an asterisk are REQUIRED.
 
+#### Headers
+
+The following HTTP Headers are defined for this operation:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
+| X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
+
+\* Headers with an asterisk are REQUIRED.
+
 #### cURL
 ```
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
@@ -1040,6 +1157,17 @@ The request provides these query string parameters as useful hints for brokers.
 | accepts_incomplete | boolean | A value of true indicates that both the marketplace and the requesting client support asynchronous deprovisioning. If this parameter is not included in the request, and the broker can only deprovision a service instance of the requested plan asynchronously, the broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
 \* Query parameters with an asterisk are REQUIRED.
+
+#### Headers
+
+The following HTTP Headers are defined for this operation:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
+| X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
+
+\* Headers with an asterisk are REQUIRED.
 
 #### cURL
 ```
