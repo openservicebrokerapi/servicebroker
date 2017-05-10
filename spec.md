@@ -117,9 +117,9 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| name* | string | A CLI-friendly name of the service. All lowercase, no spaces. This MUST be globally unique within a platform marketplace. |
-| id* | string | An identifier used to correlate this service in future requests to the broker. This MUST be globally unique within a platform marketplace. Using a GUID is RECOMMENDED. |
-| description* | string | A short description of the service. |
+| name* | string | A CLI-friendly name of the service. All lowercase, no spaces. This MUST be globally unique within a platform marketplace. MUST be a non-empty string. |
+| id* | string | An identifier used to correlate this service in future requests to the broker. This MUST be globally unique within a platform marketplace. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
+| description* | string | A short description of the service. MUST be a non-empty string. |
 | tags | array-of-strings | Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp. |
 | requires | array-of-strings | A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are `syslog_drain`, `route_forwarding` and `volume_mount`. |
 | bindable* | boolean | Specifies whether instances of the service can be bound to applications. This specifies the default for all plans of this service. Plans can override this field (see [Plan Object](#plan-object)). |
@@ -132,8 +132,8 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| id | string | The id of the Oauth client that the dashboard will use. |
-| secret | string | A secret for the dashboard client |
+| id | string | The id of the Oauth client that the dashboard will use. If present, MUST be a non-empty string. |
+| secret | string | A secret for the dashboard client. If present, MUST be a non-empty string. |
 | redirect_uri | string | A URI for the service dashboard. Validated by the OAuth token server when the dashboard requests a token. |
 
 
@@ -141,9 +141,9 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| id* | string | An identifier used to correlate this plan in future requests to the broker. This MUST be globally unique within a platform marketplace. Using a GUID is RECOMMENDED. |
-| name* | string | The CLI-friendly name of the plan. MUST be unique within the service. All lowercase, no spaces. |
-| description* | string | A short description of the plan. |
+| id* | string | An identifier used to correlate this plan in future requests to the broker. This MUST be globally unique within a platform marketplace. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
+| name* | string | The CLI-friendly name of the plan. MUST be unique within the service. All lowercase, no spaces. MUST be a non-empty string. |
+| description* | string | A short description of the plan. MUST be a non-empty string. |
 | metadata | JSON object | An opaque object of metadata for a service plan. Controller treats this as a blob. Note that there are [conventions](https://docs.cloudfoundry.org/services/catalog-metadata.html) in existing brokers and controllers for fields that aid in the display of catalog data. |
 | free | boolean | When false, instances of this plan have a cost. The default is true. |
 | bindable | boolean | Specifies whether instances of the service plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
@@ -289,9 +289,9 @@ The request provides these query string parameters as useful hints for brokers.
 
 | Query-String Field | Type | Description |
 | --- | --- | --- |
-| service_id | string | ID of the service from the catalog. |
-| plan_id | string | ID of the plan from the catalog. |
-| operation | string | A broker-provided identifier for the operation. When a value for `operation` is included with asynchronous responses for [Provision](#provisioning), [Update](#updating-a-service-instance), and [Deprovision](#deprovisioning) requests, the broker client MUST provide the same value using this query parameter as a URL-encoded string. |
+| service_id | string | ID of the service from the catalog. If present, MUST be a non-empty string. |
+| plan_id | string | ID of the plan from the catalog. If present, MUST be a non-empty string. |
+| operation | string | A broker-provided identifier for the operation. When a value for `operation` is included with asynchronous responses for [Provision](#provisioning), [Update](#updating-a-service-instance), and [Deprovision](#deprovisioning) requests, the broker client MUST provide the same value using this query parameter as a URL-encoded string. If present, MUST be a non-empty string. |
 
 <p class="note">Note: Although the request query parameters `service_id` and `plan_id` are not mandatory, the platform SHOULD include them on all `last_operation` requests it makes to service brokers.</p>
 
@@ -318,7 +318,7 @@ For success responses, the following fields are valid.
 | Response field | Type | Description |
 | --- | --- | --- |
 | state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the platform to cease polling. |
-| description | string | OPTIONAL field. A user-facing message displayed to the platform API client. Can be used to tell the user details about the status of the operation. |
+| description | string | A user-facing message displayed to the platform API client. Can be used to tell the user details about the status of the operation. If present, MUST be a non-empty string. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -351,11 +351,10 @@ The `:instance_id` of a service instance is provided by the platform. This ID wi
 
 ##### Body
 | Request field | Type | Description |
-| --- | --- | --- |
-| service_id* | string | The ID of the service (from the catalog). MUST be globally unique. |
-| plan_id* | string | The ID of the plan (from the catalog) for which the service instance has been requested. MUST be unique to a service. |
+| service_id* | string | The ID of the service (from the catalog). MUST be globally unique. MUST be a non-empty string. |
+| plan_id* | string | The ID of the plan (from the catalog) for which the service instance has been requested. MUST be unique to a service. MUST be a non-empty string. |
 | organization_guid* | string | The platform GUID for the organization under which the service is to be provisioned. Although most brokers will not use this field, it might be helpful for executing operations on a user's behalf. |
-| space_guid* | string | The identifier for the project space within the platform organization. Although most brokers will not use this field, it might be helpful for executing operations on a user's behalf. |
+| space_guid* | string | The identifier for the project space within the platform organization. Although most brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | parameters | JSON object | Configuration options for the service instance. Controller treats this as a blob. Note that there are [conventions](https://docs.cloudfoundry.org/services/catalog-metadata.html) in existing brokers and controllers for fields that aid in the display of catalog data. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
 
 \* Fields with an asterisk are REQUIRED.
@@ -407,8 +406,8 @@ For success responses, a broker MUST return the following fields. For error resp
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| dashboard_url | string | The URL of a web-based management user interface for the service instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a broker that wishes to return `dashboard_url` for a service instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. |
-| operation | string | For asynchronous responses, service brokers MAY return an identifier representing the operation. The value of this field SHOULD be provided by the broker client with requests to the [Last Operation](#polling-last-operation) endpoint in a URL encoded query parameter. |
+| dashboard_url | string | The URL of a web-based management user interface for the service instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below).  Note: a broker that wishes to return `dashboard_url` for a service instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. If present, MUST be a non-empty string. |
+| operation | string | For asynchronous responses, service brokers MAY return an identifier representing the operation. The value of this field SHOULD be provided by the broker client with requests to the [Last Operation](#polling-last-operation) endpoint in a URL encoded query parameter.  If present, MUST be a non-empty string. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -443,14 +442,14 @@ Not all permutations of plan changes are expected to be supported. For example, 
 
 | Request Field | Type | Description |
 | --- | --- | --- |
-| service_id* | string | The ID of the service (from the catalog). MUST be globally unique. |
-| plan_id | string | The ID of the plan (from the catalog) for which the service instance has been requested. MUST be unique to a service. |
+| service_id* | string | The ID of the service (from the catalog). MUST be globally unique. MUST be a non-empty string. |
+| plan_id | string | The ID of the plan (from the catalog) for which the service instance has been requested. MUST be unique to a service. If present, MUST be a non-empty string. |
 | parameters | JSON object | Configuration options for the service instance. An opaque object, controller treats this as a blob. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
 | previous_values | object | Information about the instance prior to the update. |
-| previous\_values.service_id | string | ID of the service for the instance. |
-| previous\_values.plan_id | string | ID of the plan prior to the update. |
-| previous\_values.organization_id | string | ID of the organization specified for the instance. |
-| previous\_values.space_id | string | ID of the space specified for the instance. |
+| previous_values.service_id | string | ID of the service for the instance. If present, MUST be a non-empty string. |
+| previous_values.plan_id | string | ID of the plan prior to the update. If present, MUST be a non-empty string. |
+| previous_values.organization_id | string | ID of the organization specified for the instance. If present, MUST be a non-empty string. |
+| previous_values.space_id | string | ID of the space specified for the instance. If present, MUST be a non-empty string. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -507,7 +506,7 @@ For success responses, a broker MUST return the following field. Others will be 
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| operation | string | For asynchronous responses, service brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the broker client with requests to the [Last Operation](#polling-last-operation) endpoint in a URL encoded query parameter. |
+| operation | string | For asynchronous responses, service brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the broker client with requests to the [Last Operation](#polling-last-operation) endpoint in a URL encoded query parameter. If present, MUST be a non-empty string. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -562,9 +561,9 @@ the resource it creates.
 
 | Request Field | Type | Description |
 | --- | --- | --- |
-| service_id* | string | ID of the service from the catalog. |
-| plan_id* | string | ID of the plan from the catalog. |
-| app_guid | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the binding to be created. |
+| service_id* | string | ID of the service from the catalog. MUST be a non-empty string. |
+| plan_id* | string | ID of the plan from the catalog. MUST be a non-empty string. |
+| app_guid | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the binding to be created. If present, MUST be a non-empty string. |
 | bind_resource | JSON object | A JSON object that contains data for platform resources associated with the binding to be created. Current valid values include `app_guid` for [credentials](#types-of-binding) and `route` for [route services](#route-services). |
 | parameters | JSON object | Configuration options for the service binding. An opaque object, controller treats this as a blob. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
 
@@ -656,8 +655,8 @@ The request provides these query string parameters as useful hints for brokers.
 
 | Query-String Field | Type | Description |
 | --- | --- | --- |
-| service_id* | string | ID of the service from the catalog. |
-| plan_id* | string | ID of the plan from the catalog. |
+| service_id* | string | ID of the service from the catalog. MUST be a non-empty string. |
+| plan_id* | string | ID of the plan from the catalog. MUST be a non-empty string. |
 
 \* Query parameters with an asterisk are REQUIRED.
 
@@ -702,8 +701,8 @@ The request provides these query string parameters as useful hints for brokers.
 
 | Query-String Field | Type | Description |
 | --- | --- | --- |
-| service_id* | string | ID of the service from the catalog. |
-| plan_id* | string | ID of the plan from the catalog. |
+| service_id* | string | ID of the service from the catalog. MUST be a non-empty string. |
+| plan_id* | string | ID of the plan from the catalog. MUST be a non-empty string. |
 | accepts_incomplete | boolean | A value of true indicates that both the marketplace and the requesting client support asynchronous deprovisioning. If this parameter is not included in the request, and the broker can only deprovision an instance of the requested plan asynchronously, the broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
 \* Query parameters with an asterisk are REQUIRED.
@@ -733,7 +732,7 @@ For success responses, the following fields are supported. Others will be ignore
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| operation | string | For asynchronous responses, service brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the broker client with requests to the [Last Operation](#polling-last-operation) endpoint in a URL encoded query parameter. |
+| operation | string | For asynchronous responses, service brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the broker client with requests to the [Last Operation](#polling-last-operation) endpoint in a URL encoded query parameter. If present, MUST be a non-empty string. |
 
 \* Fields with an asterisk are REQUIRED.
 
