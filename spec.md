@@ -564,8 +564,24 @@ the resource it creates.
 | service_id* | string | ID of the service from the catalog. MUST be a non-empty string. |
 | plan_id* | string | ID of the plan from the catalog. MUST be a non-empty string. |
 | app_guid | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the binding to be created. If present, MUST be a non-empty string. |
-| bind_resource | JSON object | A JSON object that contains data for platform resources associated with the binding to be created. Current valid values include `app_guid` for [credentials](#types-of-binding) and `route` for [route services](#route-services). |
+| bind_resource | JSON object | A JSON object that contains data for platform resources associated with the binding to be created. See [Bind Resource Object](#bind-resource-object) for more information. |
 | parameters | JSON object | Configuration options for the service binding. An opaque object, controller treats this as a blob. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
+
+##### Bind Resource Object
+
+The `bind_resource` object contains platform specific information
+related to the context in which the service will be used.
+In some cases the platform might not be able to provide this information
+at the time of the binding request, therefore the `bind_resource` and
+its fields are OPTIONAL.
+
+Below are some common fields that MAY be used. Platforms MAY choose to
+add additional ones as needed.
+
+| Request Field | Type | Description |
+| --- | --- | --- |
+| app_guid | string | GUID of an application associated with the binding. For [credentials](#types-of-binding) bindings. |
+| route | string | URL of the application to be intermediated. For [route services](#route-services) bindings. |
 
 \* Fields with an asterisk are REQUIRED.
 
