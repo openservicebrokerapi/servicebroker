@@ -301,7 +301,19 @@ An asynchronous response triggers the platform marketplace to poll the endpoint 
 
 #### Blocking Operations
 
-The marketplace MUST ensure that service brokers do not receive requests for a service instance while an asynchronous operation is in progress. For example, if a broker is in the process of provisioning a service instance asynchronously, the marketplace can not allow any update, bind, unbind, or deprovision requests to be made through the platform. A user who attempts to perform one of these actions while an operation is already in progress MUST receive a `400 Bad Request` response with the error message: `Another operation for this service instance is in progress`.
+Brokers do not have to support concurrent requests that act on the same
+set of resources.  If a broker receives a request that it is not able to
+process due to other activity being done on that resource then the broker
+MUST reject the request with an HTTP `422 Unprocessable Entity`.
+The HTTP body of the response MUST include a `description` property
+explaining the reason for the failure.
+
+Sample response:
+```
+{
+  "description": "Another operation for this service instance is in progress"
+}
+```
 
 ## Polling Last Operation
 
