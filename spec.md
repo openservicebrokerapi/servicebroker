@@ -40,7 +40,7 @@ A platform marketplace MAY expose services from one or many service brokers, and
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED",  "MAY", and "OPTIONAL" in this document are to
-be interpreted as described in [RFC 2119]( https://tools.ietf.org/html/rfc2119).
+be interpreted as described in [RFC 2119](https://tools.ietf.org/html/rfc2119).
 
 ## Changes
 
@@ -55,7 +55,7 @@ that do not understand them.
 
 ### Changes Since v2.10
 
-* Add <tt>bindable</tt> field to [Plan Object](#PObject) to allow services to have both bindable and non-bindable plans.
+* Add <tt>bindable</tt> field to [Plan Object](#plan-object) to allow services to have both bindable and non-bindable plans.
 
 ## API Version Header
 
@@ -92,7 +92,7 @@ The following sections describe catalog requests and responses in the Service Br
 
 #### cURL
 <pre class="terminal">
- $ curl -H "X-Broker-API-Version: 2.11" http://username:password@broker-url/v2/catalog
+$ curl -H "X-Broker-API-Version: 2.11" http://username:password@broker-url/v2/catalog
 </pre>
 
 ### Response
@@ -121,12 +121,12 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 | id* | string | An identifier used to correlate this service in future requests to the broker. This MUST be globally unique within a platform marketplace. Using a GUID is RECOMMENDED. |
 | description* | string | A short description of the service. |
 | tags | array-of-strings | Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp. |
-| requires | array-of-strings | A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are <code>syslog\_drain</code>, <code>route\_forwarding</code> and <code>volume\_mount</code>. |
-| bindable* | boolean | Specifies whether instances of the service can be bound to applications. This specifies the default for all plans of this service. Plans can override this field (see [Plan Object](#PObject)). |
+| requires | array-of-strings | A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are `syslog_drain`, `route_forwarding` and `volume_mount`. |
+| bindable* | boolean | Specifies whether instances of the service can be bound to applications. This specifies the default for all plans of this service. Plans can override this field (see [Plan Object](#plan-object)). |
 | metadata | JSON object | An opaque object of metadata for a service offering. Controller treats this as a blob. Note that there are (conventions)[https://docs.cloudfoundry.org/services/catalog-metadata.html] in existing brokers and controllers for fields that aid in the display of catalog data. |
-| [dashboard_client](#DObject) | object | Contains the data necessary to activate the Dashboard SSO feature for this service |
-| plan\_updateable | boolean | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute <code>plan\_updatable</code> to <code>plan\_updateable</code> was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. |
-| [plans*](#PObject) | array-of-objects | A list of plans for this service, schema is defined below. |
+| [dashboard_client](#dashboard-client-object) | object | Contains the data necessary to activate the Dashboard SSO feature for this service |
+| plan\_updateable | boolean | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute `plan_updatable` to `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. |
+| [plans*](#plan-object) | array-of-objects | A list of plans for this service, schema is defined below. |
 
 ##### Dashboard Client Object
 
@@ -253,7 +253,7 @@ Brokers that support sychronous responses for provision, update, and delete can 
 
 ### Asynchronous Operations
 
-<p class='note'><strong>Note:</strong> Asynchronous operations are currently supported only for provision, update, and deprovision.</p>
+<p class="note">**Note:** Asynchronous operations are currently supported only for provision, update, and deprovision.</p>
 
 For a broker to return an asynchronous response, the query parameter `accepts_incomplete=true` MUST be included the request. If the parameter is not included or is set to `false`, and the broker cannot fulfill the request synchronously (guaranteeing that the operation is complete on response), then the broker SHOULD reject the request with the status code `422 Unprocessable Entity` and the following body:
 
@@ -289,11 +289,11 @@ The request provides these query string parameters as useful hints for brokers.
 
 | Query-String Field | Type | Description |
 | --- | --- | --- |
-| service_id  |  string | ID of the service from the catalog. |
-| plan_id | string  | ID of the plan from the catalog. |
-| operation | string | A broker-provided identifier for the operation. When a value for `operation` is included with asynchronous responses for [provision](#provisioning), [update](#updating-a-service-instance), and [deprovision](#deprovisioning) requests, the broker client MUST provide the same value using this query parameter as a URL-encoded string. |
+| service_id | string | ID of the service from the catalog. |
+| plan_id | string | ID of the plan from the catalog. |
+| operation | string | A broker-provided identifier for the operation. When a value for `operation` is included with asynchronous responses for [Provision](#provisioning), [Update](#updating-a-service-instance), and [Deprovision](#deprovisioning) requests, the broker client MUST provide the same value using this query parameter as a URL-encoded string. |
 
-<p class="note"><strong>Note:</strong> Although the request query parameters <code>service_id</code> and <code>plan_id</code> are not mandatory, the platform SHOULD include them on all <code>last_operation</code> requests it makes to service brokers.</p>
+<p class="note">**Note:** Although the request query parameters `service_id` and `plan_id` are not mandatory, the platform SHOULD include them on all `last_operation` requests it makes to service brokers.</p>
 
 ##### cURL
 <pre class="terminal">
@@ -305,7 +305,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id/las
 | Status Code | Description |
 | --- | --- |
 | 200 OK | The expected response body is below. |
-| 410 Gone | Appropriate only for asynchronous delete operations. The platform MUST consider this response a success and remove the resource from its database. The expected response body is <code>{}</code>. Returning this while the platform is polling for create or update operations SHOULD be interpreted as an invalid response and the platform SHOULD continue polling. |
+| 410 Gone | Appropriate only for asynchronous delete operations. The platform MUST consider this response a success and remove the resource from its database. The expected response body is `{}`. Returning this while the platform is polling for create or update operations SHOULD be interpreted as an invalid response and the platform SHOULD continue polling. |
 
 Responses with any other status code SHOULD be interpreted as an error or invalid response. The platform SHOULD continue polling until the broker returns a valid response or the [maximum polling duration](#polling-interval-and-duration) is reached. Brokers MAY use the `description` field to expose user-facing error messages about the operation state; for more info see [Broker Errors](#broker-errors).
 
@@ -317,7 +317,7 @@ For success responses, the following fields are valid.
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| state* | string | Valid values are <code>in progress</code>, <code>succeeded</code>, and <code>failed</code>. While <code>"state": "in progress"</code>, the platform SHOULD continue polling. A response with <code>"state": "succeeded"</code> or <code>"state": "failed"</code> MUST cause the platform to cease polling. |
+| state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the platform to cease polling. |
 | description | string | OPTIONAL field. A user-facing message displayed to the platform API client. Can be used to tell the user details about the status of the operation. |
 
 \* Fields with an asterisk are REQUIRED.
@@ -407,15 +407,15 @@ For success responses, a broker MUST return the following fields. For error resp
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| dashboard_url | string | The URL of a web-based management user interface for the service instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (<code>9189kdfsk0vfnku</code> in the example below).  Note: a broker that wishes to return `dashboard_url` for a service instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. |
+| dashboard_url | string | The URL of a web-based management user interface for the service instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below).  Note: a broker that wishes to return `dashboard_url` for a service instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. |
 | operation | string | For asynchronous responses, service brokers MAY return an identifier representing the operation. The value of this field SHOULD be provided by the broker client with requests to the [Last Operation](#polling) endpoint in a URL encoded query parameter. |
 
 \* Fields with an asterisk are REQUIRED.
 
 <pre class="terminal">
 {
- "dashboard\_url": "<span>http</span>://example-dashboard.example.com/9189kdfsk0vfnku",
- "operation": "task\_10"
+  "dashboard_url": "<span>http</span>://example-dashboard.example.com/9189kdfsk0vfnku",
+  "operation": "task_10"
 }
 </pre>
 
@@ -437,7 +437,7 @@ Not all permutations of plan changes are expected to be supported. For example, 
 #### Parameters
 | Parameter name | Type | Description |
 | --- | --- | --- |
-| accepts\_incomplete | boolean | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker SHOULD reject the request with a `422 Unprocessable Entity` as described below. |
+| accepts_incomplete | boolean | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker SHOULD reject the request with a `422 Unprocessable Entity` as described below. |
 
 ##### Body
 
@@ -493,9 +493,9 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
 
 | Status Code | Description |
 | --- | --- |
-| 200 OK | The requests changes have been applied. The expected response body is <code>{}</code>. |
+| 200 OK | The requests changes have been applied. The expected response body is `{}`. |
 | 202 Accepted | Service instance update is in progress. This triggers the platform marketplace to poll the [Service Instance Last Operation Endpoint](#polling-last-operation) for operation status. |
-| 422 Unprocessable entity | MUST be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the instance (e.g. instance utilization is over the quota of the requested plan). Broker SHOULD include a user-facing message in the body; for details see [Broker Errors](#broker-errors).  Additionally, a `422 Unprocessable Entity` can also be returned if the broker only supports asynchronous update for the requested plan and the request did not include <code>?accepts_incomplete=true</code>; in this case the expected response body is: <code>{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }</code> |
+| 422 Unprocessable entity | MUST be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the instance (e.g. instance utilization is over the quota of the requested plan). Broker SHOULD include a user-facing message in the body; for details see [Broker Errors](#broker-errors).  Additionally, a `422 Unprocessable Entity` can also be returned if the broker only supports asynchronous update for the requested plan and the request did not include `?accepts_incomplete=true`; in this case the expected response body is: `{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }` |
 
 Responses with any other status code will be interpreted as a failure. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
@@ -513,7 +513,7 @@ For success responses, a broker MUST return the following field. Others will be 
 
 <pre class="terminal">
 {
- "operation": "task_10"
+  "operation": "task_10"
 }
 </pre>
 
@@ -522,7 +522,7 @@ For success responses, a broker MUST return the following field. Others will be 
 
 If `bindable:true` is declared for a service or plan in the [Catalog](#catalog-management) endpoint, broker clients MAY request generation of a service binding.
 
-<p class="note"><strong>Note</strong>: Not all services need to be bindable --- some deliver value just from being provisioned. Brokers that offer services that are bindable MUST declare them as such using <code>bindable: true</code> in the <a href="#catalog-management">Catalog</a>. Brokers that do not offer any bindable services do not need to implement the endpoint for bind requests.</p>
+<p class="note">**Note**: Not all services need to be bindable --- some deliver value just from being provisioned. Brokers that offer services that are bindable MUST declare them as such using `bindable: true` in the [Catalog](#catalog-management). Brokers that do not offer any bindable services do not need to implement the endpoint for bind requests.</p>
 
 ### Types of Binding
 
@@ -564,8 +564,8 @@ the resource it creates.
 | --- | --- | --- |
 | service_id* | string | ID of the service from the catalog. |
 | plan_id* | string | ID of the plan from the catalog. |
-| app_guid | string | Deprecated in favor of <code>bind\_resource.app\_guid</code>. GUID of an application associated with the binding to be created. |
-| bind_resource | JSON object | A JSON object that contains data for platform resources associated with the binding to be created. Current valid values include <code>app\_guid</code> for [credentials](#types-of-binding) and <code>route</code> for [route services](#route_services). |
+| app_guid | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the binding to be created. |
+| bind_resource | JSON object | A JSON object that contains data for platform resources associated with the binding to be created. Current valid values include `app_guid` for [credentials](#types-of-binding) and `route` for [route services](#route_services). |
 | parameters | JSON object | Configuration options for the service binding. An opaque object, controller treats this as a blob. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
 
 \* Fields with an asterisk are REQUIRED.
@@ -606,8 +606,8 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id/ser
 | --- | --- |
 | 201 Created | Binding has been created. The expected response body is below. |
 | 200 OK | MUST be returned if the binding already exists and the requested parameters are identical to the existing binding. The expected response body is below. |
-| 409 Conflict | MUST be returned if the requested binding already exists. The expected response body is <code>{}</code>, though the description field MAY be used to return a user-facing error message, as described in [Broker Errors](#broker-errors). |
-| 422 Unprocessable Entity | MUST be returned if the broker requires that <code>app_guid</code> be included in the request body. The expected response body is: <code>{ "error": "RequiresApp", "description": "This service supports generation of credentials through binding an application only." }</code> |
+| 409 Conflict | MUST be returned if the requested binding already exists. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Broker Errors](#broker-errors). |
+| 422 Unprocessable Entity | MUST be returned if the broker requires that `app_guid` be included in the request body. The expected response body is: `{ "error": "RequiresApp", "description": "This service supports generation of credentials through binding an application only." }` |
 
 Responses with any other status code will be interpreted as a failure and an unbind request will be sent to the broker to prevent an orphan being created on the broker. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
@@ -620,26 +620,26 @@ For success responses, the following fields are supported. Others will be ignore
 | Response Field | Type | Description |
 | --- | --- | --- |
 | credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. |
-| syslog\_drain_url | string | A URL to which logs MUST be streamed. <code>"requires":["syslog\_drain"]</code> MUST be declared in the [Catalog](#catalog-mgmt) endpoint or the platform MUST consider the response invalid. |
-| route\_service_url | string | A URL to which the platform MUST proxy requests for the address sent with <code>bind\_resource.route</code> in the request body. <code>"requires":["route\_forwarding"]</code> MUST be declared in the [Catalog](#catalog-mgmt) endpoint or the platform can consider the response invalid. |
-| volume\_mounts | array-of-objects | An array of configuration for mounting volumes. <code>"requires":["volume_mount"]</code> MUST be declared in the [Catalog](#catalog-mgmt) endpoint or the platform can consider the response invalid. |
+| syslog\_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the platform MUST consider the response invalid. |
+| route\_service_url | string | A URL to which the platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the platform can consider the response invalid. |
+| volume\_mounts | array-of-objects | An array of configuration for mounting volumes. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the platform can consider the response invalid. |
 
 <pre class="terminal">
-    {
-      "credentials": {
-        "uri": "mysql://mysqluser:pass@mysqlhost:3306/dbname",
-        "username": "mysqluser",
-        "password": "pass",
-        "host": "mysqlhost",
-        "port": 3306,
-        "database": "dbname"
-      }
-    }
+{
+  "credentials": {
+    "uri": "mysql://mysqluser:pass@mysqlhost:3306/dbname",
+    "username": "mysqluser",
+    "password": "pass",
+    "host": "mysqlhost",
+    "port": 3306,
+    "database": "dbname"
+  }
+}
 </pre>
 
 ## Unbinding
 
-<p class="note"><strong>Note</strong>: Brokers that do not provide any bindable services or plans do not need to implement this endpoint.</p>
+<p class="note">**Note**: Brokers that do not provide any bindable services or plans do not need to implement this endpoint.</p>
 
 When a broker receives an unbind request from the marketplace, it MUST delete any resources associated with the binding. In the case where credentials were generated, this might result in requests to the service instance failing to authenticate.
 
@@ -671,8 +671,8 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
 
 | Status Code | Description |
 | --- | --- |
-| 200 OK | Binding was deleted. The expected response body is <code>{}</code>. |
-| 410 Gone | MUST be returned if the binding does not exist. The expected response body is <code>{}</code>. |
+| 200 OK | Binding was deleted. The expected response body is `{}`. |
+| 410 Gone | MUST be returned if the binding does not exist. The expected response body is `{}`. |
 
 Responses with any other status code will be interpreted as a failure and the binding will remain in the marketplace database. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
@@ -718,10 +718,10 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?ac
 
 | Status Code | Description |
 | --- | --- |
-| 200 OK | Service instance was deleted. The expected response body is <code>{}</code>. |
+| 200 OK | Service instance was deleted. The expected response body is `{}`. |
 | 202 Accepted | Service instance deletion is in progress. This triggers the marketplace to poll the [Service Instance Last Operation Endpoint](#polling-last-operation) for operation status. |
-| 410 Gone | MUST be returned if the service instance does not exist. The expected response body is <code>{}</code>. |
-| 422 Unprocessable Entity | MUST be returned if the broker only supports asynchronous deprovisioning for the requested plan and the request did not include <code>?accepts_incomplete=true</code>. The expected response body is: <code>{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }</code>, as described below. |
+| 410 Gone | MUST be returned if the service instance does not exist. The expected response body is `{}`. |
+| 422 Unprocessable Entity | MUST be returned if the broker only supports asynchronous deprovisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The expected response body is: `{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }`, as described below. |
 
 Responses with any other status code will be interpreted as a failure and the service instance will remain in the marketplace database. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
@@ -739,7 +739,7 @@ For success responses, the following fields are supported. Others will be ignore
 
 <pre class="terminal">
 {
- "operation": "task_10"
+  "operation": "task_10"
 }
 </pre>
 
