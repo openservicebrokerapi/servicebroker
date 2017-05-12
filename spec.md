@@ -55,7 +55,7 @@ that do not understand them.
 
 ### Changes Since v2.10
 
-* Add <tt>bindable</tt> field to [Plan Object](#plan-object) to allow services to have both bindable and non-bindable plans.
+* Add `bindable` field to [Plan Object](#plan-object) to allow services to have both bindable and non-bindable plans.
 
 ## API Version Header
 
@@ -146,7 +146,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 | description* | string | A short description of the plan. |
 | metadata | JSON object | An opaque object of metadata for a service plan. Controller treats this as a blob. Note that there are (conventions)[https://docs.cloudfoundry.org/services/catalog-metadata.html] in existing brokers and controllers for fields that aid in the display of catalog data. |
 | free | boolean | When false, instances of this plan have a cost. The default is true |
-| bindable | boolean | Specifies whether instances of the service plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the <tt>bindable</tt> attribute of the service. If not specified, the default is derived from the service. |
+| bindable | boolean | Specifies whether instances of the service plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
 
 
 \* Fields with an asterisk are REQUIRED.
@@ -198,9 +198,9 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
             }
          ],
         "bullets": [
-            "Shared fake server",
-            "5 TB storage",
-            "40 concurrent connections"
+          "Shared fake server",
+          "5 TB storage",
+          "40 concurrent connections"
         ]
       }
     }, {
@@ -274,7 +274,7 @@ The marketplace MUST ensure that service brokers do not receive requests for an 
 
 ## Polling Last Operation
 
-When a broker returns status code `202 Accepted` for [provision](#provisioning), [update](#updating-a-service-instance), or [deprovision](#deprovisioning), the platform will begin polling the `/v2/service_instances/:guid/last_operation` endpoint to obtain the state of the last requested operation. The broker response MUST contain the field `state` and MAY contain the field `description`.
+When a broker returns status code `202 Accepted` for [Provision](#provisioning), [Update](#updating-a-service-instance), or [Deprovision](#deprovisioning), the platform will begin polling the `/v2/service_instances/:guid/last_operation` endpoint to obtain the state of the last requested operation. The broker response MUST contain the field `state` and MAY contain the field `description`.
 
 Valid values for `state` are `in progress`, `succeeded`, and `failed`. The platform will poll the `last_operation` endpoint as long as the broker returns `"state": "in progress"`. Returning `"state": "succeeded"` or `"state": "failed"` will cause the platform to cease polling. The value provided for `description` will be passed through to the platform API client and can be used to provide additional detail for users about the progress of the operation.
 
@@ -344,7 +344,7 @@ When the broker receives a provision request from the platform, it MUST take wha
 
 The `:instance_id` of a service instance is provided by the platform. This ID will be used for future requests (bind and deprovision), so the broker will use it to correlate the resource it creates.
 
-#### Parameters ####
+#### Parameters
 | Parameter name | Type | Description |
 | --- | --- | --- |
 | accepts_incomplete | boolean | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
