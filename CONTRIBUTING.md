@@ -86,3 +86,41 @@ described below:
   "proposal finalized" label.  This indicates that it is ready to be
   implemented by a platform developer, see the [process](#contributing) above.
 - Once a Pull Request is approved, it will be merged into the 'master' branch.
+
+## Spec Release Process
+
+Any member of the OSBAPI PMC can request that the accepted spec changes on
+master are released in a new version of the spec. They will do this by
+creating a new PR with the tile of the proposed release. For example,
+"Release Proposal: v2.20".
+
+### Prepare a PR
+
+- In a fork create a new branch called "v$major.$minor".
+- Update [README](README.md)'s "Latest Release" section and link to branch URL.
+- Update [RELEASE-NOTES](release-notes.md) with details of the changes included
+  in the release.
+
+### Review Process
+
+- All release proposals must be available for review for no less than one
+  week before they are approved. This will provide each dedicated committer
+  enough time to review the release proposal without unnecessarily delaying
+  forward progress.
+- Any dedicated committer can veto (via a "NOT LGTM" comment in the proposal).
+  The comment must include the reasoning behind the veto.
+  It is then expected that the dedicated committers will discuss the concerns
+  and determine the next step for release proposal
+	- either close/reject the proposal or address the concerns raised such that
+	the "NOT LGTM" can be rescinded.
+- A release proposal requires at least 4 "LGTM" comments from at least
+  4 different organizations to be approved.
+
+### Once Approved
+
+Once the release is approved, the following actions should be taken by
+a PMC member:
+
+- Merge PR into master.
+- Create a branch from the SHA of the merge named "v$major.$minor".
+- Notify mailing list of the new release!
