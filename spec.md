@@ -91,9 +91,9 @@ The following sections describe catalog requests and responses in the Service Br
 `GET /v2/catalog`
 
 #### cURL
-<pre class="terminal">
+```
 $ curl -H "X-Broker-API-Version: 2.11" http://username:password@broker-url/v2/catalog
-</pre>
+```
 
 ### Response
 
@@ -151,7 +151,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 
 \* Fields with an asterisk are REQUIRED.
 
-<pre>
+```
 {
   "services": [{
     "name": "fake-service",
@@ -230,7 +230,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
     }]
   }]
 }
-</pre>
+```
 
 
 ### Adding a Broker to the Platform
@@ -253,16 +253,16 @@ Brokers that support sychronous responses for provision, update, and delete can 
 
 ### Asynchronous Operations
 
-<p class="note">**Note:** Asynchronous operations are currently supported only for provision, update, and deprovision.</p>
+<p class="note">Note: Asynchronous operations are currently supported only for provision, update, and deprovision.</p>
 
 For a broker to return an asynchronous response, the query parameter `accepts_incomplete=true` MUST be included the request. If the parameter is not included or is set to `false`, and the broker cannot fulfill the request synchronously (guaranteeing that the operation is complete on response), then the broker SHOULD reject the request with the status code `422 Unprocessable Entity` and the following body:
 
-<pre class="terminal">
+```
 {
   "error": "AsyncRequired",
   "description": "This service plan requires client support for asynchronous service operations."
 }
-</pre>
+```
 
 If the query parameter described above is present, and the broker executes the request asynchronously, the broker MUST return the asynchronous response `202 Accepted`. The response body SHOULD be the same as if the broker were serving the request synchronously.
 
@@ -293,12 +293,12 @@ The request provides these query string parameters as useful hints for brokers.
 | plan_id | string | ID of the plan from the catalog. |
 | operation | string | A broker-provided identifier for the operation. When a value for `operation` is included with asynchronous responses for [Provision](#provisioning), [Update](#updating-a-service-instance), and [Deprovision](#deprovisioning) requests, the broker client MUST provide the same value using this query parameter as a URL-encoded string. |
 
-<p class="note">**Note:** Although the request query parameters `service_id` and `plan_id` are not mandatory, the platform SHOULD include them on all `last_operation` requests it makes to service brokers.</p>
+<p class="note">Note: Although the request query parameters `service_id` and `plan_id` are not mandatory, the platform SHOULD include them on all `last_operation` requests it makes to service brokers.</p>
 
 ##### cURL
-<pre class="terminal">
+```
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id/last_operation
-</pre>
+```
 
 ### Response
 
@@ -322,12 +322,12 @@ For success responses, the following fields are valid.
 
 \* Fields with an asterisk are REQUIRED.
 
-<pre class="terminal">
+```
 {
   "state": "in progress",
   "description": "Creating service (10% complete)."
 }
-</pre>
+```
 
 ### Polling Interval and Duration
 
@@ -360,7 +360,7 @@ The `:instance_id` of a service instance is provided by the platform. This ID wi
 
 \* Fields with an asterisk are REQUIRED.
 
-<pre class="terminal">
+```
 {
   "service_id": "service-guid-here",
   "plan_id": "plan-guid-here",
@@ -371,10 +371,10 @@ The `:instance_id` of a service instance is provided by the platform. This ID wi
     "parameter2": "foo"
   }
 }
-</pre>
+```
 
 ##### cURL
-<pre class="terminal">
+```
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id?accepts_incomplete=true -d '{
   "service_id": "service-guid-here",
   "plan_id": "plan-guid-here",
@@ -385,7 +385,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
     "parameter2": "foo"
   }
 }' -X PUT -H "X-Broker-API-Version: 2.11" -H "Content-Type: application/json"
-</pre>
+```
 
 ### Response
 
@@ -412,12 +412,12 @@ For success responses, a broker MUST return the following fields. For error resp
 
 \* Fields with an asterisk are REQUIRED.
 
-<pre class="terminal">
+```
 {
-  "dashboard_url": "<span>http</span>://example-dashboard.example.com/9189kdfsk0vfnku",
+  "dashboard_url": "http://example-dashboard.example.com/9189kdfsk0vfnku",
   "operation": "task_10"
 }
-</pre>
+```
 
 ## Updating a Service Instance
 
@@ -454,7 +454,7 @@ Not all permutations of plan changes are expected to be supported. For example, 
 
 \* Fields with an asterisk are REQUIRED.
 
-<pre class="terminal">
+```
 {
   "service_id": "service-guid-here",
   "plan_id": "plan-guid-here",
@@ -469,10 +469,10 @@ Not all permutations of plan changes are expected to be supported. For example, 
     "space_id": "space-guid-here"
   }
 }
-</pre>
+```
 
 ##### cURL
-<pre class="terminal">
+```
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id?accepts_incomplete=true -d '{
   "service_id": "service-guid-here",
   "plan_id": "plan-guid-here",
@@ -487,7 +487,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
     "space_id": "space-guid-here"
   }
 }' -X PATCH -H "X-Broker-API-Version: 2.11" -H "Content-Type: application/json"
-</pre>
+```
 
 ### Response
 
@@ -511,18 +511,18 @@ For success responses, a broker MUST return the following field. Others will be 
 
 \* Fields with an asterisk are REQUIRED.
 
-<pre class="terminal">
+```
 {
   "operation": "task_10"
 }
-</pre>
+```
 
 
 ## Binding
 
 If `bindable:true` is declared for a service or plan in the [Catalog](#catalog-management) endpoint, broker clients MAY request generation of a service binding.
 
-<p class="note">**Note**: Not all services need to be bindable --- some deliver value just from being provisioned. Brokers that offer services that are bindable MUST declare them as such using `bindable: true` in the [Catalog](#catalog-management). Brokers that do not offer any bindable services do not need to implement the endpoint for bind requests.</p>
+<p class="note">Note: Not all services need to be bindable --- some deliver value just from being provisioned. Brokers that offer services that are bindable MUST declare them as such using `bindable: true` in the [Catalog](#catalog-management). Brokers that do not offer any bindable services do not need to implement the endpoint for bind requests.</p>
 
 ### Types of Binding
 
@@ -570,7 +570,7 @@ the resource it creates.
 
 \* Fields with an asterisk are REQUIRED.
 
-<pre class="terminal">
+```
 {
   "service_id": "service-guid-here",
   "plan_id": "plan-guid-here",
@@ -582,11 +582,11 @@ the resource it creates.
     "parameter2-name-here": "parameter2-value-here"
   }
 }
-</pre>
+```
 
 
 ##### cURL
-<pre class="terminal">
+```
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:binding_id -d '{
   "service_id": "service-guid-here",
   "plan_id": "plan-guid-here",
@@ -598,7 +598,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id/ser
     "parameter2-name-here": "parameter2-value-here"
   }
 }' -X PUT
-</pre>
+```
 
 ### Response
 
@@ -624,7 +624,7 @@ For success responses, the following fields are supported. Others will be ignore
 | route_service_url | string | A URL to which the platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the platform can consider the response invalid. |
 | volume_mounts | array-of-objects | An array of configuration for mounting volumes. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the platform can consider the response invalid. |
 
-<pre class="terminal">
+```
 {
   "credentials": {
     "uri": "mysql://mysqluser:pass@mysqlhost:3306/dbname",
@@ -635,11 +635,11 @@ For success responses, the following fields are supported. Others will be ignore
     "database": "dbname"
   }
 }
-</pre>
+```
 
 ## Unbinding
 
-<p class="note">**Note**: Brokers that do not provide any bindable services or plans do not need to implement this endpoint.</p>
+<p class="note">Note: Brokers that do not provide any bindable services or plans do not need to implement this endpoint.</p>
 
 When a broker receives an unbind request from the marketplace, it MUST delete any resources associated with the binding. In the case where credentials were generated, this might result in requests to the service instance failing to authenticate.
 
@@ -662,10 +662,10 @@ The request provides these query string parameters as useful hints for brokers.
 \* Query parameters with an asterisk are REQUIRED.
 
 ##### cURL
-<pre class="terminal">
+```
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
   service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.11"
-</pre>
+```
 
 ### Response
 
@@ -709,10 +709,10 @@ The request provides these query string parameters as useful hints for brokers.
 \* Query parameters with an asterisk are REQUIRED.
 
 ##### cURL
-<pre class="terminal">
+```
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?accepts_incomplete=true
   &service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.11"
-</pre>
+```
 
 ### Response
 
@@ -737,11 +737,11 @@ For success responses, the following fields are supported. Others will be ignore
 
 \* Fields with an asterisk are REQUIRED.
 
-<pre class="terminal">
+```
 {
   "operation": "task_10"
 }
-</pre>
+```
 
 ## Broker Errors
 
@@ -761,11 +761,11 @@ For error responses, the following fields are valid. Others will be ignored. If 
 | --- | --- | --- |
 | description | string | A meaningful error message explaining why the request failed. |
 
-<pre class="terminal">
+```
 {
   "description": "Your account has exceeded its quota for service instances. Please contact support at http://support.example.com."
 }
-</pre>
+```
 
 ## Orphans
 
