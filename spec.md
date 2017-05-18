@@ -1,4 +1,4 @@
-# Open Service Broker API
+# Open Service Broker API (v2.11)
 
 ## Table of Contents
   - [API Overview](#api-overview)
