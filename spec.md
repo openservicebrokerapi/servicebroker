@@ -145,7 +145,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 | name* | string | The CLI-friendly name of the plan. MUST be unique within the service. All lowercase, no spaces. |
 | description* | string | A short description of the plan. |
 | metadata | JSON object | An opaque object of metadata for a service plan. Controller treats this as a blob. Note that there are [conventions](https://docs.cloudfoundry.org/services/catalog-metadata.html) in existing brokers and controllers for fields that aid in the display of catalog data. |
-| free | boolean | When false, instances of this plan have a cost. The default is true |
+| free | boolean | When false, instances of this plan have a cost. The default is true. |
 | bindable | boolean | Specifies whether instances of the service plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
 
 
