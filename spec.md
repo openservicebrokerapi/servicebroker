@@ -1,4 +1,4 @@
-# Open Service Broker API (master)
+# Open Service Broker API (master - may contain changes that are not yet released)
 
 ## Table of Contents
   - [API Overview](#api-overview)
