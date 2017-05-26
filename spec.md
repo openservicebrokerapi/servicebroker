@@ -432,7 +432,7 @@ Not all permutations of plan changes are expected to be supported. For example, 
 ##### Route
 `PATCH /v2/service_instances/:instance_id`
 
-`:instance_id` is the global unique ID of a previously-provisioned service instance.
+`:instance_id` is the global unique ID of a previously provisioned service instance.
 
 #### Parameters
 | Parameter name | Type | Description |
@@ -493,9 +493,9 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
 
 | Status Code | Description |
 | --- | --- |
-| 200 OK | The requests changes have been applied. The expected response body is `{}`. |
+| 200 OK | The requested changes have been applied. The expected response body is `{}`. |
 | 202 Accepted | Service instance update is in progress. This triggers the platform marketplace to poll the [Last Operation](#polling-last-operation) endpoint for operation status. |
-| 422 Unprocessable entity | MUST be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the instance (e.g. instance utilization is over the quota of the requested plan). Broker SHOULD include a user-facing message in the body; for details see [Broker Errors](#broker-errors). Additionally, a `422 Unprocessable Entity` can also be returned if the broker only supports asynchronous update for the requested plan and the request did not include `?accepts_incomplete=true`; in this case the expected response body is: `{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }` |
+| 422 Unprocessable entity | MUST be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the instance (e.g. instance utilization is over the quota of the requested plan). Brokers SHOULD include a user-facing message in the body; for details see [Broker Errors](#broker-errors). Additionally, a `422 Unprocessable Entity` can also be returned if the broker only supports asynchronous update for the requested plan and the request did not include `?accepts_incomplete=true`; in this case the expected response body is: `{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }` |
 
 Responses with any other status code will be interpreted as a failure. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
@@ -555,7 +555,7 @@ The `requires` field in the [Catalog](#catalog-management) endpoint enables a pl
 ##### Route
 `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
-The `:instance_id` is the ID of a previously-provisioned service instance. The `:binding_id` is also provided by the platform. This ID will be used for future unbind requests, so the broker will use it to correlate
+The `:instance_id` is the ID of a previously provisioned service instance. The `:binding_id` is also provided by the platform. This ID will be used for future unbind requests, so the broker will use it to correlate
 the resource it creates.
 
 ##### Body
@@ -648,7 +648,7 @@ When a broker receives an unbind request from the marketplace, it MUST delete an
 ##### Route
 `DELETE /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
-The `:instance_id` is the ID of a previously-provisioned service instance. The `:binding_id` is the ID of a previously provisioned binding for that instance.
+The `:instance_id` is the ID of a previously provisioned service instance. The `:binding_id` is the ID of a previously provisioned binding for that instance.
 
 ##### Parameters
 
