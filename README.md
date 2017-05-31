@@ -1,7 +1,7 @@
 ![Open Service Broker API](https://www.openservicebrokerapi.org/wp-content/uploads/2016/12/osbapi_logo_concept3_wtm.png)
 
-## Latest Release: v2.11
-[Read the specification](https://github.com/openservicebrokerapi/servicebroker/tree/v2.11/spec.md)
+## Latest Release: v2.12
+[Read the specification](https://github.com/openservicebrokerapi/servicebroker/blob/v2.12/spec.md)
 
 [Release Notes for past versions](release-notes.md)
 
