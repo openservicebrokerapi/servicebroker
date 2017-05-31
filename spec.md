@@ -1,4 +1,4 @@
-#Table of Contents#
+# Table of Contents#
   - [API Release Notes](#release-notes)
   - [Changes](#changes)
     - [Change Policy](#change-policy)
@@ -22,11 +22,9 @@
   - [Broker Errors](#broker-errors)
   - [Orphans](#orphans)
 
-<div id="changes"/> 
 ## Changes ##
 
-<div id="change-policy"/>
-###Change Policy 
+### Change Policy 
 
 * Existing endpoints and fields will not be removed or renamed.
 * New optional endpoints, or new HTTP methods for existing endpoints, may be
@@ -35,13 +33,11 @@ added to enable support for new features.
 These fields must be optional and should be ignored by clients and servers
 that do not understand them.
 
-<div id="since-v2.10"/>
-##Changes Since v2.10 ##
+## Changes Since v2.10 ##
 
 * Add <tt>bindable</tt> field to [Plan Object](#PObject) to allow services to have both bindable and non-bindable plans.
 
-<div id="api-overview"/> 
-##API Overview 
+## API Overview 
 
 The Service Broker API defines an HTTP interface between the services marketplace of a platform and service brokers.
 
@@ -53,7 +49,6 @@ What a binding represents may also vary by service. In general creation of a bin
 
 A platform marketplace may expose services from one or many service brokers, and an individual service broker may support one or many platform marketplaces using different URL prefixes and credentials.
 
-<div id="version-header"/>  
 ## API Version Header
 
 Requests from the platform to the service broker must contain a header that declares the version number of the Service Broker API that the marketplace will use:
@@ -64,13 +59,11 @@ The version numbers are in the format `MAJOR.MINOR`, using semantic versioning s
 
 This header allows brokers to reject requests from marketplaces for versions they do not support. While minor API revisions will always be additive, it is possible that brokers depend on a feature from a newer version of the API that is supported by the platform. In this scenario the broker may reject the request with `412 Precondition Failed` and provide a message that informs the operator of the required API version.
 
-<div id="authentication"/> 
 ## Authentication
 
 The marketplace must authenticate with the service broker using HTTP
 basic authentication (the `Authorization:` header) on every request. The broker is responsible for validating the username and password and returning a `401 Unauthorized` message if credentials are invalid. It is recommended that brokers support secure communication from platform marketplaces over TLS.
 
-<div id="catalog-mgmt"/>
 ## Catalog Management 
 
 The first endpoint that a broker must implement is the service catalog.
