@@ -111,7 +111,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| services* | array-of-service-objects | Schema of service objects defined below. MUST contain at least one service. |
+| services* | array-of-service-objects | Schema of service objects defined below. MAY be empty. |
 
 ##### Service Objects
 
