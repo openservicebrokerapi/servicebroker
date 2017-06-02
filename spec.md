@@ -111,7 +111,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| services* | array-of-service-objects | Schema of service objects defined below. |
+| services* | array-of-service-objects | Schema of service objects defined below. MAY be empty. |
 
 ##### Service Objects
 
@@ -126,7 +126,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 | metadata | JSON object | An opaque object of metadata for a service offering. Controller treats this as a blob. Note that there are [conventions](https://docs.cloudfoundry.org/services/catalog-metadata.html) in existing brokers and controllers for fields that aid in the display of catalog data. |
 | [dashboard_client](#dashboard-client-object) | object | Contains the data necessary to activate the Dashboard SSO feature for this service |
 | plan_updateable | boolean | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute `plan_updatable` to `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. |
-| [plans*](#plan-object) | array-of-objects | A list of plans for this service, schema is defined below. |
+| [plans*](#plan-object) | array-of-objects | A list of plans for this service, schema is defined below. MUST contain at least one plan. |
 
 ##### Dashboard Client Object
 
