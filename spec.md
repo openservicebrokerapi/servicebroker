@@ -446,10 +446,10 @@ Not all permutations of plan changes are expected to be supported. For example, 
 | plan_id | string | The ID of the plan (from the catalog) for which the service instance has been requested. MUST be unique to a service. If present, MUST be a non-empty string. |
 | parameters | JSON object | Configuration options for the service instance. An opaque object, controller treats this as a blob. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
 | previous_values | object | Information about the instance prior to the update. |
-| previous_values.service_id | string | ID of the service for the instance. If present, MUST be a non-empty string. |
-| previous_values.plan_id | string | ID of the plan prior to the update. If present, MUST be a non-empty string. |
-| previous_values.organization_id | string | ID of the organization specified for the instance. If present, MUST be a non-empty string. |
-| previous_values.space_id | string | ID of the space specified for the instance. If present, MUST be a non-empty string. |
+| previous\_values.service_id | string | ID of the service for the instance. If present, MUST be a non-empty string. |
+| previous\_values.plan_id | string | ID of the plan prior to the update. If present, MUST be a non-empty string. |
+| previous\_values.organization_id | string | ID of the organization specified for the instance. If present, MUST be a non-empty string. |
+| previous\_values.space_id | string | ID of the space specified for the instance. If present, MUST be a non-empty string. |
 
 \* Fields with an asterisk are REQUIRED.
 
