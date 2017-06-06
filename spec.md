@@ -99,7 +99,7 @@ $ curl -H "X-Broker-API-Version: 2.11" http://username:password@broker-url/v2/ca
 
 | Status Code | Description |
 | --- | --- |
-| 200 OK | The expected response body is below. |
+| 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
 
 #### Body - Schema of Service Objects
 
@@ -124,7 +124,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 | requires | array-of-strings | A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are `syslog_drain`, `route_forwarding` and `volume_mount`. |
 | bindable* | boolean | Specifies whether instances of the service can be bound to applications. This specifies the default for all plans of this service. Plans can override this field (see [Plan Object](#plan-object)). |
 | metadata | JSON object | An opaque object of metadata for a service offering. Controller treats this as a blob. Note that there are [conventions](https://docs.cloudfoundry.org/services/catalog-metadata.html) in existing brokers and controllers for fields that aid in the display of catalog data. |
-| [dashboard_client](#dashboard-client-object) | object | Contains the data necessary to activate the Dashboard SSO feature for this service |
+| [dashboard_client](#dashboard-client-object) | object | Contains the data necessary to activate the Dashboard SSO feature for this service. |
 | plan_updateable | boolean | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute `plan_updatable` to `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. |
 | [plans*](#plan-object) | array-of-objects | A list of plans for this service, schema is defined below. MUST contain at least one plan. |
 
@@ -304,7 +304,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id/las
 
 | Status Code | Description |
 | --- | --- |
-| 200 OK | The expected response body is below. |
+| 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
 | 410 Gone | Appropriate only for asynchronous delete operations. The platform MUST consider this response a success and remove the resource from its database. The expected response body is `{}`. Returning this while the platform is polling for create or update operations SHOULD be interpreted as an invalid response and the platform SHOULD continue polling. |
 
 Responses with any other status code SHOULD be interpreted as an error or invalid response. The platform SHOULD continue polling until the broker returns a valid response or the [maximum polling duration](#polling-interval-and-duration) is reached. Brokers MAY use the `description` field to expose user-facing error messages about the operation state; for more info see [Broker Errors](#broker-errors).
@@ -388,13 +388,12 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
 ```
 
 ### Response
-
 | Status Code | Description |
-| --- | --- |
-| 201 Created | Service instance has been provisioned. The expected response body is below. |
-| 200 OK | MAY be returned if the service instance already exists and the requested parameters are identical to the existing service instance. The expected response body is below. |
-| 202 Accepted | Service instance provisioning is in progress. This triggers the platform marketplace to poll the [Last Operation](#polling-last-operation) endpoint for operation status. |
-| 409 Conflict | MUST be returned if a service instance with the same id already exists but with different attributes. The expected response body is `{}`. |
+|---|---|
+| 200 OK | MUST be returned if the service instance already exists, is fully provisioned, and the requested parameters are identical to the existing service instance. The expected response body is below. |
+| 201 Created | MUST be returned if the service instance was provisioned as a result of this request. The expected response body is below. |
+| 202 Accepted | MUST be returned if the service instance provisioning is in progress. This triggers the platform marketplace to poll the [Service Instance Last Operation Endpoint](#polling-last-operation) for operation status. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the service instance is not yet fully provisioned. |
+| 409 Conflict | MUST be returned if a service instance with the same id already exists but with different attributes. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Broker Errors](#broker-errors). |
 | 422 Unprocessable Entity | MUST be returned if the broker only supports asynchronous provisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The expected response body is: `{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }`, as described below. |
 
 Responses with any other status code will be interpreted as a failure. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
@@ -493,8 +492,8 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
 
 | Status Code | Description |
 | --- | --- |
-| 200 OK | The requested changes have been applied. The expected response body is `{}`. |
-| 202 Accepted | Service instance update is in progress. This triggers the platform marketplace to poll the [Last Operation](#polling-last-operation) endpoint for operation status. |
+| 200 OK | MUST be returned if the request's changes have been applied. The expected response body is `{}`. |
+| 202 Accepted | MUST be returned if the service instance update is in progress. This triggers the platform marketplace to poll the [Last Operation](#polling-last-operation) for operation status. Note that a re-sent `PATCH` request MUST return a `202 Accepted`, not a `200 OK`, if the requested update has not yet completed. |
 | 422 Unprocessable entity | MUST be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the instance (e.g. instance utilization is over the quota of the requested plan). Brokers SHOULD include a user-facing message in the body; for details see [Broker Errors](#broker-errors). Additionally, a `422 Unprocessable Entity` can also be returned if the broker only supports asynchronous update for the requested plan and the request did not include `?accepts_incomplete=true`; in this case the expected response body is: `{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }` |
 
 Responses with any other status code will be interpreted as a failure. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
@@ -604,9 +603,9 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id/ser
 
 | Status Code | Description |
 | --- | --- |
-| 201 Created | Binding has been created. The expected response body is below. |
 | 200 OK | MUST be returned if the binding already exists and the requested parameters are identical to the existing binding. The expected response body is below. |
-| 409 Conflict | MUST be returned if the requested binding already exists. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Broker Errors](#broker-errors). |
+| 201 Created | MUST be returned if the binding was created as a result of this request. The expected response body is below. |
+| 409 Conflict | MUST be returned if a service binding with the same id, for the same service instance, already exists but with different parameters. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Broker Errors](#broker-errors). |
 | 422 Unprocessable Entity | MUST be returned if the broker requires that `app_guid` be included in the request body. The expected response body is: `{ "error": "RequiresApp", "description": "This service supports generation of credentials through binding an application only." }` |
 
 Responses with any other status code will be interpreted as a failure and an unbind request will be sent to the broker to prevent an orphan being created on the broker. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
@@ -671,7 +670,7 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
 
 | Status Code | Description |
 | --- | --- |
-| 200 OK | Binding was deleted. The expected response body is `{}`. |
+| 200 OK | MUST be returned if the binding was deleted as a result of this request. The expected response body is `{}`. |
 | 410 Gone | MUST be returned if the binding does not exist. The expected response body is `{}`. |
 
 Responses with any other status code will be interpreted as a failure and the binding will remain in the marketplace database. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
@@ -718,8 +717,8 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?ac
 
 | Status Code | Description |
 | --- | --- |
-| 200 OK | Service instance was deleted. The expected response body is `{}`. |
-| 202 Accepted | Service instance deletion is in progress. This triggers the marketplace to poll the [Last Operation](#polling-last-operation) endpoint for operation status. |
+| 200 OK | MUST be returned if the service instance was deleted as a result of this request. The expected response body is `{}`. |
+| 202 Accepted | MUST be returned if the service instance deletion is in progress. This triggers the marketplace to poll the [Service Instance Last Operation Endpoint](#polling-last-operation) for operation status. Note that a re-sent `DELETE` request MUST return a `202 Accepted`, not a `200 OK`, if the delete request has not completed yet. |
 | 410 Gone | MUST be returned if the service instance does not exist. The expected response body is `{}`. |
 | 422 Unprocessable Entity | MUST be returned if the broker only supports asynchronous deprovisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The expected response body is: `{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }`, as described below. |
 
