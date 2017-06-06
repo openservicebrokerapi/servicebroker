@@ -1,4 +1,4 @@
-# Open Service Broker API (master - may contain changes that are not yet released)
+# Open Service Broker API (master - might contain changes that are not yet released)
 
 ## Table of Contents
   - [API Overview](#api-overview)
@@ -351,6 +351,7 @@ The `:instance_id` of a service instance is provided by the platform. This ID wi
 
 ##### Body
 | Request field | Type | Description |
+| --- | --- | --- |
 | service_id* | string | The ID of the service (from the catalog). MUST be globally unique. MUST be a non-empty string. |
 | plan_id* | string | The ID of the plan (from the catalog) for which the service instance has been requested. MUST be unique to a service. MUST be a non-empty string. |
 | organization_guid* | string | The platform GUID for the organization under which the service is to be provisioned. Although most brokers will not use this field, it might be helpful for executing operations on a user's behalf. |

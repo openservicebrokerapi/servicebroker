@@ -62,11 +62,13 @@ done
 # echo args:$*
 
 function contains() {
+  rc=0
   echo "$2" | grep -qi "\([[:space:]]\|^\)$3\([[:space:]]\|$\)" || return 0
   echo "$2" | grep -q "\([[:space:]]\|^\)$3\([[:space:]]\|$\)" || {
     echo $file - $1: Use \'$3\'
 	rc=1
   }
+  return $rc
 }
 
 arg=""
