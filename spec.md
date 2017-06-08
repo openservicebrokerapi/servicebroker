@@ -443,8 +443,8 @@ Not all permutations of plan changes are expected to be supported. For example, 
 | Request Field | Type | Description |
 | --- | --- | --- |
 | service_id* | string | The ID of the service (from the catalog). MUST be globally unique. MUST be a non-empty string. |
-| plan_id | string | The ID of the plan (from the catalog) for which the service instance has been requested. MUST be unique to a service. If present, MUST be a non-empty string. |
-| parameters | JSON object | Configuration options for the service instance. An opaque object, controller treats this as a blob. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
+| plan_id | string | The ID of the plan (from the catalog) for which the service instance has been requested. MUST be unique to a service. If present, MUST be a non-empty string. If this field is not present in the request message, then the broker MUST NOT change the plan of the instance as a result of this request. |
+| parameters | JSON object | Configuration options for the service instance. An opaque object, controller treats this as a blob. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. If this field is not present in the request message, then the broker MUST NOT change the parameters of the instance as a result of this request. |
 | previous_values | object | Information about the instance prior to the update. |
 | previous_values.service_id | string | ID of the service for the instance. If present, MUST be a non-empty string. |
 | previous_values.plan_id | string | ID of the plan prior to the update. If present, MUST be a non-empty string. |
