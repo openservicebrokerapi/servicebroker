@@ -52,7 +52,7 @@ the [Open Service Broker API specification](spec.md) SHALL take precedence.
   contain the credentials that the Application will use to communicate
   with the Service Instance.
 
-- *Application*: The software that will make use of, be bound to, a Service
+- *Application*: The software that uses a Service Instance via Service Binding.
   Instance.
 
 ## Context Object
