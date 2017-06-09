@@ -26,7 +26,7 @@ be interpreted as described in [RFC 2119]( https://tools.ietf.org/html/rfc2119).
 
 The terminology defined below are defined by the
 [Open Service Broker API specification](spec.md) and are included here
-for convinience. If there are any inconsistencies between their definitions in
+for convenience. If there are any inconsistencies between their definitions in
 this document and the [Open Service Broker API specification](spec.md), then
 the [Open Service Broker API specification](spec.md) SHALL take precedence.
 
