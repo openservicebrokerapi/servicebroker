@@ -26,7 +26,7 @@ be interpreted as described in [RFC 2119]( https://tools.ietf.org/html/rfc2119).
 
 The terminology defined below are defined by the
 [Open Service Broker API specification](spec.md) and are included here
-for convinience. If there are any inconsistencies between their definitions in
+for convenience. If there are any inconsistencies between their definitions in
 this document and the [Open Service Broker API specification](spec.md), then
 the [Open Service Broker API specification](spec.md) SHALL take precedence.
 
@@ -52,8 +52,7 @@ the [Open Service Broker API specification](spec.md) SHALL take precedence.
   contain the credentials that the Application will use to communicate
   with the Service Instance.
 
-- *Application*: The software that will make use of, be bound to, a Service
-  Instance.
+- *Application*: The software that uses a Service Instance via Service Binding.
 
 ## Context Object
 
