@@ -1,5 +1,17 @@
 # Service Broker API Release Notes #
 
+## <a id='2-12'></a>v2.12 ##
+2017-06-13
+
+* Added `context` field to request body for provisioning a service instance (`PUT /v2/service_instances/:instance_id`) and updating a service instance (`PATCH /v2/service_instances/:instance_id`). Also added the [profile.md](https://github.com/openservicebrokerapi/servicebroker/blob/master/profile.md) file describing RECOMMENDED usage patterns for environment-specific extensions and variations. `context` will replace the `organization_guid` and `space_guid` request fields in future versions of the specification. In the interim, both SHOULD be used to ensure interoperability with old and new implementations.
+* The specification now uses RFC2119 keywords to make it clearer when things are REQUIRED rather than OPTIONAL or RECOMMENDED.
+* Request and response parameters of type string, if present, MUST be a non-empty string.
+* Cleaned up text around status codes in responses, clarifying when they MUST be returned.
+* Added clarity around the `app_guid` request field.
+* Clarified the semantics of `plan_id` and `parameters` fields in the updating a service instance request body.
+* Clarified the default value of the `plan_updateable` field.
+* Clarified when `route_service_url` is REQUIRED and when brokers can return extra data in bindings.
+
 ## <a id='2-11'></a>v2.11 ##
 2016-11-15 
 

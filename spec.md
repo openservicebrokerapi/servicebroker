@@ -5,7 +5,7 @@
   - [Notations and Terminology](#notations-and-terminology)
   - [Changes](#changes)
     - [Change Policy](#change-policy)
-    - [Changes Since v2.10](#changes-since-v210)
+    - [Changes Since v2.11](#changes-since-v211)
   - [API Version Header](#api-version-header)
   - [Authentication](#authentication)
   - [Catalog Management](#catalog-management)
@@ -84,17 +84,26 @@ added to enable support for new features.
 These fields MUST be OPTIONAL and SHOULD be ignored by clients and servers
 that do not understand them.
 
-### Changes Since v2.10
+### Changes Since v2.11
 
-* Add `bindable` field to [Plan Object](#plan-object) to allow services to have both bindable and non-bindable plans.
+* Added `context` field to request body for provisioning a service instance (`PUT /v2/service_instances/:instance_id`) and updating a service instance (`PATCH /v2/service_instances/:instance_id`). Also added the [profile.md](https://github.com/openservicebrokerapi/servicebroker/blob/master/profile.md) file describing RECOMMENDED usage patterns for environment-specific extensions and variations. `context` will replace the `organization_guid` and `space_guid` request fields in future versions of the specification. In the interim, both SHOULD be used to ensure interoperability with old and new implementations.
+* The specification now uses RFC2119 keywords to make it clearer when things are REQUIRED rather than OPTIONAL or RECOMMENDED.
+* Request and response parameters of type string, if present, MUST be a non-empty string.
+* Cleaned up text around status codes in responses, clarifying when they MUST be returned.
+* Added clarity around the `app_guid` request field.
+* Clarified the semantics of `plan_id` and `parameters` fields in the updating a service instance request body.
+* Clarified the default value of the `plan_updateable` field.
+* Clarified when `route_service_url` is REQUIRED and when brokers can return extra data in bindings.
+
+For changes in older versions, see the [release notes](https://github.com/openservicebrokerapi/servicebroker/blob/master/release-notes.md).
 
 ## API Version Header
 
 Requests from the platform to the service broker MUST contain a header that declares the version number of the Service Broker API that the marketplace will use:
 
-`X-Broker-Api-Version: 2.11`
+`X-Broker-Api-Version: 2.12`
 
-The version numbers are in the format `MAJOR.MINOR`, using semantic versioning such that 2.10 comes before 2.11.
+The version numbers are in the format `MAJOR.MINOR` using semantic versioning.
 
 This header allows brokers to reject requests from marketplaces for versions they do not support. While minor API revisions will always be additive, it is possible that brokers depend on a feature from a newer version of the API that is supported by the platform. In this scenario the broker MAY reject the request with `412 Precondition Failed` and provide a message that informs the operator of the API version that is to be used instead.
 
@@ -123,7 +132,7 @@ The following sections describe catalog requests and responses in the Service Br
 
 #### cURL
 ```
-$ curl -H "X-Broker-API-Version: 2.11" http://username:password@broker-url/v2/catalog
+$ curl -H "X-Broker-API-Version: 2.12" http://username:password@broker-url/v2/catalog
 ```
 
 ### Response
@@ -436,7 +445,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
     "parameter1": 1,
     "parameter2": "foo"
   }
-}' -X PUT -H "X-Broker-API-Version: 2.11" -H "Content-Type: application/json"
+}' -X PUT -H "X-Broker-API-Version: 2.12" -H "Content-Type: application/json"
 ```
 
 ### Response
@@ -547,7 +556,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
     "organization_id": "org-guid-here",
     "space_id": "space-guid-here"
   }
-}' -X PATCH -H "X-Broker-API-Version: 2.11" -H "Content-Type: application/json"
+}' -X PATCH -H "X-Broker-API-Version: 2.12" -H "Content-Type: application/json"
 ```
 
 ### Response
@@ -767,7 +776,7 @@ The request provides these query string parameters as useful hints for brokers.
 ##### cURL
 ```
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
-  service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.11"
+  service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.12"
 ```
 
 ### Response
@@ -814,7 +823,7 @@ The request provides these query string parameters as useful hints for brokers.
 ##### cURL
 ```
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?accepts_incomplete=true
-  &service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.11"
+  &service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.12"
 ```
 
 ### Response
