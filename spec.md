@@ -1,4 +1,4 @@
-# Open Service Broker API (master - might contain changes that are not yet released)
+# Open Service Broker API v2.12
 
 ## Table of Contents
   - [API Overview](#api-overview)
