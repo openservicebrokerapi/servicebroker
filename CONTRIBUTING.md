@@ -16,7 +16,7 @@ If there is a need for some discussion around how best to
 address the concern then opening an Issue, prior to doing the work to develop
 a PR, would be best.  These minor issues do not need a formal review, per the
 [process](#prissue-review-process) described below, rather the issue
-should be used to come to a conscensus around a PR that will eventually be
+should be used to come to a consensus around a PR that will eventually be
 submitted.
 
 If the proposed change is non-controversial (e.g. a typo) then a PR can be
