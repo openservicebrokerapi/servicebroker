@@ -221,8 +221,9 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
       "name": "fake-plan-1",
       "id": "d3031751-XXXX-XXXX-XXXX-a42377d3320e",
       "description": "Shared fake Server, 5tb persistent disk, 40 max concurrent connections",
-      "max_storage_tb": 5,
+      "free": false,
       "metadata": {
+        "max_storage_tb": 5,
         "costs":[
             {
                "amount":{
@@ -247,8 +248,9 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
       "name": "fake-plan-2",
       "id": "0f4008b5-XXXX-XXXX-XXXX-dace631cd648",
       "description": "Shared fake Server, 5tb persistent disk, 40 max concurrent connections. 100 async",
-      "max_storage_tb": 5,
+      "free": false,
       "metadata": {
+        "max_storage_tb": 5,
         "costs":[
             {
                "amount":{
