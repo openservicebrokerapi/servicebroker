@@ -6,6 +6,7 @@
   - [Changes](#changes)
     - [Change Policy](#change-policy)
     - [Changes Since v2.11](#changes-since-v211)
+  - [Alpha Features](#alpha-features)
   - [API Version Header](#api-version-header)
   - [Authentication](#authentication)
   - [Catalog Management](#catalog-management)
@@ -83,6 +84,14 @@ added to enable support for new features.
 * New fields MAY be added to existing request/response messages.
 These fields MUST be OPTIONAL and SHOULD be ignored by clients and servers
 that do not understand them.
+
+## Alpha Features
+
+In order to get feedback from the community, some features of the API are
+released at an alpha level before becoming an official part of the
+specification.  Alpha features MAY be changed or removed in future versions of
+the specification.  See the [alpha features](alpha-features.md) document for
+the more information and the list of current alpha features.
 
 ### Changes Since v2.11
 
