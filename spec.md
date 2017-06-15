@@ -293,7 +293,7 @@ Brokers that support sychronous responses for provision, update, and delete can 
 
 ### Asynchronous Operations
 
-<p class="note">Note: Asynchronous operations are currently supported only for provision, update, and deprovision.</p>
+Note: Asynchronous operations are currently supported only for provision, update, and deprovision.
 
 For a broker to return an asynchronous response, the query parameter `accepts_incomplete=true` MUST be included the request. If the parameter is not included or is set to `false`, and the broker cannot fulfill the request synchronously (guaranteeing that the operation is complete on response), then the broker SHOULD reject the request with the status code `422 Unprocessable Entity` and the following body:
 
@@ -345,7 +345,7 @@ The request provides these query string parameters as useful hints for brokers.
 | plan_id | string | ID of the plan from the catalog. If present, MUST be a non-empty string. |
 | operation | string | A broker-provided identifier for the operation. When a value for `operation` is included with asynchronous responses for [Provision](#provisioning), [Update](#updating-a-service-instance), and [Deprovision](#deprovisioning) requests, the platform MUST provide the same value using this query parameter as a URL-encoded string. If present, MUST be a non-empty string. |
 
-<p class="note">Note: Although the request query parameters `service_id` and `plan_id` are not mandatory, the platform SHOULD include them on all `last_operation` requests it makes to service brokers.</p>
+Note: Although the request query parameters `service_id` and `plan_id` are not mandatory, the platform SHOULD include them on all `last_operation` requests it makes to service brokers.
 
 ##### cURL
 ```
@@ -592,7 +592,7 @@ For success responses, a broker MUST return the following field. Others will be 
 
 If `bindable:true` is declared for a service or plan in the [Catalog](#catalog-management) endpoint, the platform MAY request generation of a service binding.
 
-<p class="note">Note: Not all services need to be bindable --- some deliver value just from being provisioned. Brokers that offer services that are bindable MUST declare them as such using `bindable: true` in the [Catalog](#catalog-management). Brokers that do not offer any bindable services do not need to implement the endpoint for bind requests.</p>
+Note: Not all services need to be bindable --- some deliver value just from being provisioned. Brokers that offer services that are bindable MUST declare them as such using `bindable: true` in the [Catalog](#catalog-management). Brokers that do not offer any bindable services do not need to implement the endpoint for bind requests.
 
 ### Types of Binding
 
@@ -751,7 +751,7 @@ For success responses, the following fields are supported. Others will be ignore
 
 ## Unbinding
 
-<p class="note">Note: Brokers that do not provide any bindable services or plans do not need to implement this endpoint.</p>
+Note: Brokers that do not provide any bindable services or plans do not need to implement this endpoint.
 
 When a broker receives an unbind request from the marketplace, it MUST delete any resources associated with the binding. In the case where credentials were generated, this might result in requests to the service instance failing to authenticate.
 
