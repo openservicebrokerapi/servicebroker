@@ -13,6 +13,7 @@ document contains the recommended usage pattern for some of those variants.
   - [Context Object Properties](#context-object-properties)
   - [Cloud Foundry](#cloud-foundry)
   - [Kubernetes](#kubernetes)
+- [Service Metadata](#service-metadata)
 
 ## Notations and Terminology
 
@@ -178,3 +179,117 @@ part of a Kubernetes API call:
   }
   ```
 
+## Service Metadata
+
+While the [specification](spec.md) does not mandate the property names used
+in the `metadata` objects, it is RECOMMENDED that the following names
+be used when possible in an attempt to provide some degree of interoperability
+and consistency.
+
+### Service Metadata Fields
+
+| Broker API Field | Type | Description |
+| --- | --- | --- |
+| metadata.displayName | string | The name of the service to be displayed in graphical clients. |
+| metadata.imageUrl | string | The URL to an image. |
+| metadata.longDescription | string | Long description. |
+| metadata.providerDisplayName | string | The name of the upstream entity providing the actual service. |
+| metadata.documentationUrl | string | Link to documentation page for the service. |
+| metadata.supportUrl | string | Link to support page for the service. |
+
+### Plan Metadata Fields
+| Broker API Field | Type | Description |
+| --- | --- | --- |
+| metadata.bullets | array-of-strings | Features of this plan, to be displayed in a bulleted-list. |
+| metadata.costs | object | An array-of-objects that describes the costs of a service, in what currency, and the unit of measure. If there are multiple costs, all of them could be billed to the user (such as a monthly + usage costs at once). |
+| metadata.displayName | string | Name of the plan to be displayed to clients. |
+
+#### Cost Object
+This object describes the costs of a service, in what currency, and the unit
+of measure.
+
+| Field | Type | Description |
+| --- | --- | --- |
+| amount* | object | An array of pricing in various currencies for the cost type as key-value pairs where key is currency code and value (as a float) is currency amount. |
+| unit* | string | Display name for type of cost, e.g. Monthly, Hourly, Reques, GB. |
+
+\* Fields with an asterisk are REQUIRED.
+
+For example:
+```
+"costs": [
+  {
+    "amount": {
+      "usd": 649.0
+    },
+    "unit": "MONTHLY"
+  }
+]
+```
+
+### Example Broker Response Body
+
+The example below contains a catalog of one service, having one service plan.
+Of course, a broker can offering a catalog of many services, each having
+many plans.
+
+```
+{
+   "services":[
+      {
+      "id":"766fa866-a950-4b12-adff-c11fa4cf8fdc",
+         "name":"cloudamqp",
+         "description":"Managed HA RabbitMQ servers in the cloud",
+         "requires":[
+
+         ],
+         "tags":[
+            "amqp",
+            "rabbitmq",
+            "messaging"
+         ],
+         "metadata":{
+            "displayName":"CloudAMQP",
+            "imageUrl":"https://d33na3ni6eqf5j.cloudfront.net/app_resources/18492/thumbs_112/img9069612145282015279.png",
+            "longDescription":"Managed, highly available, RabbitMQ clusters in the cloud",
+            "providerDisplayName":"84codes AB",
+            "documentationUrl":"http://docs.cloudfoundry.com/docs/dotcom/marketplace/services/cloudamqp.html",
+            "supportUrl":"http://www.cloudamqp.com/support.html"
+         },
+         "dashboard_client":{
+            "id": "p-mysql-client",
+            "secret": "p-mysql-secret",
+            "redirect_uri": "http://p-mysql.example.com/auth/create"
+         },
+         "plans":[
+            {
+               "id":"024f3452-67f8-40bc-a724-a20c4ea24b1c",
+               "name":"bunny",
+               "description":"A mid-sided plan",
+               "metadata":{
+                  "bullets":[
+                     "20 GB of messages",
+                     "20 connections"
+                  ],
+                  "costs":[
+                     {
+                        "amount":{
+                           "usd":99.0
+                        },
+                        "unit":"MONTHLY"
+                     },
+                     {
+                        "amount":{
+                           "usd":0.99
+                        },
+                        "unit":"1GB of messages over 20GB"
+                     }
+                  ],
+                  "displayName":"Big Bunny"
+               }
+            }
+         ]
+      }
+   ]
+}
+```
