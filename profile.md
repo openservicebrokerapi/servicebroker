@@ -2,7 +2,7 @@
 
 ## Abstract
 
-The [Open Service Broker API specification](spec.md) allows for extensions
+The [Open Service Broker API specification](https://github.com/openservicebrokerapi/servicebroker/blob/v2.12/spec.md) allows for extensions
 and variations based on the environments in which it is being used; this
 document contains the recommended usage pattern for some of those variants.
 
@@ -25,10 +25,10 @@ be interpreted as described in [RFC 2119]( https://tools.ietf.org/html/rfc2119).
 ### Terminology
 
 The terminology defined below are defined by the
-[Open Service Broker API specification](spec.md) and are included here
+[Open Service Broker API specification](https://github.com/openservicebrokerapi/servicebroker/blob/v2.12/spec.md) and are included here
 for convenience. If there are any inconsistencies between their definitions in
-this document and the [Open Service Broker API specification](spec.md), then
-the [Open Service Broker API specification](spec.md) SHALL take precedence.
+this document and the [Open Service Broker API specification](https://github.com/openservicebrokerapi/servicebroker/blob/v2.12/spec.md), then
+the [Open Service Broker API specification](https://github.com/openservicebrokerapi/servicebroker/blob/v2.12/spec.md) SHALL take precedence.
 
 - *Platform*: The software that will manage the cloud environment into which
   Applications and Service Brokers are provisioned.  Users will not directly
@@ -56,7 +56,7 @@ the [Open Service Broker API specification](spec.md) SHALL take precedence.
 
 ## Context Object
 
-In the [Open Service Broker API specification](spec.md) there are certain
+In the [Open Service Broker API specification](https://github.com/openservicebrokerapi/servicebroker/blob/v2.12/spec.md) there are certain
 message flows that include a `context` property. This property is defined
 as an opaque JSON object that is meant to contain contextual information
 about the environment in which the Platform or Application is executing.
