@@ -141,7 +141,7 @@ $ curl -H "X-Broker-API-Version: 2.12" http://username:password@broker-url/v2/ca
 | --- | --- |
 | 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
 
-#### Body - Schema of Service Objects
+#### Body
 
 CLI and web clients have different needs with regard to service and plan names.
 A CLI-friendly string is all lowercase, with no spaces.
@@ -332,10 +332,10 @@ Valid values for `state` are `in progress`, `succeeded`, and `failed`. The platf
 
 ### Request
 
-##### Route
+#### Route
 `GET /v2/service_instances/:instance_id/last_operation`
 
-##### Parameters
+#### Parameters
 
 The request provides these query string parameters as useful hints for brokers.
 
@@ -347,7 +347,7 @@ The request provides these query string parameters as useful hints for brokers.
 
 <p class="note">Note: Although the request query parameters `service_id` and `plan_id` are not mandatory, the platform SHOULD include them on all `last_operation` requests it makes to service brokers.</p>
 
-##### cURL
+#### cURL
 ```
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id/last_operation
 ```
@@ -361,7 +361,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id/las
 
 Responses with any other status code SHOULD be interpreted as an error or invalid response. The platform SHOULD continue polling until the broker returns a valid response or the [maximum polling duration](#polling-interval-and-duration) is reached. Brokers MAY use the `description` field to expose user-facing error messages about the operation state; for more info see [Broker Errors](#broker-errors).
 
-##### Body
+#### Body
 
 All response bodies MUST be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body might or might not be returned.
 
@@ -391,7 +391,7 @@ When the broker receives a provision request from the platform, it MUST take wha
 
 ### Request
 
-##### Route
+#### Route
 `PUT /v2/service_instances/:instance_id`
 
 The `:instance_id` of a service instance is provided by the platform. This ID will be used for future requests (bind and deprovision), so the broker will use it to correlate the resource it creates.
@@ -401,7 +401,7 @@ The `:instance_id` of a service instance is provided by the platform. This ID wi
 | --- | --- | --- |
 | accepts_incomplete | boolean | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision a service instance of the requested plan asynchronously, the broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
-##### Body
+#### Body
 | Request field | Type | Description |
 | --- | --- | --- |
 | service_id* | string | The ID of the service (from the catalog). MUST be globally unique. MUST be a non-empty string. |
@@ -430,7 +430,7 @@ The `:instance_id` of a service instance is provided by the platform. This ID wi
 }
 ```
 
-##### cURL
+#### cURL
 ```
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id?accepts_incomplete=true -d '{
   "context": {
@@ -460,7 +460,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
 
 Responses with any other status code will be interpreted as a failure. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
-##### Body
+#### Body
 
 All response bodies MUST be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body might or might not be returned.
 
@@ -490,7 +490,7 @@ Not all permutations of plan changes are expected to be supported. For example, 
 
 ### Request
 
-##### Route
+#### Route
 `PATCH /v2/service_instances/:instance_id`
 
 `:instance_id` is the global unique ID of a previously provisioned service instance.
@@ -500,7 +500,7 @@ Not all permutations of plan changes are expected to be supported. For example, 
 | --- | --- | --- |
 | accepts_incomplete | boolean | A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision a service instance of the requested plan asynchronously, the broker SHOULD reject the request with a `422 Unprocessable Entity` as described below. |
 
-##### Body
+#### Body
 
 | Request Field | Type | Description |
 | --- | --- | --- |
@@ -537,7 +537,7 @@ Not all permutations of plan changes are expected to be supported. For example, 
 }
 ```
 
-##### cURL
+#### cURL
 ```
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id?accepts_incomplete=true -d '{
   "context": {
@@ -569,7 +569,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
 
 Responses with any other status code will be interpreted as a failure. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
-##### Body
+#### Body
 
 All response bodies MUST be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body might or might not be returned.
 
@@ -648,13 +648,13 @@ did not include a `"requires":["volume_mount"]` property.
 
 ### Request
 
-##### Route
+#### Route
 `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
 The `:instance_id` is the ID of a previously provisioned service instance. The `:binding_id` is also provided by the platform. This ID will be used for future unbind requests, so the broker will use it to correlate
 the resource it creates.
 
-##### Body
+#### Body
 
 | Request Field | Type | Description |
 | --- | --- | --- |
@@ -697,7 +697,7 @@ add additional ones as needed.
 ```
 
 
-##### cURL
+#### cURL
 ```
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:binding_id -d '{
   "service_id": "service-guid-here",
@@ -723,7 +723,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id/ser
 
 Responses with any other status code will be interpreted as a failure and an unbind request will be sent to the broker to prevent an orphan being created on the broker. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
-##### Body
+#### Body
 
 All response bodies MUST be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body might or might not be returned.
 
@@ -757,12 +757,12 @@ When a broker receives an unbind request from the marketplace, it MUST delete an
 
 ### Request
 
-##### Route
+#### Route
 `DELETE /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
 The `:instance_id` is the ID of a previously provisioned service instance. The `:binding_id` is the ID of a previously provisioned binding for that service instance.
 
-##### Parameters
+#### Parameters
 
 The request provides these query string parameters as useful hints for brokers.
 
@@ -773,7 +773,7 @@ The request provides these query string parameters as useful hints for brokers.
 
 \* Query parameters with an asterisk are REQUIRED.
 
-##### cURL
+#### cURL
 ```
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
   service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.12"
@@ -788,7 +788,7 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
 
 Responses with any other status code will be interpreted as a failure and the binding will remain in the marketplace database. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
-##### Body
+#### Body
 
 All response bodies MUST be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body might or might not be returned.
 
@@ -803,12 +803,12 @@ provisions.
 
 ### Request
 
-##### Route
+#### Route
 `DELETE /v2/service_instances/:instance_id`
 
 `:instance_id` is the identifier of a previously provisioned service instance.
 
-##### Parameters
+#### Parameters
 
 The request provides these query string parameters as useful hints for brokers.
 
@@ -820,7 +820,7 @@ The request provides these query string parameters as useful hints for brokers.
 
 \* Query parameters with an asterisk are REQUIRED.
 
-##### cURL
+#### cURL
 ```
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?accepts_incomplete=true
   &service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.12"
@@ -837,7 +837,7 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?ac
 
 Responses with any other status code will be interpreted as a failure and the service instance will remain in the marketplace database. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
-##### Body
+#### Body
 
 All response bodies MUST be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body might or might not be returned.
 
@@ -863,7 +863,7 @@ Broker failures beyond the scope of the well-defined HTTP response codes listed
 above (like `410 Gone` on [Deprovisioning](#deprovisioning)) MUST return an appropriate HTTP response code
 (chosen to accurately reflect the nature of the failure) and a body containing a valid JSON Object (not an array).
 
-##### Body
+#### Body
 
 All response bodies MUST be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body might or might not be returned.
 
