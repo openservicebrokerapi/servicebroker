@@ -33,8 +33,10 @@ rc=0
 echo Verifying hrefs
 "${REPODIR}/tools/verify-links.sh" "${REPODIR}/spec.md" || rc=1
 
-echo
 echo Verify RFC2119 keywords
 "${REPODIR}/tools/verify-rfc.sh" "${REPODIR}/spec.md" || rc=1
+
+echo Verify tables
+"${REPODIR}/tools/verify-tables.sh" "${REPODIR}/spec.md" || rc=1
 
 exit $rc
