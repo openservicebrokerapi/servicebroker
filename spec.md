@@ -1,11 +1,10 @@
 # Open Service Broker API v2.11
 
 ## Table of Contents
-  - [API Release Notes](#release-notes)
+  - [API Overview](#api-overview)
   - [Changes](#changes)
     - [Change Policy](#change-policy)
     - [Changes Since v2.10](#since-v2.10)
-  - [API Overview](#api-overview)
   - [API Version Header](#version-header)
   - [Authentication](#authentication)
   - [Catalog Management](#catalog-mgmt)
