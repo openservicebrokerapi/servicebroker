@@ -640,9 +640,9 @@ did not include a `"requires":["route_forwarding"]` property.
 
 There are a class of services that provide network storage to applications
 via volume mounts in the application container. A create binding response
-from one of these services MUST include a `volume_mount`.
+from one of these services MUST include `volume_mounts`.
 
-Brokers MUST NOT include a `volume_mounts` in a create binding response
+Brokers MUST NOT include `volume_mounts` in a create binding response
 if the associated [Catalog](#catalog-management) entry for the service
 did not include a `"requires":["volume_mount"]` property.
 
@@ -734,7 +734,25 @@ For success responses, the following fields are supported. Others will be ignore
 | credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. |
 | syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the platform MUST consider the response invalid. |
 | route_service_url | string | A URL to which the platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the platform can consider the response invalid. |
-| volume_mounts | array-of-objects | An array of configuration for mounting volumes. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the platform can consider the response invalid. |
+| volume_mounts | array-of-objects | An array of configuration for remote storage devices to be mounted into an application container filesystem. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the platform can consider the response invalid. |
+
+##### Volume Mounts Object
+
+| Response Field | Type | Description |
+| --- | --- | --- |
+| driver | string | Name of the volume driver plugin which manages the device |
+| container_dir | string | The directory to mount inside the application container |
+| mode | string | "r" to mount the volume read-only, or "rw" to mount it read-write |
+| device_type | string | A string specifying the type of device to mount. Currently the only supported value is "shared"  |
+| device | device-object | Device object containing device_type specific details. Currently the only supported value is "shared_device" |
+
+##### Shared Device Object
+
+| Field | Type | Description |
+| --- | --- | --- |
+| volume_id | string | ID of the shared volume to mount on every app instance |
+| mount_config | object | Configuration object to be passed to the driver when the volume is mounted (optional) |
+
 
 ```
 {
@@ -746,6 +764,23 @@ For success responses, the following fields are supported. Others will be ignore
     "port": 3306,
     "database": "dbname"
   }
+}
+```
+
+```
+{
+  "volume_mounts": [{
+    "driver": "cephdriver",
+    "container_dir": "/data/images",
+    "mode": "r",
+    "device_type": "shared",
+    "device": {
+      "volume_id": "bc2c1eab-05b9-482d-b0cf-750ee07de311",
+      "mount_config": {
+        "key": "value"
+      }
+    }
+  }]
 }
 ```
 
