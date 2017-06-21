@@ -289,7 +289,7 @@ Support for synchronous or asynchronous responses MAY vary by service offering, 
 
 To execute a request synchronously, the broker need only return the usual status codes: `201 Created` for provision and bind, and `200 OK` for update, unbind, and deprovision.
 
-Brokers that support sychronous responses for provision, update, and delete can ignore the `accepts_incomplete=true` query parameter if it is provided by the client.
+Brokers that support synchronous responses for provision, update, and delete can ignore the `accepts_incomplete=true` query parameter if it is provided by the client.
 
 ### Asynchronous Operations
 
