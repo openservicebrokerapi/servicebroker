@@ -157,7 +157,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| name* | string | A CLI-friendly name of the service. All lowercase, no spaces. This MUST be globally unique within a platform marketplace. MUST be a non-empty string. |
+| name* | string | A CLI-friendly name of the service. MUST only contain lowercase characters, numbers and hyphens (no spaces). This MUST be globally unique within a platform marketplace. MUST be a non-empty string. |
 | id* | string | An identifier used to correlate this service in future requests to the broker. This MUST be globally unique within a platform marketplace. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
 | description* | string | A short description of the service. MUST be a non-empty string. |
 | tags | array-of-strings | Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp. |
@@ -182,7 +182,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 | Response field | Type | Description |
 | --- | --- | --- |
 | id* | string | An identifier used to correlate this plan in future requests to the broker. This MUST be globally unique within a platform marketplace. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
-| name* | string | The CLI-friendly name of the plan. MUST be unique within the service. All lowercase, no spaces. MUST be a non-empty string. |
+| name* | string | The CLI-friendly name of the plan. MUST only contain lowercase characters, numbers and hyphens (no spaces). MUST be unique within the service. MUST be a non-empty string. |
 | description* | string | A short description of the plan. MUST be a non-empty string. |
 | metadata | JSON object | An opaque object of metadata for a service plan. Controller treats this as a blob. Note that there are [conventions](https://docs.cloudfoundry.org/services/catalog-metadata.html) in existing brokers and controllers for fields that aid in the display of catalog data. |
 | free | boolean | When false, service instances of this plan have a cost. The default is true. |
