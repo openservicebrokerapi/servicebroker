@@ -101,7 +101,7 @@ For changes in older versions, see the [release notes](https://github.com/opense
 
 Requests from the platform to the service broker MUST contain a header that declares the version number of the Service Broker API that the marketplace will use:
 
-`X-Broker-Api-Version: 2.12`
+`X-Broker-API-Version: 2.12`
 
 The version numbers are in the format `MAJOR.MINOR` using semantic versioning.
 
