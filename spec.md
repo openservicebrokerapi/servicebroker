@@ -740,19 +740,22 @@ For success responses, the following fields are supported. Others will be ignore
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| driver | string | Name of the volume driver plugin which manages the device |
-| container_dir | string | The directory to mount inside the application container |
-| mode | string | "r" to mount the volume read-only, or "rw" to mount it read-write |
-| device_type | string | A string specifying the type of device to mount. Currently the only supported value is "shared"  |
-| device | device-object | Device object containing device_type specific details. Currently the only supported value is "shared_device" |
+| driver* | string | Name of the volume driver plugin which manages the device. |
+| container_dir* | string | The path in the application container onto which the volume will be mounted. |
+| mode* | string | "r" to mount the volume read-only or "rw" to mount it read-write. |
+| device_type* | string | A string specifying the type of device to mount. Currently the only supported value is "shared".  |
+| device* | device-object | Device object containing device_type specific details. Currently only shared devices are supported. |
 
-##### Shared Device Object
+##### Device Object
+
+Currently only shared devices are supported; a distributed file system which can be mounted on all app instances simultaneously.
 
 | Field | Type | Description |
 | --- | --- | --- |
-| volume_id | string | ID of the shared volume to mount on every app instance |
-| mount_config | object | Configuration object to be passed to the driver when the volume is mounted (optional) |
+| volume_id* | string | ID of the shared volume to mount on every app instance. |
+| mount_config | object | Configuration object to be passed to the driver when the volume is mounted. |
 
+\* Fields with an asterisk are REQUIRED.
 
 ```
 {
