@@ -86,3 +86,62 @@ described below:
   "proposal finalized" label.  This indicates that it is ready to be
   implemented by a platform developer, see the [process](#contributing) above.
 - Once a Pull Request is approved, it will be merged into the 'master' branch.
+
+## Release Process
+
+Any member of the PMC can request that the SHA on master (the **Release SHA**)
+is ready to be released into a new version of the spec. They will do this by
+creating a new PR with the title of the proposed release. For example,
+**"Release Proposal: v$major.$minor"**.
+
+### Prepare a PR
+
+1. In a fork, create a new branch called "v$major.$minor-rc" from the
+  **Release SHA**.
+2. Create a new commit with the following changes:
+  * Update [release-notes.md](release-notes.md) detailing the changes that are
+  to be released in this version.
+  * Update [README.md](README.md) with an updated _Latest Release_ subheading
+  and links to the latest version of the documents (`spec.md`, `profile.md`,
+  etc).
+  * Update [spec.md](spec.md) with an updated _Changes Since v..._ section (and
+  link from table of contents) containing a copy of the relevant release notes,
+  and with any references to the previous version of the specification (i.e. the
+  `X-Broker-API-Version` headers) updated. Do not update the header
+  (`Open Service Broker API (master - might contain changes that are not yet released)`)
+   - this will be done if and when the release proposal is approved.
+3. Open a new Pull Request titled **Release Proposal: v$major.$minor** from the
+branch of the fork to the master branch of the repository.
+4. Announce the release proposal on the next weekly call and notify the mailing
+list of the proposal, triggering the start of the
+[Review Process](#review-process) as outlined below.
+
+### Review Process
+
+- All release proposals must be available for review for no less than one
+  week before they are approved. This will provide each dedicated committer
+  enough time to review the release proposal without unnecessarily delaying
+  forward progress.
+- Any dedicated committer can veto (via a "NOT LGTM" comment in the proposal).
+  The comment must include the reasoning behind the veto. It is then expected
+  that the dedicated committers will discuss the concerns and determine the next
+  steps for release proposal. The submitter should either close/reject the
+  proposal or address the concerns raised such that the "NOT LGTM" can be
+  rescinded.
+- A release proposal requires at least 4 "LGTM" comments from at least
+  4 different organizations to be approved.
+
+### Once Approved
+
+Once the release is approved, the following actions should be taken by
+any PMC member:
+
+1. Merge the release proposal PR into the master branch of the repository.
+1. Create a new branch called **"v$major.$minor"** from the **Release SHA**.
+1. Cherry pick the commit in which the release proposal PR was merged, to pick
+   up the file changes.
+1. Create a new commit updating the [spec.md](spec.md) header to include the
+   version of the release (`Open Service Broker API (v$major.$minor)`).
+1. Push the branch to the repository (`v$major.$minor`).
+1. Notify the mailing list of the new release.
+1. The PMC will create a blog post for the new release.
