@@ -19,3 +19,9 @@ These changes have been accepted by the working group for the next version of th
 ## Contributing
 
 - See [CONTRIBUTING](CONTRIBUTING.md)
+
+## Getting Started
+
+The [Getting Started](gettingStarted.md) document provides a list of
+sample brokers, frameworks and libraries that might be useful to developers
+wanting to implement a Platform or Broker.
