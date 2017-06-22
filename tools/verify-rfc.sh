@@ -26,7 +26,7 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-REPO_ROOT=$(dirname "${BASH_SOURCE}")/..
+REPO_ROOT=$( cd $(dirname "${BASH_SOURCE}")/.. && pwd)
 
 verbose=""
 debug=""
@@ -77,7 +77,7 @@ if [ "$*" == "" ]; then
   arg="${REPO_ROOT}"
 fi
 
-Files=$(find $* $arg \( -name "*.md" -o -name "*.htm*" \) | sort)
+Files=$(find -L $* $arg \( -name "*.md" -o -name "*.htm*" \) | sort)
 
 rc=0
 
@@ -85,7 +85,7 @@ for file in ${Files}; do
   # echo scanning $file
   dir=$(dirname $file)
 
-  [[ -n "$verbose" ]] && echo "Verifying: $file"
+  [[ -n "$verbose" ]] && echo "> $file"
 
   lineNum=0
   cat ${file} | while read line; do 
