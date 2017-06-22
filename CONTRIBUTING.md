@@ -65,6 +65,20 @@ the API interactions should be well understood and there should be no
 technical surprises; we expect the only discussion necessary on PRs to be
 for wordsmithing and formatting.
 
+## Github Labels
+
+There is a label for each phase of the SDLC:
+
+- `reviewing proposal`: The API working group is reviewing a proposed change
+to the API.
+- `proposal finalized`: (??)
+- `validating through implementation`: One or more platforms that integrate
+   with the API implement the proposed change to provide feedback on the design
+- `validated by implementation`: (??)
+- `pr submitted`: (??)
+- `release candidate`: (??)
+- `included in release`: (??)
+
 ## PR/Issue Review Process
 
 All proposals (either Pull Requests or Issues) will follow the process
