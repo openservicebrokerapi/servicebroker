@@ -417,12 +417,12 @@ The `:instance_id` of a service instance is provided by the platform. This ID wi
 
 ```
 {
+  "service_id": "service-guid-here",
+  "plan_id": "plan-guid-here",
   "context": {
     "platform": "cloudfoundry",
     "some_field": "some-contextual-data"
   },
-  "service_id": "service-guid-here",
-  "plan_id": "plan-guid-here",
   "organization_guid": "org-guid-here",
   "space_guid": "space-guid-here",
   "parameters": {
@@ -435,12 +435,12 @@ The `:instance_id` of a service instance is provided by the platform. This ID wi
 ##### cURL
 ```
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id?accepts_incomplete=true -d '{
+  "service_id": "service-guid-here",
+  "plan_id": "plan-guid-here",
   "context": {
     "platform": "cloudfoundry",
     "some_field": "some-contextual-data"
   },
-  "service_id": "service-guid-here",
-  "plan_id": "plan-guid-here",
   "organization_guid": "org-guid-here",
   "space_guid": "space-guid-here",
   "parameters": {
