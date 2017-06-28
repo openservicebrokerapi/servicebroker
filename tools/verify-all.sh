@@ -31,10 +31,10 @@ REPODIR=$(dirname "${BASH_SOURCE}")/..
 rc=0
 
 echo Verifying hrefs
-"${REPODIR}/tools/verify-links.sh" "${REPODIR}/spec.md" || rc=1
+"${REPODIR}/tools/verify-links.sh" -v "${REPODIR}" || rc=1
 
 echo
 echo Verify RFC2119 keywords
-"${REPODIR}/tools/verify-rfc.sh" "${REPODIR}/spec.md" || rc=1
+"${REPODIR}/tools/verify-rfc.sh" -v "${REPODIR}"/spec.md || rc=1
 
 exit $rc
