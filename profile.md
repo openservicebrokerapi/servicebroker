@@ -76,8 +76,9 @@ or REQUIRED level requirements defined herein.
 
 The list of properties within the Context Object can vary depending on
 which Service Broker API is being invoked and which Platform is being used.
-This section will define those properties and specify when each is meant
-to be used.
+This section will define a set of properties for each platform and specify
+when each is meant to be used. Platforms MAY choose to provide additional
+properties beyond the ones defined in this document.
 
 Aside from the Platform specific properties, defined in the following
 sections, there is one common property called `platform` that
