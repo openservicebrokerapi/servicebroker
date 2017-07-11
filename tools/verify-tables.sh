@@ -79,7 +79,7 @@ function checkForPunc() {
     return 0
   fi
 
-  echo "$file - $1: Last column doesn't end with a '.' or '?'"
+  echo "$file - $1: Last column doesn't end with a '. |' or '? |' - watch for extra spaces"
   return 1
 }
 
