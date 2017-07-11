@@ -4,7 +4,7 @@
 
 The [Open Service Broker API specification](spec.md) allows for extensions
 and variations based on the environments in which it is being used; this
-document contains the recommended usage pattern for some of those variants.
+document contains the suggested usage pattern for some of those variants.
 
 ## Table of Contents
 

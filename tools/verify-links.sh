@@ -123,9 +123,9 @@ for file in ${mdFiles}; do
 
     # An external href (ie. starts with http)
     if [ "${ref:0:4}" == "http" ]; then
-      if ! wget --no-check-certificate --timeout=10 -O /dev/null ${ref} \
+      if ! curl -f -s -k --connect-timeout 10 ${ref} \
           > /dev/null 2>&1 ; then
-        echo $file: Can\'t load: url ${ref} | tee -a ${tmp}3
+        echo $file: Can\'t load url: ${ref} | tee -a ${tmp}3
       fi
       continue
     fi
