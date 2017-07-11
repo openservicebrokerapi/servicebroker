@@ -58,6 +58,9 @@ This specification defines the following terms:
   Typically, Services will expose some API that can be invoked to perform
   some action. However, there can also be non-interactive Services that can
   perform the desired actions without direct prompting from the Application.
+  
+- *Service Plan*: A tier of capabilities or service-level defined by the service provider; e.g. 
+  Bronze/Silver/Gold, Small/Medium/Large, Shared/Dedicated.
 
 - *Service Broker*: Service Brokers manage the lifecycle of Services. Platforms
   interact with Service Brokers to provision, and manage, Service Instances
