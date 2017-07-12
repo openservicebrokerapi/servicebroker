@@ -96,7 +96,7 @@ This specification defines the following terms:
 
 - *Application*: The software that will make use of, be bound to, a Service
   Instance.
-
+  
 ## Changes
 
 ### Change Policy
