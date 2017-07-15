@@ -130,6 +130,9 @@ The following sections describe catalog requests and responses in the Service Br
 #### Route
 `GET /v2/catalog`
 
+`:instance_id` MUST be a globally unique UUID whose syntax conforms to
+[RFC 4122](https://tools.ietf.org/html/rfc4122).
+
 #### cURL
 ```
 $ curl -H "X-Broker-API-Version: 2.12" http://username:password@broker-url/v2/catalog
@@ -337,6 +340,9 @@ Valid values for `state` are `in progress`, `succeeded`, and `failed`. The platf
 #### Route
 `GET /v2/service_instances/:instance_id/last_operation`
 
+`:instance_id` MUST be a globally unique UUID whose syntax conforms to
+[RFC 4122](https://tools.ietf.org/html/rfc4122).
+
 #### Parameters
 
 The request provides these query string parameters as useful hints for brokers.
@@ -396,7 +402,10 @@ When the broker receives a provision request from the platform, it MUST take wha
 #### Route
 `PUT /v2/service_instances/:instance_id`
 
-The `:instance_id` of a service instance is provided by the platform. This ID will be used for future requests (bind and deprovision), so the broker will use it to correlate the resource it creates.
+`:instance_id` MUST be a globally unique UUID whose syntax conforms to
+[RFC 4122](https://tools.ietf.org/html/rfc4122).
+This ID will be used for future requests (bind and deprovision), so the
+broker will use it to correlate the resource it creates.
 
 #### Parameters
 | Parameter name | Type | Description |
@@ -495,7 +504,9 @@ Not all permutations of plan changes are expected to be supported. For example, 
 #### Route
 `PATCH /v2/service_instances/:instance_id`
 
-`:instance_id` is the global unique ID of a previously provisioned service instance.
+`:instance_id` MUST be a globally unique UUID whose syntax conforms to
+[RFC 4122](https://tools.ietf.org/html/rfc4122).
+It MUST be the ID a previously provisioned service instance.
 
 #### Parameters
 | Parameter name | Type | Description |
@@ -653,8 +664,14 @@ did not include a `"requires":["volume_mount"]` property.
 #### Route
 `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
-The `:instance_id` is the ID of a previously provisioned service instance. The `:binding_id` is also provided by the platform. This ID will be used for future unbind requests, so the broker will use it to correlate
-the resource it creates.
+`:instance_id` MUST be a globally unique UUID whose syntax conforms to
+[RFC 4122](https://tools.ietf.org/html/rfc4122).
+It MUST be the ID of a previously provisioned service instance.
+
+`:binding_id` MUST be a globally unique UUID whose syntax conforms to
+[RFC 4122](https://tools.ietf.org/html/rfc4122).
+This ID will be used for future unbind requests, so the broker will use
+it to correlate the resource it creates.
 
 #### Body
 
@@ -800,7 +817,14 @@ When a broker receives an unbind request from the marketplace, it MUST delete an
 #### Route
 `DELETE /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
-The `:instance_id` is the ID of a previously provisioned service instance. The `:binding_id` is the ID of a previously provisioned binding for that service instance.
+`:instance_id` MUST be a globally unique UUID whose syntax conforms to
+[RFC 4122](https://tools.ietf.org/html/rfc4122).
+It MUST be the ID of a previously provisioned service instance.
+
+`:binding_id` MUST be a globally unique UUID whose syntax conforms to
+[RFC 4122](https://tools.ietf.org/html/rfc4122).
+It MUST be the the ID of a previously provisioned binding for that service
+instance.
 
 #### Parameters
 
@@ -846,7 +870,9 @@ provisions.
 #### Route
 `DELETE /v2/service_instances/:instance_id`
 
-`:instance_id` is the identifier of a previously provisioned service instance.
+`:instance_id` MUST be a globally unique UUID whose syntax conforms to
+[RFC 4122](https://tools.ietf.org/html/rfc4122).
+It MUST be the ID a previously provisioned service instance.
 
 #### Parameters
 
