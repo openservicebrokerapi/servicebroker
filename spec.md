@@ -157,8 +157,8 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| name* | string | A CLI-friendly name of the service. MUST only contain lowercase characters, numbers and hyphens (no spaces). This MUST be globally unique within a platform marketplace. MUST be a non-empty string. |
-| id* | string | An identifier used to correlate this service in future requests to the broker. This MUST be globally unique within a platform marketplace. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
+| name* | string | A CLI-friendly name of the service. MUST only contain lowercase characters, numbers and hyphens (no spaces). MUST be unique across all service objects returned in this response. MUST be a non-empty string. |
+| id* | string | An identifier used to correlate this service in future requests to the broker. This MUST be globally unique. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
 | description* | string | A short description of the service. MUST be a non-empty string. |
 | tags | array-of-strings | Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp. |
 | requires | array-of-strings | A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are `syslog_drain`, `route_forwarding` and `volume_mount`. |
@@ -167,6 +167,15 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 | [dashboard_client](#dashboard-client-object) | object | Contains the data necessary to activate the Dashboard SSO feature for this service. |
 | plan_updateable | boolean | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute `plan_updatable` to `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
 | [plans*](#plan-object) | array-of-objects | A list of plans for this service, schema is defined below. MUST contain at least one plan. |
+
+Note: Platforms will typically use the service name as an input parameter
+from their users to indicate which service they want to instantiate. Therefore,
+it is important that these values be unique for all services within a
+platform's marketplace. To achieve this goal service providers often will
+prefix their service names with some unique value (such as the name of their
+company). Additionally, some platforms might modify the service names before
+presenting them to their users.  This specification places no requirements on
+how platforms might expose these values to their users.
 
 ##### Dashboard Client Object
 
@@ -181,7 +190,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| id* | string | An identifier used to correlate this plan in future requests to the broker. This MUST be globally unique within a platform marketplace. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
+| id* | string | An identifier used to correlate this plan in future requests to the broker. This MUST be globally unique. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
 | name* | string | The CLI-friendly name of the plan. MUST only contain lowercase characters, numbers and hyphens (no spaces). MUST be unique within the service. MUST be a non-empty string. |
 | description* | string | A short description of the plan. MUST be a non-empty string. |
 | metadata | JSON object | An opaque object of metadata for a service plan. Controller treats this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing brokers and controllers for fields that aid in the display of catalog data. |
@@ -407,7 +416,7 @@ The `:instance_id` of a service instance is provided by the platform. This ID wi
 | Request field | Type | Description |
 | --- | --- | --- |
 | service_id* | string | The ID of the service (from the catalog). MUST be globally unique. MUST be a non-empty string. |
-| plan_id* | string | The ID of the plan (from the catalog) for which the service instance has been requested. MUST be unique to a service. MUST be a non-empty string. |
+| plan_id* | string | The ID of the plan (from the catalog) for which the service instance has been requested. MUST be unique within the service. MUST be a non-empty string. |
 | context | object | Platform specific contextual information under which the service instance is to be provisioned. Although most brokers will not use this field, it could be helpful in determining data placement or applying custom business rules. `context` will replace `organization_guid` and `space_guid` in future versions of the specification - in the interim both SHOULD be used to ensure interoperability with old and new implementations. |
 | organization_guid* | string | Deprecated in favor of `context`. The platform GUID for the organization under which the service instance is to be provisioned. Although most brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | space_guid* | string | Deprecated in favor of `context`. The identifier for the project space within the platform organization. Although most brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
@@ -508,7 +517,7 @@ Not all permutations of plan changes are expected to be supported. For example, 
 | --- | --- | --- |
 | context | object | Contextual data under which the service instance is created. |
 | service_id* | string | The ID of the service (from the catalog). MUST be globally unique. MUST be a non-empty string. |
-| plan_id | string | The ID of the plan (from the catalog) for which the service instance has been requested. MUST be unique to a service. If present, MUST be a non-empty string. If this field is not present in the request message, then the broker MUST NOT change the plan of the instance as a result of this request. |
+| plan_id | string | The ID of the plan (from the catalog) for which the service instance has been requested. MUST be unique within the service. If present, MUST be a non-empty string. If this field is not present in the request message, then the broker MUST NOT change the plan of the instance as a result of this request. |
 | parameters | JSON object | Configuration options for the service instance. An opaque object, controller treats this as a blob. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. If this field is not present in the request message, then the broker MUST NOT change the parameters of the instance as a result of this request. |
 | previous_values | object | Information about the service instance prior to the update. |
 | previous_values.service_id | string | Deprecated; determined to be unnecessary as the value is immutable. ID of the service for the service instance. If present, MUST be a non-empty string. |
