@@ -473,11 +473,11 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
 | Any 5xx| MAY be returned if the broker encountered an error. | The platform SHOULD attempt to issue a corresponding deprovision request to handle potential orphans. |
 | Connection timeout | It is RECOMMENDED that brokers do not time out in request processing. | The platform SHOULD attempt to issue a corresponding deprovision request to handle potential orphans. |
 
-Responses with status codes not listed above MUST be interpreted as a failure by the platform, but
- MUST NOT be handled as orphan handling scenarios. In practice, this means that the platform SHOULD 
- expect a [broker error response](#broker-errors) but SHOULD take no further action against the 
- broker related to this error. To read more about orphan handling scenarios, see 
- [the Orphans section](#orphans).
+Responses with status codes not listed above MUST be interpreted as a failure by the 
+platform, but MUST NOT be handled as orphan handling scenarios. In practice, this means 
+that the platform SHOULD expect a [broker error response](#broker-errors) but SHOULD 
+take no further action against the broker related to this error. To read more about 
+orphan handling scenarios, see [Orphans](#orphans).
 
 #### Body
 
