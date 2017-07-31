@@ -461,7 +461,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
 ### Response
 
 | Status Code | Description | Orphan Handling |
-|---|---|---|
+| --- | --- | --- |
 | 200 OK | MUST be returned if the service instance already exists, is fully provisioned, and the requested parameters are identical to the existing service instance. The expected response body is below. | N/A |
 | 201 Created | MUST be returned if the service instance was provisioned as a result of this request. The expected response body is below. | The client SHOULD attempt to issue a corresponding deprovision request if the response body was invalid. |
 | 202 Accepted | MUST be returned if the service instance provisioning is in progress. This triggers the platform marketplace to poll the [Service Instance Last Operation Endpoint](#polling-last-operation) for operation status. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the service instance is not yet fully provisioned. | N/A |
@@ -471,7 +471,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
 | 422 Unprocessable Entity | MUST be returned if the broker only supports asynchronous provisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The expected response body is: `{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }`, as described below. | N/A |
 | Any other 4xx | MAY be returned if the broker rejected the request for reasons aside from those described in the above `408`, `409` and `422` response codes. | The client SHOULD attempt to issue a corresponding deprovision request to handle potential orphans. |
 | Any 5xx| MAY be returned if the broker encountered an error. | The platform SHOULD attempt to issue a corresponding deprovision request to handle potential orphans. |
-| Connection timeout | It is RECOMMENDED that brokers do not time out in request processing. | The platform SHOULD attempt to issue a corresponding deprovision request to handle potential orphans.
+| Connection timeout | It is RECOMMENDED that brokers do not time out in request processing. | The platform SHOULD attempt to issue a corresponding deprovision request to handle potential orphans. |
 
 Responses with status codes not listed above MUST be interpreted as a failure by the platform, but
  MUST NOT be handled as orphan handling scenarios. In practice, this means that the platform SHOULD 
