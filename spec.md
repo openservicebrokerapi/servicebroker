@@ -470,11 +470,11 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
 | 409 Conflict | MUST be returned if a service instance with the same id already exists but with different attributes. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Broker Errors](#broker-errors). | N/A |
 | 422 Unprocessable Entity | MUST be returned if the broker only supports asynchronous provisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The expected response body is: `{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }`, as described below. | N/A |
 | Any other 4xx | MAY be returned if the broker rejected the request for reasons aside from those described in the above `408`, `409` and `422` response codes. | The client SHOULD attempt to issue a corresponding deprovision request to handle potential orphans. |
-| Any 5xx| MAY be returned if the broker encountered an error. | The client SHOULD attempt to issue a corresponding deprovision request to handle potential orphans. |
-| Connection timeout | It is RECOMMENDED that brokers do not time out in request processing. | The client SHOULD attempt to issue a corresponding deprovision request to handle potential orphans.
+| Any 5xx| MAY be returned if the broker encountered an error. | The platform SHOULD attempt to issue a corresponding deprovision request to handle potential orphans. |
+| Connection timeout | It is RECOMMENDED that brokers do not time out in request processing. | The platform SHOULD attempt to issue a corresponding deprovision request to handle potential orphans.
 
-Responses with status codes not listed above MUST be interpreted as a failure by the client, but
- MUST NOT be handled as orphan handling scenarios. In practice, this means that the client SHOULD 
+Responses with status codes not listed above MUST be interpreted as a failure by the platform, but
+ MUST NOT be handled as orphan handling scenarios. In practice, this means that the platform SHOULD 
  expect a [broker error response](#broker-errors) but SHOULD take no further action against the 
  broker related to this error.
 
