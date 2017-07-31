@@ -476,10 +476,8 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
 Responses with status codes not listed above MUST be interpreted as a failure by the platform, but
  MUST NOT be handled as orphan handling scenarios. In practice, this means that the platform SHOULD 
  expect a [broker error response](#broker-errors) but SHOULD take no further action against the 
- broker related to this error.
-
- Brokers can include a user-facing message in the `description` field of any failure response.
- For details, see [Broker Errors](#broker-errors).
+ broker related to this error. To read more about orphan handling scenarios, see 
+ [the Orphans section](#orphans).
 
 #### Body
 
@@ -937,3 +935,19 @@ For error responses, the following fields are valid. Others will be ignored. If 
   "description": "Your account has exceeded its quota for service instances. Please contact support at http://support.example.com."
 }
 ```
+
+#### Orphans
+
+When a broker receives a provision (`PUT /v2/service_instances/:instance_id`) or bind 
+(`PUT /v2/service_instances/:instance_id/service_bindings/:binding_id`) operation, it MAY execute
+one or more side-effecting operations to complete the operation. 
+
+In the event that a provision or bind operation fails, the broker SHOULD respond with an appropriate
+HTTP response code and body. If a failure happens, some side-effecting operations may have
+completed, but others haven't. We call this situation an "orphan" service instance (for provision
+operations) or binding (for binding operations).
+
+To mitigate orphan service instances and bindings, the marketplace SHOULD attempt
+to delete resources it cannot be sure were successfully created, and SHOULD keep
+trying to delete them until the broker responds with a success.
+
