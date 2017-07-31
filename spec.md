@@ -732,15 +732,22 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id/ser
 ```
 
 ### Response
+ 
+| Status Code | Description | Orphan Handling |
+| --- | --- | --- |
+| 200 OK | MUST be returned if the binding already exists and the requested parameters are identical to the existing binding. The expected response body is below. | N/A |
+| 201 Created | MUST be returned if the binding was created as a result of this request. The expected response body is below. | N/A |
+| 404 Not Found | MUST be returned if the given instance ID was not found | The platform SHOULD attempt to issue a corresponding unbind request to handle potential orphans |
+| 409 Conflict | MUST be returned if a service binding with the same id, for the same service instance, already exists but with different parameters. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Broker Errors](#broker-errors). | The platform SHOULD attempt to issue a corresponding unbind request to handle potential orphans |
+| 422 Unprocessable Entity | MUST be returned if the broker requires that `app_guid` be included in the request body. The expected response body is: `{ "error": "RequiresApp", "description": "This service supports generation of credentials through binding an application only." }`. | The platform SHOULD attempt to issue a corresponding unbind request to handle potential orphans.
+| Any other response code | The broker encountered an unspecified error | The platform SHOULD attempt to issue a corresponding unbind request to handle potential orphans. |
 
-| Status Code | Description |
-| --- | --- |
-| 200 OK | MUST be returned if the binding already exists and the requested parameters are identical to the existing binding. The expected response body is below. |
-| 201 Created | MUST be returned if the binding was created as a result of this request. The expected response body is below. |
-| 409 Conflict | MUST be returned if a service binding with the same id, for the same service instance, already exists but with different parameters. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Broker Errors](#broker-errors). |
-| 422 Unprocessable Entity | MUST be returned if the broker requires that `app_guid` be included in the request body. The expected response body is: `{ "error": "RequiresApp", "description": "This service supports generation of credentials through binding an application only." }`. |
+Responses with any other status code, or an expected status code and a malformed response
+body SHOULD be interpreted as a failure and the platform should issue a corresponding 
+unbind request to handle orphans. See [Orphans](#orphans) for more details on orphan 
+handling.
 
-Responses with any other status code will be interpreted as a failure and an unbind request will be sent to the broker to prevent an orphan being created on the broker. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
+For additional details on broker error formats, see [Broker Errors](#broker-errors).
 
 #### Body
 
