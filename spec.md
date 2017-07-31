@@ -460,7 +460,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
 
 ### Response
 
-| Status Code | Description | Orphan Handling |
+| Status Code | Description | Orphan Handling | 
 | --- | --- | --- |
 | 200 OK | MUST be returned if the service instance already exists, is fully provisioned, and the requested parameters are identical to the existing service instance. The expected response body is below. | N/A |
 | 201 Created | MUST be returned if the service instance was provisioned as a result of this request. The expected response body is below. | The client SHOULD attempt to issue a corresponding deprovision request if the response body was invalid. |
