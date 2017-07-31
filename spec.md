@@ -951,7 +951,7 @@ MAY execute one or more side-effecting operations to complete the operation.
 
 In the event that a provision or bind operation fails, the broker SHOULD respond 
 with an appropriate HTTP response code and body. If a failure happens, some 
-side-effecting operations may have completed, but others haven't. We call this 
+side-effecting operations could have completed, but others haven't. We call this 
 situation an "orphan" service instance (for provision operations) or binding 
 (for binding operations).
 
