@@ -89,7 +89,7 @@ described below:
 
 ## Release Process
 
-Any member of the PMC can request that the SHA on master (the **Release SHA**)
+Any member of the PMC can request a specific SHA on master (the **Release SHA**)
 is ready to be released into a new version of the spec. They will do this by
 creating a new PR with the title of the proposed release. For example,
 **"Release Proposal: v$major.$minor"**.
@@ -136,12 +136,15 @@ list of the proposal, triggering the start of the
 Once the release is approved, the following actions should be taken by
 any PMC member:
 
-1. Merge the release proposal PR into the master branch of the repository.
+1. Merge the release proposal PR into the master branch of the repository. There
+   should not be any conflicts as the text in the files that have changed should
+   only be changed during this release process.
 1. Create a new branch called **"v$major.$minor"** from the **Release SHA**.
 1. Cherry pick the commit in which the release proposal PR was merged, to pick
    up the file changes.
-1. Create a new commit updating the [spec.md](spec.md) header to include the
-   version of the release (`Open Service Broker API (v$major.$minor)`).
+1. Create a new commit updating the [spec.md](spec.md) and [profile](profile.md)
+   headers to include the version of the release
+   (`Open Service Broker API (v$major.$minor)`).
 1. Push the branch to the repository (`v$major.$minor`).
 1. Notify the mailing list of the new release.
 1. The PMC will create a blog post for the new release.
