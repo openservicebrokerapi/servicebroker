@@ -130,9 +130,6 @@ The following sections describe catalog requests and responses in the Service Br
 #### Route
 `GET /v2/catalog`
 
-`:instance_id` MUST be a globally unique UUID whose syntax conforms to
-[RFC 4122](https://tools.ietf.org/html/rfc4122).
-
 #### cURL
 ```
 $ curl -H "X-Broker-API-Version: 2.12" http://username:password@broker-url/v2/catalog
