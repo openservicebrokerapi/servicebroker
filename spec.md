@@ -939,15 +939,18 @@ For error responses, the following fields are valid. Others will be ignored. If 
 #### Orphans
 
 When a broker receives a provision (`PUT /v2/service_instances/:instance_id`) or bind 
-(`PUT /v2/service_instances/:instance_id/service_bindings/:binding_id`) operation, it MAY execute
-one or more side-effecting operations to complete the operation. 
+(`PUT /v2/service_instances/:instance_id/service_bindings/:binding_id`) operation, it 
+MAY execute one or more side-effecting operations to complete the operation. 
 
-In the event that a provision or bind operation fails, the broker SHOULD respond with an appropriate
-HTTP response code and body. If a failure happens, some side-effecting operations may have
-completed, but others haven't. We call this situation an "orphan" service instance (for provision
-operations) or binding (for binding operations).
+In the event that a provision or bind operation fails, the broker SHOULD respond 
+with an appropriate HTTP response code and body. If a failure happens, some 
+side-effecting operations may have completed, but others haven't. We call this 
+situation an "orphan" service instance (for provision operations) or binding 
+(for binding operations).
 
 To mitigate orphan service instances and bindings, the marketplace SHOULD attempt
 to delete resources it cannot be sure were successfully created, and SHOULD keep
-trying to delete them until the broker responds with a success.
+trying to delete them until the broker responds with a success. The 
+platform SHOULD continue trying the orphan handling operation on an exponential
+backoff, to prevent overloading the broker with orphan handling requests.
 
