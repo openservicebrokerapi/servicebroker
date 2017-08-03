@@ -513,7 +513,7 @@ For success responses, a broker MUST return the following fields. For error resp
 
 ## Updating a Service Instance
 
-By implementing this endpoint, service broker authors can enable users to modify two attributes of an existing service instance: the service plan and parameters. By changing the service plan, users can upgrade or downgrade their service instance to other plans. By modifying properties, users can change configuration options that are specific to a service or plan.
+By implementing this endpoint, service broker authors can enable users to modify two attributes of an existing service instance: the service plan and parameters. By changing the service plan, users can upgrade or downgrade their service instance to other plans. By modifying parameters, users can change configuration options that are specific to a service or plan.
 
 To enable support for the update of the plan, a broker MUST declare support per service by including `plan_updateable: true` in its [catalog endpoint](#catalog-management).
 
