@@ -48,31 +48,55 @@ be interpreted as described in [RFC 2119](https://tools.ietf.org/html/rfc2119).
 
 This specification defines the following terms:
 
-- *Platform*: The software that will manage the cloud environment into which
-  Applications and Service Brokers are provisioned.  Users will not directly
-  provision Services from Service Brokers, rather they will ask the Platform
-  (ie. their cloud provider) to manage Services and interact with the
-  Service Brokers for them.
+- *Platform*: The software that exposes a user-facing catalog of Service
+  offerings, aggregated from those offered by all Service Brokers. The
+  platform is the API client for Service Brokers. Users will not directly
+  provision Services from Service Brokers; rather they will ask the Platform
+  (ie. their cloud provider) to manage Services for them. Typically the platform
+  also manages the cloud environment into which Applications are provisioned.  
 
-- *Service*: A managed software offering that can be used by an Application.
-  Typically, Services will expose some API that can be invoked to perform
-  some action. However, there can also be non-interactive Services that can
-  perform the desired actions without direct prompting from the Application.
+- *Service Broker*: Service Brokers implement the Service Broker API, providing
+  an abstraction to Platforms for management of lifecycle operations across all
+  Services. Platforms interact with Service Brokers to fetch their catalog of
+  Services and Plans, and to create, update, and delete Service Instances and
+  Service Bindings. Typically Service Brokers are not responsible for health and
+  availability of services, only translating requests for lifecycle events
+  from Platforms using the generic Service Broker API into provisioning
+  operations performed by the broker itself, or requests to a managed service
+  offering that does its own provisioning, or to a generic deployment service
+  (e.g. BOSH, Helm, Brooklyn, etc.). A Service Broker may be registered with
+  many platforms and may offer one or many Services.
 
-- *Service Broker*: Service Brokers manage the lifecycle of Services. Platforms
-  interact with Service Brokers to provision, and manage, Service Instances
-  and Service Bindings.
+- *Service*: A managed software offering for which Service Instances can be
+  provisioned. Services may produce Instances that expose an API that can be
+  invoked by an application, execute infrastructure operations associated with
+  an application, or that deliver value unrelated to applications entirely. A
+  helpful analogy is that Services are factories that produce Service Instances.
+  Typically the resource that provides direct value to users is the Service
+  Instance, not the Service offering (e.g. dedicated database server), though in
+  the case of multi-tenant SaaS applications with web interfaces the Instance
+  may simply be a user account. A Service belongs to one broker and may have
+  many plans.
 
-- *Service Instance*: An instantiation of a Service offering.
+- *Service Plan*: A tier of capabilities or service-level defined by the service
+  provider; e.g. Small/Medium/Large, Shared/Dedicated. A plan belongs to a
+  Service.  
 
-- *Service Binding*: The representation of an association between an
-  Application and a Service Instance. Often, Service Bindings, will
-  contain the credentials that the Application will use to communicate
-  with the Service Instance.
+- *Service Instance*: A reserved resource of a Service offering for a Service
+  Plan. This reserved resource may be logical, in the case of a multi-tenant
+  Service, or physical in the case of a dedicated instantiation of the Service.
+  A service instance belongs to a Service Plan.
+
+- *Service Binding*: Typically represents an association between an Application
+  and a Service Instance, containing credentials that the Application will use
+  to communicate with the Service Instance. Service bindings may also represent
+  relationships with other platform resources, resulting in operations executed
+  in support of these resources. A Service Binding belongs to a Service
+  Instance.
 
 - *Application*: The software that will make use of, be bound to, a Service
   Instance.
-
+  
 ## Changes
 
 ### Change Policy
