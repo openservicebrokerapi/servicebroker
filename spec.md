@@ -621,7 +621,7 @@ For success responses, the following fields are supported. Others will be ignore
 | driver* | string | Name of the volume driver plugin which manages the device. |
 | container_dir* | string | The path in the application container onto which the volume will be mounted. This specification does not mandate what action the platform is to take if the path specified already exists in the container. |
 | mode* | string | "r" to mount the volume read-only or "rw" to mount it read-write. |
-| device_type* | string | A string specifying the type of device to mount. Currently the only supported value is "shared".  |
+| device_type* | string | A string specifying the type of device to mount. Currently the only supported value is "shared". |
 | device* | device-object | Device object containing device_type specific details. Currently only shared devices are supported. |
 
 ##### Device Object
