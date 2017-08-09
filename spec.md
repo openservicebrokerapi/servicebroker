@@ -360,8 +360,7 @@ Valid values for `state` are `in progress`, `succeeded`, and `failed`. The platf
 #### Route
 `GET /v2/service_instances/:instance_id/last_operation`
 
-`:instance_id` MUST be a globally unique UUID whose syntax conforms to
-[RFC 4122](https://tools.ietf.org/html/rfc4122).
+`:instance_id` MUST be a globally unique non-empty string.
 
 #### Parameters
 
@@ -422,8 +421,7 @@ When the broker receives a provision request from the platform, it MUST take wha
 #### Route
 `PUT /v2/service_instances/:instance_id`
 
-`:instance_id` MUST be a globally unique UUID whose syntax conforms to
-[RFC 4122](https://tools.ietf.org/html/rfc4122).
+`:instance_id` MUST be a globally unique non-empty string.
 This ID will be used for future requests (bind and deprovision), so the
 broker will use it to correlate the resource it creates.
 
@@ -446,8 +444,8 @@ broker will use it to correlate the resource it creates.
 
 ```
 {
-  "service_id": "service-guid-here",
-  "plan_id": "plan-guid-here",
+  "service_id": "service-id-here",
+  "plan_id": "plan-id-here",
   "context": {
     "platform": "cloudfoundry",
     "some_field": "some-contextual-data"
@@ -464,8 +462,8 @@ broker will use it to correlate the resource it creates.
 #### cURL
 ```
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id?accepts_incomplete=true -d '{
-  "service_id": "service-guid-here",
-  "plan_id": "plan-guid-here",
+  "service_id": "service-id-here",
+  "plan_id": "plan-id-here",
   "context": {
     "platform": "cloudfoundry",
     "some_field": "some-contextual-data"
@@ -524,8 +522,7 @@ Not all permutations of plan changes are expected to be supported. For example, 
 #### Route
 `PATCH /v2/service_instances/:instance_id`
 
-`:instance_id` MUST be a globally unique UUID whose syntax conforms to
-[RFC 4122](https://tools.ietf.org/html/rfc4122).
+`:instance_id` MUST be a globally unique non-empty string.
 It MUST be the ID a previously provisioned service instance.
 
 #### Parameters
@@ -555,15 +552,15 @@ It MUST be the ID a previously provisioned service instance.
     "platform": "cloudfoundry",
     "some_field": "some-contextual-data"
   },
-  "service_id": "service-guid-here",
-  "plan_id": "plan-guid-here",
+  "service_id": "service-id-here",
+  "plan_id": "plan-id-here",
   "parameters": {
     "parameter1": 1,
     "parameter2": "foo"
   },
   "previous_values": {
-    "plan_id": "old-plan-guid-here",
-    "service_id": "service-guid-here",
+    "plan_id": "old-plan-id-here",
+    "service_id": "service-id-here",
     "organization_id": "org-guid-here",
     "space_id": "space-guid-here"
   }
@@ -577,15 +574,15 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
     "platform": "cloudfoundry",
     "some_field": "some-contextual-data"
   },
-  "service_id": "service-guid-here",
-  "plan_id": "plan-guid-here",
+  "service_id": "service-id-here",
+  "plan_id": "plan-id-here",
   "parameters": {
     "parameter1": 1,
     "parameter2": "foo"
   },
   "previous_values": {
-    "plan_id": "old-plan-guid-here",
-    "service_id": "service-guid-here",
+    "plan_id": "old-plan-id-here",
+    "service_id": "service-id-here",
     "organization_id": "org-guid-here",
     "space_id": "space-guid-here"
   }
@@ -684,12 +681,10 @@ did not include a `"requires":["volume_mount"]` property.
 #### Route
 `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
-`:instance_id` MUST be a globally unique UUID whose syntax conforms to
-[RFC 4122](https://tools.ietf.org/html/rfc4122).
+`:instance_id` MUST be a globally unique non-empty string.
 It MUST be the ID of a previously provisioned service instance.
 
-`:binding_id` MUST be a globally unique UUID whose syntax conforms to
-[RFC 4122](https://tools.ietf.org/html/rfc4122).
+`:binding_id` MUST be a globally unique non-empty string.
 This ID will be used for future unbind requests, so the broker will use
 it to correlate the resource it creates.
 
@@ -723,8 +718,8 @@ add additional ones as needed.
 
 ```
 {
-  "service_id": "service-guid-here",
-  "plan_id": "plan-guid-here",
+  "service_id": "service-id-here",
+  "plan_id": "plan-id-here",
   "bind_resource": {
     "app_guid": "app-guid-here"
   },
@@ -739,8 +734,8 @@ add additional ones as needed.
 #### cURL
 ```
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:binding_id -d '{
-  "service_id": "service-guid-here",
-  "plan_id": "plan-guid-here",
+  "service_id": "service-id-here",
+  "plan_id": "plan-id-here",
   "bind_resource": {
     "app_guid": "app-guid-here"
   },
@@ -837,12 +832,10 @@ When a broker receives an unbind request from the marketplace, it MUST delete an
 #### Route
 `DELETE /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
-`:instance_id` MUST be a globally unique UUID whose syntax conforms to
-[RFC 4122](https://tools.ietf.org/html/rfc4122).
+`:instance_id` MUST be a globally unique non-empty string.
 It MUST be the ID of a previously provisioned service instance.
 
-`:binding_id` MUST be a globally unique UUID whose syntax conforms to
-[RFC 4122](https://tools.ietf.org/html/rfc4122).
+`:binding_id` MUST be a globally unique non-empty string.
 It MUST be the the ID of a previously provisioned binding for that service
 instance.
 
@@ -890,8 +883,7 @@ provisions.
 #### Route
 `DELETE /v2/service_instances/:instance_id`
 
-`:instance_id` MUST be a globally unique UUID whose syntax conforms to
-[RFC 4122](https://tools.ietf.org/html/rfc4122).
+`:instance_id` MUST be a globally unique non-empty string.
 It MUST be the ID a previously provisioned service instance.
 
 #### Parameters
