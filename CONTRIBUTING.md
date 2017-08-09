@@ -65,6 +65,29 @@ the API interactions should be well understood and there should be no
 technical surprises; we expect the only discussion necessary on PRs to be
 for wordsmithing and formatting.
 
+## GitHub Labels
+
+When new [design proposals](#design-change-proposals) for the API specification
+are submitted, the working group will use a set of pre-defined GitHub labels to
+highlight the current stage of the proposal. Note that these labels will not be
+used for [minor changes](#minor-changes).
+
+The labels that will be used are as follows:
+- `1 - reviewing proposal`: The API working group is actively reviewing a
+proposal that has been submitted as a GitHub Issue with the aim of validating
+both the problem statements and any proposed solutions.
+- `2 - validating through implementation`: One of more platforms are actively
+working on the proposal with the aim of providing feedback on the implementation
+of the proposed solution.
+- `3 - reviewing PR`: Feedback has been received on the implementation of the
+proposed solution and a Pull Request has been created containing the validated
+specification changes.
+
+Note that not all issues will require a validation through implementation stage,
+and proposals can move back to a previous label at any time. When a PR is
+merged, the associated issue should be closed and any labels removed from the
+issue.
+
 ## PR/Issue Review Process
 
 All proposals (either Pull Requests or Issues) will follow the process
