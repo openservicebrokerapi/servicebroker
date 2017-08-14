@@ -123,7 +123,7 @@ If authentication is used, the broker MUST authenticate the request using the
 predetermined authentication mechanism and MUST return a `401 Unauthorized`
 response if the authentication fails.
 
-Note: using an authentication mechanism that is agreed to via out of band
+Note: Using an authentication mechanism that is agreed to via out of band
 communications could lead to interoperability issues with other platforms.
 
 ## Catalog Management
@@ -716,8 +716,14 @@ add additional ones as needed.
 
 | Request Field | Type | Description |
 | --- | --- | --- |
-| app_guid | string | GUID of an application associated with the binding. For [credentials](#types-of-binding) bindings. |
+| app_guid | string | GUID of an application associated with the binding. For [credentials](#types-of-binding) bindings. MUST be unique within the scope of the platform. |
 | route | string | URL of the application to be intermediated. For [route services](#route-services) bindings. |
+
+`app_guid` represents the scope to which the binding will apply within
+the platform. For example, in Cloud Foundry it might map to an "application"
+while in Kubernetes it might map to a a "namespace". The scope of what a
+platform maps the `app_guid` to is platform specific and MAY vary across
+binding requests.
 
 \* Fields with an asterisk are REQUIRED.
 
