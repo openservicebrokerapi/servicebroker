@@ -22,7 +22,6 @@
   - [Unbinding](#unbinding)
   - [Deprovisioning](#deprovisioning)
   - [Broker Errors](#broker-errors)
-  - [Orphans](#orphans)
 
 ## API Overview
 
@@ -481,15 +480,24 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
 
 ### Response
 
-| Status Code | Description |
-| --- | --- |
-| 200 OK | MUST be returned if the service instance already exists, is fully provisioned, and the requested parameters are identical to the existing service instance. The expected response body is below. |
-| 201 Created | MUST be returned if the service instance was provisioned as a result of this request. The expected response body is below. |
-| 202 Accepted | MUST be returned if the service instance provisioning is in progress. This triggers the platform marketplace to poll the [Service Instance Last Operation Endpoint](#polling-last-operation) for operation status. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the service instance is not yet fully provisioned. |
-| 409 Conflict | MUST be returned if a service instance with the same id already exists but with different attributes. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Broker Errors](#broker-errors). |
-| 422 Unprocessable Entity | MUST be returned if the broker only supports asynchronous provisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The expected response body is: `{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }`, as described below. |
+| Status Code | Description | Orphan Handling | 
+| --- | --- | --- |
+| 200 OK | MUST be returned if the service instance already exists, is fully provisioned, and the requested parameters are identical to the existing service instance. The expected response body is below. | N/A |
+| 201 Created | MUST be returned if the service instance was provisioned as a result of this request. The expected response body is below. | The client SHOULD attempt to issue a corresponding deprovision request if the response body was invalid. |
+| 202 Accepted | MUST be returned if the service instance provisioning is in progress. This triggers the platform marketplace to poll the [Service Instance Last Operation Endpoint](#polling-last-operation) for operation status. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the service instance is not yet fully provisioned. | N/A |
+| Any other 2xx | MAY be returned by the broker in a failure scenario. | The client SHOULD attempt to issue a corresponding deprovision request to handle potential orphans. |
+| 408 Request Timeout | This is a failure condition. | The client SHOULD attempt to issue a corresponding deprovision request to handle potential orphans. |
+| 409 Conflict | MUST be returned if a service instance with the same id already exists but with different attributes. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Broker Errors](#broker-errors). | N/A |
+| 422 Unprocessable Entity | MUST be returned if the broker only supports asynchronous provisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The expected response body is: `{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }`, as described below. | N/A |
+| Any other 4xx | MAY be returned if the broker rejected the request for reasons aside from those described in the above `408`, `409` and `422` response codes. | The client SHOULD attempt to issue a corresponding deprovision request to handle potential orphans. |
+| Any 5xx| MAY be returned if the broker encountered an error. | The platform SHOULD attempt to issue a corresponding deprovision request to handle potential orphans. |
+| Connection timeout | It is RECOMMENDED that brokers do not time out in request processing. | The platform SHOULD attempt to issue a corresponding deprovision request to handle potential orphans. |
 
-Responses with any other status code will be interpreted as a failure. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
+Responses with status codes not listed above MUST be interpreted as a failure by the 
+platform, but MUST NOT be handled as orphan handling scenarios. In practice, this means 
+that the platform SHOULD expect a [broker error response](#broker-errors) but SHOULD 
+take no further action against the broker related to this error. To read more about 
+orphan handling scenarios, see [Orphans](#orphans).
 
 #### Body
 
@@ -752,15 +760,22 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id/ser
 ```
 
 ### Response
+ 
+| Status Code | Description | Orphan Handling |
+| --- | --- | --- |
+| 200 OK | MUST be returned if the binding already exists and the requested parameters are identical to the existing binding. The expected response body is below. | N/A |
+| 201 Created | MUST be returned if the binding was created as a result of this request. The expected response body is below. | N/A |
+| 404 Not Found | MUST be returned if the given instance ID was not found | The platform SHOULD attempt to issue a corresponding unbind request to handle potential orphans |
+| 409 Conflict | MUST be returned if a service binding with the same id, for the same service instance, already exists but with different parameters. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Broker Errors](#broker-errors). | The platform SHOULD attempt to issue a corresponding unbind request to handle potential orphans |
+| 422 Unprocessable Entity | MUST be returned if the broker requires that `app_guid` be included in the request body. The expected response body is: `{ "error": "RequiresApp", "description": "This service supports generation of credentials through binding an application only." }`. | The platform SHOULD attempt to issue a corresponding unbind request to handle potential orphans. |
+| Any other response code | The broker encountered an unspecified error | The platform SHOULD attempt to issue a corresponding unbind request to handle potential orphans. |
 
-| Status Code | Description |
-| --- | --- |
-| 200 OK | MUST be returned if the binding already exists and the requested parameters are identical to the existing binding. The expected response body is below. |
-| 201 Created | MUST be returned if the binding was created as a result of this request. The expected response body is below. |
-| 409 Conflict | MUST be returned if a service binding with the same id, for the same service instance, already exists but with different parameters. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Broker Errors](#broker-errors). |
-| 422 Unprocessable Entity | MUST be returned if the broker requires that `app_guid` be included in the request body. The expected response body is: `{ "error": "RequiresApp", "description": "This service supports generation of credentials through binding an application only." }`. |
+Responses with any other status code, or an expected status code and a malformed response
+body SHOULD be interpreted as a failure and the platform should issue a corresponding 
+unbind request to handle orphans. See [Orphans](#orphans) for more details on orphan 
+handling.
 
-Responses with any other status code will be interpreted as a failure and an unbind request will be sent to the broker to prevent an orphan being created on the broker. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
+For additional details on broker error formats, see [Broker Errors](#broker-errors).
 
 #### Body
 
@@ -965,26 +980,21 @@ For error responses, the following fields are valid. Others will be ignored. If 
 }
 ```
 
-## Orphans
+#### Orphans
 
-The platform marketplace is the source of truth for service instances and bindings. Service brokers are expected to have successfully provisioned all the service instances and bindings that the marketplace knows about, and none that it doesn't.
+When a broker receives a provision (`PUT /v2/service_instances/:instance_id`) or bind 
+(`PUT /v2/service_instances/:instance_id/service_bindings/:binding_id`) operation, it 
+MAY execute one or more side-effecting operations to complete the operation. 
 
-Orphans can result if the broker does not return a response before a request from the marketplace times out (typically 60 seconds). For example, if a broker does not return a response to a provision request before the request times out, the broker might eventually succeed in provisioning a service instance after the marketplace considers the request a failure. This results in an orphan service instance on the broker's side.
+In the event that a provision or bind operation fails, the broker SHOULD respond 
+with an appropriate HTTP response code and body. If a failure happens, some 
+side-effecting operations could have completed, but others haven't. We call this 
+situation an "orphan" service instance (for provision operations) or binding 
+(for binding operations).
 
-To mitigate orphan service instances and bindings, the marketplace SHOULD attempt to delete resources it cannot be sure were successfully created, and SHOULD keep trying to delete them until the broker responds with a success.
+To mitigate orphan service instances and bindings, the marketplace SHOULD attempt
+to delete resources it cannot be sure were successfully created, and SHOULD keep
+trying to delete them until the broker responds with a success. The 
+platform SHOULD continue trying the orphan handling operation on an exponential
+backoff, to prevent overloading the broker with orphan handling requests.
 
-Platforms SHOULD initiate orphan mitigation in the following scenarios:
-
-| Status code of broker response | Platform interpretation of response | Platform initiates orphan mitigation? |
-| --- | --- | --- |
-| 200 | Success | No |
-| 200 with malformed response | Failure | No |
-| 201 | Success | No |
-| 201 with malformed response | Failure | Yes |
-| All other 2xx | Failure | Yes |
-| 408 | Failure due to timeout | Yes |
-| All other 4xx | Broker rejected request | No |
-| 5xx | Broker error | Yes |
-| Timeout | Failure | Yes |
-
-If the platform marketplace encounters an internal error provisioning a service instance or binding (for example, saving to the database fails), then it MUST at least send a single delete or unbind request to the service broker to prevent creation of an orphan.
