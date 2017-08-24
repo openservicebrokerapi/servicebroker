@@ -128,16 +128,35 @@ communications could lead to interoperability issues with other platforms.
 
 ## Catalog Management
 
-The first endpoint that a platform will interact with on the broker is the service catalog.
+The first endpoint that a platform will interact with on the broker is the
+service catalog (`/v2/catalog`). This endpoint returns a list of all services
+available on the broker. Platforms query this endpoint from all brokers
+in order to present an aggregated user-facing catalog.
 
-The platform marketplace fetches this endpoint from all brokers in order to present an aggregated user-facing catalog.
+Periodically, a platform MAY re-query the service catalog endpoint for a
+broker to see if there are any changes to the list of services. Brokers
+MAY add, remove or modify (metadata, plans, etc.) the list of services
+from previous queries.
 
-Warnings for broker authors:
+When determining what, if anything, has changed on a broker, the platform
+will use the `id` of the resources (services or plans) as the only immutable
+property and MUST use that to locate the same resource as was returned from
+a previous query. Likewise, if a broker wishes for the same resource to be
+treated as the same resource as one returned from a previous query, then it
+MUST NOT change the `id` of that resource across queries.
 
-- Be cautious removing services and plans from their catalogs, as platform marketplaces might have provisioned service instances of these plans. Consider your deprecation strategy.
-- Do not change the ids of services and plans. This action is likely to be evaluated by a platform marketplace as a removal of one plan and addition of another. See above warning about removal of plans.
+When a platform recieves different `id` values for the same type of resource,
+even if all of the other metadata in those resources are the exact same, it
+MUST treat them as separate instances of that resource.
 
-The following sections describe catalog requests and responses in the Service Broker API.
+Broker authors are expected to be cautious when removing services and plans
+from their catalogs, as platforms might have provisioned service instances of
+these plans. For example, platforms might restrict the actions that users
+can perform on existing service instances if the associated service or
+plan is deleted. Consider your deprecation strategy.
+
+The following sections describe catalog requests and responses in the Service
+Broker API.
 
 ### Request
 
