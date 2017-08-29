@@ -15,6 +15,7 @@
   - [Synchronous and Asynchronous Operations](#synchronous-and-asynchronous-operations)
     - [Synchronous Operations](#synchronous-operations)
     - [Asynchronous Operations](#asynchronous-operations)
+  - [Blocking Operations](#blocking-operations)
   - [Polling Last Operation](#polling-last-operation)
     - [Polling Interval and Duration](#polling-interval-and-duration)
   - [Provisioning](#provisioning)
@@ -586,21 +587,30 @@ Service brokers MAY include a status message with each response for the
 `last_operation` endpoint that provides visibility to end users as to the
 progress of the operation.
 
-#### Blocking Operations
+## Blocking Operations
 
 Service brokers do not have to support concurrent requests that act on the
 same set of resources. If a service broker receives a request that it is not
 able to process due to other activity being done on that resource then the
-service broker MUST reject the request with an HTTP `422 Unprocessable
-Entity`. The HTTP body of the response MUST include a `description` property
-explaining the reason for the failure.
+service broker MUST reject the request with a HTTP `422 Unprocessable
+Entity` error and the following body:
 
-Sample response:
 ```
 {
+  "error": "ConcurrencyError",
   "description": "Another operation for this service instance is in progress"
 }
 ```
+
+Note that per the [Orphans](#orphans) section, this error response does not
+cause orphan mitigation to be initiated. Therefore, platforms receiving
+this error response SHOULD resend the request at a later time.
+
+Brokers MAY choose to treat the creation of a binding as a mutation of
+the corresponding service instance - it is an implementation choice. Doing
+so would cause platforms to serialize multiple binding creation requests
+when they are directed at the same service instance if concurrent updates
+are not supported.
 
 ## Polling Last Operation
 
@@ -1127,7 +1137,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 200 OK | MUST be returned if the binding already exists and the requested parameters are identical to the existing binding. The expected response body is below. |
 | 201 Created | MUST be returned if the binding was created as a result of this request. The expected response body is below. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
-| 409 Conflict | MUST be returned if a service binding with the same id, for the same service instance, already exists but with different parameters. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Service Broker Errors](#service-broker-errors). |
+| 409 Conflict | MUST be returned if a service binding with the same id, for the same service instance, already exists but with different parameters. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Service Broker Errors](#service-broker-errors). Additionally, if the service broker rejects the request due to a concurrent request to create a binding for the same service instance, then this error MUST be returned (see [Blocking Operations](#blocking-operations)). |
 | 422 Unprocessable Entity | MUST be returned if the service broker requires that `app_guid` be included in the request body. The expected response body is: `{ "error": "RequiresApp", "description": "This service supports generation of credentials through binding an application only." }`. |
 
 Responses with any other status code will be interpreted as a failure and an
