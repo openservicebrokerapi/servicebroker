@@ -9,6 +9,7 @@
 
 ## Working Changes
 [Read the working changes to the spec](spec.md)
+[Roadmap and release planning](https://github.com/openservicebrokerapi/servicebroker/projects/1)
 
 These changes have been accepted by the working group for the next version of the specification, however are still subject to change.
 
