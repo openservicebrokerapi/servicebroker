@@ -141,11 +141,10 @@ from previous queries.
 When determining what, if anything, has changed on a broker, the platform
 will use the `id` of the resources (services or plans) as the only immutable
 property and MUST use that to locate the same resource as was returned from
-a previous query. Likewise, if a broker wishes for the same resource to be
-treated as the same resource as one returned from a previous query, then it
-MUST NOT change the `id` of that resource across queries.
+a previous query. Likewise, a broker MUST NOT change the `id` of a resource
+across queries, otherwise a platform will treat it as a different resource.
 
-When a platform recieves different `id` values for the same type of resource,
+When a platform receives different `id` values for the same type of resource,
 even if all of the other metadata in those resources are the exact same, it
 MUST treat them as separate instances of that resource.
 
