@@ -490,8 +490,8 @@ The request provides these query string parameters as useful hints for brokers.
 
 | Query-String Field | Type | Description |
 | --- | --- | --- |
-| service_id | string | ID of the service from the catalog. If present, MUST be a non-empty string. |
-| plan_id | string | ID of the plan from the catalog. If present, MUST be a non-empty string. |
+| service_id | string | If present, it MUST be the ID of the service being used. |
+| plan_id | string | If present, it MUST be the ID of the plan for the service being use. |
 | operation | string | A broker-provided identifier for the operation. When a value for `operation` is included with asynchronous responses for [Provision](#provisioning), [Update](#updating-a-service-instance), and [Deprovision](#deprovisioning) requests, the platform MUST provide the same value using this query parameter as a percent-encoded string. If present, MUST be a non-empty string. |
 
 Note: Although the request query parameters `service_id` and `plan_id` are not mandatory, the platform SHOULD include them on all `last_operation` requests it makes to service brokers.
@@ -556,8 +556,8 @@ broker will use it to correlate the resource it creates.
 #### Body
 | Request field | Type | Description |
 | --- | --- | --- |
-| service_id* | string | The ID of the service (from the catalog). MUST be globally unique. MUST be a non-empty string. |
-| plan_id* | string | The ID of the plan (from the catalog) for which the service instance has been requested. MUST be unique within the service. MUST be a non-empty string. |
+| service_id* | string | MUST be the ID of a service from the catalog for this broker. |
+| plan_id* | string | MUST be the ID of a plan from the service that has been requested. |
 | context | object | Platform specific contextual information under which the service instance is to be provisioned. Although most brokers will not use this field, it could be helpful in determining data placement or applying custom business rules. `context` will replace `organization_guid` and `space_guid` in future versions of the specification - in the interim both SHOULD be used to ensure interoperability with old and new implementations. |
 | organization_guid* | string | Deprecated in favor of `context`. The platform GUID for the organization under which the service instance is to be provisioned. Although most brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | space_guid* | string | Deprecated in favor of `context`. The identifier for the project space within the platform organization. Although most brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
@@ -646,8 +646,7 @@ Not all permutations of plan changes are expected to be supported. For example, 
 #### Route
 `PATCH /v2/service_instances/:instance_id`
 
-`:instance_id` MUST be a globally unique non-empty string.
-It MUST be the ID a previously provisioned service instance.
+`:instance_id` MUST be the ID a previously provisioned service instance.
 
 #### Parameters
 | Parameter name | Type | Description |
@@ -659,14 +658,14 @@ It MUST be the ID a previously provisioned service instance.
 | Request Field | Type | Description |
 | --- | --- | --- |
 | context | object | Contextual data under which the service instance is created. |
-| service_id* | string | The ID of the service (from the catalog). MUST be globally unique. MUST be a non-empty string. |
-| plan_id | string | The ID of the plan (from the catalog) for which the service instance has been requested. MUST be unique within the service. If present, MUST be a non-empty string. If this field is not present in the request message, then the broker MUST NOT change the plan of the instance as a result of this request. |
+| service_id* | string | MUST be the ID of a service from the catalog for this broker. |
+| plan_id | string | If present, MUST be the ID of a plan from the service that has been requested. If this field is not present in the request message, then the broker MUST NOT change the plan of the instance as a result of this request. |
 | parameters | JSON object | Configuration options for the service instance. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. If this field is not present in the request message, then the broker MUST NOT change the parameters of the instance as a result of this request. |
 | previous_values | object | Information about the service instance prior to the update. |
-| previous_values.service_id | string | Deprecated; determined to be unnecessary as the value is immutable. ID of the service for the service instance. If present, MUST be a non-empty string. |
-| previous_values.plan_id | string | ID of the plan prior to the update. If present, MUST be a non-empty string. |
-| previous_values.organization_id | string | Deprecated as it was redundant information. Organization for the service instance MUST be provided by platforms in the top-level field `context`. ID of the organization specified for the service instance. If present, MUST be a non-empty string. |
-| previous_values.space_id | string | Deprecated as it was redundant information. Space for the service instance MUST be provided by platforms in the top-level field `context`. ID of the space specified for the service instance. If present, MUST be a non-empty string. |
+| previous_values.service_id | string | Deprecated; determined to be unnecessary as the value is immutable. If present, it MUST be the ID of the service for the service instance. |
+| previous_values.plan_id | string | If present, it MUST be the ID of the plan prior to the update. |
+| previous_values.organization_id | string | Deprecated as it was redundant information. Organization for the service instance MUST be provided by platforms in the top-level field `context`. If present, it MUST be the ID of the organization specified for the service instance. |
+| previous_values.space_id | string | Deprecated as it was redundant information. Space for the service instance MUST be provided by platforms in the top-level field `context`. If present, it MUST be the ID of the space specified for the service instance. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -806,8 +805,7 @@ did not include a `"requires":["volume_mount"]` property.
 #### Route
 `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
-`:instance_id` MUST be a globally unique non-empty string.
-It MUST be the ID of a previously provisioned service instance.
+`:instance_id` MUST be the ID of a previously provisioned service instance.
 
 `:binding_id` MUST be a globally unique non-empty string.
 This ID will be used for future unbind requests, so the broker will use
@@ -818,8 +816,8 @@ it to correlate the resource it creates.
 | Request Field | Type | Description |
 | --- | --- | --- |
 | context | object | Contextual data under which the service binding is created. |
-| service_id* | string | ID of the service from the catalog. MUST be a non-empty string. |
-| plan_id* | string | ID of the plan from the catalog. MUST be a non-empty string. |
+| service_id* | string | MUST be the ID of the service that is being used. |
+| plan_id* | string | MUST be the ID of the plan from the service that is being used. |
 | app_guid | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the binding to be created. If present, MUST be a non-empty string. |
 | bind_resource | JSON object | A JSON object that contains data for platform resources associated with the binding to be created. See [Bind Resource Object](#bind-resource-object) for more information. |
 | parameters | JSON object | Configuration options for the service binding. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
@@ -974,12 +972,10 @@ When a broker receives an unbind request from the marketplace, it MUST delete an
 #### Route
 `DELETE /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
-`:instance_id` MUST be a globally unique non-empty string.
-It MUST be the ID of a previously provisioned service instance.
+`:instance_id` MUST be the ID of a previously provisioned service instance.
 
-`:binding_id` MUST be a globally unique non-empty string.
-It MUST be the the ID of a previously provisioned binding for that service
-instance.
+`:binding_id` MUST be the the ID of a previously provisioned binding for
+that service instance.
 
 #### Parameters
 
@@ -987,8 +983,8 @@ The request provides these query string parameters as useful hints for brokers.
 
 | Query-String Field | Type | Description |
 | --- | --- | --- |
-| service_id* | string | ID of the service from the catalog. MUST be a non-empty string. |
-| plan_id* | string | ID of the plan from the catalog. MUST be a non-empty string. |
+| service_id* | string | MUST be the ID of the service associated with the binding being delete. |
+| plan_id* | string | MUST be the ID of the plan associated with the binding being deleted. |
 
 \* Query parameters with an asterisk are REQUIRED.
 
@@ -1026,8 +1022,7 @@ provisions.
 #### Route
 `DELETE /v2/service_instances/:instance_id`
 
-`:instance_id` MUST be a globally unique non-empty string.
-It MUST be the ID a previously provisioned service instance.
+`:instance_id` MUST be the ID a previously provisioned service instance.
 
 #### Parameters
 
@@ -1035,8 +1030,8 @@ The request provides these query string parameters as useful hints for brokers.
 
 | Query-String Field | Type | Description |
 | --- | --- | --- |
-| service_id* | string | ID of the service from the catalog. MUST be a non-empty string. |
-| plan_id* | string | ID of the plan from the catalog. MUST be a non-empty string. |
+| service_id* | string | MUST be the ID of the service instance being deleted. |
+| plan_id* | string | MUST be the ID of the plan associated with the service instance being deleted. |
 | accepts_incomplete | boolean | A value of true indicates that both the marketplace and the requesting client support asynchronous deprovisioning. If this parameter is not included in the request, and the broker can only deprovision a service instance of the requested plan asynchronously, the broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
 \* Query parameters with an asterisk are REQUIRED.
