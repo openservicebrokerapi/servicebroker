@@ -10,6 +10,7 @@
   - [Authentication](#authentication)
   - [Catalog Management](#catalog-management)
     - [Adding a Broker to the Platform](#adding-a-broker-to-the-platform)
+    - [Deprecating Services and Plans](#deprecating-services-and-plans)
   - [Synchronous and Asynchronous Operations](#synchronous-and-asynchronous-operations)
     - [Synchronous Operations](#synchronous-operations)
     - [Asynchronous Operations](#asynchronous-operations)
@@ -148,11 +149,17 @@ When a platform receives different `id` values for the same type of resource,
 even if all of the other metadata in those resources are the exact same, it
 MUST treat them as separate instances of that resource.
 
+The mutability of service and plan names is considered deprecated.  Broker
+authors SHOULD use the [`deprecated`](#deprecating-services-and-plans)
+attribute of services and plans to mark services and plans with old names as
+deprecated instead of removing them from a broker's catalog without warning.
+
 Broker authors are expected to be cautious when removing services and plans
 from their catalogs, as platforms might have provisioned service instances of
 these plans. For example, platforms might restrict the actions that users
 can perform on existing service instances if the associated service or
-plan is deleted. Consider your deprecation strategy.
+plan is deleted. Consider your [deprecation](#deprecating-services-and-plans)
+strategy.
 
 The following sections describe catalog requests and responses in the Service
 Broker API.
@@ -199,6 +206,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 | [dashboard_client](#dashboard-client-object) | object | Contains the data necessary to activate the Dashboard SSO feature for this service. |
 | plan_updateable | boolean | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute `plan_updatable` to `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
 | [plans*](#plan-object) | array-of-objects | A list of plans for this service, schema is defined below. MUST contain at least one plan. |
+| deprecated | boolean | Indicates that this service and all of its plans are deprecated and will be removed in the future. See [deprecating services and plans](#deprecating-services-and-plans) for more information. |
 
 Note: Platforms will typically use the service name as an input parameter
 from their users to indicate which service they want to instantiate. Therefore,
@@ -228,6 +236,7 @@ how platforms might expose these values to their users.
 | metadata | JSON object | An opaque object of metadata for a service plan. Controller treats this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing brokers and controllers for fields that aid in the display of catalog data. |
 | free | boolean | When false, service instances of this plan have a cost. The default is true. |
 | bindable | boolean | Specifies whether service instances of the service plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
+| deprecated | boolean | Indicates that this plan is deprecated and will be removed in the future. See [deprecating services and plans](#deprecating-services-and-plans) for more information. |
 
 
 \* Fields with an asterisk are REQUIRED.
@@ -319,6 +328,24 @@ how platforms might expose these values to their users.
 ### Adding a Broker to the Platform
 
 After implementing the first endpoint `GET /v2/catalog` documented [above](#catalog-management), the service broker will need to be registered with your platform to make your services and plans available to end users.
+
+### Deprecating services and plans
+
+While the names and plans of services are technically mutable, changing the
+names of these entities is not supported uniformly on all platforms and might
+not provide a good experience for users of all platforms.  In order to provide
+users with the best experience when a service or plan name changes, broker
+authors SHOULD use the `deprecated` field to indicate that a service or plan
+will be removed in the future and create a new service or plan with the new
+name.
+
+Platforms MUST allow existing instances of deprecated services or on
+deprecated plans to be updated (for example, to change configuration
+parameters or update to a non-deprecated plan).
+
+Platforms MAY not allow new instances of deprecated services or plans to be
+created and MAY not allow existing service instances to be updated onto a
+deprecated plan.
 
 ## Synchronous and Asynchronous Operations
 
