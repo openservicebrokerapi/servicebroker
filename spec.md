@@ -228,9 +228,49 @@ how platforms might expose these values to their users.
 | metadata | JSON object | An opaque object of metadata for a service plan. Controller treats this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing brokers and controllers for fields that aid in the display of catalog data. |
 | free | boolean | When false, service instances of this plan have a cost. The default is true. |
 | bindable | boolean | Specifies whether service instances of the service plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
+| [schemas](#schema-object) | object | Schema definitions for service instances and bindings for the plan. |
 
 
 \* Fields with an asterisk are REQUIRED.
+
+##### Schema Object
+
+| Response field | Type | Description |
+| --- | --- | --- |
+| [service_instance](#service-instances-object) | object | The schema definitions for creating and updating a service instance. |
+| [service_binding](#service-bindings-object) | object | The schema definition for creating a service binding. Used only if the service plan is bindable. |
+
+
+##### Service Instances Object
+
+| Response field | Type | Description |
+| --- | --- | --- |
+| [create](#input-parameters-object) | object | The schema definition for creating a service instance. |
+| [update](#input-parameters-object) | object | The schema definition for updating a service instance. |
+
+
+##### Service Bindings Object
+
+| Response field | Type | Description |
+| --- | --- | --- |
+| [create](#input-parameters-object) | object | The schema definition for creating a service binding. |
+
+
+##### Input Parameters Object
+
+| Response field | Type | Description |
+| --- | --- | --- |
+| parameters | JSON schema object | The schema definition for the input parameters. Each input parameter is expressed as a property within a JSON object. |
+
+The following rules apply if `parameters` is included anywhere in the catalog:
+* Platforms MUST support at least
+[JSON Schema draft v4](http://json-schema.org/).
+* Platforms SHOULD be prepared to support later versions of JSON schema also.
+* The `$schema` key MUST be present in the schema declaring the version of JSON
+schema being used.
+* Schemas MUST NOT contain any external references.
+* Schemas MUST NOT be larger than 64kB.
+
 
 ```
 {
@@ -284,6 +324,48 @@ how platforms might expose these values to their users.
           "5 TB storage",
           "40 concurrent connections"
         ]
+      },
+      "schemas": {
+        "service_instance": {
+          "create": {
+            "parameters": {
+              "$schema": "http://json-schema.org/draft-04/schema#",
+              "type": "object",
+              "properties": {
+                "billing-account": {
+                  "description": "Billing account number used to charge use of shared fake server.",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "update": {
+            "parameters": {
+              "$schema": "http://json-schema.org/draft-04/schema#",
+              "type": "object",
+              "properties": {
+                "billing-account": {
+                  "description": "Billing account number used to charge use of shared fake server.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "service_binding": {
+          "create": {
+            "parameters": {
+              "$schema": "http://json-schema.org/draft-04/schema#",
+              "type": "object",
+              "properties": {
+                "billing-account": {
+                  "description": "Billing account number used to charge use of shared fake server.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
       }
     }, {
       "name": "fake-plan-2",
@@ -457,7 +539,7 @@ broker will use it to correlate the resource it creates.
 | context | object | Platform specific contextual information under which the service instance is to be provisioned. Although most brokers will not use this field, it could be helpful in determining data placement or applying custom business rules. `context` will replace `organization_guid` and `space_guid` in future versions of the specification - in the interim both SHOULD be used to ensure interoperability with old and new implementations. |
 | organization_guid* | string | Deprecated in favor of `context`. The platform GUID for the organization under which the service instance is to be provisioned. Although most brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | space_guid* | string | Deprecated in favor of `context`. The identifier for the project space within the platform organization. Although most brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
-| parameters | JSON object | Configuration options for the service instance. Controller treats this as a blob. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
+| parameters | JSON object | Configuration options for the service instance. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -557,7 +639,7 @@ It MUST be the ID a previously provisioned service instance.
 | context | object | Contextual data under which the service instance is created. |
 | service_id* | string | The ID of the service (from the catalog). MUST be globally unique. MUST be a non-empty string. |
 | plan_id | string | The ID of the plan (from the catalog) for which the service instance has been requested. MUST be unique within the service. If present, MUST be a non-empty string. If this field is not present in the request message, then the broker MUST NOT change the plan of the instance as a result of this request. |
-| parameters | JSON object | Configuration options for the service instance. An opaque object, controller treats this as a blob. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. If this field is not present in the request message, then the broker MUST NOT change the parameters of the instance as a result of this request. |
+| parameters | JSON object | Configuration options for the service instance. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. If this field is not present in the request message, then the broker MUST NOT change the parameters of the instance as a result of this request. |
 | previous_values | object | Information about the service instance prior to the update. |
 | previous_values.service_id | string | Deprecated; determined to be unnecessary as the value is immutable. ID of the service for the service instance. If present, MUST be a non-empty string. |
 | previous_values.plan_id | string | ID of the plan prior to the update. If present, MUST be a non-empty string. |
@@ -717,7 +799,8 @@ it to correlate the resource it creates.
 | plan_id* | string | ID of the plan from the catalog. MUST be a non-empty string. |
 | app_guid | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the binding to be created. If present, MUST be a non-empty string. |
 | bind_resource | JSON object | A JSON object that contains data for platform resources associated with the binding to be created. See [Bind Resource Object](#bind-resource-object) for more information. |
-| parameters | JSON object | Configuration options for the service binding. An opaque object, controller treats this as a blob. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
+| parameters | JSON object | Configuration options for the service binding. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
+
 
 ##### Bind Resource Object
 
