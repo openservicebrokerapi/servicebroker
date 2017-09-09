@@ -8,6 +8,7 @@
     - [Changes Since v2.11](#changes-since-v211)
   - [API Version Header](#api-version-header)
   - [Authentication](#authentication)
+  - [API Routes](#api-routes)
   - [Catalog Management](#catalog-management)
     - [Adding a Broker to the Platform](#adding-a-broker-to-the-platform)
   - [Synchronous and Asynchronous Operations](#synchronous-and-asynchronous-operations)
@@ -125,6 +126,16 @@ response if the authentication fails.
 
 Note: Using an authentication mechanism that is agreed to via out of band
 communications could lead to interoperability issues with other platforms.
+
+## API Routes
+
+All endpoint routes in the Service Broker API are defined as URL suffixes. The Service Broker API MAY be exposed from a common URL prefix. An individual broker MAY also choose to expose multiple Service Broker APIs from different URL prefixes, but each MUST have a unique URL prefix.
+
+Examples of valid service broker routes are:
+
+* `https://www.mybroker.com/v2/catalog`
+* `https://www.mybroker.com/prefix/v2/catalog`
+* `https://www.mybroker.com/second/prefix/v2/catalog`
 
 ## Catalog Management
 
