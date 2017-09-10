@@ -1021,6 +1021,11 @@ delete any resources it created during the provision.
 Usually this means that all resources are immediately reclaimed for future
 provisions.
 
+Platforms MUST delete all bindings for a service prior
+to attempting to deprovision the service. This specification does not
+specify what a broker is to do if it receives a deprovision request
+while there are still bindings associated with it.
+
 ### Request
 
 #### Route
