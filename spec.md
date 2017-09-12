@@ -8,6 +8,7 @@
     - [Changes Since v2.11](#changes-since-v211)
   - [API Version Header](#api-version-header)
   - [Authentication](#authentication)
+  - [URL Properties](#url-properties)
   - [Catalog Management](#catalog-management)
     - [Adding a Broker to the Platform](#adding-a-broker-to-the-platform)
   - [Synchronous and Asynchronous Operations](#synchronous-and-asynchronous-operations)
@@ -125,6 +126,27 @@ response if the authentication fails.
 
 Note: Using an authentication mechanism that is agreed to via out of band
 communications could lead to interoperability issues with other platforms.
+
+## URL Properties
+
+This specification defines the following properties that might appear within
+URLs:
+- `service_id`
+- `plan_id`
+- `instance_id`
+- `binding_id`
+- `operation`
+
+While this specification places no restriction on the set of characters used
+within these strings, it is RECOMMENDED that these properties only contain
+characters from the "Unreserved Characters" as defined by
+[RFC3986](https://tools.ietf.org/html/rfc3986#section-2.3). In other words:
+uppercase and lowercase letters, decimal digits, hyphen, period, underscore
+and tilde.
+
+If a character outside of the "Unreserved Characters" set is used, then
+it SHOULD be percent-encoded prior to being used as part of the HTTP request,
+per [RFC3986](https://tools.ietf.org/html/rfc3986#section-2.1).
 
 ## Catalog Management
 
@@ -470,7 +492,7 @@ The request provides these query string parameters as useful hints for brokers.
 | --- | --- | --- |
 | service_id | string | ID of the service from the catalog. If present, MUST be a non-empty string. |
 | plan_id | string | ID of the plan from the catalog. If present, MUST be a non-empty string. |
-| operation | string | A broker-provided identifier for the operation. When a value for `operation` is included with asynchronous responses for [Provision](#provisioning), [Update](#updating-a-service-instance), and [Deprovision](#deprovisioning) requests, the platform MUST provide the same value using this query parameter as a URL-encoded string. If present, MUST be a non-empty string. |
+| operation | string | A broker-provided identifier for the operation. When a value for `operation` is included with asynchronous responses for [Provision](#provisioning), [Update](#updating-a-service-instance), and [Deprovision](#deprovisioning) requests, the platform MUST provide the same value using this query parameter as a percent-encoded string. If present, MUST be a non-empty string. |
 
 Note: Although the request query parameters `service_id` and `plan_id` are not mandatory, the platform SHOULD include them on all `last_operation` requests it makes to service brokers.
 
@@ -600,7 +622,7 @@ For success responses, a broker MUST return the following fields. For error resp
 | Response field | Type | Description |
 | --- | --- | --- |
 | dashboard_url | string | The URL of a web-based management user interface for the service instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a broker that wishes to return `dashboard_url` for a service instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. If present, MUST be a non-empty string. |
-| operation | string | For asynchronous responses, service brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the platform with requests to the [Last Operation](#polling-last-operation) endpoint in a URL encoded query parameter. If present, MUST be a non-empty string. |
+| operation | string | For asynchronous responses, service brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -710,7 +732,7 @@ For success responses, a broker MUST return the following field. Others will be 
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| operation | string | For asynchronous responses, service brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the platform with requests to the [Last Operation](#polling-last-operation) endpoint in a URL encoded query parameter. If present, MUST be a non-empty string. |
+| operation | string | For asynchronous responses, service brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -1036,7 +1058,7 @@ For success responses, the following fields are supported. Others will be ignore
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| operation | string | For asynchronous responses, service brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the platform with requests to the [Last Operation](#polling-last-operation) endpoint in a URL encoded query parameter. If present, MUST be a non-empty string. |
+| operation | string | For asynchronous responses, service brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
 
 \* Fields with an asterisk are REQUIRED.
 
