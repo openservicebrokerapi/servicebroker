@@ -817,6 +817,7 @@ it to correlate the resource it creates.
 
 | Request Field | Type | Description |
 | --- | --- | --- |
+| context | object | Contextual data under which the service binding is created. |
 | service_id* | string | ID of the service from the catalog. MUST be a non-empty string. |
 | plan_id* | string | ID of the plan from the catalog. MUST be a non-empty string. |
 | app_guid | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the binding to be created. If present, MUST be a non-empty string. |
@@ -850,6 +851,10 @@ binding requests.
 
 ```
 {
+  "context": {
+    "platform": "cloudfoundry",
+    "some_field": "some-contextual-data"
+  },
   "service_id": "service-id-here",
   "plan_id": "plan-id-here",
   "bind_resource": {
@@ -866,6 +871,10 @@ binding requests.
 #### cURL
 ```
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:binding_id -d '{
+  "context": {
+    "platform": "cloudfoundry",
+    "some_field": "some-contextual-data"
+  },
   "service_id": "service-id-here",
   "plan_id": "plan-id-here",
   "bind_resource": {

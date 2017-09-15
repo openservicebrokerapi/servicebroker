@@ -130,6 +130,7 @@ The following table specifies which properties MUST appear in each API:
 | --- | --- |
 | `PUT /v2/service_instances/:instance_id` | `organization_guid`<br>`space_guid` |
 | `PATCH /v2/service_instances/:instance_id` | `organization_guid`<br>`space_guid` |
+| `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id` | `organization_guid`<br>`space_guid` |
 
 Example:
 
@@ -168,6 +169,7 @@ The following table specifies which properties MUST appear in each API:
 | --- | --- |
 | `PUT /v2/service_instances/:instance_id` | `namespace` |
 | `PATCH /v2/service_instances/:instance_id` | `namespace` |
+| `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id` | `namespace` |
 
 Example:
 
