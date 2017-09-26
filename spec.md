@@ -282,7 +282,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 | bindable* | boolean | Specifies whether service instances of the service can be bound to applications. This specifies the default for all plans of this service. Plans can override this field (see [Plan Object](#plan-object)). |
 | metadata | JSON object | An opaque object of metadata for a service offering. Controller treats this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing brokers and controllers for fields that aid in the display of catalog data. |
 | [dashboard_client](#dashboard-client-object) | object | Contains the data necessary to activate the Dashboard SSO feature for this service. |
-| plan_updateable | boolean | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute `plan_updatable` to `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
+| plan_updateable | boolean | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute `plan_updatable` as `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
 | [plans*](#plan-object) | array-of-objects | A list of plans for this service, schema is defined below. MUST contain at least one plan. |
 
 Note: Platforms will typically use the service name as an input parameter
@@ -350,7 +350,7 @@ how platforms might expose these values to their users.
 The following rules apply if `parameters` is included anywhere in the catalog:
 * Platforms MUST support at least
 [JSON Schema draft v4](http://json-schema.org/).
-* Platforms SHOULD be prepared to support later versions of JSON schema also.
+* Platforms SHOULD be prepared to support later versions of JSON schema.
 * The `$schema` key MUST be present in the schema declaring the version of JSON
 schema being used.
 * Schemas MUST NOT contain any external references.
@@ -949,7 +949,7 @@ add additional ones as needed.
 
 `app_guid` represents the scope to which the binding will apply within
 the platform. For example, in Cloud Foundry it might map to an "application"
-while in Kubernetes it might map to a a "namespace". The scope of what a
+while in Kubernetes it might map to a "namespace". The scope of what a
 platform maps the `app_guid` to is platform specific and MAY vary across
 binding requests.
 
