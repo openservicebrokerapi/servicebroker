@@ -6,9 +6,14 @@ The [Open Service Broker API specification](spec.md) allows for extensions
 and variations based on the environments in which it is being used; this
 document contains the suggested usage pattern for some of those variants.
 
+While use of this profile is OPTIONAL, an implementation is not compliant
+with this profile if it fails to satisfy one or more of the MUST, SHALL
+or REQUIRED level requirements defined herein.
+
 ## Table of Contents
 
 - [Notations and Terminology](#notations-and-terminology)
+- [Originating Identity Header](#originating-identity-header)
 - [Context Object](#context-object)
   - [Context Object Properties](#context-object-properties)
   - [Cloud Foundry](#cloud-foundry)
@@ -55,6 +60,77 @@ the [Open Service Broker API specification](spec.md) SHALL take precedence.
 
 - *Application*: The software that uses a Service Instance via Service Binding.
 
+## Originating Identity Header
+
+In the [Open Service Broker API specification](spec.md) it defines an
+additional HTTP Header that can be included in messages from the Platform
+to identify the user that requested the action to be taken.
+
+The header consists of two parts: a `platform` string and `value` string,
+where the `value` is a Base64 encoded serialized JSON object.
+Both parts will vary based on the Platform which is being used. The
+following sections define the values to be used based on the Platform
+and which properties are expected to appear in the `value` JSON.
+
+Note that when both the originating identity HTTP Header and the Context
+object appear in the same message the `platform` value MUST be the same
+for both.
+
+### Cloud Foundry
+
+*`platform` Value*: `cloudfoundry`
+
+The following properties MUST appear within the JSON encoded `value`:
+
+| Property | Type | Description |
+| --- | --- | --- |
+| user_id | string | The `user_id` value from the Cloud Foundry JWT token. |
+
+Platforms MAY include additional properties.
+
+For example, a `value` of:
+```
+{
+  "user_id": "683ea748-3092-4ff4-b656-39cacc4d5360"
+}
+```
+would appear in the HTTP Header as:
+```
+X-Broker-API-Originating-Identity: cloudfoundry eyANCiAgInVzZXJfaWQiOiAiNjgzZWE3NDgtMzA5Mi00ZmY0LWI2NTYtMzljYWNjNGQ1MzYwIiwNCiAgInVzZXJfbmFtZSI6ICJqb2VAZXhhbXBsZS5jb20iDQp9
+```
+
+### Kubernetes
+
+*`platform` Value*: `kubernetes`
+
+The following properties MUST appear within the JSON encoded `value`:
+
+| Property | Type | Description |
+| --- | --- | --- |
+| username | string | The `username` property from the Kubenernetes `user.info` object. |
+| uid | string | The `uid` property from the Kubenernetes `user.info` object. |
+| groups | array-of-strings | The `groups` property from the Kubenernetes `user.info` object. |
+| extra | map-of-array-of-strings | The `extra` property from the Kubernetes `user.info` object. |
+
+Platforms MAY include additional properties.
+
+For example, a `value` of:
+```
+{
+  "username": "duke",
+  "uid": "c2dde242-5ce4-11e7-988c-000c2946f14f",
+  "groups": { "admin", "dev" },
+  "extra": {
+    "mydata": { "data1", "data3" }
+  }
+}
+```
+would appear in the HTTP Header as:
+```
+X-Broker-API-Originating-Identity: kubernetes eyANCiAgInVzZXJuYW1lIjogImR1a2UiLA0KICAidWlkIjogImMyZGRlMjQyLTVjZTQtMTFlNy05ODhjLTAwMGMyOTQ2ZjE0ZiIsDQogICJncm91cHMiOiB7ICJhZG1pbiIsICJkZXYiIH0NCn0=
+```
+
+
 ## Context Object
 
 In the [Open Service Broker API specification](spec.md) there are certain
@@ -68,10 +144,6 @@ While the `context` property is defined as an opaque JSON object, in practice,
 it is often useful and necessary for there to be an agreed upon set of
 properties to ensure a common understanding of this data between the
 Platform and the Service Brokers.
-
-While use of this profile is OPTIONAL, an implementation is not compliant
-with this profile if it fails to satisfy one or more of the MUST, SHALL
-or REQUIRED level requirements defined herein.
 
 ### Context Object Properties
 
@@ -92,6 +164,10 @@ The `platform` property MUST be a `string` and serialized as follows:
 
 Each section below will define the `platform` value that MUST be used based
 on the Platform and the set of additional properties that MUST be present.
+
+Note that when both the originating identity HTTP Header and the Context
+object appear in the same message the `platform` value MUST be the same
+for both.
 
 #### Cloud Foundry
 
