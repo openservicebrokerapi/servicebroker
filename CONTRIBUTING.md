@@ -121,7 +121,7 @@ creating a new PR with the title of the proposed release. For example,
 
 1. In a fork, create a new branch called "v$major.$minor-rc" from the
   **Release SHA**.
-2. Create a new commit with the following changes:
+2. Create a new commit titled `prepare release` with the following changes:
   * Update [release-notes.md](release-notes.md) detailing the changes that are
   to be released in this version.
   * Update [README.md](README.md) with an updated _Latest Release_ subheading
@@ -131,13 +131,13 @@ creating a new PR with the title of the proposed release. For example,
   link from table of contents) containing a copy of the relevant release notes,
   and with any references to the previous version of the specification (i.e. the
   `X-Broker-API-Version` headers) updated. Do not update the header
-  (`Open Service Broker API (master - might contain changes that are not yet released)`)
-   - this will be done if and when the release proposal is approved.
+  `Open Service Broker API (master - might contain changes that are not yet released)`
+  (this will be done if and when the release proposal is approved).
 3. Open a new Pull Request titled **Release Proposal: v$major.$minor** from the
-branch of the fork to the master branch of the repository.
+  branch of the fork to the master branch of the repository.
 4. Announce the release proposal on the next weekly call and notify the mailing
-list of the proposal, triggering the start of the
-[Review Process](#review-process) as outlined below.
+  list of the proposal, triggering the start of the
+  [Review Process](#review-process) as outlined below.
 
 ### Review Process
 
@@ -170,4 +170,6 @@ any PMC member:
    (`Open Service Broker API (v$major.$minor)`).
 1. Push the branch to the repository (`v$major.$minor`).
 1. Notify the mailing list of the new release.
+1. Update the [Roadmap & Release Planning](https://github.com/openservicebrokerapi/servicebroker/projects/1)
+   project.
 1. The PMC will create a blog post for the new release.

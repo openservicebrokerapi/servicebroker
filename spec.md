@@ -5,7 +5,7 @@
   - [Notations and Terminology](#notations-and-terminology)
   - [Changes](#changes)
     - [Change Policy](#change-policy)
-    - [Changes Since v2.11](#changes-since-v211)
+    - [Changes Since v2.12](#changes-since-v212)
   - [API Version Header](#api-version-header)
   - [Authentication](#authentication)
   - [URL Properties](#url-properties)
@@ -86,16 +86,27 @@ added to enable support for new features.
 These fields MUST be OPTIONAL and SHOULD be ignored by clients and servers
 that do not understand them.
 
-### Changes Since v2.11
+### Changes Since v2.12
 
-* Added `context` field to request body for provisioning a service instance (`PUT /v2/service_instances/:instance_id`) and updating a service instance (`PATCH /v2/service_instances/:instance_id`). Also added the [profile.md](https://github.com/openservicebrokerapi/servicebroker/blob/master/profile.md) file describing RECOMMENDED usage patterns for environment-specific extensions and variations. `context` will replace the `organization_guid` and `space_guid` request fields in future versions of the specification. In the interim, both SHOULD be used to ensure interoperability with old and new implementations.
-* The specification now uses RFC2119 keywords to make it clearer when things are REQUIRED rather than OPTIONAL or RECOMMENDED.
-* Request and response parameters of type string, if present, MUST be a non-empty string.
-* Cleaned up text around status codes in responses, clarifying when they MUST be returned.
-* Added clarity around the `app_guid` request field.
-* Clarified the semantics of `plan_id` and `parameters` fields in the updating a service instance request body.
-* Clarified the default value of the `plan_updateable` field.
-* Clarified when `route_service_url` is REQUIRED and when brokers can return extra data in bindings.
+* Added [`schemas`](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#schema-object)
+  field to services in the catalog that brokers can use to declare the
+  configuration parameters their service accepts for creating a service
+  instance, updating a service instance and creating a service binding.
+* Added [`context`](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#binding)
+  field to request body for creating a service binding.
+* Added [warning text](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#url-properties)
+  about using characters outside of the "Unreserved Characters" set in IDs.
+* Added information about
+  [`volume_mounts`](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#volume-mounts-object)
+  objects.
+* `instance_id` and `binding_id` MUST be globally unique non-empty strings.
+* Allow [non-BasicAuth authentication mechanisms](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#authentication).
+* Added a [Getting Started](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/gettingStarted.md)
+  page including sample service brokers.
+* Define what a [CLI-friendly string](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#catalog-management)
+  is.
+* Add [service/plan metadata conventions](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/profile.md#service-metadata).
+* Add [originating identity HTTP header](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#originating-identity).
 
 For changes in older versions, see the [release notes](https://github.com/openservicebrokerapi/servicebroker/blob/master/release-notes.md).
 
@@ -103,7 +114,7 @@ For changes in older versions, see the [release notes](https://github.com/opense
 
 Requests from the platform to the service broker MUST contain a header that declares the version number of the Service Broker API that the marketplace will use:
 
-`X-Broker-API-Version: 2.12`
+`X-Broker-API-Version: 2.13`
 
 The version numbers are in the format `MAJOR.MINOR` using semantic versioning.
 
@@ -249,7 +260,7 @@ The following HTTP Headers are defined for this operation:
 
 #### cURL
 ```
-$ curl http://username:password@broker-url/v2/catalog -H "X-Broker-API-Version: 2.12"
+$ curl http://username:password@broker-url/v2/catalog -H "X-Broker-API-Version: 2.13"
 ```
 
 ### Response
@@ -681,7 +692,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
     "parameter1": 1,
     "parameter2": "foo"
   }
-}' -X PUT -H "X-Broker-API-Version: 2.12" -H "Content-Type: application/json"
+}' -X PUT -H "X-Broker-API-Version: 2.13" -H "Content-Type: application/json"
 ```
 
 ### Response
@@ -805,7 +816,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
     "organization_id": "org-guid-here",
     "space_id": "space-guid-here"
   }
-}' -X PATCH -H "X-Broker-API-Version: 2.12" -H "Content-Type: application/json"
+}' -X PATCH -H "X-Broker-API-Version: 2.13" -H "Content-Type: application/json"
 ```
 
 ### Response
@@ -1112,7 +1123,7 @@ The following HTTP Headers are defined for this operation:
 #### cURL
 ```
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
-  service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.12"
+  service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.13"
 ```
 
 ### Response
@@ -1177,7 +1188,7 @@ The following HTTP Headers are defined for this operation:
 #### cURL
 ```
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?accepts_incomplete=true
-  &service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.12"
+  &service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.13"
 ```
 
 ### Response
