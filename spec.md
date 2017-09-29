@@ -333,11 +333,11 @@ how platforms might expose these values to their users.
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| [service_instance](#service-instances-object) | object | The schema definitions for creating and updating a service instance. |
-| [service_binding](#service-bindings-object) | object | The schema definition for creating a service binding. Used only if the service plan is bindable. |
+| [service_instance](#service-instance-object) | object | The schema definitions for creating and updating a service instance. |
+| [service_binding](#service-binding-object) | object | The schema definition for creating a service binding. Used only if the service plan is bindable. |
 
 
-##### Service Instances Object
+##### Service Instance Object
 
 | Response field | Type | Description |
 | --- | --- | --- |
@@ -345,7 +345,7 @@ how platforms might expose these values to their users.
 | [update](#input-parameters-object) | object | The schema definition for updating a service instance. |
 
 
-##### Service Bindings Object
+##### Service Binding Object
 
 | Response field | Type | Description |
 | --- | --- | --- |
