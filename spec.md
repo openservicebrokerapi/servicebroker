@@ -260,7 +260,7 @@ The following HTTP Headers are defined for this operation:
 
 #### cURL
 ```
-$ curl -H "X-Broker-API-Version: 2.13" http://username:password@broker-url/v2/catalog
+$ curl http://username:password@broker-url/v2/catalog -H "X-Broker-API-Version: 2.13"
 ```
 
 ### Response
@@ -582,7 +582,7 @@ The following HTTP Headers are defined for this operation:
 
 #### cURL
 ```
-$ curl http://username:password@broker-url/v2/service_instances/:instance_id/last_operation
+$ curl http://username:password@broker-url/v2/service_instances/:instance_id/last_operation -H "X-Broker-API-Version: 2.13"
 ```
 
 ### Response
@@ -1001,7 +1001,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id/ser
     "parameter1-name-here": 1,
     "parameter2-name-here": "parameter2-value-here"
   }
-}' -X PUT
+}' -X PUT -H "X-Broker-API-Version: 2.13" -H "Content-Type: application/json"
 ```
 
 ### Response
