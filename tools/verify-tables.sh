@@ -94,9 +94,9 @@ function checkForPunc() {
       continue
     fi
 
-    # Anything less than 3 words we ignore
+    # Anything less than 4 words we ignore
     count=$(echo "$col" | wc -w)
-    if (( "$count" < 3 )); then
+    if (( "$count" < 4 )); then
       continue
     fi
 
