@@ -171,7 +171,7 @@ URLs:
 - `binding_id`
 - `operation`
 
-While this specification places no restriction on the set of characters use
+While this specification places no restriction on the set of characters used
 within these strings, it is RECOMMENDED that these properties only contain
 characters from the "Unreserved Characters" as defined by
 [RFC3986](https://tools.ietf.org/html/rfc3986#section-2.3). In other words:
