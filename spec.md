@@ -316,7 +316,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 | tags | array-of-strings | Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp. |
 | requires | array-of-strings | A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are `syslog_drain`, `route_forwarding` and `volume_mount`. |
 | bindable* | boolean | Specifies whether service instances of the service can be bound to applications. This specifies the default for all plans of this service. Plans can override this field (see [Plan Object](#plan-object)). |
-| metadata | JSON object | An opaque object of metadata for a service offering. Controller treats this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing service brokers and controllers for fields that aid in the display of catalog data. |
+| metadata | object | An opaque object of metadata for a service offering. Controller treats this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing service brokers and controllers for fields that aid in the display of catalog data. |
 | [dashboard_client](#dashboard-client-object) | object | Contains the data necessary to activate the Dashboard SSO feature for this service. |
 | plan_updateable | boolean | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute `plan_updatable` as `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
 | [plans*](#plan-object) | array-of-objects | A list of plans for this service, schema is defined below. MUST contain at least one plan. |
@@ -346,7 +346,7 @@ how platforms might expose these values to their users.
 | id* | string | An identifier used to correlate this plan in future requests to the service broker. This MUST be globally unique. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
 | name* | string | The CLI-friendly name of the plan. MUST only contain lowercase characters, numbers and hyphens (no spaces). MUST be unique within the service. MUST be a non-empty string. |
 | description* | string | A short description of the plan. MUST be a non-empty string. |
-| metadata | JSON object | An opaque object of metadata for a service plan. Controller treats this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing service brokers and controllers for fields that aid in the display of catalog data. |
+| metadata | object | An opaque object of metadata for a service plan. Controller treats this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing service brokers and controllers for fields that aid in the display of catalog data. |
 | free | boolean | When false, service instances of this plan have a cost. The default is true. |
 | bindable | boolean | Specifies whether service instances of the service plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
 | [schemas](#schema-object) | object | Schema definitions for service instances and bindings for the plan. |
@@ -743,7 +743,7 @@ The following HTTP Headers are defined for this operation:
 | context | object | Platform specific contextual information under which the service instance is to be provisioned. Although most service brokers will not use this field, it could be helpful in determining data placement or applying custom business rules. `context` will replace `organization_guid` and `space_guid` in future versions of the specification - in the interim both SHOULD be used to ensure interoperability with old and new implementations. |
 | organization_guid* | string | Deprecated in favor of `context`. The platform GUID for the organization under which the service instance is to be provisioned. Although most service brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | space_guid* | string | Deprecated in favor of `context`. The identifier for the project space within the platform organization. Although most service brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
-| parameters | JSON object | Configuration options for the service instance. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
+| parameters | object | Configuration options for the service instance. Service brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -868,7 +868,7 @@ The following HTTP Headers are defined for this operation:
 | context | object | Contextual data under which the service instance is created. |
 | service_id* | string | MUST be the ID of a service from the catalog for this service broker. |
 | plan_id | string | If present, MUST be the ID of a plan from the service that has been requested. If this field is not present in the request message, then the service broker MUST NOT change the plan of the instance as a result of this request. |
-| parameters | JSON object | Configuration options for the service instance. Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. If this field is not present in the request message, then the service broker MUST NOT change the parameters of the instance as a result of this request. |
+| parameters | object | Configuration options for the service instance. Service brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. If this field is not present in the request message, then the service broker MUST NOT change the parameters of the instance as a result of this request. |
 | previous_values | object | Information about the service instance prior to the update. |
 | previous_values.service_id | string | Deprecated; determined to be unnecessary as the value is immutable. If present, it MUST be the ID of the service for the service instance. |
 | previous_values.plan_id | string | If present, it MUST be the ID of the plan prior to the update. |
@@ -1055,8 +1055,8 @@ The following HTTP Headers are defined for this operation:
 | service_id* | string | MUST be the ID of the service that is being used. |
 | plan_id* | string | MUST be the ID of the plan from the service that is being used. |
 | app_guid | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the binding to be created. If present, MUST be a non-empty string. |
-| bind_resource | JSON object | A JSON object that contains data for platform resources associated with the binding to be created. See [Bind Resource Object](#bind-resource-object) for more information. |
-| parameters | JSON object | Configuration options for the service binding. Service brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
+| bind_resource | object | A JSON object that contains data for platform resources associated with the binding to be created. See [Bind Resource Object](#bind-resource-object) for more information. |
+| parameters | object | Configuration options for the service binding. Service brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
 
 
 ##### Bind Resource Object
