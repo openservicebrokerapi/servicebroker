@@ -4,13 +4,13 @@
 
 ## Latest Release: v2.13
 [Read the specification](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md)
+
 [Read the profile](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/profile.md)
 
-[Release Notes for past versions](release-notes.md)
+[Release Notes for past versions](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/release-notes.md)
 
 ## Working Changes
-[Read the working changes to the spec](spec.md)
-[Read the working changes to the profile](profile.md)
+[Read the working changes to the documentation](https://github.com/openservicebrokerapi/servicebroker/tree/master)
 
 [Roadmap and release planning](https://github.com/openservicebrokerapi/servicebroker/projects/1)
 
