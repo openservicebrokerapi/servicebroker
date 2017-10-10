@@ -62,8 +62,13 @@ be interpreted as described in [RFC 2119](https://tools.ietf.org/html/rfc2119).
 
 This specification defines the following terms:
 
-- *Application*: The software that will make use of, and be bound to, a Service
-  Instance.
+- *Application*: Often the entity using a Service Instance will be a piece of
+  software, however, this does not need to be the case. For the purposes of
+  this specification, the term "Application" will be used to represent all
+  entities that might make use of, and be bound to, a Service Instance.
+
+- *Marketplace*: The collective offerings brought by a Service Broker for a
+  consumer.
 
 - *Platform*: The software that will manage the cloud environment into which
   Applications and Service Brokers are provisioned.  Users will not directly
@@ -76,10 +81,10 @@ This specification defines the following terms:
   some action. However, there can also be non-interactive Services that can
   perform the desired actions without direct prompting from the Application.
 
-- *Service Binding*: The representation of an association between an
-  Application and a Service Instance. Service Bindings will often
-  contain the credentials that the Application will use to communicate
-  with the Service Instance.
+- *Service Binding*: Represents the request to use a Service Instance. As part
+  of this request there might be a reference to the entity that will use the
+  Service Instance. Service Bindings will often contain the credentials that
+  can then be used to communicate with the Service Instance.
 
 - *Service Broker*: Service Brokers manage the lifecycle of Services. Platforms
   interact with Service Brokers to provision, and manage, Service Instances
