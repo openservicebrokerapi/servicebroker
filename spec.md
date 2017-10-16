@@ -297,11 +297,11 @@ $ curl http://username:password@service-broker-url/v2/catalog -H "X-Broker-API-V
 
 #### Body
 
-CLI and web clients have different needs with regard to service and plan names.
-A CLI-friendly string is all lowercase, with no spaces.
-Keep it short -- imagine a user having to type it as an argument for a longer
-command.
-A web-friendly display name is camel-cased with spaces and punctuation supported.
+CLI clients will typically have restrictions on how names, such as service
+and plan names, will be provided by users. Therefore, this specification
+defines a "CLI-friendly" string as a short string that MUST only use lowercase
+characters, numbers and hyphens, with no spaces. This will make it easier for
+users when they have to type it as an argument on the command line.
 
 | Response field | Type | Description |
 | --- | --- | --- |
