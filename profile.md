@@ -19,6 +19,7 @@ or REQUIRED level requirements defined herein.
   - [Cloud Foundry](#cloud-foundry)
   - [Kubernetes](#kubernetes)
 - [Service Metadata](#service-metadata)
+  - [Cloud Foundry Service Metadata](#cloud-foundry-service-metadata)
 
 ## Notations and Terminology
 
@@ -343,3 +344,15 @@ many plans.
   ]
 }
 ```
+
+### Cloud Foundry Service Metadata
+
+In addition to the metadata described in [Service Metadata](#service-metadata),
+Service Brokers MAY also expose the following fields to enable Cloud Foundry
+specific behaviour.
+
+#### Service Metadata Fields
+
+| Broker API Field | Type | Description |
+| --- | --- | --- |
+| metadata.shareable | string | Allows Service Instances to be shared across orgs and spaces. |
