@@ -15,6 +15,7 @@
   - [Synchronous and Asynchronous Operations](#synchronous-and-asynchronous-operations)
     - [Synchronous Operations](#synchronous-operations)
     - [Asynchronous Operations](#asynchronous-operations)
+  - [Blocking Operations](#blocking-operations)
   - [Polling Last Operation](#polling-last-operation)
     - [Polling Interval and Duration](#polling-interval-and-duration)
   - [Provisioning](#provisioning)
