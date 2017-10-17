@@ -35,7 +35,7 @@ The terminology defined below are defined by the
 for convenience. If there are any inconsistencies between their definitions in
 this document and the [Open Service Broker API specification](spec.md), then
 the [Open Service Broker API specification](spec.md) SHALL take precedence.
- 
+
 - *Platform*: The software that will manage the cloud environment into which
   Applications and Service Brokers are provisioned.  Users will not directly
   provision Services from Service Brokers, rather they will ask the Platform
