@@ -36,6 +36,12 @@ for convenience. If there are any inconsistencies between their definitions in
 this document and the [Open Service Broker API specification](spec.md), then
 the [Open Service Broker API specification](spec.md) SHALL take precedence.
 
+- *Service Binding*: Represents the request to use a Service Instance. As part
+  of this request there might be a reference to the entity, also known as the
+  Application, that will use the Service Instance. Service Bindings will often
+  contain the credentials that can then be used to communicate with the Service
+  Instance.
+ 
 - *Platform*: The software that will manage the cloud environment into which
   Applications and Service Brokers are provisioned.  Users will not directly
   provision Services from Service Brokers, rather they will ask the Platform
@@ -52,11 +58,6 @@ the [Open Service Broker API specification](spec.md) SHALL take precedence.
   and Service Bindings.
 
 - *Service Instance*: An instantiation of a Service offering.
-
-- *Service Binding*: The representation of an association between an
-  Application and a Service Instance. Often, Service Bindings, will
-  contain the credentials that the Application will use to communicate
-  with the Service Instance.
 
 - *Application*: The software that uses a Service Instance via Service Binding.
 
