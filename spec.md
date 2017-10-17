@@ -82,9 +82,10 @@ This specification defines the following terms:
   perform the desired actions without direct prompting from the Application.
 
 - *Service Binding*: Represents the request to use a Service Instance. As part
-  of this request there might be a reference to the entity that will use the
-  Service Instance. Service Bindings will often contain the credentials that
-  can then be used to communicate with the Service Instance.
+  of this request there might be a reference to the entity, also known as the
+  Application, that will use the Service Instance. Service Bindings will often
+  contain the credentials that can then be used to communicate with the Service
+  Instance.
 
 - *Service Broker*: Service Brokers manage the lifecycle of Services. Platforms
   interact with Service Brokers to provision, and manage, Service Instances
@@ -92,11 +93,11 @@ This specification defines the following terms:
 
 - *Service Instance*: An instantiation of a Service offering.
 
-- *Service Offerings*: Generic bindable endpoints to extend or tie services
-  together. Examples include log drain and routing services.
+- *Service Offering*: The advertisement of a service that a Service Broker
+  supports.
 
 - *Service Plan*: The representation of the costs and benefits for a given
-  service, potentially as a tier.
+  variant of the service, potentially as a tier.
 
 ## Changes
 
