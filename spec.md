@@ -412,7 +412,7 @@ schema being used.
         "blurb": "Add a blurb here",
         "longDescription": "A long time ago, in a galaxy far far away..."
       },
-      "displayName": "The Fake Broker"
+      "displayName": "The Fake Service Broker"
     },
     "dashboard_client": {
       "id": "398e2f8e-XXXX-XXXX-XXXX-19a71ecbcf64",
