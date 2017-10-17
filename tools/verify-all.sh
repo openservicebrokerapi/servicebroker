@@ -39,4 +39,7 @@ echo Verify RFC2119 keywords
 echo Verify tables
 "${REPODIR}/tools/verify-tables.sh" "${REPODIR}/spec.md" "${REPODIR}"/profile.md || rc=1
 
+echo Verify terminology
+"${REPODIR}/tools/verify-terms.sh" -v "${REPODIR}"/spec.md "${REPODIR}"/profile.md|| rc=1
+
 exit $rc
