@@ -393,7 +393,7 @@ schema being used.
 * Schemas MUST NOT contain any external references.
 * Schemas MUST NOT be larger than 64kB.
 
-[Example Json](./json/catalog-get.json)
+[Example Json](json/v2/catalog-get.json)
 
 ### Adding a Service Broker to the Platform
 
@@ -633,7 +633,7 @@ The following HTTP Headers are defined for this operation:
 
 \* Fields with an asterisk are REQUIRED.
 
-[Json Example](./json/v2/service_instances/example_instance_id-put-body.json)
+[Json Example](json/v2/service_instances/example_instance_id-put-body.json)
 
 #### cURL
 ```
