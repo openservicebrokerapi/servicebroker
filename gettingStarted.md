@@ -50,6 +50,7 @@ A Java port of the Ruby-based
 This broker implements support for the 
 [Asynchronous Service Operations](https://docs.cloudfoundry.org/services/api.html#asynchronous-operations),
 and calls AWS APIs to provision EC2 VMs.
+
 [Storage Service Operations](https://github.com/leonwanghui/opensds-broker/tree/master),
 for OpenSDS to provision storage as a service.
 
