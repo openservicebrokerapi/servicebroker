@@ -42,7 +42,14 @@ sample implementation has been provided for
 
 [MySQL Java Broker](https://github.com/cloudfoundry-community/cf-mysql-java-broker):
 A Java port of the Ruby-based
+
 [MySQL broker](https://github.com/cloudfoundry/cf-mysql-broker) above.
+
+[Open Service Broker](https://github.com/swisscom/open-service-broker): 
+enables platforms such as Cloud Foundry & Kubernetes to provision and manage 
+services. It is built in a modular way and one can host multiple services. 
+Open Service Broker offers extra functionality regarding billing, 
+backup/restore on top of the Open Service Broker API.
 
 ## Go
 
