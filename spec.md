@@ -406,132 +406,7 @@ schema being used.
 * Schemas MUST NOT contain any external references.
 * Schemas MUST NOT be larger than 64kB.
 
-
-```
-{
-  "services": [{
-    "name": "fake-service",
-    "id": "acb56d7c-XXXX-XXXX-XXXX-feb140a59a66",
-    "description": "fake service",
-    "tags": ["no-sql", "relational"],
-    "requires": ["route_forwarding"],
-    "bindable": true,
-    "metadata": {
-      "provider": {
-        "name": "The name"
-      },
-      "listing": {
-        "imageUrl": "http://example.com/cat.gif",
-        "blurb": "Add a blurb here",
-        "longDescription": "A long time ago, in a galaxy far far away..."
-      },
-      "displayName": "The Fake Broker"
-    },
-    "dashboard_client": {
-      "id": "398e2f8e-XXXX-XXXX-XXXX-19a71ecbcf64",
-      "secret": "277cabb0-XXXX-XXXX-XXXX-7822c0a90e5d",
-      "redirect_uri": "http://localhost:1234"
-    },
-    "plan_updateable": true,
-    "plans": [{
-      "name": "fake-plan-1",
-      "id": "d3031751-XXXX-XXXX-XXXX-a42377d3320e",
-      "description": "Shared fake Server, 5tb persistent disk, 40 max concurrent connections",
-      "free": false,
-      "metadata": {
-        "max_storage_tb": 5,
-        "costs":[
-            {
-               "amount":{
-                  "usd":99.0
-               },
-               "unit":"MONTHLY"
-            },
-            {
-               "amount":{
-                  "usd":0.99
-               },
-               "unit":"1GB of messages over 20GB"
-            }
-         ],
-        "bullets": [
-          "Shared fake server",
-          "5 TB storage",
-          "40 concurrent connections"
-        ]
-      },
-      "schemas": {
-        "service_instance": {
-          "create": {
-            "parameters": {
-              "$schema": "http://json-schema.org/draft-04/schema#",
-              "type": "object",
-              "properties": {
-                "billing-account": {
-                  "description": "Billing account number used to charge use of shared fake server.",
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "update": {
-            "parameters": {
-              "$schema": "http://json-schema.org/draft-04/schema#",
-              "type": "object",
-              "properties": {
-                "billing-account": {
-                  "description": "Billing account number used to charge use of shared fake server.",
-                  "type": "string"
-                }
-              }
-            }
-          }
-        },
-        "service_binding": {
-          "create": {
-            "parameters": {
-              "$schema": "http://json-schema.org/draft-04/schema#",
-              "type": "object",
-              "properties": {
-                "billing-account": {
-                  "description": "Billing account number used to charge use of shared fake server.",
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    }, {
-      "name": "fake-plan-2",
-      "id": "0f4008b5-XXXX-XXXX-XXXX-dace631cd648",
-      "description": "Shared fake Server, 5tb persistent disk, 40 max concurrent connections. 100 async",
-      "free": false,
-      "metadata": {
-        "max_storage_tb": 5,
-        "costs":[
-            {
-               "amount":{
-                  "usd":199.0
-               },
-               "unit":"MONTHLY"
-            },
-            {
-               "amount":{
-                  "usd":0.99
-               },
-               "unit":"1GB of messages over 20GB"
-            }
-         ],
-        "bullets": [
-          "40 concurrent connections"
-        ]
-      }
-    }]
-  }]
-}
-```
-
+[Example Json](json/v2/catalog-get.json)
 
 ### Adding a Service Broker to the Platform
 
@@ -688,8 +563,8 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 410 Gone | Appropriate only for asynchronous delete operations. The platform MUST consider this response a success and remove the resource from its database. The expected response body is `{}`. Returning this while the platform is polling for create or update operations SHOULD be interpreted as an invalid response and the platform SHOULD continue polling. |
 
 Responses with any other status code SHOULD be interpreted as an error or
-invalid response. The platform SHOULD continue polling until the service
-broker returns a valid response or the [maximum polling
+invalid response. The platform SHOULD continue polling until the service broker
+returns a valid response or the [maximum polling
 duration](#polling-interval-and-duration) is reached. Service brokers MAY use
 the `description` field to expose user-facing error messages about the
 operation state; for more info see [Service Broker
@@ -771,22 +646,7 @@ The following HTTP Headers are defined for this operation:
 
 \* Fields with an asterisk are REQUIRED.
 
-```
-{
-  "service_id": "service-id-here",
-  "plan_id": "plan-id-here",
-  "context": {
-    "platform": "cloudfoundry",
-    "some_field": "some-contextual-data"
-  },
-  "organization_guid": "org-guid-here",
-  "space_guid": "space-guid-here",
-  "parameters": {
-    "parameter1": 1,
-    "parameter2": "foo"
-  }
-}
-```
+[Json Example](json/v2/service_instances/example_instance_id-put-body.json)
 
 #### cURL
 ```
