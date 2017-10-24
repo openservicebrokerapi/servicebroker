@@ -59,11 +59,11 @@ It is expected that during this implementation phase there will be changes
 made to the design and proposed specification edits to accurately represent
 the current status of the proposal.
 
-Once support for the change has been implemented, a PR should be sent to
-this repo for the change to the broker API specification. By this point,
-the API interactions should be well understood and there should be no
-technical surprises; we expect the only discussion necessary on PRs to be
-for wordsmithing and formatting.
+Once support for the change has been implemented, a PR should be sent to this
+repo for the change to the Open Service Broker API specification. By this
+point, the API interactions should be well understood and there should be no
+technical surprises; we expect the only discussion necessary on PRs to be for
+wordsmithing and formatting.
 
 ## GitHub Labels
 

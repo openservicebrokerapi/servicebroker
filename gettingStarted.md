@@ -11,7 +11,7 @@ as a starting point if you are developing your own service broker.
 The Open Service Broker API does not make any statement as to the
 validity, stability or compliance of any of them.
 
-If you would like to add additional brokers to this list open a
+If you would like to add additional Service Brokers to this list open a
 a pull request against 
 [this repository](https://github.com/openservicebrokerapi/servicebroker)
 and edit [this file](gettingStarted.md).
@@ -21,14 +21,14 @@ and edit [this file](gettingStarted.md).
 [GitHub Repository service](https://github.com/cloudfoundry-samples/github-service-broker-ruby):
 This is designed to be an easy-to-read example of a service broker, with
 complete documentation, and comes with a demo app that uses the service.
-The broker can be deployed as an application to any Cloud Foundry instance
+The Service Broker can be deployed as an application to any Cloud Foundry instance
 or hosted elsewhere. The service broker uses GitHub as the service back end.
 
 [MySQL database service](https://github.com/cloudfoundry/cf-mysql-release):
-This broker and its accompanying MySQL server are designed to be deployed
+This Service Broker and its accompanying MySQL server are designed to be deployed
 together as a BOSH release. [BOSH](https://github.com/cloudfoundry/bosh) is
 used to deploy or upgrade the release, monitors the health of running
-components, and restarts or recreates unhealthy VMs. The broker code alone
+components, and restarts or recreates unhealthy VMs. The Service Broker code alone
 can be found [here](https://github.com/cloudfoundry/cf-mysql-broker).
 
 ## Java
@@ -47,7 +47,7 @@ A Java port of the Ruby-based
 ## Go
 
 [Asynchronous Service Broker for AWS EC2](https://github.com/cloudfoundry-samples/go_service_broker):
-This broker implements support for the 
+This Service Broker implements support for the 
 [Asynchronous Service Operations](https://docs.cloudfoundry.org/services/api.html#asynchronous-operations),
 and calls AWS APIs to provision EC2 VMs.
 
