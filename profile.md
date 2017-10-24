@@ -268,7 +268,7 @@ and consistency.
 
 ### Service Metadata Fields
 
-| Broker API Field | Type | Description |
+| Service Broker API Field | Type | Description |
 | --- | --- | --- |
 | metadata.displayName | string | The name of the service to be displayed in graphical clients. |
 | metadata.imageUrl | string | The URL to an image. |
@@ -278,7 +278,7 @@ and consistency.
 | metadata.supportUrl | string | Link to support page for the service. |
 
 ### Plan Metadata Fields
-| Broker API Field | Type | Description |
+| Service Broker API Field | Type | Description |
 | --- | --- | --- |
 | metadata.bullets | array-of-strings | Features of this plan, to be displayed in a bulleted-list. |
 | metadata.costs | object | An array-of-objects that describes the costs of a service, in what currency, and the unit of measure. If there are multiple costs, all of them could be billed to the user (such as a monthly + usage costs at once). |
@@ -307,10 +307,10 @@ For example:
 ]
 ```
 
-### Example Broker Response Body
+### Example Service Broker Response Body
 
 The example below contains a catalog of one service, having one service plan.
-Of course, a broker can offering a catalog of many services, each having
+Of course, a Service Broker can offering a catalog of many services, each having
 many plans.
 
 ```
