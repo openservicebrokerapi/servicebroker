@@ -817,7 +817,11 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 409 Conflict | MUST be returned if a service instance with the same id already exists but with different attributes. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Service Broker Errors](#service-broker-errors). |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous provisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The expected response body is: `{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }`, as described below (see [Service Broker Errors](#service-broker-errors). |
 
-Responses with any other status code will be interpreted as a failure. Service brokers can include a user-facing message in the `description` field; for details see [Service Broker Errors](#service-broker-errors).
+Responses with any other status code will be interpreted as a failure and a
+deprovision request SHOULD be sent to the Service Broker to prevent an orphan
+being created on the Service Broker.
+Service Brokers can include a user-facing message in the `description` field;
+for details see [Service Broker Errors](#service-broker-errors).
 
 #### Body
 
@@ -1155,7 +1159,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 422 Unprocessable Entity | MUST be returned if the Service Broker requires that `app_guid` be included in the request body. The expected response body is: `{ "error": "RequiresApp", "description": "This service supports generation of credentials through binding an application only." }` (see [Service Broker Errors](#service-broker-errors). |
 
 Responses with any other status code will be interpreted as a failure and an
-unbind request will be sent to the Service Broker to prevent an orphan being
+unbind request SHOULD be sent to the Service Broker to prevent an orphan being
 created on the Service Broker. Service brokers can include a user-facing
 message in the `description` field; for details see [Service Broker
 Errors](#service-broker-errors).
