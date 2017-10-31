@@ -117,9 +117,9 @@ that do not understand them.
 * Added [`schemas`](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#schema-object)
   field to services in the catalog that Service Brokers can use to declare the
   configuration parameters their service accepts for creating a service
-  instance, updating a service instance and creating a service binding.
+  instance, updating a service instance and creating a Service Binding.
 * Added [`context`](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#binding)
-  field to request body for creating a service binding.
+  field to request body for creating a Service Binding.
 * Added [warning text](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#url-properties)
   about using characters outside of the "Unreserved Characters" set in IDs.
 * Added information about
@@ -373,7 +373,7 @@ how platforms might expose these values to their users.
 | Response field | Type | Description |
 | --- | --- | --- |
 | [service_instance](#service-instance-object) | object | The schema definitions for creating and updating a service instance. |
-| [service_binding](#service-binding-object) | object | The schema definition for creating a service binding. Used only if the service plan is bindable. |
+| [service_binding](#service-binding-object) | object | The schema definition for creating a Service Binding. Used only if the service plan is bindable. |
 
 
 ##### Service Instance Object
@@ -388,7 +388,7 @@ how platforms might expose these values to their users.
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| [create](#input-parameters-object) | object | The schema definition for creating a service binding. |
+| [create](#input-parameters-object) | object | The schema definition for creating a Service Binding. |
 
 
 ##### Input Parameters Object
@@ -983,7 +983,7 @@ Errors](#service-broker-errors).
 
 If `bindable:true` is declared for a service or plan in the
 [Catalog](#catalog-management) endpoint, the platform MAY request generation
-of a service binding.
+of a Service Binding.
 
 Note: Not all services need to be bindable --- some deliver value just from
 being provisioned. Service brokers that offer services that are bindable MUST
@@ -998,7 +998,7 @@ services do not need to implement the endpoint for bind requests.
 Credentials are a set of information used by an application or a user to
 utilize the service instance. If the Service Broker supports generation of
 credentials it MUST return `credentials` in the response for a request to
-create a service binding. Credentials SHOULD be unique whenever possible, so
+create a Service Binding. Credentials SHOULD be unique whenever possible, so
 access can be revoked for each binding without affecting consumers of other
 bindings for the service instance.
 
@@ -1075,12 +1075,12 @@ The following HTTP Headers are defined for this operation:
 
 | Request Field | Type | Description |
 | --- | --- | --- |
-| context | object | Contextual data under which the service binding is created. |
+| context | object | Contextual data under which the Service Binding is created. |
 | service_id* | string | MUST be the ID of the service that is being used. |
 | plan_id* | string | MUST be the ID of the plan from the service that is being used. |
 | app_guid | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the binding to be created. If present, MUST be a non-empty string. |
 | bind_resource | object | A JSON object that contains data for platform resources associated with the binding to be created. See [Bind Resource Object](#bind-resource-object) for more information. |
-| parameters | object | Configuration options for the service binding. Service brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
+| parameters | object | Configuration options for the Service Binding. Service brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
 
 
 ##### Bind Resource Object
@@ -1151,8 +1151,8 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 200 OK | MUST be returned if the binding already exists and the requested parameters are identical to the existing binding. The expected response body is below. |
 | 201 Created | MUST be returned if the binding was created as a result of this request. The expected response body is below. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
-| 409 Conflict | MUST be returned if a service binding with the same id, for the same service instance, already exists but with different parameters. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Service Broker Errors](#service-broker-errors). Additionally, if the Service Broker rejects the request due to a concurrent request to create a binding for the same service instance, then this error MUST be returned (see [Blocking Operations](#blocking-operations)). |
-| 422 Unprocessable Entity | MUST be returned if the Service Broker requires that `app_guid` be included in the request body. The expected response body is: `{ "error": "RequiresApp", "description": "This service supports generation of credentials through binding an application only." }` (see [Service Broker Errors](#service-broker-errors). |
+| 409 Conflict | MUST be returned if a Service Binding with the same id, for the same service instance, already exists but with different parameters. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Service Broker Errors](#service-broker-errors). Additionally, if the service broker rejects the request due to a concurrent request to create a binding for the same service instance, then this error MUST be returned (see [Blocking Operations](#blocking-operations)). |
+| 422 Unprocessable Entity | MUST be returned if the service broker requires that `app_guid` be included in the request body. The expected response body is: `{ "error": "RequiresApp", "description": "This service supports generation of credentials through binding an application only." }` (see [Service Broker Errors](#service-broker-errors). |
 
 Responses with any other status code will be interpreted as a failure and an
 unbind request will be sent to the Service Broker to prevent an orphan being
