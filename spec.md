@@ -72,10 +72,10 @@ This specification defines the following terms:
   and presented to end users of a Platform.
 
 - *Platform*: The software that will manage the cloud environment into which
-  Applications and Service Brokers are provisioned.  Users will not directly
-  provision Services from Service Brokers, rather they will ask the Platform
-  (ie. their cloud provider) to manage Services and interact with the
-  Service Brokers for them.
+  Applications are provisioned and Service Brokers are registered. Users will
+  not directly provision Services from Service Brokers, rather they will ask
+  the Platform to manage Services and interact with the Service Brokers for
+  them.
 
 - *Service*: A managed software offering that can be used by an Application.
   Typically, Services will expose some API that can be invoked to perform
