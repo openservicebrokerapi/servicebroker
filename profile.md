@@ -291,7 +291,7 @@ of measure.
 | Field | Type | Description |
 | --- | --- | --- |
 | amount* | object | An array of pricing in various currencies for the cost type as key-value pairs where key is currency code and value (as a float) is currency amount. |
-| unit* | string | Display name for type of cost, e.g. Monthly, Hourly, Reques, GB. |
+| unit* | string | Display name for type of cost, e.g. Monthly, Hourly, Request, GB. |
 
 \* Fields with an asterisk are REQUIRED.
 
