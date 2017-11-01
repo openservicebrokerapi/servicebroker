@@ -51,7 +51,7 @@ the [Open Service Broker API specification](spec.md) SHALL take precedence.
   interact with Service Brokers to provision, and manage, Service Instances
   and Service Bindings.
 
-- *Service Instance*: An instantiation of a Service offering.
+- *Service Instance*: An instantiation of a Service Offering.
 
 - *Service Binding*: Represents the request to use a Service Instance. As part
   of this request there might be a reference to the entity, also known as the
@@ -228,7 +228,7 @@ part of a Cloud Foundry API call:
 The following properties are defined for usage within a Kubernetes deployment:
 
 - `namespace`<br>
-  The name of the Kubernetes namespace in which the service instance
+  The name of the Kubernetes namespace in which the Service Instance
   will be visible. This property MUST be a non-empty string serialized
   as follows:
 
