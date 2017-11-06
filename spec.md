@@ -1320,7 +1320,7 @@ bindings associated with it.
 
 `DELETE /v2/service_instances/:instance_id`
 
-`:instance_id` MUST be the ID a previously provisioned Service Instance.
+`:instance_id` MUST be the ID of a previously provisioned Service Instance.
 
 #### Parameters
 
