@@ -685,7 +685,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | --- | --- |
 | 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
-| 410 Gone | Appropriate only for asynchronous delete operations. The platform MUST consider this response a success and remove the resource from its database. The expected response body is `{}`. Returning this while the platform is polling for create or update operations SHOULD be interpreted as an invalid response and the platform SHOULD continue polling. |
+| 410 Gone | Appropriate only for asynchronous delete operations. The platform MUST consider this response a success and forget about the resource. The expected response body is `{}`. Returning this while the platform is polling for create or update operations SHOULD be interpreted as an invalid response and the platform SHOULD continue polling. |
 
 Responses with any other status code SHOULD be interpreted as an error or
 invalid response. The platform SHOULD continue polling until the service
@@ -1298,7 +1298,8 @@ $ curl 'http://username:password@service-broker-url/v2/service_instances/:instan
 | 410 Gone | MUST be returned if the binding does not exist. The expected response body is `{}`. |
 
 Responses with any other status code will be interpreted as a failure and the
-binding will remain in the marketplace database. Service brokers can include a
+Platform MUST continue to remember the Service Binding.
+Service brokers can include a
 user-facing message in the `description` field; for details see [Service
 Broker Errors](#service-broker-errors).
 
@@ -1372,7 +1373,7 @@ $ curl 'http://username:password@service-broker-url/v2/service_instances/:instan
 | 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous deprovisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The expected response body is: `{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }`, as described below (see [Service Broker Errors](#service-broker-errors). |
 
 Responses with any other status code will be interpreted as a failure and the
-service instance will remain in the marketplace database. Service brokers can
+Platform MUST remember the Service Instance. Service Brokers can
 include a user-facing message in the `description` field; for details see
 [Service Broker Errors](#service-broker-errors).
 
