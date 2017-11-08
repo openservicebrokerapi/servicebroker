@@ -30,36 +30,8 @@ be interpreted as described in [RFC 2119]( https://tools.ietf.org/html/rfc2119).
 
 ### Terminology
 
-The terminology defined below are defined by the
-[Open Service Broker API specification](spec.md) and are included here
-for convenience. If there are any inconsistencies between their definitions in
-this document and the [Open Service Broker API specification](spec.md), then
-the [Open Service Broker API specification](spec.md) SHALL take precedence.
-
-- *Platform*: The software that will manage the cloud environment into which
-  Applications and Service Brokers are provisioned.  Users will not directly
-  provision Services from Service Brokers, rather they will ask the Platform
-  (ie. their cloud provider) to manage Services and interact with the
-  Service Brokers for them.
-
-- *Service*: A managed software offering that can be used by an Application.
-  Typically, Services will expose some API that can be invoked to perform
-  some action. However, there can also be non-interactive Services that can
-  perform the desired actions without direct prompting from the Application.
-
-- *Service Broker*: Service Brokers manage the lifecycle of Services. Platforms
-  interact with Service Brokers to provision, and manage, Service Instances
-  and Service Bindings.
-
-- *Service Instance*: An instantiation of a Service Offering.
-
-- *Service Binding*: Represents the request to use a Service Instance. As part
-  of this request there might be a reference to the entity, also known as the
-  Application, that will use the Service Instance. Service Bindings will often
-  contain the credentials that can then be used to communicate with the Service
-  Instance.
-
-- *Application*: The software that uses a Service Instance via Service Binding.
+Please refer to terminology defined by the
+[Open Service Broker API specification](spec.md#terminology).
 
 ## Originating Identity Header
 

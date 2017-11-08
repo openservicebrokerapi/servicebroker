@@ -685,7 +685,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | --- | --- |
 | 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
-| 410 Gone | Appropriate only for asynchronous delete operations. The platform MUST consider this response a success and remove the resource from its database. The expected response body is `{}`. Returning this while the platform is polling for create or update operations SHOULD be interpreted as an invalid response and the platform SHOULD continue polling. |
+| 410 Gone | Appropriate only for asynchronous delete operations. The platform MUST consider this response a success and forget about the resource. The expected response body is `{}`. Returning this while the platform is polling for create or update operations SHOULD be interpreted as an invalid response and the platform SHOULD continue polling. |
 
 Responses with any other status code SHOULD be interpreted as an error or
 invalid response. The platform SHOULD continue polling until the Service
@@ -717,6 +717,10 @@ For success responses, the following fields are valid.
   "description": "Creating service (10% complete)."
 }
 ```
+
+If the successful response includes a `state` of `failed` then the Platform
+MUST send a deprovision request to the Service Broker to prevent an orphan
+being created on the Service Broker.
 
 ### Polling Interval and Duration
 
@@ -817,7 +821,12 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 409 Conflict | MUST be returned if a Service Instance with the same id already exists but with different attributes. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Service Broker Errors](#service-broker-errors). |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous provisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The expected response body is: `{ "error": "AsyncRequired", "description": "This Service Plan requires client support for asynchronous service operations." }`, as described below (see [Service Broker Errors](#service-broker-errors). |
 
-Responses with any other status code will be interpreted as a failure. Service Brokers can include a user-facing message in the `description` field; for details see [Service Broker Errors](#service-broker-errors).
+Responses with any other status code will be interpreted as a failure and a
+deprovision request MUST be sent to the Service Broker to prevent an orphan
+being created on the Service Broker.
+
+Service Brokers can include a user-facing message in the `description` field;
+for details see [Service Broker Errors](#service-broker-errors).
 
 #### Body
 
@@ -1155,7 +1164,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 422 Unprocessable Entity | MUST be returned if the Service Broker requires that `app_guid` be included in the request body. The expected response body is: `{ "error": "RequiresApp", "description": "This service supports generation of credentials through binding an application only." }` (see [Service Broker Errors](#service-broker-errors). |
 
 Responses with any other status code will be interpreted as a failure and an
-unbind request will be sent to the Service Broker to prevent an orphan being
+unbind request MUST be sent to the Service Broker to prevent an orphan being
 created on the Service Broker. Service Brokers can include a user-facing
 message in the `description` field; for details see [Service Broker
 Errors](#service-broker-errors).
@@ -1290,9 +1299,10 @@ $ curl 'http://username:password@service-broker-url/v2/service_instances/:instan
 | 410 Gone | MUST be returned if the binding does not exist. The expected response body is `{}`. |
 
 Responses with any other status code will be interpreted as a failure and the
-binding will remain in the marketplace database. Service Brokers can include a
-user-facing message in the `description` field; for details see [Service
-Broker Errors](#service-broker-errors).
+Platform MUST continue to remember the Service Binding. Service Brokers can
+include a user-facing message in the `description` field; for details see
+[Service Broker Errors](#service-broker-errors).
+
 
 #### Body
 
@@ -1364,9 +1374,9 @@ $ curl 'http://username:password@service-broker-url/v2/service_instances/:instan
 | 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous deprovisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The expected response body is: `{ "error": "AsyncRequired", "description": "This Service Plan requires client support for asynchronous service operations." }`, as described below (see [Service Broker Errors](#service-broker-errors). |
 
 Responses with any other status code will be interpreted as a failure and the
-Service Instance will remain in the marketplace database. Service Brokers can
-include a user-facing message in the `description` field; for details see
-[Service Broker Errors](#service-broker-errors).
+Platform MUST remember the Service Instance. Service Brokers can include a
+user-facing message in the `description` field; for details see [Service Broker
+Errors](#service-broker-errors).
 
 #### Body
 
