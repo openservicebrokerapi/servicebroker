@@ -898,7 +898,7 @@ The following HTTP Headers are defined for this operation:
 | context | object | Contextual data under which the Service Instance is created. |
 | service_id* | string | MUST be the ID of a service from the catalog for this Service Broker. |
 | plan_id | string | If present, MUST be the ID of a plan from the service that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the plan of the instance as a result of this request. |
-| parameters | object | Configuration options for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. If this field is not present in the request message, then the Service Broker MUST NOT change the parameters of the instance as a result of this request. |
+| parameters | object | Configuration options for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. See "Note" below. |
 | [previous_values](#previous-values-object) | object | Information about the Service Instance prior to the update. |
 
 \* Fields with an asterisk are REQUIRED.
@@ -911,6 +911,21 @@ The following HTTP Headers are defined for this operation:
 | plan_id | string | If present, it MUST be the ID of the plan prior to the update. |
 | organization_id | string | Deprecated as it was redundant information. Organization for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the organization specified for the Service Instance. |
 | space_id | string | Deprecated as it was redundant information. Space for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the space specified for the Service Instance. |
+
+Note: The `parameters` specified are expected to be the values specified
+by an end-user. Whether the user chooses to include the complete set of
+configuration options or just a subset (or even none) is their choice. How a
+Service Broker interprets these parameters (including the absence of any
+particular parameter) is out of scope of this specification - with the
+exception that if this field is not present in the request then the
+Service Broker MUST NOT change the parameters of the instance as a result of
+this request.
+
+Since some Service Instances will provide a `dashboard_url`, it is possible
+that a user has modified some of these parameters via the dashboard and
+therefore the Platform might not be aware of these changes. For this reason,
+Platforms SHOULD NOT include any parameters on the request that
+the user did not explicitly specify in their request for the update.
 
 \* Fields with an asterisk are REQUIRED.
 
