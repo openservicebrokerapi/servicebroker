@@ -87,6 +87,8 @@ for file in ${Files}; do
 
   [[ -n "$verbose" ]] && echo "> $file"
 
+  # TODO: there is a bug in this code, if the rtc term you are looking for is
+  # two words and it wraps to the next line, this will not catch the case.
   lineNum=0
   cat ${file} | while read line; do 
     ((lineNum++)) || true

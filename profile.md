@@ -200,7 +200,7 @@ part of a Cloud Foundry API call:
 The following properties are defined for usage within a Kubernetes deployment:
 
 - `namespace`<br>
-  The name of the Kubernetes namespace in which the service instance
+  The name of the Kubernetes namespace in which the Service Instance
   will be visible. This property MUST be a non-empty string serialized
   as follows:
 
