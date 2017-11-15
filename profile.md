@@ -122,7 +122,7 @@ Platform and the Service Brokers.
 
 The list of properties within the Context Object can vary depending on
 which Service Broker API is being invoked and which Platform is being used.
-This section will define a set of properties for each platform and specify
+This section will define a set of properties for each Platform and specify
 when each is meant to be used. Platforms MAY choose to provide additional
 properties beyond the ones defined in this document.
 
