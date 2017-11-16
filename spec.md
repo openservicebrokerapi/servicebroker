@@ -726,7 +726,9 @@ being created on the Service Broker.
 
 The frequency and maximum duration of polling MAY vary by platform client. If
 a platform has a max polling duration and this limit is reached, the platform
-MUST cease polling and the operation state MUST be considered `failed`.
+MUST cease polling, the operation state MUST be considered `failed`, and the
+Platform SHOULD send a deprovision request to the Service Broker to prevent an
+orphan being created.
 
 ## Provisioning
 
@@ -1471,6 +1473,10 @@ Platforms SHOULD initiate orphan mitigation in the following scenarios:
 | All other 4xx | Service Broker rejected request | No |
 | 5xx | Service Broker error | Yes |
 | Timeout | Failure | Yes |
+
+In addition, during asynchronous provisioning, if the Platform has a max polling
+duration and this limit is reached, the Platform SHOULD initiate orphan
+mitigation.
 
 If the platform marketplace encounters an internal error provisioning a
 Service Instance or binding (for example, saving to the database fails), then
