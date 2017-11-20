@@ -389,15 +389,14 @@ how platforms might expose these values to their users.
 | Response field | Type | Description |
 | --- | --- | --- |
 | [create](#input-parameters-object) | object | The schema definition for creating a Service Binding. |
+| [create-success](#binding-response-object) | object | The schema definition for the response of successfully creating a Credentials Service Binding. |
 
 
 ##### Input Parameters Object
 
-| Response field | Type | Description |
-| --- | --- | --- |
-| parameters | JSON schema object | The schema definition for the input parameters. Each input parameter is expressed as a property within a JSON object. |
+The following rules apply if `parameters` or `credentials` are included
+anywhere in the catalog:
 
-The following rules apply if `parameters` is included anywhere in the catalog:
 * Platforms MUST support at least
 [JSON Schema draft v4](http://json-schema.org/).
 * Platforms SHOULD be prepared to support later versions of JSON schema.
@@ -406,6 +405,24 @@ schema being used.
 * Schemas MUST NOT contain any external references.
 * Schemas MUST NOT be larger than 64kB.
 
+
+###### Input Parameters Object
+
+| Response field | Type | Description |
+| --- | --- | --- |
+| parameters | JSON schema object | The schema definition for the input parameters. Each input parameter is expressed as a property within a JSON object. |
+
+###### Binding Response Object
+
+| Response field | Type | Description |
+| --- | --- | --- |
+| credentials | JSON schema object | The schema definition for the credentials response. Each input parameter is expressed as a property within a JSON object. |
+
+Note: This definition of a binding response object only applies to credential
+type bindings.
+
+
+##### Reference Catalog Response
 
 ```
 {
@@ -497,13 +514,23 @@ schema being used.
                   "description": "Billing account number used to charge use of shared fake server.",
                   "type": "string"
                 }
-              },
-              "response" : {
               }
-            }, 
+            } 
+          },
+          "create-success": {
             "credentials": {
               "$schema": "http://json-schema.org/draft-04/schema#",
-              "type": "object"
+              "type": "object",
+              "properties": {
+                "token": {
+                  "description": "A token to be used to make fake API calls to the fake server.",
+                  "type": "string"
+                },
+                "uri": {
+                  "description": "The fake URI to use to make fake API calls against.",
+                  "type": "string"
+                }
+              }
             }
           }
         }
