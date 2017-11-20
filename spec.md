@@ -497,7 +497,13 @@ schema being used.
                   "description": "Billing account number used to charge use of shared fake server.",
                   "type": "string"
                 }
+              },
+              "response" : {
               }
+            }, 
+            "credentials": {
+              "$schema": "http://json-schema.org/draft-04/schema#",
+              "type": "object"
             }
           }
         }
