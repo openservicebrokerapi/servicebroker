@@ -7,6 +7,8 @@
 
 [Read the profile](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/profile.md)
 
+[View the workflows](diagram.md)
+
 [Release Notes for past versions](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/release-notes.md)
 
 ## Working Changes

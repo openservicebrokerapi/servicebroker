@@ -133,6 +133,9 @@ creating a new PR with the title of the proposed release. For example,
   `X-Broker-API-Version` headers) updated. Do not update the header
   `Open Service Broker API (master - might contain changes that are not yet released)`
   (this will be done if and when the release proposal is approved).
+  * Update [diagram.md](diagram.md) to show the new version number in the
+  header and link to the correct version of the Google Drawing from the
+  [OSBAPI Google Drive Folder](https://drive.google.com/drive/u/0/folders/0B427Up4C9IE0VmM0ZlhHTG1Rc0E).
 3. Open a new Pull Request titled **Release Proposal: v$major.$minor** from the
   branch of the fork to the master branch of the repository.
 4. Announce the release proposal on the next weekly call and notify the mailing
