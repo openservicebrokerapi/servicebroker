@@ -90,10 +90,10 @@ for file in ${Files}; do
   # TODO: there is a bug in this code, if the term you are looking for is two
   # words and it wraps to the next line, this will not catch the case.
   lineNum=0
-  cat ${file} | while read line; do 
+  cat ${file} | while read line; do
     ((lineNum++)) || true
 
-	for term in "Service Binding" "Service Broker" "Service Offering" "Service Plan" "Service Instance" ; do
+	for term in "Service Binding" "Service Broker" "Service Offering" "Service Plan" "Service Instance" "Platform" ; do
 	  contains $lineNum "${line}" "${term}"
     done
   done
