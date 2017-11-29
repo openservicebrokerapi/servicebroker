@@ -29,7 +29,7 @@
 
 ## API Overview
 
-The Service Broker API defines an HTTP interface between Platforms and Service
+The Service Broker API defines an HTTP(S) interface between Platforms and Service
 Brokers.
 
 The Service Broker is the component of the service that implements the Service
