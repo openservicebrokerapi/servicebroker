@@ -1,0 +1,12 @@
+%% Sequence Diagram for Registering a Service Instance
+
+sequenceDiagram
+  participant Platform
+  participant API  
+  participant Service Broker
+
+note over Platform: Fetch catalog
+
+Platform ->>+ Service Broker: GET /v2/catalog
+
+Service Broker -->> Platform: {...}
