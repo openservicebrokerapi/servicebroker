@@ -312,11 +312,11 @@ The example below contains a catalog of one service, having one service plan.
 Of course, a broker can offering a catalog of many services, each having
 many plans.
 
-```
+```json
 {
    "services":[
       {
-      "id":"766fa866-a950-4b12-adff-c11fa4cf8fdc",
+         "id":"766fa866-a950-4b12-adff-c11fa4cf8fdc",
          "name":"cloudamqp",
          "description":"Managed HA RabbitMQ servers in the cloud",
          "requires":[
