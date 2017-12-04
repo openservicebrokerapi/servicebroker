@@ -1297,7 +1297,7 @@ Brokers.
 
 | Query-String Field | Type | Description |
 | --- | --- | --- |
-| service_id* | string | MUST be the ID of the service associated with the binding being delete. |
+| service_id* | string | MUST be the ID of the service associated with the binding being deleted. |
 | plan_id* | string | MUST be the ID of the plan associated with the binding being deleted. |
 
 \* Query parameters with an asterisk are REQUIRED.
