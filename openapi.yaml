@@ -254,8 +254,16 @@ paths:
                 $ref: '#/components/schemas/ServiceInstanceLastOperation'
         '400':
           description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Object'
         '410':
           description: Gone
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Object'
 
   /v2/service_instances/{instance_id}/service_bindings/{binding_id}:
     put:
