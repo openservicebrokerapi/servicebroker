@@ -386,13 +386,12 @@ how Platforms might expose these values to their users.
 | Response field | Type | Description |
 | --- | --- | --- |
 | [create](#input-parameters-object) | object | The schema definition for creating a Service Binding. |
-| [create-success](#binding-response-object) | object | The schema definition for the response of successfully creating a Credentials Service Binding. |
+| [created](#output-parameters-object) | object | The schema definition of the output from creating a Service Binding. |
 
 
-##### Input Parameters Object
+#####  Parameters Object
 
-The following rules apply if `parameters` or `credentials` are included
-anywhere in the catalog:
+The following rules apply if `parameters` are included anywhere in the catalog:
 
 * Platforms MUST support at least
 [JSON Schema draft v4](http://json-schema.org/).
@@ -409,14 +408,11 @@ schema being used.
 | --- | --- | --- |
 | parameters | JSON schema object | The schema definition for the input parameters. Each input parameter is expressed as a property within a JSON object. |
 
-###### Binding Response Object
+###### Output Parameters Object
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| credentials | JSON schema object | The schema definition for the credentials response. Each input parameter is expressed as a property within a JSON object. |
-
-Note: This definition of a binding response object only applies to credential
-type bindings.
+| parameters | JSON schema object | The schema definition for the output parameters. Each input parameter is expressed as a property within a JSON object. |
 
 
 ##### Reference Catalog Response
