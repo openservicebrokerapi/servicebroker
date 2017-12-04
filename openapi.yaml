@@ -29,7 +29,7 @@ paths:
         - Catalog
       operationId: catalog.get
       parameters:
-        - $ref: '#/components/headers/X-Broker-API-Version'
+        - $ref: '#/components/parameters/APIVersion'
       responses:
         '200':
           description: catalog response
@@ -45,8 +45,8 @@ paths:
         - ServiceInstances
       operationId: serviceInstance.provision
       parameters:
-        - $ref: '#/components/headers/X-Broker-API-Version'
-        - $ref: '#/components/headers/X-Broker-API-Originating-Identity'
+        - $ref: '#/components/parameters/APIVersion'
+        - $ref: '#/components/parameters/OriginatingIdentity'
         - name: instance_id
           in: path
           description: instance id of instance to provision
@@ -100,8 +100,8 @@ paths:
         - ServiceInstances
       operationId: serviceInstance.update
       parameters:
-        - $ref: '#/components/headers/X-Broker-API-Version'
-        - $ref: '#/components/headers/X-Broker-API-Originating-Identity'
+        - $ref: '#/components/parameters/APIVersion'
+        - $ref: '#/components/parameters/OriginatingIdentity'
         - name: instance_id
           in: path
           description: instance id of instance to update
@@ -139,8 +139,8 @@ paths:
         - ServiceInstances
       operationId: serviceInstance.deprovision
       parameters:
-        - $ref: '#/components/headers/X-Broker-API-Version'
-        - $ref: '#/components/headers/X-Broker-API-Originating-Identity'
+        - $ref: '#/components/parameters/APIVersion'
+        - $ref: '#/components/parameters/OriginatingIdentity'
         - name: instance_id
           in: path
           description: id of instance being deleted
@@ -193,7 +193,7 @@ paths:
         - ServiceInstances
       operationId: serviceInstance.lastOperation.get
       parameters:
-        - $ref: '#/components/headers/X-Broker-API-Version'
+        - $ref: '#/components/parameters/APIVersion'
         - name: instance_id
           in: path
           description: instance id of instance to find last operation applied to it
@@ -234,8 +234,8 @@ paths:
         - ServiceBindings
       operationId: serviceBinding.binding
       parameters:
-        - $ref: '#/components/headers/X-Broker-API-Version'
-        - $ref: '#/components/headers/X-Broker-API-Originating-Identity'
+        - $ref: '#/components/parameters/APIVersion'
+        - $ref: '#/components/parameters/OriginatingIdentity'
         - name: instance_id
           in: path
           description: instance id being bound
@@ -288,8 +288,8 @@ paths:
         - ServiceBindings
       operationId: serviceBinding.unbinding
       parameters:
-        - $ref: '#/components/headers/X-Broker-API-Version'
-        - $ref: '#/components/headers/X-Broker-API-Originating-Identity'
+        - $ref: '#/components/parameters/APIVersion'
+        - $ref: '#/components/parameters/OriginatingIdentity'
         - name: instance_id
           in: path
           description: id of the instance associated with the binding being deleted
@@ -329,15 +329,19 @@ paths:
                 $ref: '#/components/schemas/Object'
 
 components:
-  headers:
-    X-Broker-API-Version:
+  parameters:
+    APIVersion:
+      name: X-Broker-API-Version
+      in: header
       description: version number of the Service Broker API that the Platform will use
       required: true
       schema:
         type: string
       default: '2.13'
 
-    X-Broker-API-Originating-Identity:
+    OriginatingIdentity:
+      name: X-Broker-API-Originating-Identity
+      in: header
       description: identity of the user that initiated the request from the Platform
       schema:
         type: string
