@@ -80,8 +80,16 @@ paths:
                 $ref: '#/components/schemas/ServiceInstanceProvision'
         '202':
           description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Object'
         '400':
           description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Object'
         '409':
           description: Conflict
           content:
@@ -93,7 +101,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Errors'
+                $ref: '#/components/schemas/Error'
     patch:
       summary: update a service instance
       tags:
@@ -129,10 +137,22 @@ paths:
                 $ref: '#/components/schemas/Object'
         '202': 
           description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Object'
         '400': 
           description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Object'
         '422': 
           description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
       summary: deprovision a service instance
       tags:
@@ -171,8 +191,16 @@ paths:
                 $ref: '#/components/schemas/Object'
         '202':
           description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Object'
         '400':
           description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Object'
         '410':
           description: Gone
           content:
@@ -184,7 +212,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Errors'
+                $ref: '#/components/schemas/Error'
 
   /v2/service_instances/{instance_id}/last_operation:
     get:
@@ -275,13 +303,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Errors'
+                $ref: '#/components/schemas/Error'
         '422':
           description: Unprocessable Entity
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Errors'
+                $ref: '#/components/schemas/Error'
     delete:
       summary: deprovision of a service binding
       tags:
@@ -305,11 +333,13 @@ paths:
         - name: service_id
           in: query
           description: id of the service associated with the binding being deleted
+          required: true
           schema:
             type: string
         - name: plan_id
           in: query
           description: id of the plan associated with the binding being deleted
+          required: true
           schema:
             type: string
       responses:
@@ -321,6 +351,10 @@ paths:
                 $ref: '#/components/schemas/Object'
         '400':
           description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Object'
         '410':
           description: Gone
           content:
@@ -594,7 +628,7 @@ components:
     Object:
       type: object
 
-    Errors: 
+    Error: 
       properties:
         error:
           type: string
