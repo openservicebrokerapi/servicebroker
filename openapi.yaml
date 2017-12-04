@@ -422,13 +422,18 @@ components:
     ServiceInstanceSchemaObject:
       properties:
         create:
-          $ref: '#/components/schemas/JSONSchemaObject'
+          $ref: '#/components/schemas/SchemaParameters'
         update:
-          $ref: '#/components/schemas/JSONSchemaObject'
+          $ref: '#/components/schemas/SchemaParameters'
 
     ServiceBindingSchemaObject:
       properties:
         create:
+          $ref: '#/components/schemas/SchemaParameters'
+
+    SchemaParameters:
+      properties:
+        parameters: 
           $ref: '#/components/schemas/JSONSchemaObject'
 
     JSONSchemaObject:
