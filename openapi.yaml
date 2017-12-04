@@ -20,6 +20,8 @@ info:
 servers:  
   - url: http://example.com
     description: Broker Endpoint
+  - url: http://localhost:3000
+    description: OSB Checker - MockOSB
 
 paths:
   /v2/catalog:
