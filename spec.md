@@ -29,14 +29,14 @@
 
 ## API Overview
 
-The Service Broker API defines an HTTP interface between the services
-marketplace of a platform and Service Brokers.
+The Service Broker API defines an HTTP(S) interface between Platforms and Service
+Brokers.
 
 The Service Broker is the component of the service that implements the Service
-Broker API, for which a platform's marketplace is a client. Service Brokers
-are responsible for advertising a catalog of Service Offerings and Service
-Plans to the marketplace, and acting on requests from the marketplace for
-provisioning, binding, unbinding, and deprovisioning.
+Broker API, for which a Platform is a client. Service Brokers are responsible
+for advertising a catalog of Service Offerings and Service Plans to the
+Platform, and acting on requests from the Platform for provisioning, binding,
+unbinding, and deprovisioning.
 
 In general, provisioning reserves a resource on a service; we call this
 reserved resource a Service Instance. What a Service Instance represents can
@@ -47,9 +47,9 @@ What a binding represents MAY also vary by service. In general creation of a
 binding either generates credentials necessary for accessing the resource or
 provides the Service Instance with information for a configuration change.
 
-A platform marketplace MAY expose services from one or many Service Brokers,
-and an individual Service Broker MAY support one or many platform marketplaces
-using different URL prefixes and credentials.
+A Platform MAY expose services from one or many Service Brokers, and an
+individual Service Broker MAY support one or many Platforms using different URL
+prefixes and credentials.
 
 ## Notations and Terminology
 
@@ -67,9 +67,6 @@ This specification defines the following terms:
   software, however, this does not need to be the case. For the purposes of
   this specification, the term "Application" will be used to represent all
   entities that might make use of, and be bound to, a Service Instance.
-
-- *Marketplace*: An aggregation of Services provided by Service Brokers curated
-  and presented to end users of a Platform.
 
 - *Platform*: The software that will manage the cloud environment into which
   Applications are provisioned and Service Brokers are registered. Users will
@@ -138,18 +135,18 @@ For changes in older versions, see the [release notes](https://github.com/opense
 
 ## API Version Header
 
-Requests from the platform to the Service Broker MUST contain a header that
-declares the version number of the Service Broker API that the marketplace
-will use:
+Requests from the Platform to the Service Broker MUST contain a header that
+declares the version number of the Service Broker API that the Platform will
+use:
 
 `X-Broker-API-Version: 2.13`
 
 The version numbers are in the format `MAJOR.MINOR` using semantic versioning.
 
-This header allows Service Brokers to reject requests from marketplaces for
+This header allows Service Brokers to reject requests from Platforms for
 versions they do not support. While minor API revisions will always be
 additive, it is possible that Service Brokers depend on a feature from a newer
-version of the API that is supported by the platform. In this scenario the
+version of the API that is supported by the Platform. In this scenario the
 Service Broker MAY reject the request with `412 Precondition Failed` and
 provide a message that informs the operator of the API version that is to be
 used instead.
@@ -158,14 +155,14 @@ used instead.
 
 ## Authentication
 
-While the communication between a platform and Service Broker MAY be unsecure,
-it is RECOMMENDED that all communications between a platform and a Service
+While the communication between a Platform and Service Broker MAY be unsecure,
+it is RECOMMENDED that all communications between a Platform and a Service
 Broker are secured via TLS and authenticated.
 
 Unless there is some out of band communication and agreement between a
-platform and a Service Broker, the marketplace MUST authenticate with the
+Platform and a Service Broker, the Platform MUST authenticate with the
 Service Broker using HTTP basic authentication (the `Authorization:` header)
-on every request. This specification does not specify how platform and Service
+on every request. This specification does not specify how Platform and Service
 Brokers agree on other methods of authentication.
 
 If authentication is used, the Service Broker MUST authenticate the request
@@ -173,7 +170,7 @@ using the predetermined authentication mechanism and MUST return a `401
 Unauthorized` response if the authentication fails.
 
 Note: Using an authentication mechanism that is agreed to via out of band
-communications could lead to interoperability issues with other platforms.
+communications could lead to interoperability issues with other Platforms.
 
 ## URL Properties
 
@@ -199,35 +196,35 @@ SHOULD be percent-encoded prior to being used as part of the HTTP request, per
 ## Originating Identity
 
 Often a Service Broker will need to know the identity of the user that
-initiated the request from the platform. For example, this might be needed for
-auditing or authorization purposes. In order to facilitate this, the platform
+initiated the request from the Platform. For example, this might be needed for
+auditing or authorization purposes. In order to facilitate this, the Platform
 will need to provide this identification information to the Service Broker on
 each request. Platforms MAY support this feature, and if they do, they MUST
 adhere to the following:
-- For any OSB API request that is the result of an action taken by
-  a platform's user, there MUST be an associated `OriginatingIdentity` header
-  on that HTTP request.
-- Any OSB API request that is not associated with an action from a platform's
-  user, such as the platform querying the marketplace, MAY
-  exclude the header from that HTTP request.
-- If present on a request, the `OriginatingIdentity` header MUST contain
-  the identify information for the platform's user that took the action
-  to cause the request to be sent.
+- For any OSBAPI request that is the result of an action taken by a Platform's
+  user, there MUST be an associated `OriginatingIdentity` header on that HTTP
+  request.
+- Any OSBAPI request that is not associated with an action from a Platform's
+  user, such as the Platform refetching the catalog, MAY exclude the header from
+  that HTTP request.
+- If present on a request, the `OriginatingIdentity` header MUST contain the
+  identify information for the Platform's user that took the action to cause the
+  request to be sent.
 
 The format of the header MUST be:
 
 ```
-X-Broker-API-Originating-Identity: platform value
+X-Broker-API-Originating-Identity: Platform value
 ```
 
-`platform` MUST be a non-empty string indicating the platform from which
+`Platform` MUST be a non-empty string indicating the Platform from which
 the request is being sent. The specific value SHOULD match the values
 defined in the [profile](profile.md) document for the `context.platform`
 property. When `context` is sent as part of a message, this value MUST
 be the same as the `context.platform` value.
 
 `value` MUST be a Base64 encoded string. The string MUST be a serialized
-JSON object. The specific properties will be platform specific - see
+JSON object. The specific properties will be Platform specific - see
 the [profile](profile.md) document for more information.
 
 For example:
@@ -243,38 +240,38 @@ Where the `value`, when decoded, is:
 ```
 
 Note that not all messages sent to a Service Broker are initiated by an
-end-user of the platform. For example, during orphan mitigation or during the
-querying of the Service Broker's catalog, the platform might not have an
+end-user of the Platform. For example, during orphan mitigation or during the
+querying of the Service Broker's catalog, the Platform might not have an
 end-user with which to associate the request, therefore in those cases the
 originating identity header would not be included in those messages.
 
 
 ## Catalog Management
 
-The first endpoint that a platform will interact with on the Service Broker is
+The first endpoint that a Platform will interact with on the Service Broker is
 the service catalog (`/v2/catalog`). This endpoint returns a list of all
 services available on the Service Broker. Platforms query this endpoint from
 all Service Brokers in order to present an aggregated user-facing catalog.
 
-Periodically, a platform MAY re-query the service catalog endpoint for a
+Periodically, a Platform MAY re-query the service catalog endpoint for a
 Service Broker to see if there are any changes to the list of services.
 Service Brokers MAY add, remove or modify (metadata, plans, etc.) the list of
 services from previous queries.
 
 When determining what, if anything, has changed on a Service Broker, the
-platform will use the `id` of the resources (services or plans) as the only
+Platform will use the `id` of the resources (services or plans) as the only
 immutable property and MUST use that to locate the same resource as was
 returned from a previous query. Likewise, a Service Broker MUST NOT change the
-`id` of a resource across queries, otherwise a platform will treat it as a
+`id` of a resource across queries, otherwise a Platform will treat it as a
 different resource.
 
-When a platform receives different `id` values for the same type of resource,
+When a Platform receives different `id` values for the same type of resource,
 even if all of the other metadata in those resources are the exact same, it
 MUST treat them as separate instances of that resource.
 
 Service Broker authors are expected to be cautious when removing services and
-plans from their catalogs, as platforms might have provisioned Service
-Instances of these plans. For example, platforms might restrict the actions
+plans from their catalogs, as Platforms might have provisioned Service
+Instances of these plans. For example, Platforms might restrict the actions
 that users can perform on existing Service Instances if the associated service
 or plan is deleted. Consider your deprecation strategy.
 
@@ -337,12 +334,12 @@ users when they have to type it as an argument on the command line.
 
 Note: Platforms will typically use the service name as an input parameter
 from their users to indicate which service they want to instantiate. Therefore,
-it is important that these values be unique for all services within a
-platform's marketplace. To achieve this goal service providers often will
+it is important that these values be unique for all services that have been
+registered with a Platform. To achieve this goal service providers often will
 prefix their service names with some unique value (such as the name of their
-company). Additionally, some platforms might modify the service names before
+company). Additionally, some Platforms might modify the service names before
 presenting them to their users.  This specification places no requirements on
-how platforms might expose these values to their users.
+how Platforms might expose these values to their users.
 
 ##### Dashboard Client Object
 
@@ -570,7 +567,7 @@ type bindings.
 
 After implementing the first endpoint `GET /v2/catalog` documented
 [above](#catalog-management), the Service Broker will need to be registered
-with your platform to make your services and plans available to end users.
+with your Platform to make your services and plans available to end users.
 
 ## Synchronous and Asynchronous Operations
 
@@ -627,12 +624,12 @@ executes the request asynchronously, the Service Broker MUST return the
 asynchronous response `202 Accepted`. The response body SHOULD be the same as
 if the Service Broker were serving the request synchronously.
 
-An asynchronous response triggers the platform marketplace to poll the
-endpoint `GET /v2/service_instances/:instance_id/last_operation` until the
-Service Broker indicates that the requested operation has succeeded or failed.
-Service Brokers MAY include a status message with each response for the
-`last_operation` endpoint that provides visibility to end users as to the
-progress of the operation.
+An asynchronous response triggers the Platform to poll the endpoint
+`GET /v2/service_instances/:instance_id/last_operation` until the Service Broker
+indicates that the requested operation has succeeded or failed. Service Brokers
+MAY include a status message with each response for the `last_operation`
+endpoint that provides visibility to end users as to the progress of the
+operation.
 
 ## Blocking Operations
 
@@ -650,12 +647,12 @@ Entity` error and the following body (see [Service Broker Errors](#service-broke
 ```
 
 Note that per the [Orphans](#orphans) section, this error response does not
-cause orphan mitigation to be initiated. Therefore, platforms receiving
+cause orphan mitigation to be initiated. Therefore, Platforms receiving
 this error response SHOULD resend the request at a later time.
 
 Brokers MAY choose to treat the creation of a binding as a mutation of
 the corresponding Service Instance - it is an implementation choice. Doing
-so would cause platforms to serialize multiple binding creation requests
+so would cause Platforms to serialize multiple binding creation requests
 when they are directed at the same Service Instance if concurrent updates
 are not supported.
 
@@ -663,16 +660,16 @@ are not supported.
 
 When a Service Broker returns status code `202 Accepted` for
 [Provision](#provisioning), [Update](#updating-a-service-instance), or
-[Deprovision](#deprovisioning), the platform will begin polling the
+[Deprovision](#deprovisioning), the Platform will begin polling the
 `/v2/service_instances/:instance_id/last_operation` endpoint to obtain the
 state of the last requested operation. The Service Broker response MUST
 contain the field `state` and MAY contain the field `description`.
 
 Valid values for `state` are `in progress`, `succeeded`, and `failed`. The
-platform will poll the `last_operation` endpoint as long as the Service Broker
+Platform will poll the `last_operation` endpoint as long as the Service Broker
 returns `"state": "in progress"`. Returning `"state": "succeeded"` or
-`"state": "failed"` will cause the platform to cease polling. The value
-provided for `description` will be passed through to the platform API client
+`"state": "failed"` will cause the Platform to cease polling. The value
+provided for `description` will be passed through to the Platform API client
 and can be used to provide additional detail for users about the progress of
 the operation.
 
@@ -691,10 +688,10 @@ The request provides these query string parameters as useful hints for Service B
 | --- | --- | --- |
 | service_id | string | If present, it MUST be the ID of the service being used. |
 | plan_id | string | If present, it MUST be the ID of the plan for the service being use. |
-| operation | string | A Service Broker-provided identifier for the operation. When a value for `operation` is included with asynchronous responses for [Provision](#provisioning), [Update](#updating-a-service-instance), and [Deprovision](#deprovisioning) requests, the platform MUST provide the same value using this query parameter as a percent-encoded string. If present, MUST be a non-empty string. |
+| operation | string | A Service Broker-provided identifier for the operation. When a value for `operation` is included with asynchronous responses for [Provision](#provisioning), [Update](#updating-a-service-instance), and [Deprovision](#deprovisioning) requests, the Platform MUST provide the same value using this query parameter as a percent-encoded string. If present, MUST be a non-empty string. |
 
 Note: Although the request query parameters `service_id` and `plan_id` are not
-mandatory, the platform SHOULD include them on all `last_operation` requests
+mandatory, the Platform SHOULD include them on all `last_operation` requests
 it makes to Service Brokers.
 
 #### Headers
@@ -718,10 +715,10 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | --- | --- |
 | 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
-| 410 Gone | Appropriate only for asynchronous delete operations. The platform MUST consider this response a success and forget about the resource. The expected response body is `{}`. Returning this while the platform is polling for create or update operations SHOULD be interpreted as an invalid response and the platform SHOULD continue polling. |
+| 410 Gone | Appropriate only for asynchronous delete operations. The Platform MUST consider this response a success and forget about the resource. The expected response body is `{}`. Returning this while the Platform is polling for create or update operations SHOULD be interpreted as an invalid response and the Platform SHOULD continue polling. |
 
 Responses with any other status code SHOULD be interpreted as an error or
-invalid response. The platform SHOULD continue polling until the Service
+invalid response. The Platform SHOULD continue polling until the Service
 Broker returns a valid response or the [maximum polling
 duration](#polling-interval-and-duration) is reached. Service Brokers MAY use
 the `description` field to expose user-facing error messages about the
@@ -739,8 +736,8 @@ For success responses, the following fields are valid.
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the platform to cease polling. |
-| description | string | A user-facing message displayed to the platform API client. Can be used to tell the user details about the status of the operation. If present, MUST be a non-empty string. |
+| state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the Platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the Platform to cease polling. |
+| description | string | A user-facing message displayed to the Platform API client. Can be used to tell the user details about the status of the operation. If present, MUST be a non-empty string. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -757,13 +754,13 @@ being created on the Service Broker.
 
 ### Polling Interval and Duration
 
-The frequency and maximum duration of polling MAY vary by platform client. If
-a platform has a max polling duration and this limit is reached, the platform
+The frequency and maximum duration of polling MAY vary by Platform client. If
+a Platform has a max polling duration and this limit is reached, the Platform
 MUST cease polling and the operation state MUST be considered `failed`.
 
 ## Provisioning
 
-When the Service Broker receives a provision request from the platform, it
+When the Service Broker receives a provision request from the Platform, it
 MUST take whatever action is necessary to create a new resource. What
 provisioning represents varies by service and plan, although there are several
 common use cases. For a MySQL service, provisioning could result in an empty
@@ -783,7 +780,7 @@ Service Broker will use it to correlate the resource it creates.
 #### Parameters
 | Parameter name | Type | Description |
 | --- | --- | --- |
-| accepts_incomplete | boolean | A value of true indicates that the marketplace and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only provision a Service Instance of the requested plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
+| accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only provision a Service Instance of the requested plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
 #### Headers
 
@@ -802,8 +799,8 @@ The following HTTP Headers are defined for this operation:
 | service_id* | string | MUST be the ID of a service from the catalog for this Service Broker. |
 | plan_id* | string | MUST be the ID of a plan from the service that has been requested. |
 | context | object | Platform specific contextual information under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it could be helpful in determining data placement or applying custom business rules. `context` will replace `organization_guid` and `space_guid` in future versions of the specification - in the interim both SHOULD be used to ensure interoperability with old and new implementations. |
-| organization_guid* | string | Deprecated in favor of `context`. The platform GUID for the organization under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
-| space_guid* | string | Deprecated in favor of `context`. The identifier for the project space within the platform organization. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
+| organization_guid* | string | Deprecated in favor of `context`. The Platform GUID for the organization under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
+| space_guid* | string | Deprecated in favor of `context`. The identifier for the project space within the Platform organization. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | parameters | object | Configuration options for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
 
 \* Fields with an asterisk are REQUIRED.
@@ -849,7 +846,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | --- | --- |
 | 200 OK | MUST be returned if the Service Instance already exists, is fully provisioned, and the requested parameters are identical to the existing Service Instance. The expected response body is below. |
 | 201 Created | MUST be returned if the Service Instance was provisioned as a result of this request. The expected response body is below. |
-| 202 Accepted | MUST be returned if the Service Instance provisioning is in progress. This triggers the platform marketplace to poll the [Service Instance Last Operation Endpoint](#polling-last-operation) for operation status. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the Service Instance is not yet fully provisioned. |
+| 202 Accepted | MUST be returned if the Service Instance provisioning is in progress. This triggers the Platform to poll the [Service Instance Last Operation Endpoint](#polling-last-operation) for operation status. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the Service Instance is not yet fully provisioned. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
 | 409 Conflict | MUST be returned if a Service Instance with the same id already exists but with different attributes. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Service Broker Errors](#service-broker-errors). |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous provisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The expected response body is: `{ "error": "AsyncRequired", "description": "This Service Plan requires client support for asynchronous service operations." }`, as described below (see [Service Broker Errors](#service-broker-errors). |
@@ -874,7 +871,7 @@ error responses, see [Service Broker Errors](#service-broker-errors).
 | Response field | Type | Description |
 | --- | --- | --- |
 | dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. If present, MUST be a non-empty string. |
-| operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
+| operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -914,7 +911,7 @@ error message in response.
 #### Parameters
 | Parameter name | Type | Description |
 | --- | --- | --- |
-| accepts_incomplete | boolean | A value of true indicates that the marketplace and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only provision a Service Instance of the requested plan asynchronously, the Service Broker SHOULD reject the request with a `422 Unprocessable Entity` as described below. |
+| accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only provision a Service Instance of the requested plan asynchronously, the Service Broker SHOULD reject the request with a `422 Unprocessable Entity` as described below. |
 
 #### Headers
 
@@ -938,8 +935,8 @@ The following HTTP Headers are defined for this operation:
 | previous_values | object | Information about the Service Instance prior to the update. |
 | previous_values.service_id | string | Deprecated; determined to be unnecessary as the value is immutable. If present, it MUST be the ID of the service for the Service Instance. |
 | previous_values.plan_id | string | If present, it MUST be the ID of the plan prior to the update. |
-| previous_values.organization_id | string | Deprecated as it was redundant information. Organization for the Service Instance MUST be provided by platforms in the top-level field `context`. If present, it MUST be the ID of the organization specified for the Service Instance. |
-| previous_values.space_id | string | Deprecated as it was redundant information. Space for the Service Instance MUST be provided by platforms in the top-level field `context`. If present, it MUST be the ID of the space specified for the Service Instance. |
+| previous_values.organization_id | string | Deprecated as it was redundant information. Organization for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the organization specified for the Service Instance. |
+| previous_values.space_id | string | Deprecated as it was redundant information. Space for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the space specified for the Service Instance. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -991,7 +988,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | Status Code | Description |
 | --- | --- |
 | 200 OK | MUST be returned if the request's changes have been applied. The expected response body is `{}`. |
-| 202 Accepted | MUST be returned if the Service Instance update is in progress. This triggers the platform marketplace to poll the [Last Operation](#polling-last-operation) for operation status. Note that a re-sent `PATCH` request MUST return a `202 Accepted`, not a `200 OK`, if the requested update has not yet completed. |
+| 202 Accepted | MUST be returned if the Service Instance update is in progress. This triggers the Platform to poll the [Last Operation](#polling-last-operation) for operation status. Note that a re-sent `PATCH` request MUST return a `202 Accepted`, not a `200 OK`, if the requested update has not yet completed. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
 | 422 Unprocessable entity | MUST be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the Service Instance (e.g. Service Instance utilization is over the quota of the requested plan). Service Brokers SHOULD include a user-facing message in the body; for details see [Service Broker Errors](#service-broker-errors). Additionally, a `422 Unprocessable Entity` can also be returned if the Service Broker only supports asynchronous update for the requested plan and the request did not include `?accepts_incomplete=true`; in this case the expected response body is: `{ "error": "AsyncRequired", "description": "This Service Plan requires client support for asynchronous service operations." }` (see [Service Broker Errors](#service-broker-errors). |
 
@@ -1010,7 +1007,7 @@ Errors](#service-broker-errors).
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
+| operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -1024,7 +1021,7 @@ Errors](#service-broker-errors).
 ## Binding
 
 If `bindable:true` is declared for a service or plan in the
-[Catalog](#catalog-management) endpoint, the platform MAY request generation
+[Catalog](#catalog-management) endpoint, the Platform MAY request generation
 of a Service Binding.
 
 Note: Not all services need to be bindable --- some deliver value just from
@@ -1050,7 +1047,7 @@ There are a class of Service Offerings that provide aggregation, indexing, and
 analysis of log data. To utilize these services an application that generates
 logs needs information for the location to which it will stream logs. A create
 binding response from a Service Broker that provides one of these services
-MUST include a `syslog_drain_url`. The platform MUST use the
+MUST include a `syslog_drain_url`. The Platform MUST use the
 `syslog_drain_url` value when sending logs to the service.
 
 Service Brokers MUST NOT include a `syslog_drain_url` in a create binding
@@ -1062,16 +1059,16 @@ service did not include a `"requires":["syslog_drain"]` property.
 There are a class of Service Offerings that intermediate requests to
 applications, performing functions such as rate limiting or authorization.
 
-If a platform supports route services, it MUST send a routable address, or
+If a Platform supports route services, it MUST send a routable address, or
 endpoint, for the application along with the request to create a Service
 Binding using `"bind_resource":{"route":"some-address.com"}`. A Service Broker
 MAY support configuration specific to an address using parameters; exposing
-this feature to users would require a platform to support binding multiple
+this feature to users would require a Platform to support binding multiple
 routable addresses to the same Service Instance.
 
 If a service is deployed in a configuration to support this behavior, the
 Service Broker MUST return a `route_service_url` in the response for a request
-to create a binding, so that the platform knows where to proxy the application
+to create a binding, so that the Platform knows where to proxy the application
 request. If the service is deployed such that the network configuration to
 proxy application requests through instances of the service is managed
 out-of-band, the Service Broker MUST NOT return `route_service_url` in the
@@ -1121,14 +1118,14 @@ The following HTTP Headers are defined for this operation:
 | service_id* | string | MUST be the ID of the service that is being used. |
 | plan_id* | string | MUST be the ID of the plan from the service that is being used. |
 | app_guid | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the binding to be created. If present, MUST be a non-empty string. |
-| bind_resource | object | A JSON object that contains data for platform resources associated with the binding to be created. See [Bind Resource Object](#bind-resource-object) for more information. |
+| bind_resource | object | A JSON object that contains data for Platform resources associated with the binding to be created. See [Bind Resource Object](#bind-resource-object) for more information. |
 | parameters | object | Configuration options for the Service Binding. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
 
 
 ##### Bind Resource Object
 
-The `bind_resource` object contains platform specific information related to
-the context in which the service will be used. In some cases the platform
+The `bind_resource` object contains Platform specific information related to
+the context in which the service will be used. In some cases the Platform
 might not be able to provide this information at the time of the binding
 request, therefore the `bind_resource` and its fields are OPTIONAL.
 
@@ -1137,13 +1134,13 @@ additional ones as needed.
 
 | Request Field | Type | Description |
 | --- | --- | --- |
-| app_guid | string | GUID of an application associated with the binding. For [credentials](#types-of-binding) bindings. MUST be unique within the scope of the platform. |
+| app_guid | string | GUID of an application associated with the binding. For [credentials](#types-of-binding) bindings. MUST be unique within the scope of the Platform. |
 | route | string | URL of the application to be intermediated. For [route services](#route-services) bindings. |
 
 `app_guid` represents the scope to which the binding will apply within
-the platform. For example, in Cloud Foundry it might map to an "application"
+the Platform. For example, in Cloud Foundry it might map to an "application"
 while in Kubernetes it might map to a "namespace". The scope of what a
-platform maps the `app_guid` to is platform specific and MAY vary across
+Platform maps the `app_guid` to is Platform specific and MAY vary across
 binding requests.
 
 \* Fields with an asterisk are REQUIRED.
@@ -1216,16 +1213,16 @@ Errors](#service-broker-errors).
 | Response Field | Type | Description |
 | --- | --- | --- |
 | credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. |
-| syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the platform MUST consider the response invalid. |
-| route_service_url | string | A URL to which the platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the platform can consider the response invalid. |
-| volume_mounts | array-of-objects | An array of configuration for remote storage devices to be mounted into an application container filesystem. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the platform can consider the response invalid. |
+| syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform MUST consider the response invalid. |
+| route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
+| volume_mounts | array-of-objects | An array of configuration for remote storage devices to be mounted into an application container filesystem. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 
 ##### Volume Mounts Object
 
 | Response Field | Type | Description |
 | --- | --- | --- |
 | driver* | string | Name of the volume driver plugin which manages the device. |
-| container_dir* | string | The path in the application container onto which the volume will be mounted. This specification does not mandate what action the platform is to take if the path specified already exists in the container. |
+| container_dir* | string | The path in the application container onto which the volume will be mounted. This specification does not mandate what action the Platform is to take if the path specified already exists in the container. |
 | mode* | string | "r" to mount the volume read-only or "rw" to mount it read-write. |
 | device_type* | string | A string specifying the type of device to mount. Currently the only supported value is "shared". |
 | device* | device-object | Device object containing device_type specific details. Currently only shared devices are supported. |
@@ -1277,7 +1274,7 @@ can be mounted on all app instances simultaneously.
 Note: Service Brokers that do not provide any bindable services or plans do
 not need to implement this endpoint.
 
-When a Service Broker receives an unbind request from the marketplace, it MUST
+When a Service Broker receives an unbind request from a Platform, it MUST
 delete any resources associated with the binding. In the case where
 credentials were generated, this might result in requests to the Service
 Instance failing to authenticate.
@@ -1348,9 +1345,9 @@ For a success response, the expected response body is `{}`.
 
 ## Deprovisioning
 
-When a Service Broker receives a deprovision request from the marketplace, it
-MUST delete any resources it created during the provision. Usually this means
-that all resources are immediately reclaimed for future provisions.
+When a Service Broker receives a deprovision request from a Platform, it MUST
+delete any resources it created during the provision. Usually this means that
+all resources are immediately reclaimed for future provisions.
 
 Platforms MUST delete all bindings for a service prior to attempting to
 deprovision the service. This specification does not specify what a Service
@@ -1375,7 +1372,7 @@ Brokers.
 | --- | --- | --- |
 | service_id* | string | MUST be the ID of the Service Instance being deleted. |
 | plan_id* | string | MUST be the ID of the plan associated with the Service Instance being deleted. |
-| accepts_incomplete | boolean | A value of true indicates that both the marketplace and the requesting client support asynchronous deprovisioning. If this parameter is not included in the request, and the Service Broker can only deprovision a Service Instance of the requested plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
+| accepts_incomplete | boolean | A value of true indicates that both the Platform and the requesting client support asynchronous deprovisioning. If this parameter is not included in the request, and the Service Broker can only deprovision a Service Instance of the requested plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
 \* Query parameters with an asterisk are REQUIRED.
 
@@ -1401,7 +1398,7 @@ $ curl 'http://username:password@service-broker-url/v2/service_instances/:instan
 | Status Code | Description |
 | --- | --- |
 | 200 OK | MUST be returned if the Service Instance was deleted as a result of this request. The expected response body is `{}`. |
-| 202 Accepted | MUST be returned if the Service Instance deletion is in progress. This triggers the marketplace to poll the [Service Instance Last Operation Endpoint](#polling-last-operation) for operation status. Note that a re-sent `DELETE` request MUST return a `202 Accepted`, not a `200 OK`, if the delete request has not completed yet. |
+| 202 Accepted | MUST be returned if the Service Instance deletion is in progress. This triggers the Platform to poll the [Service Instance Last Operation Endpoint](#polling-last-operation) for operation status. Note that a re-sent `DELETE` request MUST return a `202 Accepted`, not a `200 OK`, if the delete request has not completed yet. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
 | 410 Gone | MUST be returned if the Service Instance does not exist. The expected response body is `{}`. |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous deprovisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The expected response body is: `{ "error": "AsyncRequired", "description": "This Service Plan requires client support for asynchronous service operations." }`, as described below (see [Service Broker Errors](#service-broker-errors). |
@@ -1424,7 +1421,7 @@ Errors](#service-broker-errors).
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
+| operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -1452,7 +1449,7 @@ expected rather than to support the cases when a JSON body might or might not
 be returned.
 
 For error responses, the following fields are valid; while other properties
-MAY appear, platforms MAY choose to ignore them:
+MAY appear, Platforms MAY choose to ignore them:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
@@ -1474,22 +1471,20 @@ example, to specify a description in a different language.
 
 ## Orphans
 
-The platform marketplace is the source of truth for Service Instances and
-bindings. Service Brokers are expected to have successfully provisioned all
-the Service Instances and bindings that the marketplace knows about, and none
-that it doesn't.
+The Platform is the source of truth for Service Instances and bindings. Service
+Brokers are expected to have successfully provisioned all the Service Instances
+and bindings that the Platform knows about, and none that it doesn't.
 
 Orphans can result if the Service Broker does not return a response before a
-request from the marketplace times out (typically 60 seconds). For example, if
-a Service Broker does not return a response to a provision request before the
+request from the Platform times out (typically 60 seconds). For example, if a
+Service Broker does not return a response to a provision request before the
 request times out, the Service Broker might eventually succeed in provisioning
-a Service Instance after the marketplace considers the request a failure. This
+a Service Instance after the Platform considers the request a failure. This
 results in an orphan Service Instance on the Service Broker's side.
 
-To mitigate orphan Service Instances and bindings, the marketplace SHOULD
-attempt to delete resources it cannot be sure were successfully created, and
-SHOULD keep trying to delete them until the Service Broker responds with a
-success.
+To mitigate orphan Service Instances and bindings, the Platform SHOULD attempt
+to delete resources it cannot be sure were successfully created, and SHOULD keep
+trying to delete them until the Service Broker responds with a success.
 
 Platforms SHOULD initiate orphan mitigation in the following scenarios:
 
@@ -1505,7 +1500,7 @@ Platforms SHOULD initiate orphan mitigation in the following scenarios:
 | 5xx | Service Broker error | Yes |
 | Timeout | Failure | Yes |
 
-If the platform marketplace encounters an internal error provisioning a
-Service Instance or binding (for example, saving to the database fails), then
-it MUST at least send a single delete or unbind request to the Service Broker
-to prevent creation of an orphan.
+If the Platform encounters an internal error provisioning a Service Instance or
+binding (for example, saving to the database fails), then it MUST at least send
+a single delete or unbind request to the Service Broker to prevent creation of
+an orphan.
