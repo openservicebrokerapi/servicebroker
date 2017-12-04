@@ -899,7 +899,7 @@ The following HTTP Headers are defined for this operation:
 | service_id* | string | MUST be the ID of a service from the catalog for this Service Broker. |
 | plan_id | string | If present, MUST be the ID of a plan from the service that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the plan of the instance as a result of this request. |
 | parameters | object | Configuration options for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. If this field is not present in the request message, then the Service Broker MUST NOT change the parameters of the instance as a result of this request. |
-| [previous_values](#previous-values-object)() | object | Information about the Service Instance prior to the update. |
+| [previous_values](#previous-values-object) | object | Information about the Service Instance prior to the update. |
 
 \* Fields with an asterisk are REQUIRED.
 
