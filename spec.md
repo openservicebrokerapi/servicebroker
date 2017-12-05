@@ -408,7 +408,7 @@ The following rules apply if `parameters` is included anywhere in the catalog:
 * The `$schema` key MUST be present in the schema declaring the version of JSON
 schema being used.
 * Schemas MUST NOT contain any external references that are resolved to a URI
-  that requires additnal downloading.
+  that requires additional fetching.
 * Schemas MUST NOT be larger than 64kB.
 
 
@@ -438,8 +438,7 @@ schema being used.
   that requires additional fetching.
 * `$id` MUST be unique in the root schemas array.
 * All `definitions` MUST define a unique `$id` for the Root Schema Object in
-  which it
-exists.
+  which it exists.
 * For `definitions`, `$id` MUST start with a `#`.
 
 Then to refrence a subschema from within catalog `$ref` becomes
@@ -603,7 +602,7 @@ Then to refrence a subschema from within catalog `$ref` becomes
     "$id": "/v2/catalog/bindings/",
     "definitions": {
       "BillingAccount" : {
-        "$id" : "#BillingAccountParameter",
+        "$id" : "#BillingAccountParameters",
         "type": "object",
         "properties": {
           "billing": {
