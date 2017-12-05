@@ -316,7 +316,7 @@ users when they have to type it as an argument on the command line.
 | Response field | Type | Description |
 | --- | --- | --- |
 | services* | array-of-service-objects | Schema of service objects defined below. MAY be empty. |
-| [root_schemas](#root-schema-object) | array-of-root-schema-objects | An array of root JSON Schemas for reusable object definitions to be refrenced from the service objects. |
+| [root_schemas](#root-schema-object) | array-of-root-schema-objects | An array of root JSON Schemas for reusable object definitions to be referenced from the service objects. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -426,7 +426,7 @@ Platform will need to process the catalog's `root_schemas` to fully qualify
 | --- | --- | --- |
 | $schema* | string | The JSON Schema declaring the version of JSON |
 schema being used. |
-| $id* | string | The JSON Schema id to be refrenced from elsewhere in the catalog. |
+| $id* | string | The JSON Schema id to be referenced from elsewhere in the catalog. |
 | definitions* | Dictonary-of-JSON Schema Object | A definition of a JSON Schema Object. |
 
 The following rules apply if `root_schemas` is included anywhere in the catalog:
@@ -442,7 +442,7 @@ schema being used.
   which it exists.
 * For `definitions`, `$id` MUST start with a `#`.
 
-To refrence a subschema from within catalog, `$ref` becomes
+To reference a subschema from within catalog, `$ref` becomes
 `{root_schema.$id}{definitions.$id}`. 
 
 
