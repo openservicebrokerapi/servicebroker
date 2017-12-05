@@ -393,7 +393,7 @@ how Platforms might expose these values to their users.
 | Response field | Type | Description |
 | --- | --- | --- |
 | parameters | JSON schema object | The schema definition for the input `parameters`. Each input parameter is expressed as a property within a JSON object. |
-| response | JSON schema object | The schema definition for the output response. Each output response is expressed as a property within a JSON object. |
+| response | JSON schema object | The schema definition for the output response. |
 
 The following rules apply if `parameters` or `response` included anywhere in the catalog:
 
