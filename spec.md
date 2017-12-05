@@ -316,7 +316,7 @@ users when they have to type it as an argument on the command line.
 | Response field | Type | Description |
 | --- | --- | --- |
 | services* | array-of-service-objects | Schema of service objects defined below. MAY be empty. |
-| [root_schemas](#root-schema-object) | array-of-root-schema-objects | An array of root JSON Schemas for reusable object definitions to be referenced from the service objects. |
+| [root_schemas](#root-schema-objects) | array-of-root-schema-objects | An array of root JSON Schemas for reusable object definitions to be referenced from the service objects. |
 
 \* Fields with an asterisk are REQUIRED.
 
