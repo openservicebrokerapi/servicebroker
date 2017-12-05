@@ -378,7 +378,7 @@ how Platforms might expose these values to their users.
 | Response field | Type | Description |
 | --- | --- | --- |
 | [create](#json-schema-objects) | object | The schema definition for creating a Service Instance. |
-| [update](#json-schema-objectst) | object | The schema definition for updating a Service Instance. |
+| [update](#json-schema-objects) | object | The schema definition for updating a Service Instance. |
 
 
 ##### Service Binding Object
@@ -393,7 +393,7 @@ how Platforms might expose these values to their users.
 It is useful for the Platform for the Broker to define exactly what is expected
 when making requests inside opaque input request objects and unspecified output
 responses, that mechanism is JSON Schema Object definitions. This allows Broker
-authors to programaticly define inputs and outputs for applicable requests.
+authors to programmatically define inputs and outputs for applicable requests.
 
 | Response field | Type | Description |
 | --- | --- | --- |
