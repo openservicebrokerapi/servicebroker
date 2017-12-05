@@ -435,9 +435,10 @@ The following rules apply if `root_schemas` is included anywhere in the catalog:
 * The `$schema` key MUST be present in the schema declaring the version of JSON
 schema being used.
 * Schemas MUST NOT contain any external references that are resolved to a URI
-  that requires additnal downloading.
+  that requires additional fetching.
 * `$id` MUST be unique in the root schemas array.
-* All `definitions` MUST define a unique `$id` for the Root Schema Object in which it
+* All `definitions` MUST define a unique `$id` for the Root Schema Object in
+  which it
 exists.
 * For `definitions`, `$id` MUST start with a `#`.
 
