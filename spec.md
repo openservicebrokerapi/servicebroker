@@ -416,7 +416,8 @@ schema being used.
 
 It is likely that a Broker will have redundent definitions of `parameters` in
 the catalog. To simplfy this, the broker MAY provide a `root_schemas` entry. The
-Platform will need to process the catalog's `root_schemas` to be able to 
+Platform will need to process the catalog's `root_schemas` to fully qualify
+`$ref` object schmea definitions.
 
 
 ##### Root Schema Objects
@@ -441,7 +442,7 @@ schema being used.
   which it exists.
 * For `definitions`, `$id` MUST start with a `#`.
 
-Then to refrence a subschema from within catalog `$ref` becomes
+To refrence a subschema from within catalog, `$ref` becomes
 `{root_schema.$id}{definitions.$id}`. 
 
 
