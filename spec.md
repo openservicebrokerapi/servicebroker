@@ -377,20 +377,25 @@ how Platforms might expose these values to their users.
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| [create](#input-parameters-object) | object | The schema definition for creating a Service Instance. |
-| [update](#input-parameters-object) | object | The schema definition for updating a Service Instance. |
+| [create](#json-schema-objects) | object | The schema definition for creating a Service Instance. |
+| [update](#json-schema-objectst) | object | The schema definition for updating a Service Instance. |
 
 
 ##### Service Binding Object
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| [create](#input-parameters-object) | object | The schema definition for creating a Service Binding. |
+| [create](#json-schema-objects) | object | The schema definition for creating a Service Binding. |
 
 
-##### Parameters Object
+##### JSON Schema Objects
 
-The following rules apply if `parameters` is included anywhere in the catalog:
+| Response field | Type | Description |
+| --- | --- | --- |
+| parameters | JSON schema object | The schema definition for the input `parameters`. Each input parameter is expressed as a property within a JSON object. |
+| response | JSON schema object | The schema definition for the output response. Each output response is expressed as a property within a JSON object. |
+
+The following rules apply if `parameters` or `response` included anywhere in the catalog:
 
 * Platforms MUST support at least
 [JSON Schema draft v4](http://json-schema.org/).
@@ -399,14 +404,6 @@ The following rules apply if `parameters` is included anywhere in the catalog:
 schema being used.
 * Schemas MUST NOT contain any external references.
 * Schemas MUST NOT be larger than 64kB.
-
-
-###### Parameters Object
-
-| Response field | Type | Description |
-| --- | --- | --- |
-| parameters | JSON schema object | The schema definition for the input parameters. Each input parameter is expressed as a property within a JSON object. |
-| response | JSON schema object | The schema definition for the output response. Each output response is expressed as a property within a JSON object. |
 
 
 ##### Reference Catalog Response
