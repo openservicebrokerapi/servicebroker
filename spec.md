@@ -316,6 +316,9 @@ users when they have to type it as an argument on the command line.
 | Response field | Type | Description |
 | --- | --- | --- |
 | services* | array-of-service-objects | Schema of service objects defined below. MAY be empty. |
+| [root_schemas](#root-schema-object) | array-of-root-schema-objects | An array of root JSON Schemas for reusable object definitions to be refrenced from the service objects. |
+
+\* Fields with an asterisk are REQUIRED.
 
 ##### Service Objects
 
@@ -331,6 +334,8 @@ users when they have to type it as an argument on the command line.
 | [dashboard_client](#dashboard-client-object) | object | Contains the data necessary to activate the Dashboard SSO feature for this service. |
 | plan_updateable | boolean | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute `plan_updatable` as `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
 | [plans*](#plan-object) | array-of-objects | A list of plans for this service, schema is defined below. MUST contain at least one plan. |
+
+\* Fields with an asterisk are REQUIRED.
 
 Note: Platforms will typically use the service name as an input parameter
 from their users to indicate which service they want to instantiate. Therefore,
@@ -348,7 +353,6 @@ how Platforms might expose these values to their users.
 | id | string | The id of the Oauth client that the dashboard will use. If present, MUST be a non-empty string. |
 | secret | string | A secret for the dashboard client. If present, MUST be a non-empty string. |
 | redirect_uri | string | A URI for the service dashboard. Validated by the OAuth token server when the dashboard requests a token. |
-
 
 ##### Plan Object
 
@@ -400,10 +404,43 @@ The following rules apply if `parameters` is included anywhere in the catalog:
 * Platforms SHOULD be prepared to support later versions of JSON schema.
 * The `$schema` key MUST be present in the schema declaring the version of JSON
 schema being used.
-* Schemas MUST NOT contain any external references.
+* Schemas MUST NOT contain any external references that are resolved to a URI
+  that requires additnal downloading.
 * Schemas MUST NOT be larger than 64kB.
 
+###### $ref Usage
 
+It is likely that a Broker will have redundent definitions of `parameters` in
+the catalog. To simplfy this, the broker MAY provide a `root_schemas` entry.
+The root schema object MUST have an `$id` field set 
+with an entry 
+
+point to the common definition in the
+`rootSchema` object in the catalog.
+
+##### Root Schema Objects
+
+| Response field | Type | Description |
+| --- | --- | --- |
+| $schema | string | The JSON Schema declaring the version of JSON |
+schema being used. |
+| $id | string | The JSON Schema id to be refrenced from elsewhere in the catalog. |
+| definitions | Dictonary-of-JSON Schema Object | A definition of a JSON Schema Object. The key becomes the part of the  |
+
+The following rules apply if `root_schemas` is included anywhere in the catalog:
+* Platforms MUST support at least
+[JSON Schema draft v4](http://json-schema.org/).
+* Platforms SHOULD be prepared to support later versions of JSON schema.
+* The `$schema` key MUST be present in the schema declaring the version of JSON
+schema being used.
+* Schemas MUST NOT contain any external references that are resolved to a URI
+  that requires additnal downloading.
+* $id MUST be unique in the root schemas array.
+
+
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$id": "/v2/catalog/#root",
+    "definitions"
 ```
 {
   "services": [{
@@ -462,25 +499,13 @@ schema being used.
           "create": {
             "parameters": {
               "$schema": "http://json-schema.org/draft-04/schema#",
-              "type": "object",
-              "properties": {
-                "billing-account": {
-                  "description": "Billing account number used to charge use of shared fake server.",
-                  "type": "string"
-                }
-              }
+              "$ref": "/v2/catalog/#root/BillingAccountParameters"
             }
           },
           "update": {
             "parameters": {
               "$schema": "http://json-schema.org/draft-04/schema#",
-              "type": "object",
-              "properties": {
-                "billing-account": {
-                  "description": "Billing account number used to charge use of shared fake server.",
-                  "type": "string"
-                }
-              }
+              "$ref": "/v2/catalog/#root/BillingAccountParameters"
             }
           }
         },
@@ -488,13 +513,7 @@ schema being used.
           "create": {
             "parameters": {
               "$schema": "http://json-schema.org/draft-04/schema#",
-              "type": "object",
-              "properties": {
-                "billing-account": {
-                  "description": "Billing account number used to charge use of shared fake server.",
-                  "type": "string"
-                }
-              }
+              "$ref": "/v2/catalog/#bindings/BillingAccountParameters"
             }
           }
         }
@@ -523,8 +542,74 @@ schema being used.
         "bullets": [
           "40 concurrent connections"
         ]
+      },
+      "schemas": {
+        "service_instance": {
+          "create": {
+            "parameters": {
+              "$schema": "http://json-schema.org/draft-04/schema#",
+              "$ref": "/v2/catalog/#root/BillingAccountParameters"
+            }
+          },
+          "update": {
+            "parameters": {
+              "$schema": "http://json-schema.org/draft-04/schema#",
+              type: object,
+              propeties: {
+                "some-otehr-account": {
+                  "description": "Other.",
+                  "type": "string"
+                },
+                "billing": {
+                  "$ref": "/v2/catalog/#root/BillingAccountParameters"
+                }
+              }
+            }
+          }
+        },
+        "service_binding": {
+          "create": {
+            "parameters": {
+              "$schema": "http://json-schema.org/draft-04/schema#",
+              "$ref": "/v2/catalog/#bindings/BillingAccountParameters"
+            }
+          }
+        }
       }
     }]
+  }],
+  "root_schemas": [{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$id": "/v2/catalog/#root",
+    "definitions": {
+      "BillingAccountParameters" : {
+        "type": "object",
+        "properties": {
+          "billing-account": {
+            "description": "Billing account number used to charge use of shared fake server.",
+            "type": "string"
+          }
+        }
+      }
+    }
+  },{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$id": "/v2/catalog/#bindings",
+    "definitions": {
+      "BillingAccountParameters" : {
+        "type": "object",
+        "properties": {
+          "billing-account": {
+            "description": "Billing account number used to charge use of shared fake server.",
+            "type": "string"
+          },
+          "quota-account": {
+            "description": "Quota account number used to charge use of fake bandwidth.",
+            "type": "string"
+          }
+        }
+      }
+    }
   }]
 }
 ```
