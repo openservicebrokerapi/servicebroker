@@ -411,21 +411,18 @@ schema being used.
 ###### $ref Usage
 
 It is likely that a Broker will have redundent definitions of `parameters` in
-the catalog. To simplfy this, the broker MAY provide a `root_schemas` entry.
-The root schema object MUST have an `$id` field set 
-with an entry 
+the catalog. To simplfy this, the broker MAY provide a `root_schemas` entry. The
+Platform will need to process the catalog's `root_schemas` to be able to 
 
-point to the common definition in the
-`rootSchema` object in the catalog.
 
 ##### Root Schema Objects
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| $schema | string | The JSON Schema declaring the version of JSON |
+| $schema* | string | The JSON Schema declaring the version of JSON |
 schema being used. |
-| $id | string | The JSON Schema id to be refrenced from elsewhere in the catalog. |
-| definitions | Dictonary-of-JSON Schema Object | A definition of a JSON Schema Object. The key becomes the part of the  |
+| $id* | string | The JSON Schema id to be refrenced from elsewhere in the catalog. |
+| definitions* | Dictonary-of-JSON Schema Object | A definition of a JSON Schema Object. |
 
 The following rules apply if `root_schemas` is included anywhere in the catalog:
 * Platforms MUST support at least
@@ -435,12 +432,15 @@ The following rules apply if `root_schemas` is included anywhere in the catalog:
 schema being used.
 * Schemas MUST NOT contain any external references that are resolved to a URI
   that requires additnal downloading.
-* $id MUST be unique in the root schemas array.
+* `$id` MUST be unique in the root schemas array.
+* All `definitions` MUST define a unique `$id` for the Root Schema Object in which it
+exists.
+* For `definitions`, `$id` MUST start with a `#`.
+
+Then to refrence a subschema from within catalog `$ref` becomes
+`{root_schema.$id}{definitions.$id}`. 
 
 
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "$id": "/v2/catalog/#root",
-    "definitions"
 ```
 {
   "services": [{
@@ -499,13 +499,13 @@ schema being used.
           "create": {
             "parameters": {
               "$schema": "http://json-schema.org/draft-04/schema#",
-              "$ref": "/v2/catalog/#root/BillingAccountParameters"
+              "$ref": "/v2/catalog/root/#BillingAccountParameters"
             }
           },
           "update": {
             "parameters": {
               "$schema": "http://json-schema.org/draft-04/schema#",
-              "$ref": "/v2/catalog/#root/BillingAccountParameters"
+              "$ref": "/v2/catalog/root/#BillingAccountParameters"
             }
           }
         },
@@ -513,7 +513,7 @@ schema being used.
           "create": {
             "parameters": {
               "$schema": "http://json-schema.org/draft-04/schema#",
-              "$ref": "/v2/catalog/#bindings/BillingAccountParameters"
+              "$ref": "/v2/catalog/bindings/#BillingAccountParameters"
             }
           }
         }
@@ -548,7 +548,7 @@ schema being used.
           "create": {
             "parameters": {
               "$schema": "http://json-schema.org/draft-04/schema#",
-              "$ref": "/v2/catalog/#root/BillingAccountParameters"
+              "$ref": "/v2/catalog/root/#BillingAccountParameters"
             }
           },
           "update": {
@@ -561,7 +561,7 @@ schema being used.
                   "type": "string"
                 },
                 "billing": {
-                  "$ref": "/v2/catalog/#root/BillingAccountParameters"
+                  "$ref": "/v2/catalog/root/#BillingAccountParameters"
                 }
               }
             }
@@ -571,7 +571,7 @@ schema being used.
           "create": {
             "parameters": {
               "$schema": "http://json-schema.org/draft-04/schema#",
-              "$ref": "/v2/catalog/#bindings/BillingAccountParameters"
+              "$ref": "/v2/catalog/bindings/#BillingAccountParameters"
             }
           }
         }
@@ -580,9 +580,10 @@ schema being used.
   }],
   "root_schemas": [{
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "$id": "/v2/catalog/#root",
+    "$id": "/v2/catalog/root/",
     "definitions": {
-      "BillingAccountParameters" : {
+      "BillingAccount" : {
+        "$id" : "#BillingAccountParameters",
         "type": "object",
         "properties": {
           "billing-account": {
@@ -594,14 +595,14 @@ schema being used.
     }
   },{
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "$id": "/v2/catalog/#bindings",
+    "$id": "/v2/catalog/bindings/",
     "definitions": {
-      "BillingAccountParameters" : {
+      "BillingAccount" : {
+        "$id" : "#BillingAccountParameter",
         "type": "object",
         "properties": {
-          "billing-account": {
-            "description": "Billing account number used to charge use of shared fake server.",
-            "type": "string"
+          "billing": {
+            "$ref": "/v2/catalog/root/#BillingAccountParameters"
           },
           "quota-account": {
             "description": "Quota account number used to charge use of fake bandwidth.",
