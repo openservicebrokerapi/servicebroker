@@ -386,12 +386,11 @@ how Platforms might expose these values to their users.
 | Response field | Type | Description |
 | --- | --- | --- |
 | [create](#input-parameters-object) | object | The schema definition for creating a Service Binding. |
-| [created](#output-parameters-object) | object | The schema definition of the output from creating a Service Binding. |
 
 
-#####  Parameters Object
+##### Parameters Object
 
-The following rules apply if `parameters` are included anywhere in the catalog:
+The following rules apply if `parameters` is included anywhere in the catalog:
 
 * Platforms MUST support at least
 [JSON Schema draft v4](http://json-schema.org/).
@@ -402,17 +401,12 @@ schema being used.
 * Schemas MUST NOT be larger than 64kB.
 
 
-###### Input Parameters Object
+###### Parameters Object
 
 | Response field | Type | Description |
 | --- | --- | --- |
 | parameters | JSON schema object | The schema definition for the input parameters. Each input parameter is expressed as a property within a JSON object. |
-
-###### Output Parameters Object
-
-| Response field | Type | Description |
-| --- | --- | --- |
-| parameters | JSON schema object | The schema definition for the output parameters. Each input parameter is expressed as a property within a JSON object. |
+| response | JSON schema object | The schema definition for the output response. Each output response is expressed as a property within a JSON object. |
 
 
 ##### Reference Catalog Response
@@ -508,23 +502,26 @@ schema being used.
                   "type": "string"
                 }
               }
-            } 
-          },
-          "create-success": {
-            "credentials": {
+            },
+            "response": {
               "$schema": "http://json-schema.org/draft-04/schema#",
               "type": "object",
               "properties": {
-                "token": {
-                  "description": "A token to be used to make fake API calls to the fake server.",
-                  "type": "string"
-                },
-                "uri": {
-                  "description": "The fake URI to use to make fake API calls against.",
-                  "type": "string"
+                "credentials" : {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "description": "A token to be used to make fake API calls to the fake server.",
+                      "type": "string"
+                    },
+                    "uri": {
+                      "description": "The fake URI to use to make fake API calls against.",
+                      "type": "string"
+                    }
+                  }
                 }
               }
-            }
+            } 
           }
         }
       }
