@@ -558,10 +558,10 @@ Then to refrence a subschema from within catalog `$ref` becomes
           "update": {
             "parameters": {
               "$schema": "http://json-schema.org/draft-04/schema#",
-              type: object,
-              propeties: {
-                "some-otehr-account": {
-                  "description": "Other.",
+              "type": "object",
+              "propeties": {
+                "some-other-account": {
+                  "description": "Other fake account needed for update.",
                   "type": "string"
                 },
                 "billing": {
