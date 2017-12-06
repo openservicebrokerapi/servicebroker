@@ -414,10 +414,10 @@ schema being used.
 
 ###### $ref Usage
 
-It is likely that a Broker will have redundent definitions of `parameters` in
+It is likely that a Broker will have redundant definitions of `parameters` in
 the catalog. To simplfy this, the broker MAY provide a `root_schemas` entry. The
 Platform will need to process the catalog's `root_schemas` to fully qualify
-`$ref` object schmea definitions.
+`$ref` object schema definitions.
 
 
 ##### Root Schema Objects
