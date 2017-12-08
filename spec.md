@@ -400,7 +400,8 @@ authors to programmatically define inputs and outputs for applicable requests.
 | parameters | JSON schema object | The schema definition for the input `parameters`. Each input parameter is expressed as a property within a JSON object. |
 | response | JSON schema object | The schema definition for the output response. |
 
-The following rules apply if `parameters` or `response` included anywhere in the catalog:
+The following rules apply if `parameters` or `response` are included anywhere in
+the catalog:
 
 * Platforms MUST support at least
 [JSON Schema draft v4](http://json-schema.org/).
