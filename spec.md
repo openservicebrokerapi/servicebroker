@@ -437,7 +437,7 @@ The following rules apply if `root_schemas` is included anywhere in the catalog:
 schema being used.
 * Schemas MUST NOT contain any external references that are resolved to a URI
   that requires additional fetching.
-* `$id` MUST be unique in the root schemas array.
+* `$id` MUST be a unique URI in the root schemas array.
 * All `definitions` MUST define a unique `$id` for the Root Schema Object in
   which it exists.
 * For `definitions`, `$id` MUST start with a `#`.
@@ -504,13 +504,13 @@ To reference a subschema from within catalog, `$ref` becomes
           "create": {
             "parameters": {
               "$schema": "http://json-schema.org/draft-04/schema#",
-              "$ref": "/v2/catalog/root/#BillingAccountParameters"
+              "$ref": "http://www.openservicebrokerapi.org/v2/catalog/root/#BillingAccountParameters"
             }
           },
           "update": {
             "parameters": {
               "$schema": "http://json-schema.org/draft-04/schema#",
-              "$ref": "/v2/catalog/root/#BillingAccountParameters"
+              "$ref": "http://www.openservicebrokerapi.org/v2/catalog/root/#BillingAccountParameters"
             }
           }
         },
@@ -518,7 +518,7 @@ To reference a subschema from within catalog, `$ref` becomes
           "create": {
             "parameters": {
               "$schema": "http://json-schema.org/draft-04/schema#",
-              "$ref": "/v2/catalog/bindings/#BillingAccountParameters"
+              "$ref": "http://www.openservicebrokerapi.org/v2/catalog/bindings/#BillingAccountParameters"
             }
           }
         }
@@ -553,7 +553,7 @@ To reference a subschema from within catalog, `$ref` becomes
           "create": {
             "parameters": {
               "$schema": "http://json-schema.org/draft-04/schema#",
-              "$ref": "/v2/catalog/root/#BillingAccountParameters"
+              "$ref": "http://www.openservicebrokerapi.org/v2/catalog/root/#BillingAccountParameters"
             }
           },
           "update": {
@@ -566,7 +566,7 @@ To reference a subschema from within catalog, `$ref` becomes
                   "type": "string"
                 },
                 "billing": {
-                  "$ref": "/v2/catalog/root/#BillingAccountParameters"
+                  "$ref": "http://www.openservicebrokerapi.org/v2/catalog/root/#BillingAccountParameters"
                 }
               }
             }
@@ -576,7 +576,7 @@ To reference a subschema from within catalog, `$ref` becomes
           "create": {
             "parameters": {
               "$schema": "http://json-schema.org/draft-04/schema#",
-              "$ref": "/v2/catalog/bindings/#BillingAccountParameters"
+              "$ref": "http://www.openservicebrokerapi.org/v2/catalog/bindings/#BillingAccountParameters"
             }
           }
         }
@@ -585,7 +585,7 @@ To reference a subschema from within catalog, `$ref` becomes
   }],
   "root_schemas": [{
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "$id": "/v2/catalog/root/",
+    "$id": "http://www.openservicebrokerapi.org/v2/catalog/root/",
     "definitions": {
       "BillingAccount" : {
         "$id" : "#BillingAccountParameters",
@@ -600,14 +600,14 @@ To reference a subschema from within catalog, `$ref` becomes
     }
   },{
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "$id": "/v2/catalog/bindings/",
+    "$id": "http://www.openservicebrokerapi.org/v2/catalog/bindings/",
     "definitions": {
       "BillingAccount" : {
         "$id" : "#BillingAccountParameters",
         "type": "object",
         "properties": {
           "billing": {
-            "$ref": "/v2/catalog/root/#BillingAccountParameters"
+            "$ref": "http://www.openservicebrokerapi.org/v2/catalog/root/#BillingAccountParameters"
           },
           "quota-account": {
             "description": "Quota account number used to charge use of fake bandwidth.",
