@@ -424,8 +424,7 @@ Platform will need to process the catalog's `root_schemas` to fully qualify
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| $schema* | string | The JSON Schema declaring the version of JSON |
-schema being used. |
+| $schema* | string | The JSON Schema declaring the version of JSON | schema being used. |
 | $id* | string | The JSON Schema id to be referenced from elsewhere in the catalog. |
 | definitions* | Dictonary-of-JSON Schema Object | A definition of a JSON Schema Object. |
 
