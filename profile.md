@@ -281,7 +281,7 @@ For example:
 
 ### Example Service Broker Response Body
 
-The example below contains a catalog of one service, having one service plan.
+The example below contains a catalog of one service, having one Service Plan.
 Of course, a Service Broker can offering a catalog of many services, each having
 many plans.
 

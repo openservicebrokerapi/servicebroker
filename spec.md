@@ -113,8 +113,8 @@ that do not understand them.
 
 * Added [`schemas`](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#schema-object)
   field to services in the catalog that Service Brokers can use to declare the
-  configuration parameters their service accepts for creating a service
-  instance, updating a Service Instance and creating a Service Binding.
+  configuration parameters their service accepts for creating a Service
+  Instance, updating a Service Instance and creating a Service Binding.
 * Added [`context`](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#binding)
   field to request body for creating a Service Binding.
 * Added [warning text](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#url-properties)
