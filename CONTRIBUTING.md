@@ -59,6 +59,10 @@ It is expected that during this implementation phase there will be changes
 made to the design and proposed specification edits to accurately represent
 the current status of the proposal.
 
+If the proposal adds or changes an object model or resource endpoint definition,
+it is expected that the PR will also include the necessary updates to the
+[Open API document](openapi.yaml).
+
 Once support for the change has been implemented, a PR should be sent to this
 repo for the change to the Open Service Broker API specification. By this
 point, the API interactions should be well understood and there should be no
