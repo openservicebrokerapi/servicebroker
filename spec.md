@@ -29,8 +29,8 @@
 
 ## API Overview
 
-The Service Broker API defines an HTTP(S) interface between Platforms and Service
-Brokers.
+The Open Service Broker API defines an HTTP(S) interface between Platforms and
+Service Brokers.
 
 The Service Broker is the component of the service that implements the Service
 Broker API, for which a Platform is a client. Service Brokers are responsible
@@ -136,8 +136,8 @@ For changes in older versions, see the [release notes](https://github.com/opense
 ## API Version Header
 
 Requests from the Platform to the Service Broker MUST contain a header that
-declares the version number of the Service Broker API that the Platform will
-use:
+declares the version number of the  Open Service Broker API that the Platform
+will use:
 
 `X-Broker-API-Version: 2.13`
 
