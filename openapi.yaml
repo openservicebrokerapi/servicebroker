@@ -310,6 +310,10 @@ paths:
                 $ref: '#/components/schemas/ServiceBinding'
         '400':
           description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Object'
         '409':
           description: Conflict
           content:
@@ -423,6 +427,10 @@ components:
           type: array
           items:
             type: string
+            enum:
+              - syslog_drain
+              - route_forwarding
+              - volume_mount
         bindable:
           type: boolean
         metadata:
