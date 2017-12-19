@@ -55,6 +55,13 @@ verbose=""
 debug=""
 stop=""
 
+# Error file processing
+err=tmpCC-$RANDOM
+trap clean EXIT
+function clean {
+  rm -f ${err}*
+}
+
 while [[ "$#" != "0" && "$1" == "-"* ]]; do
   opts="${1:1}"
   while [[ "$opts" != "" ]]; do
@@ -105,9 +112,6 @@ function checkFile {
   lines=( "" )
   words=( "" )
 
-  # Error file
-  err=tmpCC-$RANDOM
-
   # Prepend each line of the file with its line number
   cat -n $1 | while read num line ; do
     # Put each word on its own line with its line number before it.
@@ -155,7 +159,7 @@ function checkFile {
       if [[ "${words[@]^^} " == "${phrase^^} "* && \
             "${words[@]} " != "${phrase} "* ]]; then
       ll=${words[*]}
-      echo line ${lines[0]}: \'${ll:0:${#phrase}}\' should be \'${phrase}\' | tee -a $err
+      echo line ${lines[0]}: \'${ll:0:${#phrase}}\' should be \'${phrase}\'
     fi
     done
 
@@ -164,18 +168,11 @@ function checkFile {
     for phrase in "${bannedPhrases[@]}"; do
       if [[ "${words[@]^^} " == "${phrase^^} "* ]]; then
       ll=${words[*]}
-      echo line ${lines[0]}: \'${ll:0:${#phrase}}\' is banned | tee -a $err
+      echo line ${lines[0]}: \'${ll:0:${#phrase}}\' is banned
     fi
     done
 
   done
-  
-  # Check err file to see if something went wrong
-  if [ -s $err ]; then
-    rm -f $err
-    return 1
-  fi
-  rm -f $err
 }
 
 for file in ${Files}; do
@@ -184,5 +181,7 @@ for file in ${Files}; do
 
   [[ -n "$verbose" ]] && echo "> $file"
 
-  checkFile $file
+  checkFile $file | tee -a $err
 done
+
+if [ -s ${err} ]; then exit 1 ; fi
