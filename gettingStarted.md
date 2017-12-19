@@ -61,6 +61,9 @@ and calls AWS APIs to provision EC2 VMs.
 [Storage Service Operations](https://github.com/opensds/nbp/tree/master/service-broker),
 for OpenSDS to provision storage as a service.
 
+[Open Service Broker for Azure](https://github.com/Azure/open-service-broker-azure): 
+This Service Broker implements support for Azure cloud services.
+
 # Libraries
 
 ## Go
