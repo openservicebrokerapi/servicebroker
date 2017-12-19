@@ -14,12 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This script will scan all md (markdown) files for bad references.
-# It will look for strings of the form [...](...) and make sure that
-# the (...) points to either a valid file in the source tree or, in the
-# case of it being an http url, it'll make sure we don't get a 404.
+# This script will scan all md (markdown) files for bad keyword usages.
 #
-# Usage: verify-links.sh [ dir | file ... ]
+# Usage: verify-phrases.sh [ dir | file ... ]
 # default arg is root of our source tree
 
 set -o errexit
