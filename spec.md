@@ -157,14 +157,18 @@ While the communication between a Platform and Service Broker MAY be unsecure,
 it is RECOMMENDED that all communications between a Platform and a Service
 Broker are secured via TLS and authenticated.
 
-Unless there is some out of band communication and agreement between a Platform
-and a Service Broker, the Platform MUST authenticate with the Service Broker
-using HTTP basic authentication (the `Authorization:` header) or a bearer token
-(the `Authorization: Bearer` header) on every request. If using bearer tokens,
-TLS MUST be used used.  This specification does not specify how Platform and
-Service Brokers agree on other methods of authentication nor does it specify how
-the bearer token is issued or the how token lifecycle including token timeout
-and token renewal is handled.
+Unless there is some out of band communication and agreement between a
+Platform and a Service Broker, the Platform MUST authenticate with the
+Service Broker using HTTP basic authentication (the `Authorization:` header)
+on every request. This specification does not specify how Platform and Service
+Brokers agree on other methods of authentication.
+
+An alternative to carrying basic authentication on every request is to utilize a
+bearer token via the `Authorization: Bearer` header.  When a bearer token is
+used additional processes are often required to deal with token expiration and
+renewal.  These are details not covered by this specification and must be worked
+out by the Platform.  If bearer tokens are used communication with the Broker
+MUST be secured over TLS.
 
 If authentication is used, the Service Broker MUST authenticate the request
 using the predetermined authentication mechanism and MUST return a `401
