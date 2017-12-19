@@ -316,7 +316,6 @@ users when they have to type it as an argument on the command line.
 | Response field | Type | Description |
 | --- | --- | --- |
 | services* | array-of-service-objects | Schema of service objects defined below. MAY be empty. |
-| [root_schemas](#root-schema-objects) | array-of-root-schema-objects | An array of root JSON Schemas for reusable object definitions to be referenced from the service objects. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -369,8 +368,8 @@ how Platforms might expose these values to their users.
 | bindable | boolean | Specifies whether Service Instances of the Service Plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
 | [schemas](#schema-object) | object | Schema definitions for Service Instances and bindings for the plan. |
 
-
 \* Fields with an asterisk are REQUIRED.
+
 
 ##### Schema Object
 
@@ -406,7 +405,7 @@ The following rules apply if `parameters` is included anywhere in the catalog:
 [JSON Schema draft v4](http://json-schema.org/).
 * Platforms SHOULD be prepared to support later versions of JSON schema.
 * The `$schema` key MUST be present in the schema declaring the version of JSON
-schema being used.
+schema being used unless the schema is composed of only a `$ref`.
 * Schemas MUST NOT contain any external references that are resolved to a URI
   that requires additional fetching.
 * Schemas MUST NOT be larger than 64kB.
@@ -414,11 +413,27 @@ schema being used.
 
 ###### $ref Usage
 
+Broker authors MAY leverage `$ref` and external JSON Schemas only if the JSON
+Schema refrenced can be found within the [JSON Schema](#json-schema) API
+endpoint. This mechanism is described in detail in the [JSON Schema](#json-schema) definition.
+
+interested in 
+
 It is likely that a Broker will have redundant definitions of `parameters` in
-the catalog. To simplfy this, the broker MAY provide a `root_schemas` entry. The
-Platform will need to process the catalog's `root_schemas` to fully qualify
+the catalog. To reduce the payload size and simplfy updating definitions, the
+broker MAY provide a [schemas endpoint](#TBD). There is no broker authors can not make assumptions about how the end c
+
+The Platform will need to process the schemas refrenced catalog's `root_schemas` to fully qualify
 `$ref` object schema definitions.
 
+
+
+
+
+
+
+
+#TODO:
 
 ##### Root Schema Objects
 
@@ -503,21 +518,25 @@ To reference a subschema from within catalog, `$ref` becomes
           "create": {
             "parameters": {
               "$schema": "http://json-schema.org/draft-04/schema#",
-              "$ref": "http://www.openservicebrokerapi.org/v2/catalog/root/#BillingAccountParameters"
+              "type": "object",
+              "properties": {
+                "billing-create-account": {
+                  "description": "Billing create account number used to charge use of shared fake server.",
+                  "type": "string"
+                }
+              }
             }
           },
           "update": {
             "parameters": {
-              "$schema": "http://json-schema.org/draft-04/schema#",
-              "$ref": "http://www.openservicebrokerapi.org/v2/catalog/root/#BillingAccountParameters"
+              "$ref": "osb.v2:///fakeservice/v1#BillingAccountParameters"
             }
           }
         },
         "service_binding": {
           "create": {
             "parameters": {
-              "$schema": "http://json-schema.org/draft-04/schema#",
-              "$ref": "http://www.openservicebrokerapi.org/v2/catalog/bindings/#BillingAccountParameters"
+              "$ref": "osb.v2:///fakeservice/v1/bindings#AccountParameters"
             }
           }
         }
@@ -551,8 +570,7 @@ To reference a subschema from within catalog, `$ref` becomes
         "service_instance": {
           "create": {
             "parameters": {
-              "$schema": "http://json-schema.org/draft-04/schema#",
-              "$ref": "http://www.openservicebrokerapi.org/v2/catalog/root/#BillingAccountParameters"
+              "$ref": "osb.v2:///fakeservice/v1#BillingAccountParameters"
             }
           },
           "update": {
@@ -565,7 +583,7 @@ To reference a subschema from within catalog, `$ref` becomes
                   "type": "string"
                 },
                 "billing": {
-                  "$ref": "http://www.openservicebrokerapi.org/v2/catalog/root/#BillingAccountParameters"
+                  "$ref": "osb.v2:///fakeservice/v1#BillingAccountParameters"
                 }
               }
             }
@@ -574,39 +592,126 @@ To reference a subschema from within catalog, `$ref` becomes
         "service_binding": {
           "create": {
             "parameters": {
-              "$schema": "http://json-schema.org/draft-04/schema#",
-              "$ref": "http://www.openservicebrokerapi.org/v2/catalog/bindings/#BillingAccountParameters"
+              "$ref": "osb.v2:///fakeservice/v1/bindings#AccountParameters"
             }
           }
         }
       }
     }]
-  }],
-  "root_schemas": [{
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "$id": "http://www.openservicebrokerapi.org/v2/catalog/root/",
-    "definitions": {
-      "BillingAccount" : {
-        "$id" : "#BillingAccountParameters",
-        "type": "object",
-        "properties": {
-          "billing-account": {
-            "description": "Billing account number used to charge use of shared fake server.",
-            "type": "string"
+  }]
+}
+```
+
+## JSON Schemas
+
+#TODO: detail
+
+### Request
+
+#### Route
+`GET /v2/catalog/schema{/:component_path}`
+
+#### Headers
+
+The following HTTP Headers are defined for this operation:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
+
+\* Headers with an asterisk are REQUIRED.
+
+#### cURL
+```
+$ curl http://username:password@service-broker-url/v2/catalog -H "X-Broker-API-Version: 2.13"
+```
+
+### Response
+
+| Status Code | Description |
+| --- | --- |
+| 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
+
+#TODO: define body objects a little.
+
+#### Body
+
+
+```
+$ curl http://username:password@service-broker-url/v2/catalog/schemas -H "X-Broker-API-Version: 2.13"
+```
+
+Returns:
+
+```
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "osb.v2:///schemas/",
+  "definitions": {
+    "foo/v1": {
+      "$id": "osb.v2:///fakeservice/v1",
+      "definitions": {
+        "BillingAccount" : {
+          "$id" : "#BillingAccountParameters",
+          "type": "object",
+          "properties": {
+            "billing-account": {
+              "description": "Billing account number used to charge use of shared fake server.",
+              "type": "string"
+            }
+          }
+        },
+        "bindings": {
+          "$id" : "/bindings",
+          "definitions": {
+            "$id" : "#AccountParameters",
+            "type": "object",
+            "properties": {
+              "billing": {
+                "$ref": "osb.v2:///fakeservice/v1#BillingAccountParameters"
+              },
+              "quota-account": {
+                "description": "Quota account number used to charge use of fake bandwidth.",
+                "type": "string"
+              }
+            }
           }
         }
       }
     }
-  },{
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "$id": "http://www.openservicebrokerapi.org/v2/catalog/bindings/",
-    "definitions": {
-      "BillingAccount" : {
-        "$id" : "#BillingAccountParameters",
+  }
+}
+```
+
+```
+$ curl http://username:password@service-broker-url/v2/catalog/schemas/fakeservice/v1 -H "X-Broker-API-Version: 2.13"
+```
+
+Returns:
+
+```
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "osb.v2:///fakeservice/v1",
+  "definitions": {
+    "BillingAccount" : {
+      "$id" : "#BillingAccountParameters",
+      "type": "object",
+      "properties": {
+        "billing-account": {
+          "description": "Billing account number used to charge use of shared fake server.",
+          "type": "string"
+        }
+      }
+    },
+    "bindings": {
+      "$id" : "/bindings",
+      "definitions": {
+        "$id" : "#AccountParameters",
         "type": "object",
         "properties": {
           "billing": {
-            "$ref": "http://www.openservicebrokerapi.org/v2/catalog/root/#BillingAccountParameters"
+            "$ref": "osb.v2:///fakeservice/v1#BillingAccountParameters"
           },
           "quota-account": {
             "description": "Quota account number used to charge use of fake bandwidth.",
@@ -615,10 +720,35 @@ To reference a subschema from within catalog, `$ref` becomes
         }
       }
     }
-  }]
+  }
 }
 ```
 
+```
+$ curl http://username:password@service-broker-url/v2/catalog/schemas/fakeservice/v1/bindings -H "X-Broker-API-Version: 2.13"
+```
+
+Returns:
+
+```
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "osb.v2:///fakeservice/v1/bindings",
+  "definitions": {
+    "$id" : "#AccountParameters",
+    "type": "object",
+    "properties": {
+      "billing": {
+        "$ref": "osb.v2:///fakeservice/v1#BillingAccountParameters"
+      },
+      "quota-account": {
+        "description": "Quota account number used to charge use of fake bandwidth.",
+        "type": "string"
+      }
+    }
+  }
+}
+```
 
 ### Adding a Service Broker to the Platform
 
