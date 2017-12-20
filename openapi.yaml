@@ -85,7 +85,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Object'
+                $ref: '#/components/schemas/AsyncOperation'
         '400':
           description: Bad Request
           content:
@@ -142,7 +142,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Object'
+                $ref: '#/components/schemas/AsyncOperation'
         '400': 
           description: Bad Request
           content:
@@ -559,6 +559,13 @@ components:
         space_id:
           type: string
           deprecated: true
+
+    AsyncOperation:
+      required:
+        - operation
+      properties:
+        operation:
+          type: string
 
     ServiceInstanceLastOperation:
       required:
