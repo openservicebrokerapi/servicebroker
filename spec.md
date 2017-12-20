@@ -295,6 +295,7 @@ The following HTTP Headers are defined for this operation:
 \* Headers with an asterisk are REQUIRED.
 
 #### cURL
+
 ```
 $ curl http://username:password@service-broker-url/v2/catalog -H "X-Broker-API-Version: 2.13"
 ```
@@ -406,58 +407,9 @@ The following rules apply if `parameters` is included anywhere in the catalog:
 * Platforms SHOULD be prepared to support later versions of JSON schema.
 * The `$schema` key MUST be present in the schema declaring the version of JSON
 schema being used unless the schema is composed of only a `$ref`.
-* Schemas MUST NOT contain any external references that are resolved to a URI
-  that requires additional fetching.
+* Schemas MUST NOT contain any external references except for schemas found
+  under `/schemas{/*}` (see [$ref Usage](#$ref-usage) for further information).
 * Schemas MUST NOT be larger than 64kB.
-
-
-###### $ref Usage
-
-Broker authors MAY leverage `$ref` and external JSON Schemas only if the JSON
-Schema refrenced can be found within the [JSON Schema](#json-schema) API
-endpoint. This mechanism is described in detail in the [JSON Schema](#json-schema) definition.
-
-interested in 
-
-It is likely that a Broker will have redundant definitions of `parameters` in
-the catalog. To reduce the payload size and simplfy updating definitions, the
-broker MAY provide a [schemas endpoint](#TBD). There is no broker authors can not make assumptions about how the end c
-
-The Platform will need to process the schemas refrenced catalog's `root_schemas` to fully qualify
-`$ref` object schema definitions.
-
-
-
-
-
-
-
-
-#TODO:
-
-##### Root Schema Objects
-
-| Response field | Type | Description |
-| --- | --- | --- |
-| $schema* | string | The JSON Schema declaring the version of JSON | schema being used. |
-| $id* | string | The JSON Schema id to be referenced from elsewhere in the catalog. |
-| definitions* | Dictonary-of-JSON Schema Object | A definition of a JSON Schema Object. |
-
-The following rules apply if `root_schemas` is included anywhere in the catalog:
-* Platforms MUST support at least
-[JSON Schema draft v4](http://json-schema.org/).
-* Platforms SHOULD be prepared to support later versions of JSON schema.
-* The `$schema` key MUST be present in the schema declaring the version of JSON
-schema being used.
-* Schemas MUST NOT contain any external references that are resolved to a URI
-  that requires additional fetching.
-* `$id` MUST be a unique URI in the root schemas array.
-* All `definitions` MUST define a unique `$id` for the Root Schema Object in
-  which it exists.
-* For `definitions`, `$id` MUST start with a `#`.
-
-To reference a subschema from within catalog, `$ref` becomes
-`{root_schema.$id}{definitions.$id}`. 
 
 
 ```
@@ -602,14 +554,71 @@ To reference a subschema from within catalog, `$ref` becomes
 }
 ```
 
+
 ## JSON Schemas
 
-#TODO: detail
+The JSON Schemas endpoint is used to define reusable definitions of JSON Schema
+Objects referenced throughout the [Catalog](#catalog-management). It will be the
+responsibility of the Platform to examine the response from the catalog to
+determine if the Broker is using `$ref` JSON Schemas. The Broker can signal to
+the Platform that JSON Schema components are supported by using the `osb_v2:`
+scheme. Components are a way to allow Platforms to only fetch sub-schemas.
+
+The root JSON Schema document can be found by getting the JSON Schemas
+endpoint without a `:component_path`.
+
+If the `osb_v2:` scheme is used by the broker, then the Platform MAY fetch the
+component JSON Schema directly using the following convention:
+
+Given: `osb_v2:///{:component_path}`, fetch `/v2/catalog/schemas/:component_path`
+and then the Controller is responsible to continue fetching any unknown
+`:component_path` URIs. Care must be taken by the platform to not fetch
+duplicate definitions.
+
+A Platform MAY ignore the `osb_v2:` scheme and just fetch `/v2/catalog/schemas`
+which will contain all sub-Schema documents. This reduces the complexity of the
+Platform but increases the potential payload size of the JSON Schemas.
+
+A Platform MUST fetch the root Schema document for any other `$ref` URIs found
+that do not match the `osb_v2:` scheme. If this happens the Platform has no use
+for the previously fetched sub-schemas and can just use the root schema. The
+Broker MUST provide the JSON Schema Object for the referenced URI in a subschema
+returned.
+
+Component Paths that use the scheme `osb_v2:` SHOULD be versioned, and the
+document behind the URI MUST not change after the catalog has been served to a
+Controller. 
+
+Platforms are able to leverage this JSON Schema by using or creating a library
+that supports pre-fetched JSON Schemas.
+
+Brokers MUST NOT allow duplicate JSON Pointers to be formed in any JSON Schema.
+
+A note about the scheme, at the time of this writing, there were no found client
+libraries that fully support the [JSON Schema](http://json-schema.org/) spec in
+the usage of URI for `$ref`. Only URL was supported in libraries. So as a
+compromise the `osb_v2:` scheme SHOULD be followed by three forward slashes
+(`///`). This indicates the authority is implied (authority is ''). 
+
+
+#### $ref Usage
+
+Brokers MAY leverage `$ref` and external JSON Schemas only if the JSON Schema
+references can be found within the [JSON Schema](#json-schema) API endpoint. $ref
+usage is assumed to be delegation (linking), not inclusion (replacement).
+Libraries that implement `$ref` content replacement may have adverse behaviors.
+
+For Brokers that support `$ref`:
+
+* MUST respond with all JSON Schema documents for `/schemas` requests that are
+  referenced in the catalog.
+* MUST respond to `/schemas/:component_id` requests. This response MAY be the
+  same as `/schemas`.
 
 ### Request
 
 #### Route
-`GET /v2/catalog/schema{/:component_path}`
+`GET /v2/catalog/schemas`
 
 #### Headers
 
@@ -622,8 +631,9 @@ The following HTTP Headers are defined for this operation:
 \* Headers with an asterisk are REQUIRED.
 
 #### cURL
+
 ```
-$ curl http://username:password@service-broker-url/v2/catalog -H "X-Broker-API-Version: 2.13"
+$ curl http://username:password@service-broker-url/v2/catalog/schemas -H "X-Broker-API-Version: 2.13"
 ```
 
 ### Response
@@ -632,16 +642,27 @@ $ curl http://username:password@service-broker-url/v2/catalog -H "X-Broker-API-V
 | --- | --- |
 | 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
 
-#TODO: define body objects a little.
 
 #### Body
 
+The root JSON Schema document is a complete collection of JSON Schemas
+leveraged by the Broker's catalog. The Platform will process this
+document before catalog `$ref` URIs map to definitions. The body MUST contain
+all JSON Schema object definitions found in the catalog and referenced
+sub-schemas.
 
-```
-$ curl http://username:password@service-broker-url/v2/catalog/schemas -H "X-Broker-API-Version: 2.13"
-```
+| Response field | Type | Description |
+| --- | --- | --- |
+| $schema* | string | The JSON Schema declaring the version of JSON schema being used. |
+| $id* | string | The top level JSON Schema ID for this document. |
+| definitions* | Dictionary-of-JSON Schema Object | A collection of JSON sub-Schema Objects. |
 
-Returns:
+Please refer to the [JSON Schema](http://json-schema.org/) specification for
+more details on JSON Schema.
+
+Note the same restriction on `$ref` applies to `/schemas`.
+
+\* Fields with an asterisk are REQUIRED.
 
 ```
 {
@@ -682,6 +703,40 @@ Returns:
   }
 }
 ```
+
+#### Route
+`GET /v2/catalog/schemas/:component_path`
+
+#### Headers
+
+The following HTTP Headers are defined for this operation:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
+
+\* Headers with an asterisk are REQUIRED.
+
+#### cURL
+```
+$ curl http://username:password@service-broker-url/v2/catalog/schemas/:component_path -H "X-Broker-API-Version: 2.13"
+```
+
+### Response
+
+| Status Code | Description |
+| --- | --- |
+| 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
+
+
+#### Body
+
+| Response field | Type | Description |
+| --- | --- | --- |
+| $schema* | string | The JSON Schema declaring the version of JSON | schema being used. |
+| $id* | string | The JSON Schema id to be referenced from elsewhere in the catalog. |
+
+\* Fields with an asterisk are REQUIRED.
 
 ```
 $ curl http://username:password@service-broker-url/v2/catalog/schemas/fakeservice/v1 -H "X-Broker-API-Version: 2.13"
@@ -749,6 +804,7 @@ Returns:
   }
 }
 ```
+
 
 ### Adding a Service Broker to the Platform
 
