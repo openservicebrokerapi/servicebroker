@@ -408,7 +408,7 @@ The following rules apply if `parameters` is included anywhere in the catalog:
 * The `$schema` key MUST be present in the schema declaring the version of JSON
 schema being used unless the schema is composed of only a `$ref`.
 * Schemas MUST NOT contain any external references except for schemas found
-  under `/schemas{/*}` (see [$ref Usage](#$ref-usage) for further information).
+  under `/schemas{/*}` (see [$ref Usage](#ref-usage) for further information).
 * Schemas MUST NOT be larger than 64kB.
 
 
@@ -604,7 +604,7 @@ compromise the `osb_v2:` scheme SHOULD be followed by three forward slashes
 #### $ref Usage
 
 Brokers MAY leverage `$ref` and external JSON Schemas only if the JSON Schema
-references can be found within the [JSON Schema](#json-schema) API endpoint. $ref
+references can be found within the [JSON Schemas](#json-schemas) API endpoint. $ref
 usage is assumed to be delegation (linking), not inclusion (replacement).
 Libraries that implement `$ref` content replacement may have adverse behaviors.
 
