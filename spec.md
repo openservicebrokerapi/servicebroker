@@ -572,7 +572,7 @@ If the `osb_v2:` scheme is used by the broker, then the Platform MAY fetch the
 component JSON Schema directly using the following convention:
 
 Given: `osb_v2:///{:component_path}`, fetch `/v2/catalog/schemas/:component_path`
-and then the Controller is responsible to continue fetching any unknown
+and then the Platform is responsible to continue fetching any unknown
 `:component_path` URIs. Care must be taken by the platform to not fetch
 duplicate definitions.
 
@@ -588,7 +588,7 @@ returned.
 
 Component Paths that use the scheme `osb_v2:` SHOULD be versioned, and the
 document behind the URI MUST not change after the catalog has been served to a
-Controller. 
+Platform. 
 
 Platforms are able to leverage this JSON Schema by using or creating a library
 that supports pre-fetched JSON Schemas.
