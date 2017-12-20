@@ -611,10 +611,10 @@ Libraries that implement `$ref` content replacement may have adverse behaviors.
 
 For Brokers that support `$ref`:
 
-* MUST respond with all JSON Schema documents for `/schemas` requests that are
-  referenced in the catalog.
-* MUST respond to `/schemas/:component_id` requests. This response MAY be the
-  same as `/schemas`.
+  * MUST respond with all JSON Schema documents for `/schemas` requests that are
+    referenced in the catalog.
+  * MAY provide `$ref`'s with the `osb_v2:` scheme, then
+    * MUST respond to `/schemas/:component_id` requests.
 
 ### Request
 
