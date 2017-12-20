@@ -409,7 +409,7 @@ schema being used.
   "services": [{
     "name": "fake-service",
     "id": "acb56d7c-XXXX-XXXX-XXXX-feb140a59a66",
-    "description": "fake service",
+    "description": "A fake service.",
     "tags": ["no-sql", "relational"],
     "requires": ["route_forwarding"],
     "bindable": true,
@@ -433,7 +433,7 @@ schema being used.
     "plans": [{
       "name": "fake-plan-1",
       "id": "d3031751-XXXX-XXXX-XXXX-a42377d3320e",
-      "description": "Shared fake Server, 5tb persistent disk, 40 max concurrent connections",
+      "description": "Shared fake Server, 5tb persistent disk, 40 max concurrent connections.",
       "free": false,
       "metadata": {
         "max_storage_tb": 5,
@@ -502,7 +502,7 @@ schema being used.
     }, {
       "name": "fake-plan-2",
       "id": "0f4008b5-XXXX-XXXX-XXXX-dace631cd648",
-      "description": "Shared fake Server, 5tb persistent disk, 40 max concurrent connections. 100 async",
+      "description": "Shared fake Server, 5tb persistent disk, 40 max concurrent connections. 100 async.",
       "free": false,
       "metadata": {
         "max_storage_tb": 5,
@@ -609,7 +609,7 @@ Entity` error and the following body (see [Service Broker Errors](#service-broke
 ```
 {
   "error": "ConcurrencyError",
-  "description": "Another operation for this Service Instance is in progress"
+  "description": "Another operation for this Service Instance is in progress."
 }
 ```
 

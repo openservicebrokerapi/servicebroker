@@ -39,4 +39,7 @@ echo Verify tables
 echo Verify terminology and RFC keywords
 "${REPODIR}/tools/verify-phrases.sh" -v "${REPODIR}"/spec.md "${REPODIR}"/profile.md || rc=1
 
+echo Verify description json fields
+"${REPODIR}/tools/verify-descriptions.sh" -v "${REPODIR}"/spec.md "${REPODIR}"/profile.md || rc=1
+
 exit $rc
