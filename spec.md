@@ -573,7 +573,7 @@ component JSON Schema directly using the following convention:
 
 Given: `osb_v2:///{:component_path}`, fetch `/v2/catalog/schemas/:component_path`
 and then the Platform is responsible to continue fetching any unknown
-`:component_path` URIs. Care must be taken by the platform to not fetch
+`:component_path` URIs. Care ought to be taken by the platform to not fetch
 duplicate definitions.
 
 A Platform MAY ignore the `osb_v2:` scheme and just fetch `/v2/catalog/schemas`
@@ -587,7 +587,7 @@ Broker MUST provide the JSON Schema Object for the referenced URI in a subschema
 returned.
 
 Component Paths that use the scheme `osb_v2:` SHOULD be versioned, and the
-document behind the URI MUST not change after the catalog has been served to a
+document behind the URI MUST NOT change after the catalog has been served to a
 Platform. 
 
 Platforms are able to leverage this JSON Schema by using or creating a library
@@ -607,7 +607,7 @@ compromise the `osb_v2:` scheme SHOULD be followed by three forward slashes
 Brokers MAY leverage `$ref` and external JSON Schemas only if the JSON Schema
 references can be found within the [JSON Schemas](#json-schemas) API endpoint. $ref
 usage is assumed to be delegation (linking), not inclusion (replacement).
-Libraries that implement `$ref` content replacement may have adverse behaviors.
+Libraries that implement `$ref` content replacement result in adverse behaviors.
 
 For Brokers that support `$ref`:
 
