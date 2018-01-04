@@ -62,7 +62,7 @@ The following properties MUST appear within the JSON encoded `value`:
 Platforms MAY include additional properties.
 
 For example, a `value` of:
-```
+```json
 {
   "user_id": "683ea748-3092-4ff4-b656-39cacc4d5360"
 }
@@ -88,7 +88,7 @@ The following properties MUST appear within the JSON encoded `value`:
 Platforms MAY include additional properties.
 
 For example, a `value` of:
-```
+```json
 {
   "username": "duke",
   "uid": "c2dde242-5ce4-11e7-988c-000c2946f14f",
@@ -281,67 +281,65 @@ For example:
 
 ### Example Service Broker Response Body
 
-The example below contains a catalog of one service, having one service plan.
+The example below contains a catalog of one service, having one Service Plan.
 Of course, a Service Broker can offering a catalog of many services, each having
 many plans.
 
-```
+```json
 {
-   "services":[
-      {
+  "services":[
+    {
       "id":"766fa866-a950-4b12-adff-c11fa4cf8fdc",
-         "name":"cloudamqp",
-         "description":"Managed HA RabbitMQ servers in the cloud",
-         "requires":[
-
-         ],
-         "tags":[
-            "amqp",
-            "rabbitmq",
-            "messaging"
-         ],
-         "metadata":{
-            "displayName":"CloudAMQP",
-            "imageUrl":"https://d33na3ni6eqf5j.cloudfront.net/app_resources/18492/thumbs_112/img9069612145282015279.png",
-            "longDescription":"Managed, highly available, RabbitMQ clusters in the cloud",
-            "providerDisplayName":"84codes AB",
-            "documentationUrl":"http://docs.cloudfoundry.com/docs/dotcom/marketplace/services/cloudamqp.html",
-            "supportUrl":"http://www.cloudamqp.com/support.html"
-         },
-         "dashboard_client":{
-            "id": "p-mysql-client",
-            "secret": "p-mysql-secret",
-            "redirect_uri": "http://p-mysql.example.com/auth/create"
-         },
-         "plans":[
-            {
-               "id":"024f3452-67f8-40bc-a724-a20c4ea24b1c",
-               "name":"bunny",
-               "description":"A mid-sided plan",
-               "metadata":{
-                  "bullets":[
-                     "20 GB of messages",
-                     "20 connections"
-                  ],
-                  "costs":[
-                     {
-                        "amount":{
-                           "usd":99.0
-                        },
-                        "unit":"MONTHLY"
-                     },
-                     {
-                        "amount":{
-                           "usd":0.99
-                        },
-                        "unit":"1GB of messages over 20GB"
-                     }
-                  ],
-                  "displayName":"Big Bunny"
-               }
-            }
-         ]
-      }
-   ]
+      "name":"cloudamqp",
+      "description":"Managed HA RabbitMQ servers in the cloud.",
+      "requires":[],
+      "tags":[
+        "amqp",
+        "rabbitmq",
+        "messaging"
+      ],
+      "metadata":{
+        "displayName":"CloudAMQP",
+        "imageUrl":"https://d33na3ni6eqf5j.cloudfront.net/app_resources/18492/thumbs_112/img9069612145282015279.png",
+        "longDescription":"Managed, highly available, RabbitMQ clusters in the cloud.",
+        "providerDisplayName":"84codes AB",
+        "documentationUrl":"http://docs.cloudfoundry.com/docs/dotcom/marketplace/services/cloudamqp.html",
+        "supportUrl":"http://www.cloudamqp.com/support.html"
+      },
+      "dashboard_client":{
+        "id":"p-mysql-client",
+        "secret":"p-mysql-secret",
+        "redirect_uri":"http://p-mysql.example.com/auth/create"
+      },
+      "plans":[
+        {
+          "id":"024f3452-67f8-40bc-a724-a20c4ea24b1c",
+          "name":"bunny",
+          "description":"A mid-sided plan.",
+          "metadata":{
+            "bullets":[
+              "20 GB of messages",
+              "20 connections"
+            ],
+            "costs":[
+              {
+                "amount":{
+                  "usd":99.0
+                },
+                "unit":"MONTHLY"
+              },
+              {
+                "amount":{
+                  "usd":0.99
+                },
+                "unit":"1GB of messages over 20GB"
+              }
+            ],
+            "displayName":"Big Bunny"
+          }
+        }
+      ]
+    }
+  ]
 }
 ```

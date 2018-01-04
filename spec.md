@@ -29,8 +29,8 @@
 
 ## API Overview
 
-The Service Broker API defines an HTTP(S) interface between Platforms and Service
-Brokers.
+The Open Service Broker API defines an HTTP(S) interface between Platforms and
+Service Brokers.
 
 The Service Broker is the component of the service that implements the Service
 Broker API, for which a Platform is a client. Service Brokers are responsible
@@ -113,8 +113,8 @@ that do not understand them.
 
 * Added [`schemas`](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#schema-object)
   field to services in the catalog that Service Brokers can use to declare the
-  configuration parameters their service accepts for creating a service
-  instance, updating a Service Instance and creating a Service Binding.
+  configuration parameters their service accepts for creating a Service
+  Instance, updating a Service Instance and creating a Service Binding.
 * Added [`context`](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#binding)
   field to request body for creating a Service Binding.
 * Added [warning text](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#url-properties)
@@ -136,8 +136,8 @@ For changes in older versions, see the [release notes](https://github.com/opense
 ## API Version Header
 
 Requests from the Platform to the Service Broker MUST contain a header that
-declares the version number of the Service Broker API that the Platform will
-use:
+declares the version number of the  Open Service Broker API that the Platform
+will use:
 
 `X-Broker-API-Version: 2.13`
 
@@ -409,7 +409,7 @@ schema being used.
   "services": [{
     "name": "fake-service",
     "id": "acb56d7c-XXXX-XXXX-XXXX-feb140a59a66",
-    "description": "fake service",
+    "description": "A fake service.",
     "tags": ["no-sql", "relational"],
     "requires": ["route_forwarding"],
     "bindable": true,
@@ -433,7 +433,7 @@ schema being used.
     "plans": [{
       "name": "fake-plan-1",
       "id": "d3031751-XXXX-XXXX-XXXX-a42377d3320e",
-      "description": "Shared fake Server, 5tb persistent disk, 40 max concurrent connections",
+      "description": "Shared fake Server, 5tb persistent disk, 40 max concurrent connections.",
       "free": false,
       "metadata": {
         "max_storage_tb": 5,
@@ -502,7 +502,7 @@ schema being used.
     }, {
       "name": "fake-plan-2",
       "id": "0f4008b5-XXXX-XXXX-XXXX-dace631cd648",
-      "description": "Shared fake Server, 5tb persistent disk, 40 max concurrent connections. 100 async",
+      "description": "Shared fake Server, 5tb persistent disk, 40 max concurrent connections. 100 async.",
       "free": false,
       "metadata": {
         "max_storage_tb": 5,
@@ -609,7 +609,7 @@ Entity` error and the following body (see [Service Broker Errors](#service-broke
 ```
 {
   "error": "ConcurrencyError",
-  "description": "Another operation for this Service Instance is in progress"
+  "description": "Another operation for this Service Instance is in progress."
 }
 ```
 
@@ -898,12 +898,34 @@ The following HTTP Headers are defined for this operation:
 | context | object | Contextual data under which the Service Instance is created. |
 | service_id* | string | MUST be the ID of a service from the catalog for this Service Broker. |
 | plan_id | string | If present, MUST be the ID of a plan from the service that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the plan of the instance as a result of this request. |
-| parameters | object | Configuration options for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. If this field is not present in the request message, then the Service Broker MUST NOT change the parameters of the instance as a result of this request. |
-| previous_values | object | Information about the Service Instance prior to the update. |
-| previous_values.service_id | string | Deprecated; determined to be unnecessary as the value is immutable. If present, it MUST be the ID of the service for the Service Instance. |
-| previous_values.plan_id | string | If present, it MUST be the ID of the plan prior to the update. |
-| previous_values.organization_id | string | Deprecated as it was redundant information. Organization for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the organization specified for the Service Instance. |
-| previous_values.space_id | string | Deprecated as it was redundant information. Space for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the space specified for the Service Instance. |
+| parameters | object | Configuration options for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. See "Note" below. |
+| [previous_values](#previous-values-object) | object | Information about the Service Instance prior to the update. |
+
+\* Fields with an asterisk are REQUIRED.
+
+##### Previous Values Object
+
+| Request Field | Type | Description |
+| --- | --- | --- |
+| service_id | string | Deprecated; determined to be unnecessary as the value is immutable. If present, it MUST be the ID of the service for the Service Instance. |
+| plan_id | string | If present, it MUST be the ID of the plan prior to the update. |
+| organization_id | string | Deprecated as it was redundant information. Organization for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the organization specified for the Service Instance. |
+| space_id | string | Deprecated as it was redundant information. Space for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the space specified for the Service Instance. |
+
+Note: The `parameters` specified are expected to be the values specified
+by an end-user. Whether the user chooses to include the complete set of
+configuration options or just a subset (or even none) is their choice. How a
+Service Broker interprets these parameters (including the absence of any
+particular parameter) is out of scope of this specification - with the
+exception that if this field is not present in the request then the
+Service Broker MUST NOT change the parameters of the instance as a result of
+this request.
+
+Since some Service Instances will provide a `dashboard_url`, it is possible
+that a user has modified some of these parameters via the dashboard and
+therefore the Platform might not be aware of these changes. For this reason,
+Platforms SHOULD NOT include any parameters on the request that
+the user did not explicitly specify in their request for the update.
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -1264,7 +1286,7 @@ Brokers.
 
 | Query-String Field | Type | Description |
 | --- | --- | --- |
-| service_id* | string | MUST be the ID of the service associated with the binding being delete. |
+| service_id* | string | MUST be the ID of the service associated with the binding being deleted. |
 | plan_id* | string | MUST be the ID of the plan associated with the binding being deleted. |
 
 \* Query parameters with an asterisk are REQUIRED.
