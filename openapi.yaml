@@ -7,7 +7,7 @@ openapi: "3.0.0"
 
 info:
   title: Open Service Broker API
-  description: The Service Broker API defines an HTTP(S) interface between Platforms and Service Brokers.
+  description: The Open Service Broker API defines an HTTP(S) interface between Platforms and Service Brokers.
   license: 
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -26,7 +26,7 @@ servers:
 paths:
   /v2/catalog:
     get:
-      summary: get the service catalog
+      summary: get the catalog of services that the service broker offers
       tags:
         - Catalog
       operationId: catalog.get
@@ -85,7 +85,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AsyncOperation'
+                $ref: '#/components/schemas/ServiceInstanceProvision'
         '400':
           description: Bad Request
           content:
@@ -97,7 +97,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Object'
+                $ref: '#/components/schemas/Error'
         '422':
           description: Unprocessable Entity
           content:
@@ -234,12 +234,12 @@ paths:
             type: string
         - name: service_id
           in: query
-          description: id of the service being used
+          description: id of the service associated with the instance
           schema:
             type: string
         - name: plan_id
           in: query
-          description: id of the plan being used
+          description: id of the plan associated with the instance
           schema:
             type: string
         - name: operation
@@ -278,13 +278,13 @@ paths:
         - $ref: '#/components/parameters/OriginatingIdentity'
         - name: instance_id
           in: path
-          description: instance id being bound
+          description: instance id of instance to create a binding on
           required: true
           schema:
             type: string
         - name: binding_id
           in: path
-          description: binding id being bound
+          description: binding id of binding to create
           required: true
           schema:
             type: string
@@ -348,13 +348,13 @@ paths:
             type: string
         - name: service_id
           in: query
-          description: id of the service associated with the binding being deleted
+          description: id of the service associated with the instance for which a binding is being deleted
           required: true
           schema:
             type: string
         - name: plan_id
           in: query
-          description: id of the plan associated with the binding being deleted
+          description: id of the plan associated with the instance for which a binding is being deleted
           required: true
           schema:
             type: string
@@ -434,7 +434,7 @@ components:
         bindable:
           type: boolean
         metadata:
-          $ref: '#/components/schemas/Object'
+          $ref: '#/components/schemas/Metadata'
         dashboard_client:
           $ref: '#/components/schemas/DashboardClient'
         plan_updateable:
@@ -466,7 +466,7 @@ components:
         description:
           type: string
         metadata:
-          $ref: '#/components/schemas/Object'
+          $ref: '#/components/schemas/Metadata'
         free:
           type: boolean
           default: true
@@ -514,7 +514,7 @@ components:
         plan_id:
           type: string
         context:
-          $ref: '#/components/schemas/Object'
+          $ref: '#/components/schemas/Context'
         organization_guid:
           type: string
           deprecated: true
@@ -536,7 +536,7 @@ components:
         - service_id
       properties:
         context:
-          $ref: '#/components/schemas/Object'
+          $ref: '#/components/schemas/Context'
         service_id:
           type: string
         plan_id:
@@ -561,8 +561,6 @@ components:
           deprecated: true
 
     AsyncOperation:
-      required:
-        - operation
       properties:
         operation:
           type: string
@@ -651,6 +649,14 @@ components:
           type: string
         mount_config:
           $ref: '#/components/schemas/Object'
+
+    Context:
+      description: "See [Context Conventions](https://github.com/openservicebrokerapi/servicebroker/blob/master/profile.md#context-object) for more details."
+      type: object
+
+    Metadata:
+      description: "See [Service Metadata Conventions](https://github.com/openservicebrokerapi/servicebroker/blob/master/profile.md#service-metadata) for more details."
+      type: object
 
     Object:
       type: object
