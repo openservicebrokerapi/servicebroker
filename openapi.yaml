@@ -584,7 +584,7 @@ components:
         - plan_id
       properties:
         context:
-          $ref: '#/components/schemas/Object'
+          $ref: '#/components/schemas/Context'
         service_id:
           type: string
         plan_id:
