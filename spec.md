@@ -165,10 +165,10 @@ Brokers agree on other methods of authentication.
 
 An alternative to carrying basic authentication on every request is to utilize a
 bearer token via the `Authorization: Bearer` header.  When a bearer token is
-used additional processes are often required to deal with token expiration and
-renewal.  These are details not covered by this specification and must be worked
-out by the Platform.  If bearer tokens are used communication with the Broker
-MUST be secured over TLS.
+used additional processes are often needed to deal with token expiration and
+renewal.  These are details not covered by this specification and need to be
+worked out by the Platform.  If bearer tokens are used communication with the
+Broker MUST be secured over TLS.
 
 If authentication is used, the Service Broker MUST authenticate the request
 using the predetermined authentication mechanism and MUST return a `401
