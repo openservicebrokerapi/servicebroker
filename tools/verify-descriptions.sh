@@ -14,17 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This script will scan all md (markdown) files for bad references.
-# It will look for strings of the form [...](...) and make sure that
-# the (...) points to either a valid file in the source tree or, in the
-# case of it being an http url, it'll make sure we don't get a 404.
+# This script will scan all md (markdown) files for json description
+# fields that do not conform to the correct syntax patterns.
 #
-# Usage: verify-links.sh [ dir | file ... ]
+# Usage: verify-descriptions.sh [ dir | file ... ]
 # default arg is root of our source tree
 
 set -o errexit
 set -o nounset
 set -o pipefail
+
+trap clean EXIT
+err=tmpCC-${RANDOM}
+function clean {
+  rm -f ${err}*
+}
 
 REPO_ROOT=$( cd $(dirname "${BASH_SOURCE}")/.. && pwd)
 
@@ -40,7 +44,7 @@ while [[ "$#" != "0" && "$1" == "-"* ]]; do
       d) debug="1" ; verbose="1" ;;
       -) stop="1" ;;
       ?) echo "Usage: $0 [OPTION]... [DIR|FILE]..."
-         echo "Verify all RFC2119 keywords in files."
+         echo "Verify all 'description' fields have correct syntax."
          echo
          echo "  -v   show each file as it is checked"
          echo "  -?   show this help text"
@@ -61,16 +65,6 @@ done
 # echo debug:$debug
 # echo args:$*
 
-function contains() {
-  rc=0
-  echo "$2" | grep -qi "\([[:space:]]\|^\)$3\([[:space:]]\|$\)" || return 0
-  echo "$2" | grep -q "\([[:space:]]\|^\)$3\([[:space:]]\|$\)" || {
-    echo $file - $1: Use \'$3\'
-	rc=1
-  }
-  return $rc
-}
-
 arg=""
 
 if [ "$*" == "" ]; then
@@ -79,7 +73,16 @@ fi
 
 Files=$(find -L $* $arg \( -name "*.md" -o -name "*.htm*" \) | sort)
 
-rc=0
+function checkFile {
+  # Prepend each line of the file with its line number.
+  # Catch "description" and "longDescription"
+  cat -n ${file} | while read num line ; do
+    echo "${line}" | \
+	grep -q '"[a-zA-Z]*[dD]escription" *: *".*[^\.]"' > /dev/null || continue
+
+    echo "${file} - ${num}: Missing period at end of description property"
+  done
+}
 
 for file in ${Files}; do
   # echo scanning $file
@@ -87,16 +90,7 @@ for file in ${Files}; do
 
   [[ -n "$verbose" ]] && echo "> $file"
 
-  # TODO: there is a bug in this code, if the rtc term you are looking for is
-  # two words and it wraps to the next line, this will not catch the case.
-  lineNum=0
-  cat ${file} | while read line; do 
-    ((lineNum++)) || true
-
-	for rfc in MUST "MUST NOT" REQUIRED SHALL "SHALL NOT" SHOULD "SHOULD NOT" \
-	           RECOMMENDED MAY OPTIONAL ; do
-	  contains $lineNum "${line}" "${rfc}"
-    done
-  done
+  checkFile $file | tee -a ${err}
 done
-exit $rc
+
+if [ -s ${err} ]; then exit 1 ; fi

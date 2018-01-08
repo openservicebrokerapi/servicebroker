@@ -281,7 +281,7 @@ For example:
 
 ### Example Service Broker Response Body
 
-The example below contains a catalog of one service, having one service plan.
+The example below contains a catalog of one service, having one Service Plan.
 Of course, a Service Broker can offering a catalog of many services, each having
 many plans.
 
@@ -291,7 +291,7 @@ many plans.
     {
       "id":"766fa866-a950-4b12-adff-c11fa4cf8fdc",
       "name":"cloudamqp",
-      "description":"Managed HA RabbitMQ servers in the cloud",
+      "description":"Managed HA RabbitMQ servers in the cloud.",
       "requires":[],
       "tags":[
         "amqp",
@@ -301,7 +301,7 @@ many plans.
       "metadata":{
         "displayName":"CloudAMQP",
         "imageUrl":"https://d33na3ni6eqf5j.cloudfront.net/app_resources/18492/thumbs_112/img9069612145282015279.png",
-        "longDescription":"Managed, highly available, RabbitMQ clusters in the cloud",
+        "longDescription":"Managed, highly available, RabbitMQ clusters in the cloud.",
         "providerDisplayName":"84codes AB",
         "documentationUrl":"http://docs.cloudfoundry.com/docs/dotcom/marketplace/services/cloudamqp.html",
         "supportUrl":"http://www.cloudamqp.com/support.html"
@@ -315,7 +315,7 @@ many plans.
         {
           "id":"024f3452-67f8-40bc-a724-a20c4ea24b1c",
           "name":"bunny",
-          "description":"A mid-sided plan",
+          "description":"A mid-sided plan.",
           "metadata":{
             "bullets":[
               "20 GB of messages",
