@@ -34,7 +34,7 @@ echo Verifying hrefs
 "${REPODIR}/tools/verify-links.sh" -v "${REPODIR}" || rc=1
 
 echo Verify tables
-"${REPODIR}/tools/verify-tables.sh" "${REPODIR}"/spec.md "${REPODIR}"/profile.md || rc=1
+"${REPODIR}/tools/verify-tables.sh" -v "${REPODIR}"/spec.md "${REPODIR}"/profile.md || rc=1
 
 echo Verify terminology and RFC keywords
 "${REPODIR}/tools/verify-phrases.sh" -v "${REPODIR}"/spec.md "${REPODIR}"/profile.md || rc=1
