@@ -1,7 +1,7 @@
 # This is the Open API interface for Open Service Broker API. Every attempt will
 # be made to make the Open API version of OSB API accurately represent the
 # written specification. If the spec and this document conflict, the spec is
-# the authroity.
+# the authority.
 
 openapi: "3.0.0"
 
@@ -406,6 +406,7 @@ components:
             $ref: '#/components/schemas/Service'
 
     Service:
+      type: object
       required:
         - name
         - id
@@ -445,6 +446,7 @@ components:
             $ref: '#/components/schemas/Plan'
 
     DashboardClient:
+      type: object
       properties:
         id:
             type: string
@@ -454,6 +456,7 @@ components:
             type: string
 
     Plan:
+      type: object
       required:
         - id
         - name
@@ -476,6 +479,7 @@ components:
           $ref: '#/components/schemas/SchemasObject'
 
     SchemasObject:
+      type: object
       properties:
         service_instance:
           $ref: '#/components/schemas/ServiceInstanceSchemaObject'
@@ -483,6 +487,7 @@ components:
           $ref: '#/components/schemas/ServiceBindingSchemaObject'
 
     ServiceInstanceSchemaObject:
+      type: object
       properties:
         create:
           $ref: '#/components/schemas/SchemaParameters'
@@ -490,11 +495,13 @@ components:
           $ref: '#/components/schemas/SchemaParameters'
 
     ServiceBindingSchemaObject:
+      type: object
       properties:
         create:
           $ref: '#/components/schemas/SchemaParameters'
 
     SchemaParameters:
+      type: object
       properties:
         parameters: 
           $ref: '#/components/schemas/JSONSchemaObject'
@@ -503,6 +510,7 @@ components:
       type: object
 
     ServiceInstanceProvisionRequest:
+      type: object
       required:
         - service_id
         - plan_id
@@ -525,6 +533,7 @@ components:
           $ref: '#/components/schemas/Object'
 
     ServiceInstanceProvision:
+      type: object
       properties:
         dashboard_url:
           type: string
@@ -532,6 +541,7 @@ components:
           type: string # could be a link object to last operation
 
     ServiceInstanceUpdateRequest:
+      type: object
       required:
         - service_id
       properties:
@@ -547,6 +557,7 @@ components:
           $ref: '#/components/schemas/ServiceInstancePreviousValues'
 
     ServiceInstancePreviousValues:
+      type: object
       properties:
         service_id:
           type: string
@@ -561,11 +572,13 @@ components:
           deprecated: true
 
     AsyncOperation:
+      type: object
       properties:
         operation:
           type: string
 
     ServiceInstanceLastOperation:
+      type: object
       required:
         - state
       properties:
@@ -579,6 +592,7 @@ components:
           type: string
 
     ServiceBindingRequest:
+      type: object
       required:
         - service_id
         - plan_id
@@ -598,6 +612,7 @@ components:
           $ref: '#/components/schemas/Object'
 
     ServiceBindingResouceObject:
+      type: object
       properties:
         app_guid:
           type: string
@@ -605,6 +620,7 @@ components:
           type: string
 
     ServiceBinding:
+      type: object
       properties:
         credentials:
           $ref: '#/components/schemas/Object'
@@ -618,6 +634,7 @@ components:
             $ref: '#/components/schemas/ServiceBindingVolumeMount'
 
     ServiceBindingVolumeMount:
+      type: object
       required:
         - driver
         - container_dir
@@ -642,6 +659,7 @@ components:
           $ref: '#/components/schemas/ServiceBindingVolumeMountDevice'
 
     ServiceBindingVolumeMountDevice:
+      type: object
       required:
         - volume_id
       properties:
@@ -662,6 +680,7 @@ components:
       type: object
 
     Error: 
+      type: object
       properties:
         error:
           type: string
