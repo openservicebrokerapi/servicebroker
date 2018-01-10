@@ -390,10 +390,9 @@ how Platforms might expose these values to their users.
 
 ##### JSON Schema Objects
 
-A Platform will find it useful for the Broker to define exactly what is expected
-when making requests inside opaque input request objects and unspecified output
-responses, that mechanism is JSON Schema Object definitions. This allows Broker
-authors to programmatically define inputs and outputs for applicable requests.
+Platforms MAY be able to provide a better user experience if Service Brokers can
+programmatically define the inputs and outputs of requests using JSON Schema
+Object definitions.
 
 | Response field | Type | Description |
 | --- | --- | --- |
