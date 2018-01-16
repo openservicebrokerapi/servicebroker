@@ -715,9 +715,9 @@ For success responses, the following fields are valid.
 }
 ```
 
-If the successful response includes a `state` of `failed` then the Platform
-MUST send a deprovision request to the Service Broker to prevent an orphan
-being created on the Service Broker.
+If the successful response includes a `state` of `failed`, then the Platform
+MUST clean up the failed resource as per the [Provisioning Failure
+Cleanup](#failure-cleanup) section.
 
 ### Polling Interval and Duration
 
@@ -818,12 +818,10 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 409 Conflict | MUST be returned if a Service Instance with the same id already exists but with different attributes. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Service Broker Errors](#service-broker-errors). |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous provisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The expected response body is: `{ "error": "AsyncRequired", "description": "This Service Plan requires client support for asynchronous service operations." }`, as described below (see [Service Broker Errors](#service-broker-errors). |
 
-Responses with any other status code will be interpreted as a failure and a
-deprovision request MUST be sent to the Service Broker to prevent an orphan
-being created on the Service Broker.
-
-Service Brokers can include a user-facing message in the `description` field;
-for details see [Service Broker Errors](#service-broker-errors).
+Request timeouts, responses with any other status code, or malformed response
+bodies will be interpreted as failures. Service Brokers can include a user-facing
+message in the `description` field; for details see [Service Broker
+Errors](#service-broker-errors).
 
 #### Body
 
@@ -848,6 +846,16 @@ error responses, see [Service Broker Errors](#service-broker-errors).
   "operation": "task_10"
 }
 ```
+
+### Failure Cleanup
+
+After an unsuccessful provision attempt, a Service Broker MAY have stray
+resources persisted as a side effect. In order to prevent resource leaks, if a
+provision request has been sent to a Service Broker, then the Platform MUST send
+a deprovision request at some point before cleaning up its internal
+representation of the Service Instance. If the deprovision attempt fails, the
+Platform SHOULD keep retrying until the Service Broker responds with a success
+or the Platform reaches its internal retry limit.
 
 ## Updating a Service Instance
 
@@ -1182,9 +1190,8 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 409 Conflict | MUST be returned if a Service Binding with the same id, for the same Service Instance, already exists but with different parameters. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Service Broker Errors](#service-broker-errors). Additionally, if the Service Broker rejects the request due to a concurrent request to create a binding for the same Service Instance, then this error MUST be returned (see [Blocking Operations](#blocking-operations)). |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker requires that `app_guid` be included in the request body. The expected response body is: `{ "error": "RequiresApp", "description": "This service supports generation of credentials through binding an application only." }` (see [Service Broker Errors](#service-broker-errors). |
 
-Responses with any other status code will be interpreted as a failure and an
-unbind request MUST be sent to the Service Broker to prevent an orphan being
-created on the Service Broker. Service Brokers can include a user-facing
+Request timeouts, responses with any other status code, or malformed response
+bodies will be interpreted as failures. Service Brokers can include a user-facing
 message in the `description` field; for details see [Service Broker
 Errors](#service-broker-errors).
 
@@ -1257,6 +1264,16 @@ can be mounted on all app instances simultaneously.
   }]
 }
 ```
+
+### Failure Cleanup
+
+After an unsuccessful bind attempt, a Service Broker MAY have stray resources
+persisted as a side effect. In order to prevent resource leaks, if a bind request
+has been sent to a Service Broker, then the Platform MUST send an unbind request
+at some point before cleaning up its internal representation of the Service
+Binding. If the unbind attempt fails, the Platform SHOULD keep retrying until the
+Service Broker responds with a success or the Platform reaches its internal
+retry limit.
 
 ## Unbinding
 
@@ -1459,6 +1476,10 @@ the Service Broker MAY use a different `description` string if appropriate, for
 example, to specify a description in a different language.
 
 ## Orphans
+
+*Deprecated. Refer to the failure cleanup sections for
+[Provisioning](#failure-cleanup) and [Binding](#failure-cleanup-1) for guidance
+on cleaning up orphaned resources.*
 
 The Platform is the source of truth for Service Instances and bindings. Service
 Brokers are expected to have successfully provisioned all the Service Instances
