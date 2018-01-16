@@ -14,7 +14,7 @@ syntax of the API, can be suggested via a Github Issue or Pull Request (PR).
 
 If there is a need for some discussion around how best to
 address the concern then opening an Issue, prior to doing the work to develop
-a PR, would be best.  These minor issues do not need a formal review, per the
+a PR, would be best. These minor issues do not need a formal review, per the
 [process](#prissue-review-process) described below, rather the issue
 should be used to come to a consensus around a PR that will eventually be
 submitted.
@@ -30,7 +30,7 @@ Either way, once a PR is submitted it will be reviewed per the
 New design proposals to the API spec should be submitted by opening a
 Github issue with a link to a Google Doc containing the proposal. Proposals
 should focus primarily on motivation, problem statement, and use cases before
-suggesting a solution or change.  Collaboration on the design, fleshing out of
+suggesting a solution or change. Collaboration on the design, fleshing out of
 use cases, etc can occur as comment discussions in the Google Doc, as well
 as on our weekly calls.
 
@@ -106,7 +106,7 @@ described below:
 - A proposal requires at least 4 "LGTM" comments from at least 4 different
   organizations to be approved.
 - Once a "design change" issue is approved, it will be tagged with an
-  "proposal finalized" label.  This indicates that it is ready to be
+  "proposal finalized" label. This indicates that it is ready to be
   implemented by a platform developer, see the [process](#contributing) above.
 - Once a Pull Request is approved, it will be merged into the 'master' branch.
 

@@ -338,7 +338,7 @@ it is important that these values be unique for all services that have been
 registered with a Platform. To achieve this goal service providers often will
 prefix their service names with some unique value (such as the name of their
 company). Additionally, some Platforms might modify the service names before
-presenting them to their users.  This specification places no requirements on
+presenting them to their users. This specification places no requirements on
 how Platforms might expose these values to their users.
 
 ##### Dashboard Client Object
@@ -601,7 +601,7 @@ operation.
 ## Blocking Operations
 
 Service Brokers do not have to support concurrent requests that mutate the
-same resource.  If a Service Broker receives a request that it is not
+same resource. If a Service Broker receives a request that it is not
 able to process due to other activity being done on that resource then the
 Service Broker MUST reject the request with a HTTP `422 Unprocessable
 Entity` error and the following body (see [Service Broker Errors](#service-broker-errors):
