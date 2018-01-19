@@ -3,20 +3,27 @@
 ![Open Service Broker API](https://github.com/openservicebrokerapi/servicebroker/blob/master/logo.png?raw=true)
 
 ## Latest Release: v2.13
-[Read the specification](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md)
+[Specification](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md)
 
-[Read the profile](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/profile.md)
+[OpenAPI doc](http://petstore.swagger.io/?url=https://raw.githubusercontent.com/openservicebrokerapi/servicebroker/v2.13/openapi.yaml)
 
-[View the workflows](diagram.md)
+[Profile](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/profile.md)
 
-[Release Notes for past versions](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/release-notes.md)
+[Workflows](diagram.md)
 
-## Working Changes
-[Read the working changes to the documentation](https://github.com/openservicebrokerapi/servicebroker/tree/master)
+[Release notes](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/release-notes.md)
+
+## Working Changes (might contain changes that are not yet released)
+[Specification](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md)
+
+[OpenAPI doc](http://petstore.swagger.io/?url=https://raw.githubusercontent.com/openservicebrokerapi/servicebroker/master/openapi.yaml)
+
+[Profile](https://github.com/openservicebrokerapi/servicebroker/blob/master/profile.md)
 
 [Roadmap and release planning](https://github.com/openservicebrokerapi/servicebroker/projects/1)
 
-These changes have been accepted by the working group for the next version of the specification, however are still subject to change.
+Changes in these documents have been accepted by the working group for the next
+version of the specification, however are still subject to change.
 
 ## Communications
 
