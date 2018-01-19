@@ -8,10 +8,10 @@ openapi: "3.0.0"
 info:
   title: Open Service Broker API
   description: The Open Service Broker API defines an HTTP(S) interface between Platforms and Service Brokers.
-  license: 
+  license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  contact: 
+  contact:
     name: Open Service Broker API
     url: https://www.openservicebrokerapi.org/
     email: open-service-broker-api@googlegroups.com
@@ -85,7 +85,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServiceInstanceProvision'
+                $ref: '#/components/schemas/ServiceInstanceAsyncProvision'
         '400':
           description: Bad Request
           content:
@@ -131,25 +131,25 @@ paths:
             schema:
               $ref: '#/components/schemas/ServiceInstanceUpdateRequest'
       responses:
-        '200': 
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Object'
-        '202': 
+        '202':
           description: Accepted
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AsyncOperation'
-        '400': 
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Object'
-        '422': 
+        '422':
           description: Unprocessable entity
           content:
             application/json:
@@ -503,7 +503,7 @@ components:
     SchemaParameters:
       type: object
       properties:
-        parameters: 
+        parameters:
           $ref: '#/components/schemas/JSONSchemaObject'
 
     JSONSchemaObject:
@@ -533,6 +533,12 @@ components:
           $ref: '#/components/schemas/Object'
 
     ServiceInstanceProvision:
+      type: object
+      properties:
+        dashboard_url:
+          type: string
+
+    ServiceInstanceAsyncProvision:
       type: object
       properties:
         dashboard_url:
@@ -679,7 +685,7 @@ components:
     Object:
       type: object
 
-    Error: 
+    Error:
       type: object
       properties:
         error:
