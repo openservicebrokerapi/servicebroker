@@ -5,7 +5,7 @@
 ## Latest Release: v2.13
 [Read the specification](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md)
 
-[Read the profile](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/profile.md)
+[Read about the platform API profile](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/profile.md)
 
 [View the workflows](diagram.md)
 
