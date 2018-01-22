@@ -1030,16 +1030,17 @@ response if the associated [Catalog](#catalog-management) entry for the
 service did not include a `"requires":["syslog_drain"]` property.
 
 #### Route Services
+Route services are a class of Service Offerings that intermediate requests to
+applications, performing functions such as rate limiting or authorization. To
+indicate support for route services, the catalog entry for the Service MUST
+include the `"requires":["route_forwarding"]` property.
 
-There are a class of Service Offerings that intermediate requests to
-applications, performing functions such as rate limiting or authorization.
-
-If a Platform supports route services, it MUST send a routable address, or
-endpoint, for the application along with the request to create a Service
-Binding using `"bind_resource":{"route":"some-address.com"}`. A Service Broker
-MAY support configuration specific to an address using parameters; exposing
-this feature to users would require a Platform to support binding multiple
-routable addresses to the same Service Instance.
+When creating a route service type of Service Binding, a Platform MUST send
+a routable address, or endpoint, for the application along with the request to
+create a Service Binding using `"bind_resource":{"route":"some-address.com"}`.
+Service Brokers MAY support configuration specific to an address using
+parameters; exposing this feature to users would require a Platform to support
+binding multiple routable addresses to the same Service Instance.
 
 If a service is deployed in a configuration to support this behavior, the
 Service Broker MUST return a `route_service_url` in the response for a request
