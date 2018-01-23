@@ -91,7 +91,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Object'
+                $ref: '#/components/schemas/Error'
         '409':
           description: Conflict
           content:
@@ -148,7 +148,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Object'
+                $ref: '#/components/schemas/Error'
         '422':
           description: Unprocessable entity
           content:
@@ -204,13 +204,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Object'
+                $ref: '#/components/schemas/Error'
         '410':
           description: Gone
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Object'
+                $ref: '#/components/schemas/Error'
         '422':
           description: Unprocessable Entity
           content:
@@ -259,13 +259,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Object'
+                $ref: '#/components/schemas/Error'
         '410':
           description: Gone
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Object'
+                $ref: '#/components/schemas/Error'
 
   /v2/service_instances/{instance_id}/service_bindings/{binding_id}:
     put:
@@ -313,7 +313,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Object'
+                $ref: '#/components/schemas/Error'
         '409':
           description: Conflict
           content:
@@ -370,13 +370,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Object'
+                $ref: '#/components/schemas/Error'
         '410':
           description: Gone
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Object'
+                $ref: '#/components/schemas/Error'
 
 components:
   parameters:
@@ -686,6 +686,7 @@ components:
       type: object
 
     Error:
+      description: "See [Service Broker Errors](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#service-broker-errors) for more details."
       type: object
       properties:
         error:
