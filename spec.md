@@ -7,7 +7,7 @@
     - [Change Policy](#change-policy)
     - [Changes Since v2.12](#changes-since-v212)
   - [API Version Header](#api-version-header)
-  - [Authentication](#authentication)
+  - [Platform to Service Broker Authentication](#platform-to-service-broker-authentication)
   - [URL Properties](#url-properties)
   - [Originating Identity](#originating-identity)
   - [Service Broker Errors](#service-broker-errors)
@@ -151,7 +151,7 @@ Service Broker MAY reject the request with `412 Precondition Failed` and
 provide a message that informs the operator of the API version that is to be
 used instead.
 
-## Authentication
+## Platform to Service Broker Authentication
 
 While the communication between a Platform and Service Broker MAY be unsecure,
 it is RECOMMENDED that all communications between a Platform and a Service
@@ -163,16 +163,15 @@ Service Broker using HTTP basic authentication (the `Authorization:` header)
 on every request. This specification does not specify how Platform and Service
 Brokers agree on other methods of authentication.
 
-An alternative to carrying basic authentication on every request is to utilize a
-bearer token via the `Authorization: Bearer` header.  When a bearer token is
-used additional processes are often needed to deal with token expiration and
-renewal.  These are details not covered by this specification and need to be
-worked out by the Platform.  If bearer tokens are used communication with the
-Broker MUST be secured over TLS.
+Platforms and brokers may agree on an authentication mechanism other than
+basic authentication, but the specific agreements are not covered by this
+specification. Please see the platform.md documentation for a description
+of each mechanism and platform support.
 
 If authentication is used, the Service Broker MUST authenticate the request
-using the predetermined authentication mechanism and MUST return a `401
-Unauthorized` response if the authentication fails.
+using the predetermined authentication mechanism, securing communications
+via TLS, and MUST return a 401 Unauthorized response if the authentication
+fails.
 
 Note: Using an authentication mechanism that is agreed to via out of band
 communications could lead to interoperability issues with other Platforms.
