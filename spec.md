@@ -338,6 +338,11 @@ defines a "CLI-friendly" string as a short string that MUST only use lowercase
 characters, numbers and hyphens, with no spaces. This will make it easier for
 users when they have to type it as an argument on the command line.
 
+For backwards compatibility reasons, this specification does not preclude
+the use of CLI-unfriendly strings that might cause problems for command line
+parsers (or that are not very meaningful to users), such as `-`.
+It is therefore RECOMMENDED that implementations avoid such strings.
+
 | Response field | Type | Description |
 | --- | --- | --- |
 | services* | array-of-service-objects | Schema of service objects defined below. MAY be empty. |
