@@ -92,9 +92,9 @@ For example, a `value` of:
 {
   "username": "duke",
   "uid": "c2dde242-5ce4-11e7-988c-000c2946f14f",
-  "groups": { "admin", "dev" },
+  "groups": [ "admin", "dev" ],
   "extra": {
-    "mydata": { "data1", "data3" }
+    "mydata": [ "data1", "data3" ]
   }
 }
 ```
