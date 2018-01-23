@@ -127,7 +127,8 @@ creating a new PR with the title of the proposed release. For example,
   **Release SHA**.
 2. Create a new commit titled `prepare release` with the following changes:
   * Update [release-notes.md](release-notes.md) detailing the changes that are
-  to be released in this version.
+  to be released in this version. Include a versioned link to the new branch's
+  version of the spec.
   * Update [README.md](README.md) with an updated _Latest Release_ subheading
   and links to the latest version of the documents (`spec.md`, `profile.md`,
   `openapi.yaml`, etc).
