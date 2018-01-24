@@ -163,14 +163,14 @@ Service Broker using HTTP basic authentication (the `Authorization:` header)
 on every request. This specification does not specify how Platform and Service
 Brokers agree on other methods of authentication.
 
-Platforms and brokers may agree on an authentication mechanism other than
-basic authentication, but the specific agreements are not covered by this
-specification. Please see the platform.md documentation for a description
-of each mechanism and platform support.
+Platforms and Service Brokers MAY agree on an authentication mechanism other
+than basic authentication, but the specific agreements are not covered by this
+specification. Please see the [profile](profile.md) documentation for a
+description of each mechanism and platform support.
 
 If authentication is used, the Service Broker MUST authenticate the request
 using the predetermined authentication mechanism, securing communications
-via TLS, and MUST return a 401 Unauthorized response if the authentication
+via TLS, and MUST return a `401 Unauthorized` response if the authentication
 fails.
 
 Note: Using an authentication mechanism that is agreed to via out of band
