@@ -14,6 +14,9 @@
 [Release notes](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/release-notes.md)
 
 ## Working Changes (might contain changes that are not yet released)
+Changes in these documents have been accepted by the working group for the next
+version of the specification, however are still subject to change.
+
 [Specification](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md)
 
 [OpenAPI doc](http://petstore.swagger.io/?url=https://raw.githubusercontent.com/openservicebrokerapi/servicebroker/master/openapi.yaml)
@@ -21,9 +24,6 @@
 [Profile](https://github.com/openservicebrokerapi/servicebroker/blob/master/profile.md)
 
 [Roadmap and release planning](https://github.com/openservicebrokerapi/servicebroker/projects/1)
-
-Changes in these documents have been accepted by the working group for the next
-version of the specification, however are still subject to change.
 
 ## Communications
 
