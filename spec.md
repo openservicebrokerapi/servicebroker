@@ -846,7 +846,7 @@ For success responses, the following fields are defined:
 
 ##### Exention APIs Object
 
-The `extention_api` object MAY be used to desribe any additional endpoint needed related to a Service Instance. An examples of this might include backup and restore endpoints for a database. If present, MUST return a `discovery_url`. See [Extentions](#extentions) for more information.
+The `extention_apis` object MAY be used to desribe any additional endpoint needed related to a Service Instance. An examples of this might include backup and restore endpoints for a database. If present, MUST return a `discovery_url`. See [Extentions](#extentions) for more information.
 
 | Response field | Type | Description |
 | --- | --- | --- |
@@ -1444,7 +1444,7 @@ the creation of an orphan.
 
 ## Extentions
 
-A Service Broker might want to extend the Service Broker API to include custom endpoints specific to their service. An example of this could be lifecycle management, (e.g. "Day Two Operations"), like Backup, Restore, Stop, Start, Restart and Pause. Extending the Service Broker API can be done on a per Service Instance basis, during provisioning. The provisioning request will return a URI to an OpenAPI 3.0+ document that the Platform can use to determine the new endpoint(s), parameter(s), authentication mechanism and server URL.
+A Service Broker might want to extend the Service Broker API to include custom endpoints specific to their service. An example of this could be lifecycle management, (e.g. "Day Two Operations"), like Backup, Restore, Stop, Start, Restart and Pause. Extending the Service Broker API can be done on a per Service Instance basis, during provisioning. The provisioning request will return a URI to an OpenAPI 3.0+ document that the Platform can use to determine the new endpoint(s), parameter(s), authentication mechanism and server URL. See [Provisioning](#provisioning) for more information on extentions on a per Service Instance basis.
 
 ### OpenAPI Document
 
