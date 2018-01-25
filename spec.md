@@ -842,7 +842,7 @@ For success responses, the following fields are defined:
 | --- | --- | --- |
 | dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. If present, MUST be a non-empty string. |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
-| extention_apis | array-of-objects | For extentions to the Service Broker API on a per Service Instance basis, Service Brokers MAY return one or more objects that desribe additional API endpoints via an OpenAPI document. See [Extention APIs Object](#extention-apis-object) for more information.|
+| extention_apis | array-of-objects | For extentions to the Service Broker API on a per Service Instance basis, Service Brokers MAY return one or more objects that desribe additional API endpoints via an OpenAPI document. See [Extention APIs Object](#exention-apis-object) for more information.|
 
 ##### Exention APIs Object
 
