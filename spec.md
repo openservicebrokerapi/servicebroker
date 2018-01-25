@@ -26,6 +26,7 @@
   - [Unbinding](#unbinding)
   - [Deprovisioning](#deprovisioning)
   - [Orphans](#orphans)
+  - [Extentions](#extentions)
 
 ## API Overview
 
