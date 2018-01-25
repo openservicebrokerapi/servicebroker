@@ -860,7 +860,7 @@ The `extension_apis` object MAY be used to describe any additional endpoint need
   "dashboard_url": "http://example-dashboard.example.com/9189kdfsk0vfnku",
   "operation": "task_10",
   "extension_apis":[{
-      "discovery_url": "http://example-openapi-doc.example.com/extentions",
+      "discovery_url": "http://example-openapi-doc.example.com/extensions",
       "credentials":[{
         "tokenURL": "https://example.com/api/oauth/token"
       }]
