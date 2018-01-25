@@ -842,17 +842,18 @@ For success responses, the following fields are defined:
 | --- | --- | --- |
 | dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. If present, MUST be a non-empty string. |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
-| extention_apis | array-of-objects | For extentions to the Service Broker API on a per Service Instance basis, Service Brokers MAY return one or more objects that desribe additional API endpoints via an OpenAPI document. See [Extention APIs Object](#exention-apis-object) for more information.|
+| extention_apis | array-of-objects | For extensions to the Service Broker API on a per Service Instance basis, Service Brokers MAY return one or more objects that describe additional API endpoints via an OpenAPI document. See [Extention APIs Object](#extention-apis-object) for more information.|
 
-##### Exention APIs Object
+##### Extension APIs Object
 
-The `extention_apis` object MAY be used to desribe any additional endpoint needed related to a Service Instance. An examples of this might include backup and restore endpoints for a database. If present, MUST return a `discovery_url`. See [Extentions](#extentions) for more information.
+The `extension_apis` object MAY be used to describe any additional endpoint needed related to a Service Instance. An examples of this might include backup and restore endpoints for a database. If present, MUST return a `discovery_url`. See [Extensions](#extensions) for more information.
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| discovery_url | string | A URI pointing to a valid OpenAPI 3.0+ document describing the API extention(s) to the Service Instance including server location, endpoints, parameters and any other detail required for invocation. The location of the API extention endpoint(s) can be local to the Service Broker or on a remote server. The Platform MUST execute these API extentions on behalf of the client. MUST be a valid URI. See [OpenAPI](#openapi-document) for more information.|
-| credentials | object | A Service Broker MAY return authentication details for running any of the extention API calls, especially for those running on remote servers. If not present, platforms can assume that standard broker authentication will work for the new endpoint(s). See [Extention Authentication](#extention-api-authentication) for more information.|
+| discovery_url | string | A URI pointing to a valid OpenAPI 3.0+ document describing the API extension(s) to the Service Instance including server location, endpoints, parameters and any other detail required for invocation. The location of the API extension endpoint(s) can be local to the Service Broker or on a remote server. The Platform MUST execute these API extensions on behalf of the client. MUST be a valid URI. See [OpenAPI](#openapi-document) for more information.|
+| credentials | object | A Service Broker MAY return authentication details for running any of the extension API calls, especially for those running on remote servers. If not present, platforms can assume that standard broker authentication will work for the new endpoint(s). See [Extension Authentication](#extension-api-authentication) for more information.|
 | adheres_to | string | A URI pointing to a specification detailing the implementation guidelines for the OpenAPI document hosted at the `discovery_url`. If present, must be a valid URI.|
+
 
 ```
 {
@@ -1442,20 +1443,20 @@ Service Binding (for example, saving to the database fails), then it MUST at
 least send a single delete or unbind request to the Service Broker to prevent
 the creation of an orphan.
 
-## Extentions
+## Extensions
 
-A Service Broker might want to extend the Service Broker API to include custom endpoints specific to their service. An example of this could be lifecycle management, (e.g. "Day Two Operations"), like Backup, Restore, Stop, Start, Restart and Pause. Extending the Service Broker API can be done on a per Service Instance basis, during provisioning. The provisioning request will return a URI to an OpenAPI 3.0+ document that the Platform can use to determine the new endpoint(s), parameter(s), authentication mechanism and server URL. See [Provisioning](#provisioning) for more information on extentions on a per Service Instance basis.
+A Service Broker might want to extend the Service Broker API to include custom endpoints specific to their service. An example of this could be lifecycle management, (e.g. "Day Two Operations"), like Backup, Restore, Stop, Start, Restart and Pause. Extending the Service Broker API can be done on a per Service Instance basis, during provisioning. The provisioning request will return a URI to an OpenAPI 3.0+ document that the Platform can use to determine the new endpoint(s), parameter(s), authentication mechanism and server URL. See [Provisioning](#provisioning) for more information on extensions on a per Service Instance basis.
 
 ### OpenAPI Document
 
 To extend the API, the Service Broker MUST create an OpenAPI 3.0+ document describing the additional API endpoints and parameters. The returned OpenAPI document MUST be in json format. See the [OpenAPI Specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md) for more information.
 
-### Extention API on Remote Servers
+### Extension API on Remote Servers
 
-Additional API endpoints MAY be executed on a remote server, however the OpenAPI document MUST include the servers `url` so that the Platform will know how to invoke the endpoint(s). If the server `context` parameter of the OpenAPI docuement is set to local host the Platform can assume the extention API endpoints are to be invoked using the Service Broker host and port.
+Additional API endpoints MAY be executed on a remote server, however the OpenAPI document MUST include the servers `url` so that the Platform will know how to invoke the endpoint(s). If the server `context` parameter of the OpenAPI document is set to local host the Platform can assume the extension API endpoints are to be invoked using the Service Broker host and port.
 
-### Extention API Authentication
+### Extension API Authentication
 
-The Service Broker MAY use the the same broker authentication method for invocation of extention endpoints by not providing credentials as part of a `extentions_api` object. If no credentials are present in an `extentions_api` object, the Platform can assume that the default broker authentication is required.
+The Service Broker MAY use the the same broker authentication method for invocation of extension endpoints by not providing credentials as part of a `extensions_api` object. If no credentials are present in an `extensions_api` object, the Platform can assume that the default broker authentication is required.
 
-If the Service Broker wants to use alternate methods of authentication, (e.g. on remote servers) it MUST provide details to that mechanism in the OpenAPI docuement, (e.g. an OAuth Flow Object), and the appropriate credential(s), (e.g. bearer token), as part of the `extentions_api` object. If credentials are present in an `extentions_api` object, the Platform will need to verify the authentication method from the OpenAPI document.
+If the Service Broker wants to use alternate methods of authentication, (e.g. on remote servers) it MUST provide details to that mechanism in the OpenAPI document, (e.g. an OAuth Flow Object), and the appropriate credential(s), (e.g. bearer token), as part of the `extensions_api` object. If credentials are present in an `extensions_api` object, the Platform will need to verify the authentication method from the OpenAPI document.
