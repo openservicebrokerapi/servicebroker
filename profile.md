@@ -18,6 +18,7 @@ or REQUIRED level requirements defined herein.
   - [Context Object Properties](#context-object-properties)
   - [Cloud Foundry](#cloud-foundry)
   - [Kubernetes](#kubernetes)
+- [Platform to Service Broker Authentication](#platform-to-service-broker-authentication)
 - [Service Metadata](#service-metadata)
   - [Cloud Foundry Service Metadata](#cloud-foundry-service-metadata)
 
