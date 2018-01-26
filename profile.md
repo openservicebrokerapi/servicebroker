@@ -232,7 +232,7 @@ part of a Kubernetes API call:
   }
   ```
 
-## Authentication
+## Platform to Service Broker Authentication
 
 The [specification](spec.md) requires that brokers implement HTTP Basic authentication, but also allows for other mechanisms if the platform and the broker agree upon them outside of the specification. This section contains a list of supported mechanisms that platforms and brokers support. The list will be growing as time goes on.
 
