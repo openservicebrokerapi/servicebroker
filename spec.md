@@ -26,7 +26,6 @@
   - [Unbinding](#unbinding)
   - [Deprovisioning](#deprovisioning)
   - [Orphans](#orphans)
-  - [Extensions](#extensions)
 
 ## API Overview
 
@@ -846,13 +845,28 @@ For success responses, the following fields are defined:
 
 ##### Extension APIs Object
 
-The `extension_apis` object MAY be used to describe any additional endpoint needed related to a Service Instance. An examples of this might include backup and restore endpoints for a database. If present, MUST return a `discovery_url`. See [Extensions](#extensions) for more information.
+The `extension_apis` object MAY be used to describe any additional endpoint
+needed related to a Service Instance. An example of this could be lifecycle
+management, (e.g. "Day Two Operations"), like Backup, Restore, Stop, Start,
+Restart and Pause.
+
+The Service Instance provisioning request will return a URI to an OpenAPI 3.0+
+document that the Platform can use to determine the new endpoint(s),
+parameter(s), authentication mechanism and server URL. The new APIs are 
+extensions to the Open Service Broker API. As such they are indended to be 
+invokved by the Platform on behalf of its clients.
+
+Extension API endpoints MAY be executed on a remote server, however the OpenAPI
+document MUST include the servers `url` so that the Platform will know how to
+invoke the endpoint(s). If the server `context` parameter of the OpenAPI
+document is set to localhost the Platform can assume the extension API endpoints
+are to be invoked using the Service Broker host and port.
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| discovery_url | string | A URI pointing to a valid OpenAPI 3.0+ document describing the API extension(s) to the Service Instance including server location, endpoints, parameters and any other detail necessary for invocation. The location of the API extension endpoint(s) can be local to the Service Broker or on a remote server. The Platform MUST execute these API extensions on behalf of the client. MUST be a valid URI. See [OpenAPI](#openapi-document) for more information. |
-| credentials | object | A Service Broker MAY return authentication details for running any of the extension API calls, especially for those running on remote servers. If not present, platforms can assume that standard broker authentication will work for the new endpoint(s). See [Extension Authentication](#extension-api-authentication) for more information. |
-| adheres_to | string | A URI pointing to a specification detailing the implementation guidelines for the OpenAPI document hosted at the `discovery_url`. If present, MUST be a valid URI. |
+| discovery_url | string | A URI pointing to a valid OpenAPI 3.0+ document describing the API extension(s) to the Service Instance including server location, endpoints, parameters and any other detail required for invocation. The location of the API extension endpoint(s) can be local to the Service Broker or on a remote server. MUST be a valid URI. The returned OpenAPI document MUST be in json format. See the [OpenAPI Specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md) for more information. |
+| credentials | object | A Service Broker MAY return authentication details for running any of the extension API calls, especially for those running on remote servers. If not present, the same authentication mechanism used for the normal Open Service Broker APIs MUST work for the new endpoint(s). If the Service Broker wants to use alternate methods of authentication, (e.g. on remote servers) it MUST provide details to that mechanism in the OpenAPI document, (e.g. an OAuth Flow Object), and the appropriate credential(s), (e.g. bearer token), as part of the `extensions_api` object. If credentials are present in an `extensions_api` object, the Platform will need to verify the authentication method from the OpenAPI document. |
+| adheres_to | string | A URI refering to a specification detailing the implementation guidelines for the OpenAPI document hosted at the `discovery_url`. While this property is a URI, there is no requirement for there to be an actual server listening at that endpoint. This value is meant to provide a unique identifier representing the set of extensions APIs supported. If present, MUST be a valid URI. |
 
 
 ```
@@ -863,7 +877,7 @@ The `extension_apis` object MAY be used to describe any additional endpoint need
       "discovery_url": "http://example-openapi-doc.example.com/extensions",
       "credentials":[{
         "tokenURL": "https://example.com/api/oauth/token"
-      }]
+      }],
       "adheres_to": "http://example-specification.example.com"
   }]
 }
@@ -1442,21 +1456,3 @@ If the Platform encounters an internal error provisioning a Service Instance or
 Service Binding (for example, saving to the database fails), then it MUST at
 least send a single delete or unbind request to the Service Broker to prevent
 the creation of an orphan.
-
-## Extensions
-
-A Service Broker might want to extend the Service Broker API to include custom endpoints specific to their service. An example of this could be lifecycle management, (e.g. "Day Two Operations"), like Backup, Restore, Stop, Start, Restart and Pause. Extending the Service Broker API can be done on a per Service Instance basis, during provisioning. The provisioning request will return a URI to an OpenAPI 3.0+ document that the Platform can use to determine the new endpoint(s), parameter(s), authentication mechanism and server URL. See [Provisioning](#provisioning) for more information on extensions on a per Service Instance basis.
-
-### OpenAPI Document
-
-To extend the API, the Service Broker MUST create an OpenAPI 3.0+ document describing the additional API endpoints and parameters. The returned OpenAPI document MUST be in json format. See the [OpenAPI Specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md) for more information.
-
-### Extension API on Remote Servers
-
-Additional API endpoints MAY be executed on a remote server, however the OpenAPI document MUST include the servers `url` so that the Platform will know how to invoke the endpoint(s). If the server `context` parameter of the OpenAPI document is set to local host the Platform can assume the extension API endpoints are to be invoked using the Service Broker host and port.
-
-### Extension API Authentication
-
-The Service Broker MAY use the the same broker authentication method for invocation of extension endpoints by not providing credentials as part of a `extensions_api` object. If no credentials are present in an `extensions_api` object, the Platform can assume that the default broker authentication method is to be used.
-
-If the Service Broker wants to use alternate methods of authentication, (e.g. on remote servers) it MUST provide details to that mechanism in the OpenAPI document, (e.g. an OAuth Flow Object), and the appropriate credential(s), (e.g. bearer token), as part of the `extensions_api` object. If credentials are present in an `extensions_api` object, the Platform will need to verify the authentication method from the OpenAPI document.
