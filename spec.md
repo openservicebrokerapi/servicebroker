@@ -26,6 +26,7 @@
   - [Unbinding](#unbinding)
   - [Deprovisioning](#deprovisioning)
   - [Orphans](#orphans)
+  - [Extensions](#extensions)
 
 ## API Overview
 
@@ -254,10 +255,10 @@ include additional fields within the response. When adding new fields, Service
 Brokers SHOULD use a unique prefix for the field names to reduce the chances of
 conflict with future specification defined fields.
 
-| Response Field | Type   | Description                                                                                                       |
-| -------------- | ------ | ----------------------------------------------------------------------------------------------------------------- |
-| error          | string | A single word in camel case that uniquely identifies the error condition. If present, MUST be a non-empty string. |
-| description    | string | A user-facing error message explaining why the request failed. If present, MUST be a non-empty string.            |
+| Response Field | Type | Description |
+| --- | --- | --- |
+| error | string | A single word in camel case that uniquely identifies the error condition. If present, MUST be a non-empty string. |
+| description | string | A user-facing error message explaining why the request failed. If present, MUST be a non-empty string. |
 
 ### Error Codes
 
@@ -265,11 +266,11 @@ There are failure scenarios described throughout this specification for which
 the `error` field MUST contain a specific string. Service Broker authors MUST
 use these error codes for the specified failure scenarios.
 
-| Error            | Reason                                                                                 | Expected Action                                                                      |
-| ---------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| AsyncRequired    | This request requires client support for asynchronous service operations.              | The query parameter `accepts_incomplete=true` MUST be included the request.          |
+| Error | Reason | Expected Action |
+| --- | --- | --- |
+| AsyncRequired | This request requires client support for asynchronous service operations. | The query parameter `accepts_incomplete=true` MUST be included the request. |
 | ConcurrencyError | The Service Broker does not support concurrent requests that mutate the same resource. | Clients MUST wait until pending requests have completed for the specified resources. |
-| RequiresApp      | The request body is missing the `app_guid` field.                                      | The `app_guid` MUST be included in the request body.                                 |
+| RequiresApp | The request body is missing the `app_guid` field. | The `app_guid` MUST be included in the request body. |
 
 ## Catalog Management
 
@@ -313,8 +314,8 @@ Broker API.
 
 The following HTTP Headers are defined for this operation:
 
-| Header                               | Type     | Description                                                                       |
-| --------------------------------------- | --------- | ----------------------------------------------------------------------------------------- |
+| Header | Type | Description |
+| --- | --- | --- |
 | X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
 
 \* Headers with an asterisk are REQUIRED.
@@ -326,9 +327,9 @@ $ curl http://username:password@service-broker-url/v2/catalog -H "X-Broker-API-V
 
 ### Response
 
-| Status Code | Description                                                                                       |
-| ----------- | ------------------------------------------------------------------------------------------------- |
-| 200 OK      | MUST be returned upon successful processing of this request. The expected response body is below. |
+| Status Code | Description |
+| --- | --- |
+| 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
 
 #### Body
 
@@ -343,26 +344,26 @@ the use of CLI-unfriendly strings that might cause problems for command line
 parsers (or that are not very meaningful to users), such as `-`.
 It is therefore RECOMMENDED that implementations avoid such strings.
 
-| Response field | Type                     | Description                                            |
-| -------------- | ------------------------ | ------------------------------------------------------ |
-| services*      | array-of-service-objects | Schema of service objects defined below. MAY be empty. |
+| Response field | Type | Description |
+| --- | --- | --- |
+| services* | array-of-service-objects | Schema of service objects defined below. MAY be empty. |
 
 \* Fields with an asterisk are REQUIRED.
 
 ##### Service Objects
 
-| Response field                               | Type             | Description                                                                                                                                                                                                                                                                                                     |
-| -------------------------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| name*                                        | string           | A CLI-friendly name of the service. MUST only contain lowercase characters, numbers and hyphens (no spaces). MUST be unique across all service objects returned in this response. MUST be a non-empty string.                                                                                                   |
-| id*                                          | string           | An identifier used to correlate this service in future requests to the Service Broker. This MUST be globally unique. MUST be a non-empty string. Using a GUID is RECOMMENDED.                                                                                                                                   |
-| description*                                 | string           | A short description of the service. MUST be a non-empty string.                                                                                                                                                                                                                                                 |
-| tags                                         | array-of-strings | Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp. |
-| requires                                     | array-of-strings | A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are `syslog_drain`, `route_forwarding` and `volume_mount`.                                                                                                                   |
-| bindable*                                    | boolean          | Specifies whether Service Instances of the service can be bound to applications. This specifies the default for all plans of this service. Plans can override this field (see [Plan Object](#plan-object)).                                                                                                     |
-| metadata                                     | object           | An opaque object of metadata for a Service Offering. Controller treats this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and controllers for fields that aid in the display of catalog data.                                                           |
-| [dashboard_client](#dashboard-client-object) | object           | Contains the data necessary to activate the Dashboard SSO feature for this service.                                                                                                                                                                                                                             |
-| plan_updateable                              | boolean          | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute `plan_updatable` as `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false.            |
-| [plans*](#plan-object)                       | array-of-objects | A list of plans for this service, schema is defined below. MUST contain at least one plan.                                                                                                                                                                                                                      |
+| Response field | Type | Description |
+| --- | --- | --- |
+| name* | string | A CLI-friendly name of the service. MUST only contain lowercase characters, numbers and hyphens (no spaces). MUST be unique across all service objects returned in this response. MUST be a non-empty string. |
+| id* | string | An identifier used to correlate this service in future requests to the Service Broker. This MUST be globally unique. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
+| description* | string | A short description of the service. MUST be a non-empty string. |
+| tags | array-of-strings | Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp. |
+| requires | array-of-strings | A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are `syslog_drain`, `route_forwarding` and `volume_mount`. |
+| bindable* | boolean | Specifies whether Service Instances of the service can be bound to applications. This specifies the default for all plans of this service. Plans can override this field (see [Plan Object](#plan-object)). |
+| metadata | object | An opaque object of metadata for a Service Offering. Controller treats this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and controllers for fields that aid in the display of catalog data. |
+| [dashboard_client](#dashboard-client-object) | object | Contains the data necessary to activate the Dashboard SSO feature for this service. |
+| plan_updateable | boolean | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute `plan_updatable` as `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
+| [plans*](#plan-object) | array-of-objects | A list of plans for this service, schema is defined below. MUST contain at least one plan. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -377,52 +378,52 @@ how Platforms might expose these values to their users.
 
 ##### Dashboard Client Object
 
-| Response field | Type   | Description                                                                                               |
-| -------------- | ------ | --------------------------------------------------------------------------------------------------------- |
-| id             | string | The id of the Oauth client that the dashboard will use. If present, MUST be a non-empty string.           |
-| secret         | string | A secret for the dashboard client. If present, MUST be a non-empty string.                                |
-| redirect_uri   | string | A URI for the service dashboard. Validated by the OAuth token server when the dashboard requests a token. |
+| Response field | Type | Description |
+| --- | --- | --- |
+| id | string | The id of the Oauth client that the dashboard will use. If present, MUST be a non-empty string. |
+| secret | string | A secret for the dashboard client. If present, MUST be a non-empty string. |
+| redirect_uri | string | A URI for the service dashboard. Validated by the OAuth token server when the dashboard requests a token. |
 
 
 ##### Plan Object
 
-| Response field            | Type    | Description                                                                                                                                                                                                                                                |
-| ------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| id*                       | string  | An identifier used to correlate this plan in future requests to the Service Broker. This MUST be globally unique. MUST be a non-empty string. Using a GUID is RECOMMENDED.                                                                                 |
-| name*                     | string  | The CLI-friendly name of the plan. MUST only contain lowercase characters, numbers and hyphens (no spaces). MUST be unique within the service. MUST be a non-empty string.                                                                                 |
-| description*              | string  | A short description of the plan. MUST be a non-empty string.                                                                                                                                                                                               |
-| metadata                  | object  | An opaque object of metadata for a Service Plan. Controller treats this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and controllers for fields that aid in the display of catalog data.          |
-| free                      | boolean | When false, Service Instances of this plan have a cost. The default is true.                                                                                                                                                                               |
-| bindable                  | boolean | Specifies whether Service Instances of the Service Plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
-| [schemas](#schema-object) | object  | Schema definitions for Service Instances and bindings for the plan.                                                                                                                                                                                        |
+| Response field | Type | Description |
+| --- | --- | --- |
+| id* | string | An identifier used to correlate this plan in future requests to the Service Broker. This MUST be globally unique. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
+| name* | string | The CLI-friendly name of the plan. MUST only contain lowercase characters, numbers and hyphens (no spaces). MUST be unique within the service. MUST be a non-empty string. |
+| description* | string | A short description of the plan. MUST be a non-empty string. |
+| metadata | object | An opaque object of metadata for a Service Plan. Controller treats this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and controllers for fields that aid in the display of catalog data. |
+| free | boolean | When false, Service Instances of this plan have a cost. The default is true. |
+| bindable | boolean | Specifies whether Service Instances of the Service Plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
+| [schemas](#schema-object) | object | Schema definitions for Service Instances and bindings for the plan. |
 
 \* Fields with an asterisk are REQUIRED.
 
 ##### Schema Object
 
-| Response field                               | Type   | Description                                                                                      |
-| -------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------ |
-| [service_instance](#service-instance-object) | object | The schema definitions for creating and updating a Service Instance.                             |
-| [service_binding](#service-binding-object)   | object | The schema definition for creating a Service Binding. Used only if the Service Plan is bindable. |
+| Response field | Type | Description |
+| --- | --- | --- |
+| [service_instance](#service-instance-object) | object | The schema definitions for creating and updating a Service Instance. |
+| [service_binding](#service-binding-object) | object | The schema definition for creating a Service Binding. Used only if the Service Plan is bindable. |
 
 ##### Service Instance Object
 
-| Response field                     | Type   | Description                                            |
-| ---------------------------------- | ------ | ------------------------------------------------------ |
+| Response field | Type | Description |
+| --- | --- | --- |
 | [create](#input-parameters-object) | object | The schema definition for creating a Service Instance. |
 | [update](#input-parameters-object) | object | The schema definition for updating a Service Instance. |
 
 ##### Service Binding Object
 
-| Response field                     | Type   | Description                                           |
-| ---------------------------------- | ------ | ----------------------------------------------------- |
+| Response field | Type | Description |
+| --- | --- | --- |
 | [create](#input-parameters-object) | object | The schema definition for creating a Service Binding. |
 
 ##### Input Parameters Object
 
-| Response field | Type               | Description                                                                                                           |
-| -------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------- |
-| parameters     | JSON schema object | The schema definition for the input parameters. Each input parameter is expressed as a property within a JSON object. |
+| Response field | Type | Description |
+| --- | --- | --- |
+| parameters | JSON schema object | The schema definition for the input parameters. Each input parameter is expressed as a property within a JSON object. |
 
 The following rules apply if `parameters` is included anywhere in the catalog:
 * Platforms MUST support at least
@@ -670,11 +671,11 @@ to provide additional detail for users about the progress of the operation.
 
 The request provides these query string parameters as useful hints for Service Brokers.
 
-| Query-String Field | Type   | Description                                                                                                                                                                                                                                                                                                                                                                                |
-| ------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| service_id         | string | If present, it MUST be the ID of the service being used.                                                                                                                                                                                                                                                                                                                                   |
-| plan_id            | string | If present, it MUST be the ID of the plan for the service being use.                                                                                                                                                                                                                                                                                                                       |
-| operation          | string | A Service Broker-provided identifier for the operation. When a value for `operation` is included with asynchronous responses for [Provision](#provisioning), [Update](#updating-a-service-instance), and [Deprovision](#deprovisioning) requests, the Platform MUST provide the same value using this query parameter as a percent-encoded string. If present, MUST be a non-empty string. |
+| Query-String Field | Type | Description |
+| --- | --- | --- |
+| service_id | string | If present, it MUST be the ID of the service being used. |
+| plan_id | string | If present, it MUST be the ID of the plan for the service being use. |
+| operation | string | A Service Broker-provided identifier for the operation. When a value for `operation` is included with asynchronous responses for [Provision](#provisioning), [Update](#updating-a-service-instance), and [Deprovision](#deprovisioning) requests, the Platform MUST provide the same value using this query parameter as a percent-encoded string. If present, MUST be a non-empty string. |
 
 Note: Although the request query parameters `service_id` and `plan_id` are not
 mandatory, the Platform SHOULD include them on all `last_operation` requests
@@ -697,11 +698,11 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 
 ### Response
 
-| Status Code     | Description                                                                                                                                                                                                                                                                                                                                    |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 200 OK          | MUST be returned upon successful processing of this request. The expected response body is below.                                                                                                                                                                                                                                              |
-| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data.                                                                                                                                                                                                                                                                        |
-| 410 Gone        | Appropriate only for asynchronous delete operations. The Platform MUST consider this response a success and forget about the resource. The expected response body is `{}`. Returning this while the Platform is polling for create or update operations SHOULD be interpreted as an invalid response and the Platform SHOULD continue polling. |
+| Status Code | Description |
+| --- | --- |
+| 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
+| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
+| 410 Gone | Appropriate only for asynchronous delete operations. The Platform MUST consider this response a success and forget about the resource. The expected response body is `{}`. Returning this while the Platform is polling for create or update operations SHOULD be interpreted as an invalid response and the Platform SHOULD continue polling. |
 
 Responses with any other status code SHOULD be interpreted as an error or
 invalid response. The Platform SHOULD continue polling until the Service Broker
@@ -712,10 +713,10 @@ returns a valid response or the
 
 For success responses, the following fields are defined:
 
-| Response field | Type   | Description                                                                                                                                                                                                                              |
-| -------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| state*         | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the Platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the Platform to cease polling. |
-| description    | string | A user-facing message displayed to the Platform API client. Can be used to tell the user details about the status of the operation. If present, MUST be a non-empty string.                                                              |
+| Response field | Type | Description |
+| --- | --- | --- |
+| state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the Platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the Platform to cease polling. |
+| description | string | A user-facing message displayed to the Platform API client. Can be used to tell the user details about the status of the operation. If present, MUST be a non-empty string. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -756,30 +757,30 @@ This ID will be used for future requests (bind and deprovision), so the
 Service Broker will use it to correlate the resource it creates.
 
 #### Parameters
-| Parameter name     | Type    | Description                                                                                                                                                                                                                                                                                                                                                       |
-| ------------------ | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Parameter name | Type | Description |
+| --- | --- | --- |
 | accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only provision a Service Instance of the requested plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
 #### Headers
 
 The following HTTP Headers are defined for this operation:
 
-| Header                                                                                                                                        | Type           | Description                                                                                                                                                                                                    |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| X-Broker-API-Version*                                                             | string | See [API Version Header](#api-version-header).                     |
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
 | X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
 
 \* Headers with an asterisk are REQUIRED.
 
 #### Body
-| Request field      | Type   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| ------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| service_id*        | string | MUST be the ID of a service from the catalog for this Service Broker.                                                                                                                                                                                                                                                                                                                                                                             |
-| plan_id*           | string | MUST be the ID of a plan from the service that has been requested.                                                                                                                                                                                                                                                                                                                                                                                |
-| context            | object | Platform specific contextual information under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it could be helpful in determining data placement or applying custom business rules. `context` will replace `organization_guid` and `space_guid` in future versions of the specification - in the interim both SHOULD be used to ensure interoperability with old and new implementations. |
-| organization_guid* | string | Deprecated in favor of `context`. The Platform GUID for the organization under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string.                                                                                                                                                               |
-| space_guid*        | string | Deprecated in favor of `context`. The identifier for the project space within the Platform organization. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string.                                                                                                                                                                                      |
-| parameters         | object | Configuration options for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation.                                                                                                                                                                                                                                                                           |
+| Request field | Type | Description |
+| --- | --- | --- |
+| service_id* | string | MUST be the ID of a service from the catalog for this Service Broker. |
+| plan_id* | string | MUST be the ID of a plan from the service that has been requested. |
+| context | object | Platform specific contextual information under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it could be helpful in determining data placement or applying custom business rules. `context` will replace `organization_guid` and `space_guid` in future versions of the specification - in the interim both SHOULD be used to ensure interoperability with old and new implementations. |
+| organization_guid* | string | Deprecated in favor of `context`. The Platform GUID for the organization under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
+| space_guid* | string | Deprecated in favor of `context`. The identifier for the project space within the Platform organization. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
+| parameters | object | Configuration options for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -820,13 +821,13 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 
 ### Response
 
-| Status Code              | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 200 OK                   | MUST be returned if the Service Instance already exists, is fully provisioned, and the requested parameters are identical to the existing Service Instance. The expected response body is below.                                                                                                                                                                                                                                                                                              |
-| 201 Created              | MUST be returned if the Service Instance was provisioned as a result of this request. The expected response body is below.                                                                                                                                                                                                                                                                                                                                                                    |
-| 202 Accepted             | MUST be returned if the Service Instance provisioning is in progress. This triggers the Platform to poll the [Service Instance Last Operation Endpoint](#polling-last-operation) for operation status. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the Service Instance is not yet fully provisioned.                                                                                                                                                  |
-| 400 Bad Request          | MUST be returned if the request is malformed or missing mandatory data.                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| 409 Conflict             | MUST be returned if a Service Instance with the same id already exists but with different attributes.                                                                                                                                                                                                                                                                                                                                                                                         |
+| Status Code | Description |
+| --- | --- |
+| 200 OK | MUST be returned if the Service Instance already exists, is fully provisioned, and the requested parameters are identical to the existing Service Instance. The expected response body is below. |
+| 201 Created | MUST be returned if the Service Instance was provisioned as a result of this request. The expected response body is below. |
+| 202 Accepted | MUST be returned if the Service Instance provisioning is in progress. This triggers the Platform to poll the [Service Instance Last Operation Endpoint](#polling-last-operation) for operation status. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the Service Instance is not yet fully provisioned. |
+| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
+| 409 Conflict | MUST be returned if a Service Instance with the same id already exists but with different attributes. |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous provisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The response body MUST contain a response body containing error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. |
 
 Responses with any other status code will be interpreted as a failure and a
@@ -837,36 +838,21 @@ being created on the Service Broker.
 
 For success responses, the following fields are defined:
 
-| Response field | Type             | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| -------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| dashboard_url  | string           | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. If present, MUST be a non-empty string. |
-| operation      | string           | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string.                                                                                                                                                                                                   |
-| extension_apis | array-of-objects | For extensions to the Service Broker API on a per Service Instance basis, Service Brokers MAY return one or more objects that describe additional API endpoints via an OpenAPI document. See [Extension APIs Object](#extension-apis-object) for more information.                                                                                                                                                                                                                                                |
+| Response field | Type | Description |
+| --- | --- | --- |
+| dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. If present, MUST be a non-empty string. |
+| operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
+| extension_apis | array-of-objects | For extensions to the Service Broker API on a per Service Instance basis, Service Brokers MAY return one or more objects that describe additional API endpoints via an OpenAPI document. See [Extension APIs Object](#extension-apis-object) for more information. |
 
 ##### Extension APIs Object
 
-The `extension_apis` object MAY be used to describe any additional endpoint
-needed related to a Service Instance. An example of this could be lifecycle
-management, (e.g. "Day Two Operations"), like Backup, Restore, Stop, Start,
-Restart and Pause.
+The `extension_apis` object MAY be used to describe any additional endpoint needed related to a Service Instance. An examples of this might include backup and restore endpoints for a database. If present, MUST return a `discovery_url`. See [Extensions](#extensions) for more information.
 
-The Service Instance provisioning request will return a URI to an OpenAPI 3.0+
-document that the Platform can use to determine the new endpoint(s),
-parameter(s), authentication mechanism and server URL. The new APIs are 
-extensions to the Open Service Broker API. As such they are indended to be 
-invokved by the Platform on behalf of its clients.
-
-Extension API endpoints MAY be executed on a remote server, however the OpenAPI
-document MUST include the servers `url` so that the Platform will know how to
-invoke the endpoint(s). If the server `context` parameter of the OpenAPI
-document is set to localhost the Platform can assume the extension API endpoints
-are to be invoked using the Service Broker host and port.
-
-| Response field | Type   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| -------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| discovery_url* | string | A URI pointing to a valid OpenAPI 3.0+ document describing the API extension(s) to the Service Instance including server location, endpoints, parameters and any other detail required for invocation. The location of the API extension endpoint(s) can be local to the Service Broker or on a remote server. MUST be a valid URI. The returned OpenAPI document MUST be in json format. See the [OpenAPI Specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md) for more information.|
-| credentials    | object | A Service Broker MAY return authentication details for running any of the extension API calls, especially for those running on remote servers. If not present, the same authentication mechanism used for the normal Open Service Broker APIs MUST work for the new endpoint(s). If the Service Broker wants to use alternate methods of authentication, (e.g. on remote servers) it MUST provide details to that mechanism in the OpenAPI document, (e.g. an OAuth Flow Object), and the appropriate credential(s), (e.g. bearer token), as part of the `extensions_api` object. If credentials are present in an `extensions_api` object, the Platform will need to verify the authentication method from the OpenAPI document.                                                                                               |
-| adheres_to     | string | A URI refering to a specification detailing the implementation guidelines for the OpenAPI document hosted at the `discovery_url`. While this property is a URI, there is no requirement for there to be an actual server listening at that endpoint. This value is meant to provide a unique identifier representing the set of extensions APIs supported. If present, MUST be a valid URI.                                                                        |
+| Response field | Type | Description |
+| --- | --- | --- |
+| discovery_url | string | A URI pointing to a valid OpenAPI 3.0+ document describing the API extension(s) to the Service Instance including server location, endpoints, parameters and any other detail necessary for invocation. The location of the API extension endpoint(s) can be local to the Service Broker or on a remote server. The Platform MUST execute these API extensions on behalf of the client. MUST be a valid URI. See [OpenAPI](#openapi-document) for more information. |
+| credentials | object | A Service Broker MAY return authentication details for running any of the extension API calls, especially for those running on remote servers. If not present, platforms can assume that standard broker authentication will work for the new endpoint(s). See [Extension Authentication](#extension-api-authentication) for more information. |
+| adheres_to | string | A URI pointing to a specification detailing the implementation guidelines for the OpenAPI document hosted at the `discovery_url`. If present, MUST be a valid URI. |
 
 
 ```
@@ -877,7 +863,7 @@ are to be invoked using the Service Broker host and port.
       "discovery_url": "http://example-openapi-doc.example.com/extensions",
       "credentials":[{
         "tokenURL": "https://example.com/api/oauth/token"
-      }],
+      }]
       "adheres_to": "http://example-specification.example.com"
   }]
 }
@@ -910,8 +896,8 @@ error message in response.
 `:instance_id` MUST be the ID a previously provisioned Service Instance.
 
 #### Parameters
-| Parameter name     | Type    | Description                                                                                                                                                                                                                                                                                                                                                         |
-| ------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Parameter name | Type | Description |
+| --- | --- | --- |
 | accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only provision a Service Instance of the requested plan asynchronously, the Service Broker SHOULD reject the request with a `422 Unprocessable Entity` as described below. |
 
 #### Headers
@@ -927,24 +913,24 @@ The following HTTP Headers are defined for this operation:
 
 #### Body
 
-| Request Field                              | Type   | Description                                                                                                                                                                                                                       |
-| ------------------------------------------ | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| context                                    | object | Contextual data under which the Service Instance is created.                                                                                                                                                                      |
-| service_id*                                | string | MUST be the ID of a service from the catalog for this Service Broker.                                                                                                                                                             |
-| plan_id                                    | string | If present, MUST be the ID of a plan from the service that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the plan of the instance as a result of this request. |
-| parameters                                 | object | Configuration options for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. See "Note" below.                                         |
-| [previous_values](#previous-values-object) | object | Information about the Service Instance prior to the update.                                                                                                                                                                       |
+| Request Field | Type | Description |
+| --- | --- | --- |
+| context | object | Contextual data under which the Service Instance is created. |
+| service_id* | string | MUST be the ID of a service from the catalog for this Service Broker. |
+| plan_id | string | If present, MUST be the ID of a plan from the service that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the plan of the instance as a result of this request. |
+| parameters | object | Configuration options for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. See "Note" below. |
+| [previous_values](#previous-values-object) | object | Information about the Service Instance prior to the update. |
 
 \* Fields with an asterisk are REQUIRED.
 
 ##### Previous Values Object
 
-| Request Field   | Type   | Description                                                                                                                                                                                                                             |
-| --------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| service_id      | string | Deprecated; determined to be unnecessary as the value is immutable. If present, it MUST be the ID of the service for the Service Instance.                                                                                              |
-| plan_id         | string | If present, it MUST be the ID of the plan prior to the update.                                                                                                                                                                          |
+| Request Field | Type | Description |
+| --- | --- | --- |
+| service_id | string | Deprecated; determined to be unnecessary as the value is immutable. If present, it MUST be the ID of the service for the Service Instance. |
+| plan_id | string | If present, it MUST be the ID of the plan prior to the update. |
 | organization_id | string | Deprecated as it was redundant information. Organization for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the organization specified for the Service Instance. |
-| space_id        | string | Deprecated as it was redundant information. Space for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the space specified for the Service Instance.               |
+| space_id | string | Deprecated as it was redundant information. Space for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the space specified for the Service Instance. |
 
 Note: The `parameters` specified are expected to be the values specified
 by an end-user. Whether the user chooses to include the complete set of
@@ -1008,11 +994,11 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 
 ### Response
 
-| Status Code              | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 200 OK                   | MUST be returned if the request's changes have been applied. The expected response body is `{}`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| 202 Accepted             | MUST be returned if the Service Instance update is in progress. This triggers the Platform to poll the [Last Operation](#polling-last-operation) for operation status. Note that a re-sent `PATCH` request MUST return a `202 Accepted`, not a `200 OK`, if the requested update has not yet completed.                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| 400 Bad Request          | MUST be returned if the request is malformed or missing mandatory data.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Status Code | Description |
+| --- | --- |
+| 200 OK | MUST be returned if the request's changes have been applied. The expected response body is `{}`. |
+| 202 Accepted | MUST be returned if the Service Instance update is in progress. This triggers the Platform to poll the [Last Operation](#polling-last-operation) for operation status. Note that a re-sent `PATCH` request MUST return a `202 Accepted`, not a `200 OK`, if the requested update has not yet completed. |
+| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
 | 422 Unprocessable entity | MUST be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the Service Instance (e.g. Service Instance utilization is over the quota of the requested plan). Additionally, a `422 Unprocessable Entity` can also be returned if the Service Broker only supports asynchronous update for the requested plan and the request did not include `?accepts_incomplete=true`; in this case the response body MUST contain a error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. |
 
 Responses with any other status code will be interpreted as a failure.
@@ -1021,9 +1007,9 @@ Responses with any other status code will be interpreted as a failure.
 
 For success responses, the following fields are defined:
 
-| Response field | Type     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| ------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| operation           | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
+| Response field | Type | Description |
+| --- | --- | --- |
+| operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
 
 ```
 {
@@ -1127,14 +1113,14 @@ The following HTTP Headers are defined for this operation:
 
 #### Body
 
-| Request Field | Type   | Description                                                                                                                                                                |
-| ------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| context       | object | Contextual data under which the Service Binding is created.                                                                                                                |
-| service_id*   | string | MUST be the ID of the service that is being used.                                                                                                                          |
-| plan_id*      | string | MUST be the ID of the plan from the service that is being used.                                                                                                            |
-| app_guid      | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the binding to be created. If present, MUST be a non-empty string.                 |
+| Request Field | Type | Description |
+| --- | --- | --- |
+| context | object | Contextual data under which the Service Binding is created. |
+| service_id* | string | MUST be the ID of the service that is being used. |
+| plan_id* | string | MUST be the ID of the plan from the service that is being used. |
+| app_guid | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the binding to be created. If present, MUST be a non-empty string. |
 | bind_resource | object | A JSON object that contains data for Platform resources associated with the binding to be created. See [Bind Resource Object](#bind-resource-object) for more information. |
-| parameters    | object | Configuration options for the Service Binding. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation.     |
+| parameters | object | Configuration options for the Service Binding. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -1148,10 +1134,10 @@ request, therefore the `bind_resource` and its fields are OPTIONAL.
 Below are some common fields that MAY be used. Platforms MAY choose to add
 additional ones as needed.
 
-| Request Field | Type   | Description                                                                                                                                         |
-| ------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| app_guid      | string | GUID of an application associated with the binding. For [credentials](#types-of-binding) bindings. MUST be unique within the scope of the Platform. |
-| route         | string | URL of the application to be intermediated. For [route services](#route-services) bindings.                                                         |
+| Request Field | Type | Description |
+| --- | --- | --- |
+| app_guid | string | GUID of an application associated with the binding. For [credentials](#types-of-binding) bindings. MUST be unique within the scope of the Platform. |
+| route | string | URL of the application to be intermediated. For [route services](#route-services) bindings. |
 
 `app_guid` represents the scope to which the binding will apply within
 the Platform. For example, in Cloud Foundry it might map to an "application"
@@ -1199,12 +1185,12 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 
 ### Response
 
-| Status Code              | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 200 OK                   | MUST be returned if the binding already exists and the requested parameters are identical to the existing binding. The expected response body is below.                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| 201 Created              | MUST be returned if the binding was created as a result of this request. The expected response body is below.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| 400 Bad Request          | MUST be returned if the request is malformed or missing mandatory data.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| 409 Conflict             | MUST be returned if a Service Binding with the same id, for the same Service Instance, already exists but with different parameters.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Status Code | Description |
+| --- | --- |
+| 200 OK | MUST be returned if the binding already exists and the requested parameters are identical to the existing binding. The expected response body is below. |
+| 201 Created | MUST be returned if the binding was created as a result of this request. The expected response body is below. |
+| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
+| 409 Conflict | MUST be returned if a Service Binding with the same id, for the same Service Instance, already exists but with different parameters. |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker requires that `app_guid` be included in the request body. The response body MUST contain error code `"RequiresApp"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service supports generation of credentials through binding an application only."`. Additionally, if the Service Broker rejects the request due to a concurrent request to create a binding for the same Service Instance, then this error MUST be returned (see [Blocking Operations](#blocking-operations)). |
 
 Responses with any other status code will be interpreted as a failure and an
@@ -1215,22 +1201,22 @@ created on the Service Broker.
 
 For success responses, the following fields are defined:
 
-| Response Field    | Type             | Description                                                                                                                                                                                                                                                               |
-| ----------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| credentials       | object           | A free-form hash of credentials that can be used by applications or users to access the service.                                                                                                                                                                          |
-| syslog_drain_url  | string           | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform MUST consider the response invalid.                                                                                   |
-| route_service_url | string           | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
-| volume_mounts     | array-of-objects | An array of configuration for remote storage devices to be mounted into an application container filesystem. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid.             |
+| Response Field | Type | Description |
+| --- | --- | --- |
+| credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. |
+| syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform MUST consider the response invalid. |
+| route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
+| volume_mounts | array-of-objects | An array of configuration for remote storage devices to be mounted into an application container filesystem. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 
 ##### Volume Mounts Object
 
-| Response Field | Type          | Description                                                                                                                                                                                                 |
-| -------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| driver*        | string        | Name of the volume driver plugin which manages the device.                                                                                                                                                  |
-| container_dir* | string        | The path in the application container onto which the volume will be mounted. This specification does not mandate what action the Platform is to take if the path specified already exists in the container. |
-| mode*          | string        | "r" to mount the volume read-only or "rw" to mount it read-write.                                                                                                                                           |
-| device_type*   | string        | A string specifying the type of device to mount. Currently the only supported value is "shared".                                                                                                            |
-| device*        | device-object | Device object containing device_type specific details. Currently only shared devices are supported.                                                                                                         |
+| Response Field | Type | Description |
+| --- | --- | --- |
+| driver* | string | Name of the volume driver plugin which manages the device. |
+| container_dir* | string | The path in the application container onto which the volume will be mounted. This specification does not mandate what action the Platform is to take if the path specified already exists in the container. |
+| mode* | string | "r" to mount the volume read-only or "rw" to mount it read-write. |
+| device_type* | string | A string specifying the type of device to mount. Currently the only supported value is "shared". |
+| device* | device-object | Device object containing device_type specific details. Currently only shared devices are supported. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -1239,9 +1225,9 @@ For success responses, the following fields are defined:
 Currently only shared devices are supported; a distributed file system which
 can be mounted on all app instances simultaneously.
 
-| Field        | Type   | Description                                                                 |
-| ------------ | ------ | --------------------------------------------------------------------------- |
-| volume_id*   | string | ID of the shared volume to mount on every app instance.                     |
+| Field | Type | Description |
+| --- | --- | --- |
+| volume_id* | string | ID of the shared volume to mount on every app instance. |
 | mount_config | object | Configuration object to be passed to the driver when the volume is mounted. |
 
 \* Fields with an asterisk are REQUIRED.
@@ -1302,10 +1288,10 @@ Service Instance.
 The request provides these query string parameters as useful hints for Service
 Brokers.
 
-| Query-String Field | Type   | Description                                                              |
-| ------------------ | ------ | ------------------------------------------------------------------------ |
-| service_id*        | string | MUST be the ID of the service associated with the binding being deleted. |
-| plan_id*           | string | MUST be the ID of the plan associated with the binding being deleted.    |
+| Query-String Field | Type | Description |
+| --- | --- | --- |
+| service_id* | string | MUST be the ID of the service associated with the binding being deleted. |
+| plan_id* | string | MUST be the ID of the plan associated with the binding being deleted. |
 
 \* Query parameters with an asterisk are REQUIRED.
 
@@ -1329,11 +1315,11 @@ $ curl 'http://username:password@service-broker-url/v2/service_instances/:instan
 
 ### Response
 
-| Status Code     | Description                                                                                                  |
-| --------------- | ------------------------------------------------------------------------------------------------------------ |
-| 200 OK          | MUST be returned if the binding was deleted as a result of this request. The expected response body is `{}`. |
-| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data.                                      |
-| 410 Gone        | MUST be returned if the binding does not exist. The expected response body is `{}`.                          |
+| Status Code | Description |
+| --- | --- |
+| 200 OK | MUST be returned if the binding was deleted as a result of this request. The expected response body is `{}`. |
+| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
+| 410 Gone | MUST be returned if the binding does not exist. The expected response body is `{}`. |
 
 Responses with any other status code will be interpreted as a failure and the
 Platform MUST continue to remember the Service Binding.
@@ -1367,10 +1353,10 @@ The request provides these query string parameters as useful hints for Service
 Brokers.
 
 
-| Query-String Field | Type    | Description                                                                                                                                                                                                                                                                                                                                                             |
-| ------------------ | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| service_id*        | string  | MUST be the ID of the Service Instance being deleted.                                                                                                                                                                                                                                                                                                                   |
-| plan_id*           | string  | MUST be the ID of the plan associated with the Service Instance being deleted.                                                                                                                                                                                                                                                                                          |
+| Query-String Field | Type | Description |
+| --- | --- | --- |
+| service_id* | string | MUST be the ID of the Service Instance being deleted. |
+| plan_id* | string | MUST be the ID of the plan associated with the Service Instance being deleted. |
 | accepts_incomplete | boolean | A value of true indicates that both the Platform and the requesting client support asynchronous deprovisioning. If this parameter is not included in the request, and the Service Broker can only deprovision a Service Instance of the requested plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
 \* Query parameters with an asterisk are REQUIRED.
@@ -1394,12 +1380,12 @@ $ curl 'http://username:password@service-broker-url/v2/service_instances/:instan
 
 ### Response
 
-| Status Code              | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 200 OK                   | MUST be returned if the Service Instance was deleted as a result of this request. The expected response body is `{}`.                                                                                                                                                                                                                                                                                                                                                |
-| 202 Accepted             | MUST be returned if the Service Instance deletion is in progress. This triggers the Platform to poll the [Service Instance Last Operation Endpoint](#polling-last-operation) for operation status. Note that a re-sent `DELETE` request MUST return a `202 Accepted`, not a `200 OK`, if the delete request has not completed yet.                                                                                                                                   |
-| 400 Bad Request          | MUST be returned if the request is malformed or missing mandatory data.                                                                                                                                                                                                                                                                                                                                                                                              |
-| 410 Gone                 | MUST be returned if the Service Instance does not exist.                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Status Code | Description |
+| --- | --- |
+| 200 OK | MUST be returned if the Service Instance was deleted as a result of this request. The expected response body is `{}`. |
+| 202 Accepted | MUST be returned if the Service Instance deletion is in progress. This triggers the Platform to poll the [Service Instance Last Operation Endpoint](#polling-last-operation) for operation status. Note that a re-sent `DELETE` request MUST return a `202 Accepted`, not a `200 OK`, if the delete request has not completed yet. |
+| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
+| 410 Gone | MUST be returned if the Service Instance does not exist. |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous deprovisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. |
 
 Responses with any other status code will be interpreted as a failure and the
@@ -1441,18 +1427,36 @@ success.
 Platforms SHOULD initiate orphan mitigation in the following scenarios:
 
 | Status code of Service Broker response | Platform interpretation of response | Platform initiates orphan mitigation? |
-| -------------------------------------- | ----------------------------------- | ------------------------------------- |
-| 200                                    | Success                             | No                                    |
-| 200 with malformed response            | Failure                             | No                                    |
-| 201                                    | Success                             | No                                    |
-| 201 with malformed response            | Failure                             | Yes                                   |
-| All other 2xx                          | Failure                             | Yes                                   |
-| 408                                    | Timeout failure                     | Yes                                   |
-| All other 4xx                          | Request rejected                    | No                                    |
-| 5xx                                    | Service Broker error                | Yes                                   |
-| Timeout                                | Failure                             | Yes                                   |
+| --- | --- | --- |
+| 200 | Success | No |
+| 200 with malformed response | Failure | No |
+| 201 | Success | No |
+| 201 with malformed response | Failure | Yes |
+| All other 2xx | Failure | Yes |
+| 408 | Timeout failure | Yes |
+| All other 4xx | Request rejected | No |
+| 5xx | Service Broker error | Yes |
+| Timeout | Failure | Yes |
 
 If the Platform encounters an internal error provisioning a Service Instance or
 Service Binding (for example, saving to the database fails), then it MUST at
 least send a single delete or unbind request to the Service Broker to prevent
 the creation of an orphan.
+
+## Extensions
+
+A Service Broker might want to extend the Service Broker API to include custom endpoints specific to their service. An example of this could be lifecycle management, (e.g. "Day Two Operations"), like Backup, Restore, Stop, Start, Restart and Pause. Extending the Service Broker API can be done on a per Service Instance basis, during provisioning. The provisioning request will return a URI to an OpenAPI 3.0+ document that the Platform can use to determine the new endpoint(s), parameter(s), authentication mechanism and server URL. See [Provisioning](#provisioning) for more information on extensions on a per Service Instance basis.
+
+### OpenAPI Document
+
+To extend the API, the Service Broker MUST create an OpenAPI 3.0+ document describing the additional API endpoints and parameters. The returned OpenAPI document MUST be in json format. See the [OpenAPI Specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md) for more information.
+
+### Extension API on Remote Servers
+
+Additional API endpoints MAY be executed on a remote server, however the OpenAPI document MUST include the servers `url` so that the Platform will know how to invoke the endpoint(s). If the server `context` parameter of the OpenAPI document is set to local host the Platform can assume the extension API endpoints are to be invoked using the Service Broker host and port.
+
+### Extension API Authentication
+
+The Service Broker MAY use the the same broker authentication method for invocation of extension endpoints by not providing credentials as part of a `extensions_api` object. If no credentials are present in an `extensions_api` object, the Platform can assume that the default broker authentication method is to be used.
+
+If the Service Broker wants to use alternate methods of authentication, (e.g. on remote servers) it MUST provide details to that mechanism in the OpenAPI document, (e.g. an OAuth Flow Object), and the appropriate credential(s), (e.g. bearer token), as part of the `extensions_api` object. If credentials are present in an `extensions_api` object, the Platform will need to verify the authentication method from the OpenAPI document.
