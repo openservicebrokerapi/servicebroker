@@ -857,10 +857,11 @@ extensions to the Open Service Broker API. As such they are indended to be
 invokved by the Platform on behalf of its clients.
 
 Extension API endpoints MAY be executed on a remote server, however the OpenAPI
-document MUST include the servers `url` so that the Platform will know how to
-invoke the endpoint(s). If the server `context` parameter of the OpenAPI
-document is set to `localhost` the Platform MUST assume the extension API endpoints
-are to be invoked using the Service Broker host and port.
+document MUST include a Server Object with an accurate `url` parameter and a
+`description` field labeled, "Service Broker Extensions Server". If no Server
+Object `description` field contains, "Service Broker Extensions Server", the 
+Platform MUST assume the extension API endpoints are to be invoked using the
+Service Broker host and port. See [OpenAPI Server Object](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#serverObject) for more information.
 
 | Response Field | Type | Description |
 | --- | --- | --- |
