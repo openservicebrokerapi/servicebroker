@@ -728,7 +728,9 @@ For success responses, the following fields are defined:
 
 If the successful response includes a `state` of `failed` then the Platform
 MUST send a deprovision request to the Service Broker to prevent an orphan
-being created on the Service Broker.
+being created on the Service Broker. However, while the Platform will attempt
+to send a deprovision request, Service Brokers MAY automatically delete
+any resources associated with the failed bind request on their own.
 
 ### Polling Interval and Duration
 
@@ -831,7 +833,9 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 
 Responses with any other status code will be interpreted as a failure and a
 deprovision request MUST be sent to the Service Broker to prevent an orphan
-being created on the Service Broker.
+being created on the Service Broker. However, while the platform will attempt
+to send a deprovision request, Service Brokers MAY automatically delete
+any resources associated with the failed provisioning request on their own.
 
 #### Body
 
@@ -982,6 +986,8 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 422 Unprocessable entity | MUST be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the Service Instance (e.g. Service Instance utilization is over the quota of the requested plan). Additionally, a `422 Unprocessable Entity` can also be returned if the Service Broker only supports asynchronous update for the requested plan and the request did not include `?accepts_incomplete=true`; in this case the response body MUST contain a error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. |
 
 Responses with any other status code will be interpreted as a failure.
+When the response includes a 4xx status code, the Service Broker MUST NOT
+apply any of the requested changes to the Service Instance.
 
 #### Body
 
@@ -1176,7 +1182,9 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 
 Responses with any other status code will be interpreted as a failure and an
 unbind request MUST be sent to the Service Broker to prevent an orphan being
-created on the Service Broker.
+created on the Service Broker. However, while the platform will attempt
+to send an unbind request, Service Brokers MAY automatically delete
+any resources associated with the failed bind request on their own.
 
 #### Body
 
