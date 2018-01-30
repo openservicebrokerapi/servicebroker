@@ -1112,7 +1112,8 @@ might not be able to provide this information at the time of the binding
 request, therefore the `bind_resource` and its fields are OPTIONAL.
 
 Below are some common fields that MAY be used. Platforms MAY choose to add
-additional ones as needed.
+additional ones as needed (see
+[Bind Resource Object](profile.md#bind-resource-object) conventions).
 
 | Request Field | Type | Description |
 | --- | --- | --- |
