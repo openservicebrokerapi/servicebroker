@@ -970,6 +970,7 @@ error message in response.
 | Parameter Name | Type | Description |
 | --- | --- | --- |
 | accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only provision a Service Instance of the requested plan asynchronously, the Service Broker SHOULD reject the request with a `422 Unprocessable Entity` as described below. |
+| accepts_updates | boolean | A value of true indicates that the Platform supports the Service Broker returning updated metadata about the Service Instance in the response message. |
 
 #### Headers
 
@@ -1082,10 +1083,24 @@ For success responses, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
+| dashboard_url | string | The updated URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`0129d920a083838` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the update request, even if the service is updated asynchronously. If present, MUST be a non-empty string. |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
+
+While the Service Broker MAY include any extension fields in the response
+message, unless the `accepts_updates` parameter is specified on the request
+with a value of true, any metadata included in the response message
+might not be processed by the Platform. Therefore, in these cases, the
+Service Broker MUST continue to support the old metadata values.
+If the Platform includes the `accepts_updates` parameter with a value of
+true on the request message, and the response message includes updated
+metadata, then the Platform MUST use the new values specified in the
+response message. Additionally, any metadata previously associated with a
+Service Instance but not included in the response message MUST remain
+unchanged within the Platform.
 
 ```
 {
+  "dashboard_url": "http://example-dashboard.example.com/0129d920a083838",
   "operation": "task_10"
 }
 ```
