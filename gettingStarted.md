@@ -40,7 +40,7 @@ the deployment guide for the
 
 The [Service Catalog](https://github.com/kubernetes-incubator/service-catalog)
 project is responsible for integrating Service Brokers to the Kubernetes
-ecosystem. The project has it's own
+ecosystem. The project has its own
 [Special Interest Group (SIG)](https://github.com/kubernetes/community/tree/master/sig-service-catalog)
 and can be deployed by following
 [this walkthrough guide](https://github.com/kubernetes-incubator/service-catalog/blob/master/docs/walkthrough.md).
