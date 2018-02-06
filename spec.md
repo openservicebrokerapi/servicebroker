@@ -165,8 +165,9 @@ Brokers agree on other methods of authentication.
 
 Platforms and Service Brokers MAY agree on an authentication mechanism other
 than basic authentication, but the specific agreements are not covered by this
-specification. Please see the [profile](profile.md) documentation for a
-description of each mechanism and platform support.
+specification. Please see the 
+[Platform Features authentication mechanisms wiki document](https://github.com/openservicebrokerapi/servicebroker/wiki/Platform-Features)
+for details on these mechanisms.
 
 If authentication is used, the Service Broker MUST authenticate the request
 using the predetermined authentication mechanism, securing communications
