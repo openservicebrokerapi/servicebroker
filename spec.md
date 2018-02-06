@@ -351,7 +351,7 @@ the use of CLI-unfriendly strings that might cause problems for command line
 parsers (or that are not very meaningful to users), such as `-`.
 It is therefore RECOMMENDED that implementations avoid such strings.
 
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | services* | array-of-service-objects | Schema of service objects defined below. MAY be empty. |
 
@@ -359,7 +359,7 @@ It is therefore RECOMMENDED that implementations avoid such strings.
 
 ##### Service Objects
 
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | name* | string | A CLI-friendly name of the service. MUST only contain alphanumeric characters and hyphens (no spaces). MUST be unique across all service objects returned in this response. MUST be a non-empty string. |
 | id* | string | An identifier used to correlate this service in future requests to the Service Broker. This MUST be globally unique. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
@@ -385,7 +385,7 @@ how Platforms might expose these values to their users.
 
 ##### Dashboard Client Object
 
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | id | string | The id of the Oauth client that the dashboard will use. If present, MUST be a non-empty string. |
 | secret | string | A secret for the dashboard client. If present, MUST be a non-empty string. |
@@ -394,7 +394,7 @@ how Platforms might expose these values to their users.
 
 ##### Plan Object
 
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | id* | string | An identifier used to correlate this plan in future requests to the Service Broker. This MUST be globally unique. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
 | name* | string | The CLI-friendly name of the plan. MUST only contain alphanumeric characters and hyphens (no spaces). MUST be unique within the service. MUST be a non-empty string. |
@@ -408,27 +408,27 @@ how Platforms might expose these values to their users.
 
 ##### Schema Object
 
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | [service_instance](#service-instance-object) | object | The schema definitions for creating and updating a Service Instance. |
 | [service_binding](#service-binding-object) | object | The schema definition for creating a Service Binding. Used only if the Service Plan is bindable. |
 
 ##### Service Instance Object
 
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | [create](#input-parameters-object) | object | The schema definition for creating a Service Instance. |
 | [update](#input-parameters-object) | object | The schema definition for updating a Service Instance. |
 
 ##### Service Binding Object
 
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | [create](#input-parameters-object) | object | The schema definition for creating a Service Binding. |
 
 ##### Input Parameters Object
 
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | parameters | JSON schema object | The schema definition for the input parameters. Each input parameter is expressed as a property within a JSON object. |
 
@@ -720,7 +720,7 @@ returns a valid response or the
 
 For success responses, the following fields are defined:
 
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the Platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the Platform to cease polling. |
 | description | string | A user-facing message displayed to the Platform API client. Can be used to tell the user details about the status of the operation. If present, MUST be a non-empty string. |
@@ -766,7 +766,7 @@ This ID will be used for future requests (bind and deprovision), so the
 Service Broker will use it to correlate the resource it creates.
 
 #### Parameters
-| Parameter name | Type | Description |
+| Parameter Name | Type | Description |
 | --- | --- | --- |
 | accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only provision a Service Instance of the requested plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
@@ -782,7 +782,7 @@ The following HTTP Headers are defined for this operation:
 \* Headers with an asterisk are REQUIRED.
 
 #### Body
-| Request field | Type | Description |
+| Request Field | Type | Description |
 | --- | --- | --- |
 | service_id* | string | MUST be the ID of a service from the catalog for this Service Broker. |
 | plan_id* | string | MUST be the ID of a plan from the service that has been requested. |
@@ -849,7 +849,7 @@ any resources associated with the failed provisioning request on their own.
 
 For success responses, the following fields are defined:
 
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. If present, MUST be a non-empty string. |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
@@ -888,7 +888,7 @@ error message in response.
 `:instance_id` MUST be the ID a previously provisioned Service Instance.
 
 #### Parameters
-| Parameter name | Type | Description |
+| Parameter Name | Type | Description |
 | --- | --- | --- |
 | accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only provision a Service Instance of the requested plan asynchronously, the Service Broker SHOULD reject the request with a `422 Unprocessable Entity` as described below. |
 
@@ -1001,7 +1001,7 @@ apply any of the requested changes to the Service Instance.
 
 For success responses, the following fields are defined:
 
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
 
@@ -1392,7 +1392,7 @@ Platform MUST remember the Service Instance.
 
 For success responses, the following fields are defined:
 
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
 
@@ -1423,7 +1423,7 @@ success.
 
 Platforms SHOULD initiate orphan mitigation in the following scenarios:
 
-| Status code of Service Broker response | Platform interpretation of response | Platform initiates orphan mitigation? |
+| Status Code Of Service Broker Response | Platform Interpretation Of Response | Platform Initiates Orphan Mitigation? |
 | --- | --- | --- |
 | 200 | Success | No |
 | 200 with malformed response | Failure | No |
