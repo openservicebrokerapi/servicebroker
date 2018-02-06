@@ -853,7 +853,7 @@ Restore, Stop, Start, Restart and Pause.
 The `extension_api` MUST include a URI to an OpenAPI 3.0+ document that the
 Platform can use to determine the new endpoint(s), parameter(s), authentication
 mechanism and server URL. The new APIs are extensions to the Open Service Broker
-API. As such they are indended to be invokved by the Platform on behalf of its
+API. As such they are indended to be invoked by the Platform on behalf of its
 clients.
 
 Extension API endpoints MAY be executed on a remote server, however the OpenAPI
@@ -874,6 +874,7 @@ absolute URL.
   ]
 }
 ```
+
 See [OpenAPI Server Object](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#serverObject) for more information.
 
 | Response Field | Type | Description |
