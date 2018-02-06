@@ -344,7 +344,7 @@ Note: In previous versions of the specification service and plan names
 were not allowed to use uppercase characters. However, this requirement was
 not enforced and therefore to ensure backwards compatibility with existing
 Service Brokers that might use uppercase characters the specification
-as been changed.
+has been changed.
 
 For backwards compatibility reasons, this specification does not preclude
 the use of CLI-unfriendly strings that might cause problems for command line
