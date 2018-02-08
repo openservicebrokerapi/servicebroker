@@ -18,7 +18,6 @@ or REQUIRED level requirements defined herein.
   - [Context Object Properties](#context-object-properties)
   - [Cloud Foundry](#cloud-foundry)
   - [Kubernetes](#kubernetes)
-- [Platform to Service Broker Authentication](#platform-to-service-broker-authentication)
 - [Service Metadata](#service-metadata)
   - [Cloud Foundry Service Metadata](#cloud-foundry-service-metadata)
 
@@ -232,12 +231,6 @@ part of a Kubernetes API call:
     "namespace": "development"
   }
   ```
-
-## Platform to Service Broker Authentication
-
-The [specification](spec.md) requires that brokers implement HTTP Basic authentication, but also allows for other mechanisms if the platform and the broker agree upon them outside of the specification. This section contains a list of supported mechanisms that platforms and brokers support. The list will be growing as time goes on.
-
-- The [Kubernetes Service Catalog](https://github.com/kubernetes-incubator/service-catalog) supports arbitrary HTTP Bearer tokens over TLS as an authentication mechanism
 
 ## Service Metadata
 
