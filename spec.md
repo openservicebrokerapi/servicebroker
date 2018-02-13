@@ -345,8 +345,8 @@ $ curl http://username:password@service-broker-url/v2/catalog -H "X-Broker-API-V
 CLI clients will typically have restrictions on how names, such as service
 and plan names, will be provided by users. Therefore, this specification
 defines a "CLI-friendly" string as a short string that MUST only use
-alphanumeric characters and hyphens, with no spaces. This will make it easier
-for users when they have to type it as an argument on the command line.
+alphanumeric characters, periods, and hyphens, with no spaces. This will make it
+easier for users when they have to type it as an argument on the command line.
 For comparison purposes, service and plan names MUST be treated as
 case-sensitive strings.
 
@@ -371,7 +371,7 @@ It is therefore RECOMMENDED that implementations avoid such strings.
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| name* | string | A CLI-friendly name of the service. MUST only contain alphanumeric characters and hyphens (no spaces). MUST be unique across all service objects returned in this response. MUST be a non-empty string. |
+| name* | string | A CLI-friendly name of the service. MUST only contain alphanumeric characters, periods, and hyphens (no spaces). MUST be unique across all service objects returned in this response. MUST be a non-empty string. |
 | id* | string | An identifier used to correlate this service in future requests to the Service Broker. This MUST be globally unique such that Platforms (and their users) MUST be able to assume that seeing the same value (no matter what Service Broker uses it) will always refer to this service. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
 | description* | string | A short description of the service. MUST be a non-empty string. |
 | tags | array of strings | Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp. |
@@ -407,7 +407,7 @@ how Platforms might expose these values to their users.
 | Response Field | Type | Description |
 | --- | --- | --- |
 | id* | string | An identifier used to correlate this plan in future requests to the Service Broker. This MUST be globally unique such that Platforms (and their users) MUST be able to assume that seeing the same value (no matter what Service Broker uses it) will always refer to this plan and for the same service. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
-| name* | string | The CLI-friendly name of the plan. MUST only contain alphanumeric characters and hyphens (no spaces). MUST be unique within the service. MUST be a non-empty string. |
+| name* | string | The CLI-friendly name of the plan. MUST only contain alphanumeric characters, periods, and hyphens (no spaces). MUST be unique within the service. MUST be a non-empty string. |
 | description* | string | A short description of the plan. MUST be a non-empty string. |
 | metadata | object | An opaque object of metadata for a Service Plan. It is expected that Platforms will treat this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and Platforms for fields that aid in the display of catalog data. |
 | free | boolean | When false, Service Instances of this plan have a cost. The default is true. |
