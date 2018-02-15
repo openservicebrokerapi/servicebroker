@@ -863,6 +863,7 @@ See [OpenAPI Server Object](https://github.com/OAI/OpenAPI-Specification/blob/ma
 | discovery_url* | string | A URI pointing to a valid OpenAPI 3.0+ document describing the API extension(s) to the Open Service Broker API including server location, endpoints, parameters and any other detail the platform needs for invocation. The location of the API extension endpoint(s) can be local to the Service Broker or on a remote server. MUST be a valid URI. The returned OpenAPI document MUST be in json format. See the [OpenAPI Specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md) for more information. |
 | server_url | string | A URI pointing to a remote server where API extensions will run. This URI will be used as the basepath for the endpoint(s) described by the `discovery_url` OpenAPI document. If no `server_url` is present, the Platform MUST assume the extension API endpoint(s) are to be invoked using the Service Broker host and port. If present, MUST be a valid URI. |
 | credentials | object | A Service Broker MAY return authentication details for running any of the extension API calls, especially for those running on remote servers. If not present, the same authentication mechanism used for the normal Open Service Broker APIs MUST work for the new endpoint(s). If the Service Broker wants to use alternate methods of authentication, (e.g. on remote servers) it MUST provide details to that mechanism in the OpenAPI document, (e.g. an OAuth Flow Object), and the appropriate credential(s), (e.g. bearer token), as part of the `extension_api` object within the `credentials` field. If credentials are present in an `extension_api` object, the Platform will need to verify the authentication method from the OpenAPI document. |
+| alt_instance_id | string | Refers to a parameter in the `discovery_url` OpenAPI document that maps directly to the Service Broker API `instance_id` parameter. If the extension API endpoint(s) use a different value to represent a Service Broker instance, then `alt_instance_id` MUST be present. If not present, the Platform can assume `instance_id` means Service Broker Instance in the OpenAPI document. |
 | adheres_to | string | A URI refering to a specification detailing the implementation guidelines for the OpenAPI document hosted at the `discovery_url`. While this property is a URI, there is no requirement for there to be an actual server listening at that endpoint. This value is meant to provide a unique identifier representing the set of extensions APIs supported. If present, MUST be a valid URI. |
 
 \* Fields with an asterisk are REQUIRED.
@@ -877,6 +878,7 @@ See [OpenAPI Server Object](https://github.com/OAI/OpenAPI-Specification/blob/ma
       "credentials":[{
         "tokenURL": "https://example.com/api/oauth/token"
       }],
+      "alt_instance_id": "serviceInstance",
       "adheres_to": "http://example-specification.example.com"
   }]
 }
