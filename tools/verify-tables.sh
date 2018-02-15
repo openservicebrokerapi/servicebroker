@@ -101,9 +101,9 @@ function checkForPunc() {
       continue
     fi
 
-    # Ignore columns containing 4 words or less
-    count=$(echo "$col" | wc -w)
-    if (( "$count" <= 4 )); then
+    # Anything less than 4 words we ignore
+    count=$(echo "$col" | sed "s/(.*)//g" | sed "s/\[.*\]//g" | wc -w)
+    if (( "$count" < 4 )); then
       continue
     fi
 
@@ -111,7 +111,7 @@ function checkForPunc() {
       continue
     fi
 
-    echo "$file - $1: column $colNum doesn't end with a '. |' or '? |' - watch for extra/missing spaces."
+    echo "$file - $1: column $colNum has more than 3 words and doesn't end with a '. |' or '? |' - watch for extra/missing spaces."
 
   done
 }
