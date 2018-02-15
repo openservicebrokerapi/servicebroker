@@ -851,34 +851,17 @@ management of a Service Instance, (e.g. "Day Two Operations"), like Backup,
 Restore, Stop, Start, Restart and Pause.
 
 The `extension_api` MUST include a URI to an OpenAPI 3.0+ document that the
-Platform can use to determine the new endpoint(s), parameter(s), authentication
-mechanism and server URL. The new APIs are extensions to the Open Service Broker
+Platform can use to determine the new endpoint(s), parameter(s) and
+authentication mechanism. The new APIs are extensions to the Open Service Broker
 API. As such they are indended to be invokved by the Platform on behalf of its
 clients.
 
-Extension API endpoints MAY be executed on a remote server, however the OpenAPI
-document MUST include a Server Object with an accurate `url` parameter and a
-`description` field labeled, "Service Broker Extensions Server". If no Server
-Object `description` field contains, "Service Broker Extensions Server", the 
-Platform MUST assume the extension API endpoints are to be invoked using the
-Service Broker host and port. The `url` for this Server Object MUST be an
-absolute URL.
-
-```
-{
-  "servers": [
-    {
-      "url": "https://extensions.servicebrokerexample.com",
-      "description": "Service Broker Extensions Server"
-    }
-  ]
-}
-```
 See [OpenAPI Server Object](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#serverObject) for more information.
 
 | Response Field | Type | Description |
 | --- | --- | --- |
 | discovery_url* | string | A URI pointing to a valid OpenAPI 3.0+ document describing the API extension(s) to the Open Service Broker API including server location, endpoints, parameters and any other detail the platform needs for invocation. The location of the API extension endpoint(s) can be local to the Service Broker or on a remote server. MUST be a valid URI. The returned OpenAPI document MUST be in json format. See the [OpenAPI Specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md) for more information. |
+| server_url | string | A URI pointing to a remote server where API extensions will run. This URI will be used as the basepath for the endpoint(s) described by the `discovery_url` OpenAPI document. If no `server_url` is present, the Platform MUST assume the extension API endpoint(s) are to be invoked using the Service Broker host and port. If present, MUST be a valid URI. |
 | credentials | object | A Service Broker MAY return authentication details for running any of the extension API calls, especially for those running on remote servers. If not present, the same authentication mechanism used for the normal Open Service Broker APIs MUST work for the new endpoint(s). If the Service Broker wants to use alternate methods of authentication, (e.g. on remote servers) it MUST provide details to that mechanism in the OpenAPI document, (e.g. an OAuth Flow Object), and the appropriate credential(s), (e.g. bearer token), as part of the `extension_api` object within the `credentials` field. If credentials are present in an `extension_api` object, the Platform will need to verify the authentication method from the OpenAPI document. |
 | adheres_to | string | A URI refering to a specification detailing the implementation guidelines for the OpenAPI document hosted at the `discovery_url`. While this property is a URI, there is no requirement for there to be an actual server listening at that endpoint. This value is meant to provide a unique identifier representing the set of extensions APIs supported. If present, MUST be a valid URI. |
 
@@ -890,6 +873,7 @@ See [OpenAPI Server Object](https://github.com/OAI/OpenAPI-Specification/blob/ma
   "operation": "task_10",
   "extension_apis":[{
       "discovery_url": "http://example-openapi-doc.example.com/extensions",
+      "server_url": "http://myremoteserver.example.com",
       "credentials":[{
         "tokenURL": "https://example.com/api/oauth/token"
       }],
