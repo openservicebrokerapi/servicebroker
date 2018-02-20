@@ -287,7 +287,7 @@ and consistency.
 | Service Broker API Field | Type | Description |
 | --- | --- | --- |
 | metadata.bullets | array-of-strings | Features of this plan, to be displayed in a bulleted-list. |
-| metadata.costs | object | An array-of-objects that describes the costs of a service, in what currency, and the unit of measure. If there are multiple costs, all of them could be billed to the user (such as a monthly + usage costs at once). |
+| metadata.costs | array-of-objects | An array-of-objects that describes the costs of a service, in what currency, and the unit of measure. If there are multiple costs, all of them could be billed to the user (such as a monthly + usage costs at once). |
 | metadata.displayName | string | Name of the plan to be displayed to clients. |
 
 #### Cost Object
