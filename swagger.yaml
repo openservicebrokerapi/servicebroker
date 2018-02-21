@@ -72,7 +72,7 @@ paths:
         '400':
           description: Bad Request
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/Error'
         '409':
           description: Conflict
           schema:
@@ -110,7 +110,7 @@ paths:
         '400':
           description: Bad Request
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/Error'
         '422':
           description: Unprocessable entity
           schema:
@@ -138,11 +138,11 @@ paths:
         '400':
           description: Bad Request
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/Error'
         '410':
           description: Gone
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/Error'
         '422':
           description: Unprocessable Entity
           schema:
@@ -179,11 +179,11 @@ paths:
         '400':
           description: Bad Request
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/Error'
         '410':
           description: Gone
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/Error'
   '/v2/service_instances/{instance_id}/service_bindings/{binding_id}':
     parameters:
       - $ref: '#/parameters/APIVersion'
@@ -216,7 +216,7 @@ paths:
         '400':
           description: Bad Request
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/Error'
         '409':
           description: Conflict
           schema:
@@ -241,11 +241,11 @@ paths:
         '400':
           description: Bad Request
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/Error'
         '410':
           description: Gone
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/Error'
 parameters:
   APIVersion:
     name: X-Broker-API-Version
