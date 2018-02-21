@@ -353,7 +353,7 @@ It is therefore RECOMMENDED that implementations avoid such strings.
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| services* | array-of-service-objects | Schema of service objects defined below. MAY be empty. |
+| services* | [Service](#service-objects)\[\] | Schema of service objects defined below. MAY be empty. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -364,13 +364,13 @@ It is therefore RECOMMENDED that implementations avoid such strings.
 | name* | string | A CLI-friendly name of the service. MUST only contain alphanumeric characters and hyphens (no spaces). MUST be unique across all service objects returned in this response. MUST be a non-empty string. |
 | id* | string | An identifier used to correlate this service in future requests to the Service Broker. This MUST be globally unique. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
 | description* | string | A short description of the service. MUST be a non-empty string. |
-| tags | array-of-strings | Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp. |
-| requires | array-of-strings | A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are `syslog_drain`, `route_forwarding` and `volume_mount`. |
+| tags | string\[\] | Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp. |
+| requires | string\[\] | A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are `syslog_drain`, `route_forwarding` and `volume_mount`. |
 | bindable* | boolean | Specifies whether Service Instances of the service can be bound to applications. This specifies the default for all plans of this service. Plans can override this field (see [Plan Object](#plan-object)). |
 | metadata | object | An opaque object of metadata for a Service Offering. It is expected that Platforms will treat this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and Platforms for fields that aid in the display of catalog data. |
-| [dashboard_client](#dashboard-client-object) | object | Contains the data necessary to activate the Dashboard SSO feature for this service. |
+| dashboard_client | [DashboardClient](#dashboard-client-object) | Contains the data necessary to activate the Dashboard SSO feature for this service. |
 | plan_updateable | boolean | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute `plan_updatable` as `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
-| [plans*](#plan-object) | array-of-objects | A list of plans for this service, schema is defined below. MUST contain at least one plan. |
+| plans* | [Plan](#plan-object)\[\] | A list of plans for this service, schema is defined below. MUST contain at least one plan. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -402,7 +402,7 @@ how Platforms might expose these values to their users.
 | metadata | object | An opaque object of metadata for a Service Plan. It is expected that Platforms will treat this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and Platforms for fields that aid in the display of catalog data. |
 | free | boolean | When false, Service Instances of this plan have a cost. The default is true. |
 | bindable | boolean | Specifies whether Service Instances of the Service Plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
-| [schemas](#schema-object) | object | Schema definitions for Service Instances and bindings for the plan. |
+| schemas | [Schema](#schema-object) | Schema definitions for Service Instances and bindings for the plan. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -410,21 +410,21 @@ how Platforms might expose these values to their users.
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| [service_instance](#service-instance-object) | object | The schema definitions for creating and updating a Service Instance. |
-| [service_binding](#service-binding-object) | object | The schema definition for creating a Service Binding. Used only if the Service Plan is bindable. |
+| service_instance | [ServiceInstance](#service-instance-object) | The schema definitions for creating and updating a Service Instance. |
+| service_binding | [ServiceBinding](#service-binding-object) | The schema definition for creating a Service Binding. Used only if the Service Plan is bindable. |
 
 ##### Service Instance Object
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| [create](#input-parameters-object) | object | The schema definition for creating a Service Instance. |
-| [update](#input-parameters-object) | object | The schema definition for updating a Service Instance. |
+| create | [InputParameters](#input-parameters-object) | The schema definition for creating a Service Instance. |
+| update | [InputParameters](#input-parameters-object) | The schema definition for updating a Service Instance. |
 
 ##### Service Binding Object
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| [create](#input-parameters-object) | object | The schema definition for creating a Service Binding. |
+| create | [InputParameters](#input-parameters-object) | The schema definition for creating a Service Binding. |
 
 ##### Input Parameters Object
 
@@ -911,7 +911,7 @@ The following HTTP Headers are defined for this operation:
 | service_id* | string | MUST be the ID of a service from the catalog for this Service Broker. |
 | plan_id | string | If present, MUST be the ID of a plan from the service that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the plan of the instance as a result of this request. |
 | parameters | object | Configuration options for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. See "Note" below. |
-| [previous_values](#previous-values-object) | object | Information about the Service Instance prior to the update. |
+| previous_values | [PreviousValues](#previous-values-object) | Information about the Service Instance prior to the update. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -1113,7 +1113,7 @@ The following HTTP Headers are defined for this operation:
 | service_id* | string | MUST be the ID of the service that is being used. |
 | plan_id* | string | MUST be the ID of the plan from the service that is being used. |
 | app_guid | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the binding to be created. If present, MUST be a non-empty string. |
-| bind_resource | object | A JSON object that contains data for Platform resources associated with the binding to be created. See [Bind Resource Object](#bind-resource-object) for more information. |
+| bind_resource | [BindResource](#bind-resource-object) | A JSON object that contains data for Platform resources associated with the binding to be created. See [Bind Resource Object](#bind-resource-object) for more information. |
 | parameters | object | Configuration options for the Service Binding. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
 
 \* Fields with an asterisk are REQUIRED.
@@ -1203,7 +1203,7 @@ For success responses, the following fields are defined:
 | credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. |
 | syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform MUST consider the response invalid. |
 | route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
-| volume_mounts | array-of-objects | An array of configuration for remote storage devices to be mounted into an application container filesystem. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
+| volume_mounts | [VolumeMount](#volume-mounts-object)\[\] | An array of configuration for remote storage devices to be mounted into an application container filesystem. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 
 ##### Volume Mounts Object
 
@@ -1213,7 +1213,7 @@ For success responses, the following fields are defined:
 | container_dir* | string | The path in the application container onto which the volume will be mounted. This specification does not mandate what action the Platform is to take if the path specified already exists in the container. |
 | mode* | string | "r" to mount the volume read-only or "rw" to mount it read-write. |
 | device_type* | string | A string specifying the type of device to mount. Currently the only supported value is "shared". |
-| device* | device-object | Device object containing device_type specific details. Currently only shared devices are supported. |
+| device* | [Device](#device-object) | Device object containing device_type specific details. Currently only shared devices are supported. |
 
 \* Fields with an asterisk are REQUIRED.
 
