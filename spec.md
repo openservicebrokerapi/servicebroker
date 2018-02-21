@@ -151,6 +151,17 @@ Service Broker MAY reject the request with `412 Precondition Failed` and
 provide a message that informs the operator of the API version that is to be
 used instead.
 
+## Extending Resources
+
+Senders of messages defined by this specification MAY include additional
+fields within the JSON objects. When adding new fields, unique prefixes
+SHOULD be used for the field names to reduce the chances of conflicts
+with future specification defined fields.
+
+Receivers of a messages defined by this specification that contain unknown
+extension fields MUST ignore those fields and MUST NOT halt processing
+of those messages due to those fields.
+
 ## Platform to Service Broker Authentication
 
 While the communication between a Platform and Service Broker MAY be unsecure,
@@ -737,10 +748,6 @@ For success responses, the following fields are defined:
 
 \* Fields with an asterisk are REQUIRED.
 
-Service Brokers MAY include additional fields within the response. When adding
-new fields, Service Brokers SHOULD use a unique prefix for the field names to
-reduce the chances of conflict with future specification defined fields.
-
 ```
 {
   "state": "in progress",
@@ -806,10 +813,6 @@ The following HTTP Headers are defined for this operation:
 | parameters | object | Configuration options for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
 
 \* Fields with an asterisk are REQUIRED.
-
-Platforms MAY include additional fields within the response. When adding
-new fields, Platforms SHOULD use a unique prefix for the field names to
-reduce the chances of conflict with future specification defined fields.
 
 ```
 {
@@ -879,10 +882,6 @@ For success responses, the following fields are defined:
 }
 ```
 
-Service Brokers MAY include additional fields within the response. When adding
-new fields, Service Brokers SHOULD use a unique prefix for the field names to
-reduce the chances of conflict with future specification defined fields.
-
 ## Updating a Service Instance
 
 By implementing this endpoint, Service Broker authors can enable users to
@@ -942,10 +941,6 @@ The following HTTP Headers are defined for this operation:
 | previous_values | [PreviousValues](#previous-values-object) | Information about the Service Instance prior to the update. |
 
 \* Fields with an asterisk are REQUIRED.
-
-Platforms MAY include additional fields within the response. When adding
-new fields, Platforms SHOULD use a unique prefix for the field names to
-reduce the chances of conflict with future specification defined fields.
 
 ##### Previous Values Object
 
@@ -1042,10 +1037,6 @@ For success responses, the following fields are defined:
   "operation": "task_10"
 }
 ```
-
-Service Brokers MAY include additional fields within the response. When adding
-new fields, Service Brokers SHOULD use a unique prefix for the field names to
-reduce the chances of conflict with future specification defined fields.
 
 
 ## Binding
@@ -1155,10 +1146,6 @@ The following HTTP Headers are defined for this operation:
 
 \* Fields with an asterisk are REQUIRED.
 
-Platforms MAY include additional fields within the response. When adding
-new fields, Platforms SHOULD use a unique prefix for the field names to
-reduce the chances of conflict with future specification defined fields.
-
 ##### Bind Resource Object
 
 The `bind_resource` object contains Platform specific information related to
@@ -1258,10 +1245,6 @@ For success responses, the following fields are defined:
 
 \* Fields with an asterisk are REQUIRED.
 
-Service Brokers MAY include additional fields within the response. When adding
-new fields, Service Brokers SHOULD use a unique prefix for the field names to
-reduce the chances of conflict with future specification defined fields.
-
 ##### Device Object
 
 Currently only shared devices are supported; a distributed file system which
@@ -1273,10 +1256,6 @@ can be mounted on all app instances simultaneously.
 | mount_config | object | Configuration object to be passed to the driver when the volume is mounted. |
 
 \* Fields with an asterisk are REQUIRED.
-
-Service Brokers MAY include additional fields within the response. When adding
-new fields, Service Brokers SHOULD use a unique prefix for the field names to
-reduce the chances of conflict with future specification defined fields.
 
 ```
 {
@@ -1374,10 +1353,6 @@ Platform MUST continue to remember the Service Binding.
 
 For a success response, the expected response body is `{}`.
 
-Service Brokers MAY include additional fields within the response. When adding
-new fields, Service Brokers SHOULD use a unique prefix for the field names to
-reduce the chances of conflict with future specification defined fields.
-
 ## Deprovisioning
 
 When a Service Broker receives a deprovision request from a Platform, it MUST
@@ -1448,10 +1423,6 @@ For success responses, the following fields are defined:
 | Response Field | Type | Description |
 | --- | --- | --- |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
-
-Service Brokers MAY include additional fields within the response. When adding
-new fields, Service Brokers SHOULD use a unique prefix for the field names to
-reduce the chances of conflict with future specification defined fields.
 
 ```
 {
