@@ -359,7 +359,6 @@ It is therefore RECOMMENDED that implementations avoid such strings.
 
 \* Fields with an asterisk are REQUIRED.
 
-
 ##### Service Objects
 
 | Response Field | Type | Description |
@@ -386,7 +385,6 @@ company). Additionally, some Platforms might modify the service names before
 presenting them to their users. This specification places no requirements on
 how Platforms might expose these values to their users.
 
-
 ##### Dashboard Client Object
 
 | Response Field | Type | Description |
@@ -394,7 +392,6 @@ how Platforms might expose these values to their users.
 | id | string | The id of the Oauth client that the dashboard will use. If present, MUST be a non-empty string. |
 | secret | string | A secret for the dashboard client. If present, MUST be a non-empty string. |
 | redirect_uri | string | A URI for the service dashboard. Validated by the OAuth token server when the dashboard requests a token. |
-
 
 ##### Plan Object
 
@@ -409,7 +406,6 @@ how Platforms might expose these values to their users.
 | [schemas](#schema-object) | object | Schema definitions for Service Instances and bindings for the plan. |
 
 \* Fields with an asterisk are REQUIRED.
-
 
 ##### Schema Object
 
