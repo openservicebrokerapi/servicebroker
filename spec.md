@@ -368,7 +368,7 @@ It is therefore RECOMMENDED that implementations avoid such strings.
 | requires | string\[\] | A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are `syslog_drain`, `route_forwarding` and `volume_mount`. |
 | bindable* | boolean | Specifies whether Service Instances of the service can be bound to applications. This specifies the default for all plans of this service. Plans can override this field (see [Plan Object](#plan-object)). |
 | metadata | object | An opaque object of metadata for a Service Offering. It is expected that Platforms will treat this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and Platforms for fields that aid in the display of catalog data. |
-| dashboard_client | [DashboardClient](#dashboardclient-object) | Contains the data necessary to activate the Dashboard SSO feature for this service. |
+| dashboard_client | [DashboardClient](#dashboard-client-object) | Contains the data necessary to activate the Dashboard SSO feature for this service. |
 | plan_updateable | boolean | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute `plan_updatable` as `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
 | plans* | [Plan](#plan-object)\[\] | A list of plans for this service, schema is defined below. MUST contain at least one plan. |
 
@@ -383,7 +383,7 @@ company). Additionally, some Platforms might modify the service names before
 presenting them to their users. This specification places no requirements on
 how Platforms might expose these values to their users.
 
-##### DashboardClient Object
+##### Dashboard Client Object
 
 | Response Field | Type | Description |
 | --- | --- | --- |
@@ -410,23 +410,23 @@ how Platforms might expose these values to their users.
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| service_instance | [ServiceInstanceSchema](#serviceinstanceschema-object) | The schema definitions for creating and updating a Service Instance. |
-| service_binding | [ServiceBindingSchema](#servicebindingschema-object) | The schema definition for creating a Service Binding. Used only if the Service Plan is bindable. |
+| service_instance | [ServiceInstanceSchema](#service-instance-schema-object) | The schema definitions for creating and updating a Service Instance. |
+| service_binding | [ServiceBindingSchema](#service-binding-schema-object) | The schema definition for creating a Service Binding. Used only if the Service Plan is bindable. |
 
-##### ServiceInstanceSchema Object
-
-| Response Field | Type | Description |
-| --- | --- | --- |
-| create | [InputParametersSchema](#inputparametersschema-object) | The schema definition for creating a Service Instance. |
-| update | [InputParametersSchema](#inputparametersschema-object) | The schema definition for updating a Service Instance. |
-
-##### ServiceBindingSchema Object
+##### Service Instance Schema Object
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| create | [InputParametersSchema](#inputparametersschema-object) | The schema definition for creating a Service Binding. |
+| create | [InputParametersSchema](#input-parameters-schema-object) | The schema definition for creating a Service Instance. |
+| update | [InputParametersSchema](#input-parameters-schema-object) | The schema definition for updating a Service Instance. |
 
-##### InputParametersSchema Object
+##### Service Binding Schema Object
+
+| Response Field | Type | Description |
+| --- | --- | --- |
+| create | [InputParametersSchema](#input-parameters-schema-object) | The schema definition for creating a Service Binding. |
+
+##### Input Parameters Schema Object
 
 | Response Field | Type | Description |
 | --- | --- | --- |
@@ -911,11 +911,11 @@ The following HTTP Headers are defined for this operation:
 | service_id* | string | MUST be the ID of a service from the catalog for this Service Broker. |
 | plan_id | string | If present, MUST be the ID of a plan from the service that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the plan of the instance as a result of this request. |
 | parameters | object | Configuration options for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. See "Note" below. |
-| previous_values | [PreviousValues](#previousvalues-object) | Information about the Service Instance prior to the update. |
+| previous_values | [PreviousValues](#previous-values-object) | Information about the Service Instance prior to the update. |
 
 \* Fields with an asterisk are REQUIRED.
 
-##### PreviousValues Object
+##### Previous Values Object
 
 | Request Field | Type | Description |
 | --- | --- | --- |
@@ -1113,12 +1113,12 @@ The following HTTP Headers are defined for this operation:
 | service_id* | string | MUST be the ID of the service that is being used. |
 | plan_id* | string | MUST be the ID of the plan from the service that is being used. |
 | app_guid | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the binding to be created. If present, MUST be a non-empty string. |
-| bind_resource | [BindResource](#bindresource-object) | A JSON object that contains data for Platform resources associated with the binding to be created. See [BindResource Object](#bindresource-object) for more information. |
+| bind_resource | [BindResource](#bind-resource-object) | A JSON object that contains data for Platform resources associated with the binding to be created. See [Bind Resource Object](#bind-resource-object) for more information. |
 | parameters | object | Configuration options for the Service Binding. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
 
 \* Fields with an asterisk are REQUIRED.
 
-##### BindResource Object
+##### Bind Resource Object
 
 The `bind_resource` object contains Platform specific information related to
 the context in which the service will be used. In some cases the Platform
@@ -1127,7 +1127,7 @@ request, therefore the `bind_resource` and its fields are OPTIONAL.
 
 Below are some common fields that MAY be used. Platforms MAY choose to add
 additional ones as needed (see
-[BindResource Object](profile.md#bind-resource-object) conventions).
+[Bind Resource Object](profile.md#bind-resource-object) conventions).
 
 | Request Field | Type | Description |
 | --- | --- | --- |
@@ -1203,9 +1203,9 @@ For success responses, the following fields are defined:
 | credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. |
 | syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform MUST consider the response invalid. |
 | route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
-| volume_mounts | [VolumeMount](#volumemount-object)\[\] | An array of configuration for remote storage devices to be mounted into an application container filesystem. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
+| volume_mounts | [VolumeMount](#volume-mount-object)\[\] | An array of configuration for remote storage devices to be mounted into an application container filesystem. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 
-##### VolumeMount Object
+##### Volume Mount Object
 
 | Response Field | Type | Description |
 | --- | --- | --- |
