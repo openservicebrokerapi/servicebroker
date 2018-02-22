@@ -308,6 +308,7 @@ Broker API.
 ### Request
 
 #### Route
+
 `GET /v2/catalog`
 
 #### Headers
@@ -649,6 +650,7 @@ For Brokers that support `$ref`:
 ### Request
 
 #### Route
+
 `GET /v2/catalog/schemas`
 
 #### Headers
@@ -736,6 +738,7 @@ Note the same restriction on `$ref` applies to `/schemas`.
 ```
 
 #### Route
+
 `GET /v2/catalog/schemas/:component_path`
 
 #### Headers
@@ -1029,6 +1032,7 @@ account on an multi-tenant SaaS application.
 ### Request
 
 #### Route
+
 `PUT /v2/service_instances/:instance_id`
 
 `:instance_id` MUST be a globally unique non-empty string.
@@ -1036,6 +1040,7 @@ This ID will be used for future requests (bind and deprovision), so the
 Service Broker will use it to correlate the resource it creates.
 
 #### Parameters
+
 | Parameter Name | Type | Description |
 | --- | --- | --- |
 | accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only provision a Service Instance of the requested plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
@@ -1052,6 +1057,7 @@ The following HTTP Headers are defined for this operation:
 \* Headers with an asterisk are REQUIRED.
 
 #### Body
+
 | Request Field | Type | Description |
 | --- | --- | --- |
 | service_id* | string | MUST be the ID of a service from the catalog for this Service Broker. |
@@ -1081,6 +1087,7 @@ The following HTTP Headers are defined for this operation:
 ```
 
 #### cURL
+
 ```
 $ curl http://username:password@service-broker-url/v2/service_instances/:instance_id?accepts_incomplete=true -d '{
   "service_id": "service-id-here",
@@ -1153,6 +1160,7 @@ error message in response.
 ### Request
 
 #### Route
+
 `PATCH /v2/service_instances/:instance_id`
 
 `:instance_id` MUST be the ID a previously provisioned Service Instance.
@@ -1233,6 +1241,7 @@ the user did not explicitly specify in their request for the update.
 ```
 
 #### cURL
+
 ```
 $ curl http://username:password@service-broker-url/v2/service_instances/:instance_id?accepts_incomplete=true -d '{
   "context": {
@@ -1319,6 +1328,7 @@ response if the associated [Catalog](#catalog-management) entry for the
 service did not include a `"requires":["syslog_drain"]` property.
 
 #### Route Services
+
 Route services are a class of Service Offerings that intermediate requests to
 applications, performing functions such as rate limiting or authorization. To
 indicate support for route services, the catalog entry for the Service MUST
@@ -1356,6 +1366,7 @@ did not include a `"requires":["volume_mount"]` property.
 ### Request
 
 #### Route
+
 `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
 `:instance_id` MUST be the ID of a previously provisioned Service Instance.
@@ -1430,6 +1441,7 @@ binding requests.
 
 
 #### cURL
+
 ```
 $ curl http://username:password@service-broker-url/v2/service_instances/:instance_id/service_bindings/:binding_id -d '{
   "context": {
@@ -1640,6 +1652,7 @@ The following HTTP Headers are defined for this operation:
 \* Headers with an asterisk are REQUIRED.
 
 #### cURL
+
 ```
 $ curl 'http://username:password@service-broker-url/v2/service_instances/:instance_id?accepts_incomplete=true
   &service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.13"
