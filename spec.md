@@ -590,22 +590,23 @@ schema being used unless the schema is composed of only a `$ref`.
 ## JSON Schemas
 
 The JSON Schemas endpoint is used to define reusable definitions of JSON Schema
-Objects referenced throughout the [Catalog](#catalog-management). It will be the
-responsibility of the Platform to examine the response from the catalog to
-determine if the Broker is using `$ref` JSON Schemas. The Broker can signal to
-the Platform that JSON Schema components are supported by using the `osb_v2:`
-scheme. Components are a way to allow Platforms to only fetch sub-schemas.
+Objects referenced throughout the [Catalog](#catalog-management). If a Platform
+intends to support JSON Schemas, it MUST examine the response from the catalog
+to determine if the Service Broker is using `$ref` JSON Schemas. The Service
+Broker can signal to the Platform that JSON Schema components are supported by
+using the `osb_v2:` scheme. Components are a way to allow Platforms to only
+fetch sub-schemas.
 
 The root JSON Schema document can be found by getting the JSON Schemas
 endpoint without a `:component_path`.
 
-If the `osb_v2:` scheme is used by the broker, then the Platform MAY fetch the
-component JSON Schema directly using the following convention:
+If the `osb_v2:` scheme is used by the Service Broker, then the Platform MAY
+fetch the component JSON Schema directly using the following convention:
 
-Given: `osb_v2:///{:component_path}`, fetch `/v2/catalog/schemas/:component_path`
-and then the Platform is responsible to continue fetching any unknown
-`:component_path` URIs. Care ought to be taken by the platform to not fetch
-duplicate definitions.
+ - Given: `osb_v2:///{:component_path}`, fetch `/v2/catalog/schemas/:component_path`
+   and then the Platform is responsible to continue fetching any unknown
+   `:component_path` URIs. Care ought to be taken by the platform to not fetch
+   duplicate definitions.
 
 A Platform MAY ignore the `osb_v2:` scheme and just fetch `/v2/catalog/schemas`
 which will contain all sub-Schema documents. This reduces the complexity of the
@@ -614,17 +615,14 @@ Platform but increases the potential payload size of the JSON Schemas.
 A Platform MUST fetch the root Schema document for any other `$ref` URIs found
 that do not match the `osb_v2:` scheme. If this happens the Platform has no use
 for the previously fetched sub-schemas and can just use the root schema. The
-Broker MUST provide the JSON Schema Object for the referenced URI in a subschema
-returned.
+Service Broker MUST provide the JSON Schema Object for the referenced URI in a
+subschema returned.
 
-Component Paths that use the scheme `osb_v2:` SHOULD be versioned, and the
-document behind the URI MUST NOT change after the catalog has been served to a
-Platform. 
-
-Platforms are able to leverage this JSON Schema by using or creating a library
-that supports pre-fetched JSON Schemas.
-
-Brokers MUST NOT allow duplicate JSON Pointers to be formed in any JSON Schema.
+When the osb_v2: scheme is used, the data referenced by a component path MUST
+NOT change and can only be deleted when there are no longer any references to
+it in the Service Broker's schema. Additionally, once deleted, that component
+path MUST NOT ever be used again by this Service Broker, unless the schema
+referenced is the exact same as the previously referenced schema.
 
 A note about the scheme, at the time of this writing, there were no found client
 libraries that fully support the [JSON Schema](http://json-schema.org/) spec in
@@ -635,12 +633,13 @@ compromise the `osb_v2:` scheme SHOULD be followed by three forward slashes
 
 #### $ref Usage
 
-Brokers MAY leverage `$ref` and external JSON Schemas only if the JSON Schema
-references can be found within the [JSON Schemas](#json-schemas) API endpoint. $ref
-usage is assumed to be delegation (linking), not inclusion (replacement).
-Libraries that implement `$ref` content replacement result in adverse behaviors.
+Service Brokers MAY leverage `$ref` and external JSON Schemas only if the JSON
+Schema references can be found within the [JSON Schemas](#json-schemas) API
+endpoint. `$ref` usage is assumed to be delegation (linking), not inclusion
+(replacement). Libraries that implement `$ref` content replacement result in
+adverse behaviors.
 
-For Brokers that support `$ref`:
+For Service Brokers that support `$ref`, they:
 
   * MUST respond with all JSON Schema documents for `/schemas` requests that are
     referenced in the catalog.
@@ -684,7 +683,7 @@ document before catalog `$ref` URIs map to definitions. The body MUST contain
 all JSON Schema object definitions found in the catalog and referenced
 sub-schemas.
 
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | $schema* | string | The JSON Schema declaring the version of JSON schema being used. |
 | $id* | string | The top level JSON Schema ID for this document. |
