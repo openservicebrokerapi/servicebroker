@@ -30,6 +30,13 @@ verbose=""
 debug=""
 stop=""
 
+# Error processing
+trap clean EXIT
+err=tmp-${RANDOM}
+function clean {
+  rm -f ${err}*
+}
+
 while [[ "$#" != "0" && "$1" == "-"* ]]; do
   opts="${1:1}"
   while [[ "$opts" != "" ]]; do
@@ -64,17 +71,17 @@ done
 # $3 == previous line
 function checkForPunc() {
   if [[ "$2" != "|"* ]]; then
-    return 0
+    return
   fi
 
   # Split the first row of each table
   if [[ "$3" == "" ]]; then
-    return 0
+    return
   fi
 
   if [[ "$2" != *" |" ]]; then
     echo "$file - $1: row doesn't end with ' |' - watch for trailing spaces"
-    return 1
+    return
   fi
 
   line=${2#|}      # remove leading |
@@ -105,45 +112,41 @@ function checkForPunc() {
     fi
 
     echo "$file - $1: column $colNum doesn't end with a '. |' or '? |' - watch for extra/missing spaces."
-    return 1
 
   done
-  return 0
 }
 
 # $1 == line number
 # $2 == line
 function checkForSpaces() {
   if [[ "$2" != "|"* ]]; then
-    return 0
+    return
   fi
 
   if [[ "$line" != "| "* ]]; then
     echo "$file - $1: Missing a space after leading |"
-    return 1
+    return
   fi
 
   if [[ "$line" != *" |" ]]; then
     echo "$file - $1: Line doesn't end with ' |'"
-    return 1
+    return
   fi
 
   if [[ "$line" =~ "|.*[^ ]|" ]]; then
     echo "$file - $1: Missing a space before |"
-    return 1
+    return
   fi
 
   if [[ "$line" =~ "|.*|[^ ]" ]]; then
     echo "$file - $1: Missing a space after |"
-    return 1
+    return
   fi
 
   if [[ "$line" == *"  "* ]]; then
     echo "$file - $1: Has a double-space in it"
-    return 1
+    return
   fi
-
-  return 0
 }
 
 arg=""
@@ -158,16 +161,17 @@ for file in ${Files}; do
   # echo scanning $file
   dir=$(dirname $file)
 
-  [[ -n "$verbose" ]] && echo "Verifying: $file"
+  [[ -n "$verbose" ]] && echo "> $file"
 
   lineNum=0
   previous=""
   cat ${file} | while read line; do
     ((lineNum++)) || true
 
-    checkForPunc ${lineNum} "${line}" "${previous}"
-    checkForSpaces ${lineNum} "${line}"
+    checkForPunc ${lineNum} "${line}" "${previous}" | tee -a ${err}
+    checkForSpaces ${lineNum} "${line}" | tee -a ${err}
     previous="${line}"
   done
 done
-exit 0
+
+if [ -s ${err} ]; then exit 1 ; fi

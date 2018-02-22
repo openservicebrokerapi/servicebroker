@@ -10,6 +10,7 @@
   - [Authentication](#authentication)
   - [URL Properties](#url-properties)
   - [Originating Identity](#originating-identity)
+  - [Service Broker Errors](#service-broker-errors)
   - [Catalog Management](#catalog-management)
     - [Adding a Service Broker to the Platform](#adding-a-service-broker-to-the-platform)
   - [JSON Schemas](#json-schemas)
@@ -25,7 +26,6 @@
     - [Types of Binding](#types-of-binding)
   - [Unbinding](#unbinding)
   - [Deprovisioning](#deprovisioning)
-  - [Service Broker Errors](#service-broker-errors)
   - [Orphans](#orphans)
 
 ## API Overview
@@ -152,8 +152,6 @@ Service Broker MAY reject the request with `412 Precondition Failed` and
 provide a message that informs the operator of the API version that is to be
 used instead.
 
-
-
 ## Authentication
 
 While the communication between a Platform and Service Broker MAY be unsecure,
@@ -246,6 +244,33 @@ querying of the Service Broker's catalog, the Platform might not have an
 end-user with which to associate the request, therefore in those cases the
 originating identity header would not be included in those messages.
 
+## Service Broker Errors
+
+When a request to a Service Broker fails, the Service Broker MUST return an
+appropriate HTTP response code. Where the specification defines the expected
+response code, that response code MUST be used.
+
+For error responses, the following fields are defined. Service Brokers MAY
+include additional fields within the response. When adding new fields, Service
+Brokers SHOULD use a unique prefix for the field names to reduce the chances of
+conflict with future specification defined fields.
+
+| Response Field | Type | Description |
+| --- | --- | --- |
+| error | string | A single word in camel case that uniquely identifies the error condition. If present, MUST be a non-empty string. |
+| description | string | A user-facing error message explaining why the request failed. If present, MUST be a non-empty string. |
+
+### Error Codes
+
+There are failure scenarios described throughout this specification for which
+the `error` field MUST contain a specific string. Service Broker authors MUST
+use these error codes for the specified failure scenarios.
+
+| Error | Reason | Expected Action |
+| --- | --- | --- |
+| AsyncRequired | This request requires client support for asynchronous service operations. | The query parameter `accepts_incomplete=true` MUST be included the request. |
+| ConcurrencyError | The Service Broker does not support concurrent requests that mutate the same resource. | Clients MUST wait until pending requests have completed for the specified resources. |
+| RequiresApp | The request body is missing the `app_guid` field. | The `app_guid` MUST be included in the request body. |
 
 ## Catalog Management
 
@@ -311,11 +336,24 @@ $ curl http://username:password@service-broker-url/v2/catalog -H "X-Broker-API-V
 
 CLI clients will typically have restrictions on how names, such as service
 and plan names, will be provided by users. Therefore, this specification
-defines a "CLI-friendly" string as a short string that MUST only use lowercase
-characters, numbers and hyphens, with no spaces. This will make it easier for
-users when they have to type it as an argument on the command line.
+defines a "CLI-friendly" string as a short string that MUST only use 
+alphanumeric characters and hyphens, with no spaces. This will make it easier
+for users when they have to type it as an argument on the command line.
+For comparison purposes, service and plan names MUST be treated as
+case-sensitive strings.
 
-| Response field | Type | Description |
+Note: In previous versions of the specification service and plan names
+were not allowed to use uppercase characters. However, this requirement was
+not enforced and therefore to ensure backwards compatibility with existing
+Service Brokers that might use uppercase characters the specification
+has been changed.
+
+For backwards compatibility reasons, this specification does not preclude
+the use of CLI-unfriendly strings that might cause problems for command line
+parsers (or that are not very meaningful to users), such as `-`.
+It is therefore RECOMMENDED that implementations avoid such strings.
+
+| Response Field | Type | Description |
 | --- | --- | --- |
 | services* | array-of-service-objects | Schema of service objects defined below. MAY be empty. |
 
@@ -324,15 +362,15 @@ users when they have to type it as an argument on the command line.
 
 ##### Service Objects
 
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
-| name* | string | A CLI-friendly name of the service. MUST only contain lowercase characters, numbers and hyphens (no spaces). MUST be unique across all service objects returned in this response. MUST be a non-empty string. |
+| name* | string | A CLI-friendly name of the service. MUST only contain alphanumeric characters and hyphens (no spaces). MUST be unique across all service objects returned in this response. MUST be a non-empty string. |
 | id* | string | An identifier used to correlate this service in future requests to the Service Broker. This MUST be globally unique. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
 | description* | string | A short description of the service. MUST be a non-empty string. |
 | tags | array-of-strings | Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp. |
 | requires | array-of-strings | A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are `syslog_drain`, `route_forwarding` and `volume_mount`. |
 | bindable* | boolean | Specifies whether Service Instances of the service can be bound to applications. This specifies the default for all plans of this service. Plans can override this field (see [Plan Object](#plan-object)). |
-| metadata | object | An opaque object of metadata for a Service Offering. Controller treats this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and controllers for fields that aid in the display of catalog data. |
+| metadata | object | An opaque object of metadata for a Service Offering. It is expected that Platforms will treat this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and Platforms for fields that aid in the display of catalog data. |
 | [dashboard_client](#dashboard-client-object) | object | Contains the data necessary to activate the Dashboard SSO feature for this service. |
 | plan_updateable | boolean | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute `plan_updatable` as `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
 | [plans*](#plan-object) | array-of-objects | A list of plans for this service, schema is defined below. MUST contain at least one plan. |
@@ -345,13 +383,13 @@ it is important that these values be unique for all services that have been
 registered with a Platform. To achieve this goal service providers often will
 prefix their service names with some unique value (such as the name of their
 company). Additionally, some Platforms might modify the service names before
-presenting them to their users.  This specification places no requirements on
+presenting them to their users. This specification places no requirements on
 how Platforms might expose these values to their users.
 
 
 ##### Dashboard Client Object
 
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | id | string | The id of the Oauth client that the dashboard will use. If present, MUST be a non-empty string. |
 | secret | string | A secret for the dashboard client. If present, MUST be a non-empty string. |
@@ -360,12 +398,12 @@ how Platforms might expose these values to their users.
 
 ##### Plan Object
 
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | id* | string | An identifier used to correlate this plan in future requests to the Service Broker. This MUST be globally unique. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
-| name* | string | The CLI-friendly name of the plan. MUST only contain lowercase characters, numbers and hyphens (no spaces). MUST be unique within the service. MUST be a non-empty string. |
+| name* | string | The CLI-friendly name of the plan. MUST only contain alphanumeric characters and hyphens (no spaces). MUST be unique within the service. MUST be a non-empty string. |
 | description* | string | A short description of the plan. MUST be a non-empty string. |
-| metadata | object | An opaque object of metadata for a Service Plan. Controller treats this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and controllers for fields that aid in the display of catalog data. |
+| metadata | object | An opaque object of metadata for a Service Plan. It is expected that Platforms will treat this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and Platforms for fields that aid in the display of catalog data. |
 | free | boolean | When false, Service Instances of this plan have a cost. The default is true. |
 | bindable | boolean | Specifies whether Service Instances of the Service Plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
 | [schemas](#schema-object) | object | Schema definitions for Service Instances and bindings for the plan. |
@@ -375,30 +413,27 @@ how Platforms might expose these values to their users.
 
 ##### Schema Object
 
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | [service_instance](#service-instance-object) | object | The schema definitions for creating and updating a Service Instance. |
 | [service_binding](#service-binding-object) | object | The schema definition for creating a Service Binding. Used only if the Service Plan is bindable. |
 
-
 ##### Service Instance Object
 
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | [create](#input-parameters-object) | object | The schema definition for creating a Service Instance. |
 | [update](#input-parameters-object) | object | The schema definition for updating a Service Instance. |
 
-
 ##### Service Binding Object
 
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | [create](#input-parameters-object) | object | The schema definition for creating a Service Binding. |
 
-
 ##### Input Parameters Object
 
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | parameters | JSON schema object | The schema definition for the input parameters. Each input parameter is expressed as a property within a JSON object. |
 
@@ -411,7 +446,6 @@ schema being used unless the schema is composed of only a `$ref`.
 * Schemas MUST NOT contain any external references except for schemas found
   under `/schemas{/*}` (see [$ref Usage](#ref-usage) for further information).
 * Schemas MUST NOT be larger than 64kB.
-
 
 ```
 {
@@ -849,19 +883,15 @@ Note: Asynchronous operations are currently supported only for provision,
 update, and deprovision.
 
 For a Service Broker to return an asynchronous response, the query parameter
-`accepts_incomplete=true` MUST be included the request. If the parameter is
-not included or is set to `false`, and the Service Broker cannot fulfill the
-request synchronously (guaranteeing that the operation is complete on
-response), then the Service Broker SHOULD reject the request with the status
-code `422 Unprocessable Entity` and the following body
-(see [Service Broker Errors](#service-broker-errors)):
-
-```
-{
-  "error": "AsyncRequired",
-  "description": "This Service Plan requires client support for asynchronous service operations."
-}
-```
+`accepts_incomplete=true` MUST be included the request. If the parameter is not
+included or is set to `false`, and the Service Broker cannot fulfil the request
+synchronously (guaranteeing that the operation is complete on response), then
+the Service Broker SHOULD reject the request with the status code `422
+Unprocessable Entity` and a response body containing error code
+`"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The
+error response MAY include a helpful error message in the `description` field
+such as `"This Service Plan requires client support for asynchronous service
+operations."`.
 
 If the query parameter described above is present, and the Service Broker
 executes the request asynchronously, the Service Broker MUST return the
@@ -877,28 +907,23 @@ operation.
 
 ## Blocking Operations
 
-Service Brokers do not have to support concurrent requests that mutate the
-same resource.  If a Service Broker receives a request that it is not
-able to process due to other activity being done on that resource then the
-Service Broker MUST reject the request with a HTTP `422 Unprocessable
-Entity` error and the following body (see [Service Broker Errors](#service-broker-errors):
-
-```
-{
-  "error": "ConcurrencyError",
-  "description": "Another operation for this Service Instance is in progress."
-}
-```
+Service Brokers do not have to support concurrent requests that mutate the same
+resource. If a Service Broker receives a request that it is not able to process
+due to other activity being done on that resource then the Service Broker MUST
+reject the request with a HTTP `422 Unprocessable Entity` and a response body
+containing error code `"ConcurrencyError"` (see
+[Service Broker Errors](#service-broker-errors)). The error response MAY include
+a helpful error message in the `description` field such as `"Another operation
+for this Service Instance is in progress."`.
 
 Note that per the [Orphans](#orphans) section, this error response does not
-cause orphan mitigation to be initiated. Therefore, Platforms receiving
-this error response SHOULD resend the request at a later time.
+cause orphan mitigation to be initiated. Therefore, Platforms receiving this
+error response SHOULD resend the request at a later time.
 
-Brokers MAY choose to treat the creation of a binding as a mutation of
-the corresponding Service Instance - it is an implementation choice. Doing
-so would cause Platforms to serialize multiple binding creation requests
-when they are directed at the same Service Instance if concurrent updates
-are not supported.
+Brokers MAY choose to treat the creation of a binding as a mutation of the
+corresponding Service Instance - it is an implementation choice. Doing so would
+cause Platforms to serialize multiple binding creation requests when they are
+directed at the same Service Instance if concurrent updates are not supported.
 
 ## Polling Last Operation
 
@@ -906,16 +931,15 @@ When a Service Broker returns status code `202 Accepted` for
 [Provision](#provisioning), [Update](#updating-a-service-instance), or
 [Deprovision](#deprovisioning), the Platform will begin polling the
 `/v2/service_instances/:instance_id/last_operation` endpoint to obtain the
-state of the last requested operation. The Service Broker response MUST
-contain the field `state` and MAY contain the field `description`.
+state of the last requested operation. The Service Broker response MUST contain
+the field `state` and MAY contain the field `description`.
 
 Valid values for `state` are `in progress`, `succeeded`, and `failed`. The
 Platform will poll the `last_operation` endpoint as long as the Service Broker
-returns `"state": "in progress"`. Returning `"state": "succeeded"` or
-`"state": "failed"` will cause the Platform to cease polling. The value
-provided for `description` will be passed through to the Platform API client
-and can be used to provide additional detail for users about the progress of
-the operation.
+returns `"state": "in progress"`. Returning `"state": "succeeded"` or `"state":
+"failed"` will cause the Platform to cease polling. The value provided for
+`description` will be passed through to the Platform API client and can be used
+to provide additional detail for users about the progress of the operation.
 
 ### Request
 
@@ -962,23 +986,15 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 410 Gone | Appropriate only for asynchronous delete operations. The Platform MUST consider this response a success and forget about the resource. The expected response body is `{}`. Returning this while the Platform is polling for create or update operations SHOULD be interpreted as an invalid response and the Platform SHOULD continue polling. |
 
 Responses with any other status code SHOULD be interpreted as an error or
-invalid response. The Platform SHOULD continue polling until the Service
-Broker returns a valid response or the [maximum polling
-duration](#polling-interval-and-duration) is reached. Service Brokers MAY use
-the `description` field to expose user-facing error messages about the
-operation state; for more info see [Service Broker
-Errors](#service-broker-errors).
+invalid response. The Platform SHOULD continue polling until the Service Broker
+returns a valid response or the
+[maximum polling duration](#polling-interval-and-duration) is reached.
 
 #### Body
 
-All response bodies MUST be a valid JSON Object (`{}`). This is for future
-compatibility; it will be easier to add fields in the future if JSON is
-expected rather than to support the cases when a JSON body might or might not
-be returned.
+For success responses, the following fields are defined:
 
-For success responses, the following fields are valid.
-
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the Platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the Platform to cease polling. |
 | description | string | A user-facing message displayed to the Platform API client. Can be used to tell the user details about the status of the operation. If present, MUST be a non-empty string. |
@@ -994,7 +1010,9 @@ For success responses, the following fields are valid.
 
 If the successful response includes a `state` of `failed` then the Platform
 MUST send a deprovision request to the Service Broker to prevent an orphan
-being created on the Service Broker.
+being created on the Service Broker. However, while the Platform will attempt
+to send a deprovision request, Service Brokers MAY automatically delete
+any resources associated with the failed bind request on their own.
 
 ### Polling Interval and Duration
 
@@ -1022,7 +1040,7 @@ This ID will be used for future requests (bind and deprovision), so the
 Service Broker will use it to correlate the resource it creates.
 
 #### Parameters
-| Parameter name | Type | Description |
+| Parameter Name | Type | Description |
 | --- | --- | --- |
 | accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only provision a Service Instance of the requested plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
@@ -1038,7 +1056,7 @@ The following HTTP Headers are defined for this operation:
 \* Headers with an asterisk are REQUIRED.
 
 #### Body
-| Request field | Type | Description |
+| Request Field | Type | Description |
 | --- | --- | --- |
 | service_id* | string | MUST be the ID of a service from the catalog for this Service Broker. |
 | plan_id* | string | MUST be the ID of a plan from the service that has been requested. |
@@ -1092,32 +1110,23 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 201 Created | MUST be returned if the Service Instance was provisioned as a result of this request. The expected response body is below. |
 | 202 Accepted | MUST be returned if the Service Instance provisioning is in progress. This triggers the Platform to poll the [Service Instance Last Operation Endpoint](#polling-last-operation) for operation status. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the Service Instance is not yet fully provisioned. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
-| 409 Conflict | MUST be returned if a Service Instance with the same id already exists but with different attributes. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Service Broker Errors](#service-broker-errors). |
-| 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous provisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The expected response body is: `{ "error": "AsyncRequired", "description": "This Service Plan requires client support for asynchronous service operations." }`, as described below (see [Service Broker Errors](#service-broker-errors). |
+| 409 Conflict | MUST be returned if a Service Instance with the same id already exists but with different attributes. |
+| 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous provisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The response body MUST contain a response body containing error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. |
 
 Responses with any other status code will be interpreted as a failure and a
 deprovision request MUST be sent to the Service Broker to prevent an orphan
-being created on the Service Broker.
-
-Service Brokers can include a user-facing message in the `description` field;
-for details see [Service Broker Errors](#service-broker-errors).
+being created on the Service Broker. However, while the platform will attempt
+to send a deprovision request, Service Brokers MAY automatically delete
+any resources associated with the failed provisioning request on their own.
 
 #### Body
 
-All response bodies MUST be a valid JSON Object (`{}`). This is for future
-compatibility; it will be easier to add fields in the future if JSON is
-expected rather than to support the cases when a JSON body might or might not
-be returned.
+For success responses, the following fields are defined:
 
-For success responses, a Service Broker MUST return the following fields. For
-error responses, see [Service Broker Errors](#service-broker-errors).
-
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. If present, MUST be a non-empty string. |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
-
-\* Fields with an asterisk are REQUIRED.
 
 ```
 {
@@ -1153,7 +1162,7 @@ error message in response.
 `:instance_id` MUST be the ID a previously provisioned Service Instance.
 
 #### Parameters
-| Parameter name | Type | Description |
+| Parameter Name | Type | Description |
 | --- | --- | --- |
 | accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only provision a Service Instance of the requested plan asynchronously, the Service Broker SHOULD reject the request with a `422 Unprocessable Entity` as described below. |
 
@@ -1256,26 +1265,19 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 200 OK | MUST be returned if the request's changes have been applied. The expected response body is `{}`. |
 | 202 Accepted | MUST be returned if the Service Instance update is in progress. This triggers the Platform to poll the [Last Operation](#polling-last-operation) for operation status. Note that a re-sent `PATCH` request MUST return a `202 Accepted`, not a `200 OK`, if the requested update has not yet completed. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
-| 422 Unprocessable entity | MUST be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the Service Instance (e.g. Service Instance utilization is over the quota of the requested plan). Service Brokers SHOULD include a user-facing message in the body; for details see [Service Broker Errors](#service-broker-errors). Additionally, a `422 Unprocessable Entity` can also be returned if the Service Broker only supports asynchronous update for the requested plan and the request did not include `?accepts_incomplete=true`; in this case the expected response body is: `{ "error": "AsyncRequired", "description": "This Service Plan requires client support for asynchronous service operations." }` (see [Service Broker Errors](#service-broker-errors). |
+| 422 Unprocessable entity | MUST be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the Service Instance (e.g. Service Instance utilization is over the quota of the requested plan). Additionally, a `422 Unprocessable Entity` can also be returned if the Service Broker only supports asynchronous update for the requested plan and the request did not include `?accepts_incomplete=true`; in this case the response body MUST contain a error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. |
 
-Responses with any other status code will be interpreted as a failure. Service Brokers can include a user-facing message in the `description` field; for details see [Service Broker Errors](#service-broker-errors).
+Responses with any other status code will be interpreted as a failure.
+When the response includes a 4xx status code, the Service Broker MUST NOT
+apply any of the requested changes to the Service Instance.
 
 #### Body
 
-All response bodies MUST be a valid JSON Object (`{}`). This is for future
-compatibility; it will be easier to add fields in the future if JSON is
-expected rather than to support the cases when a JSON body might or might not
-be returned.
+For success responses, the following fields are defined:
 
-For success responses, a Service Broker MUST return the following field.
-Others will be ignored. For error responses, see [Service Broker
-Errors](#service-broker-errors).
-
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
-
-\* Fields with an asterisk are REQUIRED.
 
 ```
 {
@@ -1321,16 +1323,17 @@ response if the associated [Catalog](#catalog-management) entry for the
 service did not include a `"requires":["syslog_drain"]` property.
 
 #### Route Services
+Route services are a class of Service Offerings that intermediate requests to
+applications, performing functions such as rate limiting or authorization. To
+indicate support for route services, the catalog entry for the Service MUST
+include the `"requires":["route_forwarding"]` property.
 
-There are a class of Service Offerings that intermediate requests to
-applications, performing functions such as rate limiting or authorization.
-
-If a Platform supports route services, it MUST send a routable address, or
-endpoint, for the application along with the request to create a Service
-Binding using `"bind_resource":{"route":"some-address.com"}`. A Service Broker
-MAY support configuration specific to an address using parameters; exposing
-this feature to users would require a Platform to support binding multiple
-routable addresses to the same Service Instance.
+When creating a route service type of Service Binding, a Platform MUST send
+a routable address, or endpoint, for the application along with the request to
+create a Service Binding using `"bind_resource":{"route":"some-address.com"}`.
+Service Brokers MAY support configuration specific to an address using
+parameters; exposing this feature to users would require a Platform to support
+binding multiple routable addresses to the same Service Instance.
 
 If a service is deployed in a configuration to support this behavior, the
 Service Broker MUST return a `route_service_url` in the response for a request
@@ -1387,6 +1390,7 @@ The following HTTP Headers are defined for this operation:
 | bind_resource | object | A JSON object that contains data for Platform resources associated with the binding to be created. See [Bind Resource Object](#bind-resource-object) for more information. |
 | parameters | object | Configuration options for the Service Binding. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
 
+\* Fields with an asterisk are REQUIRED.
 
 ##### Bind Resource Object
 
@@ -1396,7 +1400,8 @@ might not be able to provide this information at the time of the binding
 request, therefore the `bind_resource` and its fields are OPTIONAL.
 
 Below are some common fields that MAY be used. Platforms MAY choose to add
-additional ones as needed.
+additional ones as needed (see
+[Bind Resource Object](profile.md#bind-resource-object) conventions).
 
 | Request Field | Type | Description |
 | --- | --- | --- |
@@ -1408,8 +1413,6 @@ the Platform. For example, in Cloud Foundry it might map to an "application"
 while in Kubernetes it might map to a "namespace". The scope of what a
 Platform maps the `app_guid` to is Platform specific and MAY vary across
 binding requests.
-
-\* Fields with an asterisk are REQUIRED.
 
 ```
 {
@@ -1456,25 +1459,18 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 200 OK | MUST be returned if the binding already exists and the requested parameters are identical to the existing binding. The expected response body is below. |
 | 201 Created | MUST be returned if the binding was created as a result of this request. The expected response body is below. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
-| 409 Conflict | MUST be returned if a Service Binding with the same id, for the same Service Instance, already exists but with different parameters. The expected response body is `{}`, though the description field MAY be used to return a user-facing error message, as described in [Service Broker Errors](#service-broker-errors). Additionally, if the Service Broker rejects the request due to a concurrent request to create a binding for the same Service Instance, then this error MUST be returned (see [Blocking Operations](#blocking-operations)). |
-| 422 Unprocessable Entity | MUST be returned if the Service Broker requires that `app_guid` be included in the request body. The expected response body is: `{ "error": "RequiresApp", "description": "This service supports generation of credentials through binding an application only." }` (see [Service Broker Errors](#service-broker-errors). |
+| 409 Conflict | MUST be returned if a Service Binding with the same id, for the same Service Instance, already exists but with different parameters. |
+| 422 Unprocessable Entity | MUST be returned if the Service Broker requires that `app_guid` be included in the request body. The response body MUST contain error code `"RequiresApp"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service supports generation of credentials through binding an application only."`. Additionally, if the Service Broker rejects the request due to a concurrent request to create a binding for the same Service Instance, then this error MUST be returned (see [Blocking Operations](#blocking-operations)). |
 
 Responses with any other status code will be interpreted as a failure and an
 unbind request MUST be sent to the Service Broker to prevent an orphan being
-created on the Service Broker. Service Brokers can include a user-facing
-message in the `description` field; for details see [Service Broker
-Errors](#service-broker-errors).
+created on the Service Broker. However, while the platform will attempt
+to send an unbind request, Service Brokers MAY automatically delete
+any resources associated with the failed bind request on their own.
 
 #### Body
 
-All response bodies MUST be a valid JSON Object (`{}`). This is for future
-compatibility; it will be easier to add fields in the future if JSON is
-expected rather than to support the cases when a JSON body might or might not
-be returned.
-
-For success responses, the following fields are supported. Others will be
-ignored. For error responses, see [Service Broker
-Errors](#service-broker-errors).
+For success responses, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
@@ -1492,6 +1488,8 @@ Errors](#service-broker-errors).
 | mode* | string | "r" to mount the volume read-only or "rw" to mount it read-write. |
 | device_type* | string | A string specifying the type of device to mount. Currently the only supported value is "shared". |
 | device* | device-object | Device object containing device_type specific details. Currently only shared devices are supported. |
+
+\* Fields with an asterisk are REQUIRED.
 
 ##### Device Object
 
@@ -1595,17 +1593,9 @@ $ curl 'http://username:password@service-broker-url/v2/service_instances/:instan
 | 410 Gone | MUST be returned if the binding does not exist. The expected response body is `{}`. |
 
 Responses with any other status code will be interpreted as a failure and the
-Platform MUST continue to remember the Service Binding. Service Brokers can
-include a user-facing message in the `description` field; for details see
-[Service Broker Errors](#service-broker-errors).
-
+Platform MUST continue to remember the Service Binding.
 
 #### Body
-
-All response bodies MUST be a valid JSON Object (`{}`). This is for future
-compatibility; it will be easier to add fields in the future if JSON is
-expected rather than to support the cases when a JSON body might or might not
-be returned.
 
 For a success response, the expected response body is `{}`.
 
@@ -1666,30 +1656,19 @@ $ curl 'http://username:password@service-broker-url/v2/service_instances/:instan
 | 200 OK | MUST be returned if the Service Instance was deleted as a result of this request. The expected response body is `{}`. |
 | 202 Accepted | MUST be returned if the Service Instance deletion is in progress. This triggers the Platform to poll the [Service Instance Last Operation Endpoint](#polling-last-operation) for operation status. Note that a re-sent `DELETE` request MUST return a `202 Accepted`, not a `200 OK`, if the delete request has not completed yet. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
-| 410 Gone | MUST be returned if the Service Instance does not exist. The expected response body is `{}`. |
-| 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous deprovisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The expected response body is: `{ "error": "AsyncRequired", "description": "This Service Plan requires client support for asynchronous service operations." }`, as described below (see [Service Broker Errors](#service-broker-errors). |
+| 410 Gone | MUST be returned if the Service Instance does not exist. |
+| 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous deprovisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. |
 
 Responses with any other status code will be interpreted as a failure and the
-Platform MUST remember the Service Instance. Service Brokers can include a
-user-facing message in the `description` field; for details see [Service Broker
-Errors](#service-broker-errors).
+Platform MUST remember the Service Instance.
 
 #### Body
 
-All response bodies MUST be a valid JSON Object (`{}`). This is for future
-compatibility; it will be easier to add fields in the future if JSON is
-expected rather than to support the cases when a JSON body might or might not
-be returned.
+For success responses, the following fields are defined:
 
-For success responses, the following fields are supported. Others will be
-ignored. For error responses, see [Service Broker
-Errors](#service-broker-errors).
-
-| Response field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
-
-\* Fields with an asterisk are REQUIRED.
 
 ```
 {
@@ -1697,49 +1676,12 @@ Errors](#service-broker-errors).
 }
 ```
 
-## Service Broker Errors
-
-### Response
-
-Service Broker failures beyond the scope of the well-defined HTTP response
-codes listed above (like `410 Gone` on [Deprovisioning](#deprovisioning)) MUST
-return an appropriate HTTP response code (chosen to accurately reflect the
-nature of the failure) and a body containing a valid JSON Object (not an
-array).
-
-#### Body
-
-All response bodies MUST be a valid JSON Object (`{}`). This is for future
-compatibility; it will be easier to add fields in the future if JSON is
-expected rather than to support the cases when a JSON body might or might not
-be returned.
-
-For error responses, the following fields are valid; while other properties
-MAY appear, Platforms MAY choose to ignore them:
-
-| Response Field | Type | Description |
-| --- | --- | --- |
-| error | string | A single word uniquely identifying the error condition. |
-| description | string | A meaningful error message explaining why the request failed. |
-
-```
-{
-  "error": "QuotaExceeded",
-  "description": "Your account has exceeded its quota for Service Instances. Please contact support at http://support.example.com."
-}
-```
-
-All errors defined in this specification include a corresponding `error` value
-that SHOULD be used in the error response message. Each error definition will
-also include a `description` property that is RECOMMENDED to be used. However,
-the Service Broker MAY use a different `description` string if appropriate, for
-example, to specify a description in a different language.
-
 ## Orphans
 
-The Platform is the source of truth for Service Instances and bindings. Service
-Brokers are expected to have successfully provisioned all the Service Instances
-and bindings that the Platform knows about, and none that it doesn't.
+The Platform is the source of truth for Service Instances and Service Bindings.
+Service Brokers are expected to have successfully provisioned all of the Service
+Instances and Service Bindings that the Platform knows about, and none that it
+doesn't.
 
 Orphans can result if the Service Broker does not return a response before a
 request from the Platform times out (typically 60 seconds). For example, if a
@@ -1748,13 +1690,14 @@ request times out, the Service Broker might eventually succeed in provisioning
 a Service Instance after the Platform considers the request a failure. This
 results in an orphan Service Instance on the Service Broker's side.
 
-To mitigate orphan Service Instances and bindings, the Platform SHOULD attempt
-to delete resources it cannot be sure were successfully created, and SHOULD keep
-trying to delete them until the Service Broker responds with a success.
+To mitigate orphan Service Instances and Service Bindings, the Platform SHOULD
+attempt to delete resources it cannot be sure were successfully created, and
+SHOULD keep trying to delete them until the Service Broker responds with a
+success.
 
 Platforms SHOULD initiate orphan mitigation in the following scenarios:
 
-| Status code of Service Broker response | Platform interpretation of response | Platform initiates orphan mitigation? |
+| Status Code Of Service Broker Response | Platform Interpretation Of Response | Platform Initiates Orphan Mitigation? |
 | --- | --- | --- |
 | 200 | Success | No |
 | 200 with malformed response | Failure | No |
@@ -1762,11 +1705,11 @@ Platforms SHOULD initiate orphan mitigation in the following scenarios:
 | 201 with malformed response | Failure | Yes |
 | All other 2xx | Failure | Yes |
 | 408 | Timeout failure | Yes |
-| All other 4xx | Service Broker rejected request | No |
+| All other 4xx | Request rejected | No |
 | 5xx | Service Broker error | Yes |
 | Timeout | Failure | Yes |
 
 If the Platform encounters an internal error provisioning a Service Instance or
-binding (for example, saving to the database fails), then it MUST at least send
-a single delete or unbind request to the Service Broker to prevent creation of
-an orphan.
+Service Binding (for example, saving to the database fails), then it MUST at
+least send a single delete or unbind request to the Service Broker to prevent
+the creation of an orphan.
