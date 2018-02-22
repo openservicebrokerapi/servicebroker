@@ -14,7 +14,7 @@ syntax of the API, can be suggested via a Github Issue or Pull Request (PR).
 
 If there is a need for some discussion around how best to
 address the concern then opening an Issue, prior to doing the work to develop
-a PR, would be best.  These minor issues do not need a formal review, per the
+a PR, would be best. These minor issues do not need a formal review, per the
 [process](#prissue-review-process) described below, rather the issue
 should be used to come to a consensus around a PR that will eventually be
 submitted.
@@ -30,13 +30,13 @@ Either way, once a PR is submitted it will be reviewed per the
 New design proposals to the API spec should be submitted by opening a
 Github issue with a link to a Google Doc containing the proposal. Proposals
 should focus primarily on motivation, problem statement, and use cases before
-suggesting a solution or change.  Collaboration on the design, fleshing out of
+suggesting a solution or change. Collaboration on the design, fleshing out of
 use cases, etc can occur as comment discussions in the Google Doc, as well
 as on our weekly calls.
 
-For changes largely impacting the SB API actors (platforms, service authors,
-etc...), it is recommended to solicit feedback from these actors and leave
-enough time (say 2 weeks) for feedback to be provided, and for the
+For changes largely impacting the Open Service Broker API actors (Platforms,
+Service Authors, etc), it is recommended to solicit feedback from these actors
+and leave enough time (say 2 weeks) for feedback to be provided, and for the
 potentially received objections/suggestions to be handled.
 
 Once the design has been finalized in the Google Doc, the proposed set of
@@ -58,6 +58,10 @@ access to the implementation of the feature is acceptable.
 It is expected that during this implementation phase there will be changes
 made to the design and proposed specification edits to accurately represent
 the current status of the proposal.
+
+If the proposal adds or changes an object model or resource endpoint definition,
+it is expected that the PR will also include the necessary updates to the
+[Open API document](openapi.yaml).
 
 Once support for the change has been implemented, a PR should be sent to this
 repo for the change to the Open Service Broker API specification. By this
@@ -106,7 +110,7 @@ described below:
 - A proposal requires at least 4 "LGTM" comments from at least 4 different
   organizations to be approved.
 - Once a "design change" issue is approved, it will be tagged with an
-  "proposal finalized" label.  This indicates that it is ready to be
+  "proposal finalized" label. This indicates that it is ready to be
   implemented by a platform developer, see the [process](#contributing) above.
 - Once a Pull Request is approved, it will be merged into the 'master' branch.
 
@@ -123,10 +127,11 @@ creating a new PR with the title of the proposed release. For example,
   **Release SHA**.
 2. Create a new commit titled `prepare release` with the following changes:
   * Update [release-notes.md](release-notes.md) detailing the changes that are
-  to be released in this version.
+  to be released in this version. Include a versioned link to the new branch's
+  version of the spec.
   * Update [README.md](README.md) with an updated _Latest Release_ subheading
   and links to the latest version of the documents (`spec.md`, `profile.md`,
-  etc).
+  `openapi.yaml`, etc).
   * Update [spec.md](spec.md) with an updated _Changes Since v..._ section (and
   link from table of contents) containing a copy of the relevant release notes,
   and with any references to the previous version of the specification (i.e. the
@@ -168,9 +173,9 @@ any PMC member:
 1. Create a new branch called **"v$major.$minor"** from the **Release SHA**.
 1. Cherry pick the commit in which the release proposal PR was merged, to pick
    up the file changes.
-1. Create a new commit updating the [spec.md](spec.md) and [profile](profile.md)
-   headers to include the version of the release
-   (`Open Service Broker API (v$major.$minor)`).
+1. Create a new commit updating [spec.md](spec.md), [profile](profile.md) and
+   [openapi.yaml](openapi.yaml) to include the version of the release
+   `v$major.$minor`.
 1. Push the branch to the repository (`v$major.$minor`).
 1. Notify the mailing list of the new release.
 1. Update the [Roadmap & Release Planning](https://github.com/openservicebrokerapi/servicebroker/projects/1)

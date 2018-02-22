@@ -272,8 +272,5 @@ for file in ${mdFiles}; do
 
   done
 done
-rc=0
-if [ -a ${tmp}3 ]; then
-  rc=1
-fi
-exit $rc
+
+if [ -s ${tmp}3 ]; then exit 1 ; fi
