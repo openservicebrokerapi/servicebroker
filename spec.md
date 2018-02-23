@@ -692,8 +692,6 @@ sub-schemas.
 Please refer to the [JSON Schema](http://json-schema.org/) specification for
 more details on JSON Schema.
 
-Note the same restriction on `$ref` applies to `/schemas`.
-
 \* Fields with an asterisk are REQUIRED.
 
 ```
@@ -766,7 +764,7 @@ $ curl http://username:password@service-broker-url/v2/catalog/schemas/:component
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| $schema* | string | The JSON Schema declaring the version of JSON | schema being used. |
+| $schema* | string | The JSON Schema declaring the version of JSON schema being used. |
 | $id* | string | The JSON Schema id to be referenced from elsewhere in the catalog. |
 
 \* Fields with an asterisk are REQUIRED.
