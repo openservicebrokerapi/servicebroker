@@ -628,7 +628,7 @@ A note about the scheme, at the time of this writing, there were no found client
 libraries that fully support the [JSON Schema](http://json-schema.org/) spec in
 the usage of URI for `$ref`. Only URL was supported in libraries. So as a
 compromise the `osb_v2:` scheme SHOULD be followed by three forward slashes
-(`///`). This indicates the authority is implied (authority is ''). 
+(`///`). This indicates the authority is implied (authority is '').
 
 
 #### $ref Usage
@@ -643,7 +643,7 @@ For Service Brokers that support `$ref`, they:
 
   * MUST respond with all JSON Schema documents for `/schemas` requests that are
     referenced in the catalog.
-  * MAY provide `$ref`'s with the `osb_v2:` scheme, then
+  * MAY provide `$ref`'s with the `osb_v2:` scheme, then:
     * MUST respond to `/schemas/:component_id` requests.
 
 ### Request
