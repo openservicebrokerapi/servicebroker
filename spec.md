@@ -173,7 +173,7 @@ If authentication is used, the Service Broker MUST authenticate the request
 using the predetermined authentication mechanism, and MUST return a `401 Unauthorized`
 response if the authentication fails.
 
-Additionally, the Service Broker MUST secure communucations with TLS. The Platform
+Additionally, the Service Broker MUST secure communications with TLS. The Platform
 and Service Broker SHOULD agree whether the Service Broker will use a root-signed
 certificate or a self-signed certificate.
 
