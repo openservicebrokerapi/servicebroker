@@ -101,9 +101,9 @@ function checkForPunc() {
       continue
     fi
 
-    # Anything less than 4 words we ignore
+    # Ignore columns containing 4 words or less
     count=$(echo "$col" | wc -w)
-    if (( "$count" < 4 )); then
+    if (( "$count" <= 4 )); then
       continue
     fi
 
