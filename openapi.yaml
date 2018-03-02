@@ -507,7 +507,7 @@ components:
           $ref: '#/components/schemas/JSONSchema'
 
     JSONSchema:
-      type: object
+      $ref: 'http://json-schema.org/draft-04/schema'
 
     ServiceInstanceProvisionRequest:
       type: object
