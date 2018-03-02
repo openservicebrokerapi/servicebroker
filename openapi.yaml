@@ -476,17 +476,17 @@ components:
         bindable:
           type: boolean
         schemas:
-          $ref: '#/components/schemas/SchemasObject'
+          $ref: '#/components/schemas/Schemas'
 
-    SchemasObject:
+    Schemas:
       type: object
       properties:
         service_instance:
-          $ref: '#/components/schemas/ServiceInstanceSchemaObject'
+          $ref: '#/components/schemas/ServiceInstanceSchema'
         service_binding:
-          $ref: '#/components/schemas/ServiceBindingSchemaObject'
+          $ref: '#/components/schemas/ServiceBindingSchema'
 
-    ServiceInstanceSchemaObject:
+    ServiceInstanceSchema:
       type: object
       properties:
         create:
@@ -494,7 +494,7 @@ components:
         update:
           $ref: '#/components/schemas/SchemaParameters'
 
-    ServiceBindingSchemaObject:
+    ServiceBindingSchema:
       type: object
       properties:
         create:
@@ -504,9 +504,9 @@ components:
       type: object
       properties:
         parameters:
-          $ref: '#/components/schemas/JSONSchemaObject'
+          $ref: '#/components/schemas/JSONSchema'
 
-    JSONSchemaObject:
+    JSONSchema:
       type: object
 
     ServiceInstanceProvisionRequest:
