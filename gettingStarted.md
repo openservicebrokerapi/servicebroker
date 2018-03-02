@@ -45,9 +45,17 @@ ecosystem. The project has its own
 and can be deployed by following
 [this walkthrough guide](https://github.com/kubernetes-incubator/service-catalog/blob/master/docs/walkthrough.md).
 
+# Quickstarts
+
+[`osb-starter-pack`](https://github.com/pmorie/osb-starter-pack):
+A go project that lets you easily deploy and iterate on a new service broker.
+Uses the [`osb-broker-lib`](https://github.com/pmorie/osb-broker-lib) and
+[`go-open-service-broker-client`](https://github.com/pmorie/go-open-service-broker-client)
+projects.
+
 # Service Broker Libraries
 
-[brokerapi](https://github.com/pivotal-cf/brokerapi):
+[`brokerapi`](https://github.com/pivotal-cf/brokerapi):
 A Go package for building Open Service Broker API Service Brokers.
 
 [Spring Cloud - Cloud Foundry Service Broker](https://github.com/spring-cloud/spring-cloud-cloudfoundry-service-broker):
@@ -57,9 +65,15 @@ include a single dependency in Gradle, implement interfaces, and configure. A
 sample implementation has been provided for
 [MongoDB](https://github.com/spring-cloud-samples/cloudfoundry-service-broker).
 
+[`osb-broker-lib`](https://github.com/pmorie/osb-broker-lib):
+A go library that provides the REST API implementation for the OSB API. Users
+implement an interface that uses the types from the
+[`go-open-service-broker-client`](https://github.com/pmorie/go-open-service-broker-client).
+
+
 # Other Libraries
 
-[go-open-service-broker-client](https://github.com/pmorie/go-open-service-broker-client):
+[`go-open-service-broker-client`](https://github.com/pmorie/go-open-service-broker-client):
 This library is a golang client for communicating with service brokers,
 useful for Platform developers.
 
