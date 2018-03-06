@@ -344,7 +344,7 @@ $ curl http://username:password@service-broker-url/v2/catalog -H "X-Broker-API-V
 
 CLI clients will typically have restrictions on how names, such as service
 and plan names, will be provided by users. Therefore, this specification
-defines a "CLI-friendly" string as a short string that MUST only use 
+defines a "CLI-friendly" string as a short string that MUST only use
 alphanumeric characters and hyphens, with no spaces. This will make it easier
 for users when they have to type it as an argument on the command line.
 For comparison purposes, service and plan names MUST be treated as
@@ -880,8 +880,14 @@ Service Instance to other plans. By modifying parameters, users can change
 configuration options that are specific to a service or plan.
 
 To enable support for the update of the plan, a Service Broker MUST declare
-support per service by including `plan_updateable: true` in its [catalog
+support per service by including `"plan_updateable": true` in its [catalog
 endpoint](#catalog-management).
+
+If `"plan_updateable": true` is declared for a plan in the
+[Catalog](#catalog-management) endpoint, the Platform MAY request an update of
+a Service Instance using the given plan. Otherwise, Platforms MUST NOT make an
+update request to the Service Broker for any Service Instance using the given
+plan.
 
 Not all permutations of plan changes are expected to be supported. For
 example, a service might support upgrading from plan "shared small" to "shared
@@ -1024,13 +1030,14 @@ For success responses, the following fields are defined:
 
 ## Binding
 
-If `bindable:true` is declared for a service or plan in the
+If `"bindable": true` is declared for a service or plan in the
 [Catalog](#catalog-management) endpoint, the Platform MAY request generation
-of a Service Binding.
+of a Service Binding. Otherwise, Platforms MUST NOT make a binding request to
+the Service Broker for any Service Instance using the given service or plan.
 
 Note: Not all services need to be bindable --- some deliver value just from
 being provisioned. Service Brokers that offer services that are bindable MUST
-declare them as such using `bindable: true` in the
+declare them as such using `"bindable": true` in the
 [Catalog](#catalog-management). Service Brokers that do not offer any bindable
 services do not need to implement the endpoint for bind requests.
 
