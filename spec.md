@@ -1447,7 +1447,7 @@ Platforms SHOULD initiate orphan mitigation in the following scenarios:
 | 201 | Success | No |
 | 201 with malformed response | Failure | Yes |
 | All other 2xx | Failure | Yes |
-| 408 | Timeout failure | Yes |
+| 408 | Client timeout failure (request not received at the server) | No |
 | All other 4xx | Request rejected | No |
 | 5xx | Service Broker error | Yes |
 | Timeout | Failure | Yes |
