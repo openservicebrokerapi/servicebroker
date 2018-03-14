@@ -3,8 +3,8 @@
 # accurately represent the written specification. If the spec and this document
 # conflict, the spec is the authority.
 
-
 swagger: '2.0'
+
 info:
   title: Open Service Broker API
   description: >-
