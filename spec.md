@@ -622,11 +622,15 @@ A Platform MAY ignore the `osb_v2:` scheme and just fetch `/v2/catalog/schemas`
 which will contain all sub-Schema documents. This reduces the complexity of the
 Platform but increases the potential payload size of the JSON Schemas.
 
-A Platform MUST fetch the root Schema document for any other `$ref` URIs found
-that do not match the `osb_v2:` scheme. If this happens the Platform has no use
-for the previously fetched sub-schemas and can just use the root schema. The
-Service Broker MUST provide the JSON Schema Object for the referenced URI in a
-subschema returned.
+A Platform SHOULD fetch the root Schema document for any other `$ref` URIs
+found that do not match the `osb_v2:` scheme. The Service Broker MUST provide
+the JSON Schema Object for the referenced URI in a subschema returned.
+
+Note: If the Service Broker provides a mix of `osb_v2:` in addition to other
+schemes that result in fetching both `/v2/catalog/schemas/:component_path` and
+`/v2/catalog/schemas`, the Platform will have colliding JSON Schema `$ids`. In
+this case the Platform SHOULD ignore the component paths and use the root
+schema. Service Brokers SHOULD avoid mixing `osb_v2:` and other schemes.
 
 When the osb_v2: scheme is used, the data referenced by a component path MUST
 NOT change and can only be deleted when there are no longer any references to
