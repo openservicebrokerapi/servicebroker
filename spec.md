@@ -438,7 +438,7 @@ how Platforms might expose these values to their users.
 
 ##### Request/Response Schema Object
 
-A Service Broker can programmatically define the inputs and outputs of requests
+A Service Broker MAY programmatically define the inputs and outputs of requests
 and responses using JSON Schema Object definitions.
 
 | Response Field | Type | Description |
