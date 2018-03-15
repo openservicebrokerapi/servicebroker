@@ -427,7 +427,7 @@ how Platforms might expose these values to their users.
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| create | [Request/ResponseSchemaObject](#requestresponse-json-schema-object) | The Service Broker schema definition for creating a Service Instance and the associated response. |
+| create | [Request/ResponseSchemaObject](#requestresponse-schema-object) | The Service Broker schema definition for creating a Service Instance and the associated response. |
 | update | [Request/ResponseSchemaObject](#requestresponse-schema-object) | The schema definition for updating a Service Instance and the associated response. |
 
 ##### Service Binding Schema Object
