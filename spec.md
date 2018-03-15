@@ -523,14 +523,14 @@ schema being used unless the schema is composed of only a `$ref`.
           },
           "update": {
             "parameters": {
-              "$ref": "osb.v2:///fakeservice/v1#BillingAccountParameters"
+              "$ref": "osb_v2:///fakeservice/v1#BillingAccountParameters"
             }
           }
         },
         "service_binding": {
           "create": {
             "parameters": {
-              "$ref": "osb.v2:///fakeservice/v1/bindings#AccountParameters"
+              "$ref": "osb_v2:///fakeservice/v1/bindings#AccountParameters"
             }
           }
         }
@@ -564,7 +564,7 @@ schema being used unless the schema is composed of only a `$ref`.
         "service_instance": {
           "create": {
             "parameters": {
-              "$ref": "osb.v2:///fakeservice/v1#BillingAccountParameters"
+              "$ref": "osb_v2:///fakeservice/v1#BillingAccountParameters"
             }
           },
           "update": {
@@ -577,7 +577,7 @@ schema being used unless the schema is composed of only a `$ref`.
                   "type": "string"
                 },
                 "billing": {
-                  "$ref": "osb.v2:///fakeservice/v1#BillingAccountParameters"
+                  "$ref": "osb_v2:///fakeservice/v1#BillingAccountParameters"
                 }
               }
             }
@@ -586,7 +586,7 @@ schema being used unless the schema is composed of only a `$ref`.
         "service_binding": {
           "create": {
             "parameters": {
-              "$ref": "osb.v2:///fakeservice/v1/bindings#AccountParameters"
+              "$ref": "osb_v2:///fakeservice/v1/bindings#AccountParameters"
             }
           }
         }
@@ -613,10 +613,10 @@ endpoint without a `:component_path`.
 If the `osb_v2:` scheme is used by the Service Broker, then the Platform MAY
 fetch the component JSON Schema directly using the following convention:
 
- - Given: `osb_v2:///{:component_path}`, fetch `/v2/catalog/schemas/:component_path`
-   and then the Platform is responsible to continue fetching any unknown
-   `:component_path` URIs. Care ought to be taken by the platform to not fetch
-   duplicate definitions.
+ - Given: `osb_v2:///{:component_path}`, fetch
+   `/v2/catalog/schemas/:component_path` and then the Platform is responsible
+   to continue fetching any unknown `:component_path` URIs. Care ought to be
+   taken by the platform to not fetch duplicate definitions.
 
 A Platform MAY ignore the `osb_v2:` scheme and just fetch `/v2/catalog/schemas`
 which will contain all sub-Schema documents. This reduces the complexity of the
@@ -679,7 +679,7 @@ The following HTTP Headers are defined for this operation:
 #### cURL
 
 ```
-$ curl http://username:password@service-broker-url/v2/catalog/schemas -H "X-Broker-API-Version: 2.13"
+$ curl http://username:password@service-broker-url/v2/catalog/schemas -H "X-Broker-API-Version: 2.14"
 ```
 
 ### Response
@@ -710,10 +710,10 @@ more details on JSON Schema.
 ```
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "$id": "osb.v2:///schemas/",
+  "$id": "osb_v2:///schemas/",
   "definitions": {
     "foo/v1": {
-      "$id": "osb.v2:///fakeservice/v1",
+      "$id": "osb_v2:///fakeservice/v1",
       "definitions": {
         "BillingAccount" : {
           "$id" : "#BillingAccountParameters",
@@ -732,7 +732,7 @@ more details on JSON Schema.
             "type": "object",
             "properties": {
               "billing": {
-                "$ref": "osb.v2:///fakeservice/v1#BillingAccountParameters"
+                "$ref": "osb_v2:///fakeservice/v1#BillingAccountParameters"
               },
               "quota-account": {
                 "description": "Quota account number used to charge use of fake bandwidth.",
@@ -783,7 +783,7 @@ $ curl http://username:password@service-broker-url/v2/catalog/schemas/:component
 \* Fields with an asterisk are REQUIRED.
 
 ```
-$ curl http://username:password@service-broker-url/v2/catalog/schemas/fakeservice/v1 -H "X-Broker-API-Version: 2.13"
+$ curl http://username:password@service-broker-url/v2/catalog/schemas/fakeservice/v1 -H "X-Broker-API-Version: 2.14"
 ```
 
 Returns:
@@ -791,7 +791,7 @@ Returns:
 ```
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "$id": "osb.v2:///fakeservice/v1",
+  "$id": "osb_v2:///fakeservice/v1",
   "definitions": {
     "BillingAccount" : {
       "$id" : "#BillingAccountParameters",
@@ -810,7 +810,7 @@ Returns:
         "type": "object",
         "properties": {
           "billing": {
-            "$ref": "osb.v2:///fakeservice/v1#BillingAccountParameters"
+            "$ref": "osb_v2:///fakeservice/v1#BillingAccountParameters"
           },
           "quota-account": {
             "description": "Quota account number used to charge use of fake bandwidth.",
@@ -824,7 +824,7 @@ Returns:
 ```
 
 ```
-$ curl http://username:password@service-broker-url/v2/catalog/schemas/fakeservice/v1/bindings -H "X-Broker-API-Version: 2.13"
+$ curl http://username:password@service-broker-url/v2/catalog/schemas/fakeservice/v1/bindings -H "X-Broker-API-Version: 2.14"
 ```
 
 Returns:
@@ -832,13 +832,13 @@ Returns:
 ```
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "$id": "osb.v2:///fakeservice/v1/bindings",
+  "$id": "osb_v2:///fakeservice/v1/bindings",
   "definitions": {
     "$id" : "#AccountParameters",
     "type": "object",
     "properties": {
       "billing": {
-        "$ref": "osb.v2:///fakeservice/v1#BillingAccountParameters"
+        "$ref": "osb_v2:///fakeservice/v1#BillingAccountParameters"
       },
       "quota-account": {
         "description": "Quota account number used to charge use of fake bandwidth.",
