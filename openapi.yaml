@@ -476,38 +476,40 @@ components:
         bindable:
           type: boolean
         schemas:
-          $ref: '#/components/schemas/SchemasObject'
+          $ref: '#/components/schemas/Schemas'
 
-    SchemasObject:
+    Schemas:
       type: object
       properties:
         service_instance:
-          $ref: '#/components/schemas/ServiceInstanceSchemaObject'
+          $ref: '#/components/schemas/ServiceInstanceSchema'
         service_binding:
-          $ref: '#/components/schemas/ServiceBindingSchemaObject'
+          $ref: '#/components/schemas/ServiceBindingSchema'
 
-    ServiceInstanceSchemaObject:
+    ServiceInstanceSchema:
       type: object
       properties:
         create:
-          $ref: '#/components/schemas/SchemaParameters'
+          $ref: '#/components/schemas/RequestResponseSchemaObject'
         update:
-          $ref: '#/components/schemas/SchemaParameters'
+          $ref: '#/components/schemas/RequestResponseSchemaObject'
 
-    ServiceBindingSchemaObject:
+    ServiceBindingSchema:
       type: object
       properties:
         create:
-          $ref: '#/components/schemas/SchemaParameters'
+          $ref: '#/components/schemas/RequestResponseSchemaObject'
 
-    SchemaParameters:
+    RequestResponseSchemaObject:
       type: object
       properties:
         parameters:
-          $ref: '#/components/schemas/JSONSchemaObject'
+          $ref: '#/components/schemas/JSONSchema'
+        response:
+          $ref: '#/components/schemas/JSONSchema'
 
-    JSONSchemaObject:
-      type: object
+    JSONSchema:
+      $ref: 'http://json-schema.org/draft-04/schema'
 
     ServiceInstanceProvisionRequest:
       type: object
