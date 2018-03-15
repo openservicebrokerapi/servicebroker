@@ -692,8 +692,7 @@ $ curl http://username:password@service-broker-url/v2/catalog/schemas -H "X-Brok
 #### Body
 
 The root JSON Schema document is a complete collection of JSON Schemas
-leveraged by the Broker's catalog. The Platform will process this
-document before catalog `$ref` URIs map to definitions. The body MUST contain
+refrenced in the Service Broker's catalog using `$ref`. The body MUST contain
 all JSON Schema object definitions found in the catalog and referenced
 sub-schemas.
 
