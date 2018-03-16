@@ -427,16 +427,16 @@ how Platforms might expose these values to their users.
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| create | [Request/ResponseSchemaObject](#requestresponse-schema-object) | The Service Broker schema definition for creating a Service Instance and the associated response. |
-| update | [Request/ResponseSchemaObject](#requestresponse-schema-object) | The schema definition for updating a Service Instance and the associated response. |
+| create | [RequestResponseSchema](#request-response-schema-object) | The Service Broker schema definition for creating a Service Instance and the associated response. |
+| update | [RequestResponseSchema](#request-response-schema-object) | The schema definition for updating a Service Instance and the associated response. |
 
 ##### Service Binding Schema Object
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| create | [Request/ResponseSchemaObject](#requestresponse-schema-object) | The schema definition for creating a Service Binding and the associated response. |
+| create | [RequestResponseSchema](#request-response-schema-object) | The schema definition for creating a Service Binding and the associated response. |
 
-##### Request/Response Schema Object
+##### Request Response Schema Object
 
 A Service Broker MAY programmatically define the inputs and outputs of requests
 and responses using JSON Schema Object definitions.
