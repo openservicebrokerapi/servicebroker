@@ -490,17 +490,17 @@ components:
       type: object
       properties:
         create:
-          $ref: '#/components/schemas/RequestResponseSchemaObject'
+          $ref: '#/components/schemas/RequestResponseSchema'
         update:
-          $ref: '#/components/schemas/RequestResponseSchemaObject'
+          $ref: '#/components/schemas/RequestResponseSchema'
 
     ServiceBindingSchema:
       type: object
       properties:
         create:
-          $ref: '#/components/schemas/RequestResponseSchemaObject'
+          $ref: '#/components/schemas/RequestResponseSchema'
 
-    RequestResponseSchemaObject:
+    RequestResponseSchema:
       type: object
       properties:
         parameters:
