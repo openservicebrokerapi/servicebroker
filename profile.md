@@ -277,7 +277,7 @@ and consistency.
 | Service Broker API Field | Type | Description |
 | --- | --- | --- |
 | metadata.displayName | string | The name of the service to be displayed in graphical clients. |
-| metadata.imageUrl | string | The URL to an image. |
+| metadata.imageUrl | string | The URL to an image or a data URL containing an image. |
 | metadata.longDescription | string | Long description. |
 | metadata.providerDisplayName | string | The name of the upstream entity providing the actual service. |
 | metadata.documentationUrl | string | Link to documentation page for the service. |
