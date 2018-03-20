@@ -151,20 +151,17 @@ Service Broker MAY reject the request with `412 Precondition Failed` and
 provide a message that informs the operator of the API version that is to be
 used instead.
 
-## Extending Resources
+## Vendor Extension Fields
 
 Senders of messages defined by this specification MAY include additional
-fields within the JSON objects as extensions. For backwards compatibility
-reasons, new fields MAY be added at any location within the JSON objects,
-however, they SHOULD be placed within the `extensions` property of the JSON
-object.
-
-When adding new fields, unique prefixes SHOULD be used for the field names to
-reduce the chances of conflicts with other extensions that might be defined.
+fields within the JSON objects. When adding new fields, unique prefixes
+SHOULD be used for the field names to reduce the chances of conflicts with
+with future specification defined fields or other extensions.
 
 Receivers of a messages defined by this specification that contain unknown
 extension fields MUST ignore those fields and MUST NOT halt processing
-of those messages due to those fields.
+of those messages due to the presence of those fields. Receiver are under
+no obligation to understand or process unknown extension fields.
 
 ## Platform to Service Broker Authentication
 
@@ -274,10 +271,7 @@ When a request to a Service Broker fails, the Service Broker MUST return an
 appropriate HTTP response code. Where the specification defines the expected
 response code, that response code MUST be used.
 
-For error responses, the following fields are defined. Service Brokers MAY
-include additional fields within the response. When adding new fields, Service
-Brokers SHOULD use a unique prefix for the field names to reduce the chances of
-conflict with future specification defined fields.
+For error responses, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
@@ -749,7 +743,6 @@ For success responses, the following fields are defined:
 | --- | --- | --- |
 | state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the Platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the Platform to cease polling. |
 | description | string | A user-facing message displayed to the Platform API client. Can be used to tell the user details about the status of the operation. If present, MUST be a non-empty string. |
-| extensions | object | A set of extension properties. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -879,7 +872,6 @@ For success responses, the following fields are defined:
 | --- | --- | --- |
 | dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. If present, MUST be a non-empty string. |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
-| extensions | object | A set of extension properties. |
 
 ```
 {
@@ -1037,7 +1029,6 @@ For success responses, the following fields are defined:
 | Response Field | Type | Description |
 | --- | --- | --- |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
-| extensions | object | A set of extension properties. |
 
 ```
 {
@@ -1239,7 +1230,6 @@ For success responses, the following fields are defined:
 | syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform MUST consider the response invalid. |
 | route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for remote storage devices to be mounted into an application container filesystem. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
-| extensions | object | A set of extension properties. |
 
 ##### Volume Mount Object
 
