@@ -1,18 +1,20 @@
+version: 2
 approve_by_comment: true
 approve_regex: '(?i)LGTM'
 reject_regex: '(?i)NOT LGTM'
 reset_on_push: true
 signed_off_by:
   required: false
-reviewers:
-  required: 4
-  members:
-    - duglin
-    - vaikas-google
-    - shalako
-    - pmorie
-    - fmui
-    - zrob
-    - avade
-    - mattmcneeney
-    - n3wscott
+groups:
+  admins:
+    required: 4
+    users:
+      - duglin
+      - vaikas-google
+      - shalako
+      - pmorie
+      - fmui
+      - zrob
+      - avade
+      - mattmcneeney
+      - n3wscott
