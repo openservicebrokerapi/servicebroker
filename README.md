@@ -1,8 +1,5 @@
 [![Build Status](https://travis-ci.org/openservicebrokerapi/servicebroker.svg?branch=master)](https://travis-ci.org/openservicebrokerapi/servicebroker "Travis")
 
-
-
-
 ![Open Service Broker API](https://github.com/openservicebrokerapi/servicebroker/blob/master/logo.png?raw=true)
 
 ## Latest Release: v2.13
