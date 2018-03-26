@@ -131,6 +131,11 @@ This section will define a set of properties for each Platform and specify
 when each is meant to be used. Platforms MAY choose to provide additional
 properties beyond the ones defined in this document.
 
+Each property will include the version of the Open Service Broker
+API in which it was introduced. For any API call in which that property
+is mandatory, it is only mandatory for the specified version of the
+specification or higher.
+
 Aside from the Platform specific properties, defined in the following
 sections, there is one common property called `platform` that
 MUST also appear within `context` to indicate which Platform is being used.
@@ -154,7 +159,10 @@ for both.
 The following properties are defined for usage within a Cloud Foundry
 deployment:
 
-- `organization_guid`  
+- `organization_guid`
+
+  Version: 2.11
+
   The GUID of the organization that a Service Instance is associated with.
   This property MUST be a non-empty string serialized as follows:
   ```
@@ -165,7 +173,10 @@ deployment:
   "organization_guid": "1113aa0-124e-4af2-1526-6bfacf61b111"
   ```
 
-- `space_guid`  
+- `space_guid`
+
+  Version: 2.11
+
   The GUID of the space that a Service Instance is associated with.
   This property MUST be a non-empty string serialized as follows:
   ```
@@ -176,11 +187,11 @@ deployment:
   "space_guid": "aaaa1234-da91-4f12-8ffa-b51d0336aaaa"
   ```
 
-The following table specifies the REQUIRED properties for requests from a
-Platform to a Service Broker:
+The following table specifies which properties will appear in each API.
+All properties specified are REQUIRED unless otherwise noted.
 
 | Request API | Properties |
-| --- | --- | --- |
+| --- | --- |
 | `PUT /v2/service_instances/:instance_id` | `organization_guid`, `space_guid` |
 | `PATCH /v2/service_instances/:instance_id` | `organization_guid`, `space_guid` |
 | `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id` | `organization_guid`, `space_guid` |
@@ -201,7 +212,10 @@ Cloud Foundry API call:
 
 The following properties are defined for usage within a Kubernetes deployment:
 
-- `namespace`<br>
+- `namespace`
+
+  Version: 2.11
+
   The name of the Kubernetes namespace in which the Service Instance
   will be visible. This property MUST be a non-empty string serialized
   as follows:
@@ -214,13 +228,30 @@ The following properties are defined for usage within a Kubernetes deployment:
   "namespace": "testing"
   ```
 
-The following table specifies which properties MUST appear in each API:
+
+- `clusterID`
+
+  Version: 2.14
+
+  The unique identifier for the Kubernetes cluster from which the request
+  was sent. This property MUST be a non-empty string serialized as follows:
+
+  ```
+  "clusterID": "id-goes-here"
+  ```
+  For example:
+  ```
+  "clusterID": "644e1dd7-2a7f-18fb-b8ed-ed78c3f92c2b"
+  ```
+
+The following table specifies which properties will appear in each API.
+All properties specified are REQUIRED unless otherwise noted.
 
 | Request API | Properties |
 | --- | --- |
-| `PUT /v2/service_instances/:instance_id` | `namespace` |
-| `PATCH /v2/service_instances/:instance_id` | `namespace` |
-| `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id` | `namespace` |
+| `PUT /v2/service_instances/:instance_id` | `namespace`, `clusterID` |
+| `PATCH /v2/service_instances/:instance_id` | `namespace`, `clusterID` |
+| `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id` | `namespace`, `clusterID` |
 
 Example:
 
@@ -229,7 +260,8 @@ part of a Kubernetes API call:
   ```
   "context": {
     "platform": "kubernetes",
-    "namespace": "development"
+    "namespace": "development",
+    "clusterID": "8263feba-9b8a-23ae-99ed-abcd1234feda"
   }
   ```
 
@@ -244,7 +276,7 @@ object in which Platforms MAY choose to add additional fields.
 The following properties are defined for usage within a Cloud Foundry
 deployment:
 
-- `space_guid`  
+- `space_guid`
   This OPTIONAL property is the GUID of a space that a Service Binding is
   associated with. If present, this property MUST be a non-empty string
   serialized as follows:
