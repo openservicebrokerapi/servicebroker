@@ -229,7 +229,7 @@ The following properties are defined for usage within a Kubernetes deployment:
   ```
 
 
-- `clusterID`
+- `clusterid`
 
   Version: 2.14
 
@@ -237,11 +237,11 @@ The following properties are defined for usage within a Kubernetes deployment:
   was sent. This property MUST be a non-empty string serialized as follows:
 
   ```
-  "clusterID": "id-goes-here"
+  "clusterid": "id-goes-here"
   ```
   For example:
   ```
-  "clusterID": "644e1dd7-2a7f-18fb-b8ed-ed78c3f92c2b"
+  "clusterid": "644e1dd7-2a7f-18fb-b8ed-ed78c3f92c2b"
   ```
 
 The following table specifies which properties will appear in each API.
@@ -249,9 +249,9 @@ All properties specified are REQUIRED unless otherwise noted.
 
 | Request API | Properties |
 | --- | --- |
-| `PUT /v2/service_instances/:instance_id` | `namespace`, `clusterID` |
-| `PATCH /v2/service_instances/:instance_id` | `namespace`, `clusterID` |
-| `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id` | `namespace`, `clusterID` |
+| `PUT /v2/service_instances/:instance_id` | `namespace`, `clusterid` |
+| `PATCH /v2/service_instances/:instance_id` | `namespace`, `clusterid` |
+| `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id` | `namespace`, `clusterid` |
 
 Example:
 
@@ -261,7 +261,7 @@ part of a Kubernetes API call:
   "context": {
     "platform": "kubernetes",
     "namespace": "development",
-    "clusterID": "8263feba-9b8a-23ae-99ed-abcd1234feda"
+    "clusterid": "8263feba-9b8a-23ae-99ed-abcd1234feda"
   }
   ```
 
