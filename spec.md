@@ -151,6 +151,18 @@ Service Broker MAY reject the request with `412 Precondition Failed` and
 provide a message that informs the operator of the API version that is to be
 used instead.
 
+## Vendor Extension Fields
+
+Senders of messages defined by this specification MAY include additional
+fields within the JSON objects. When adding new fields, unique prefixes
+SHOULD be used for the field names to reduce the chances of conflicts with
+with future specification defined fields or other extensions.
+
+Receivers of a messages defined by this specification that contain unknown
+extension fields MUST ignore those fields and MUST NOT halt processing
+of those messages due to the presence of those fields. Receiver are under
+no obligation to understand or process unknown extension fields.
+
 ## Platform to Service Broker Authentication
 
 While the communication between a Platform and Service Broker MAY be unsecure,
@@ -259,10 +271,7 @@ When a request to a Service Broker fails, the Service Broker MUST return an
 appropriate HTTP response code. Where the specification defines the expected
 response code, that response code MUST be used.
 
-For error responses, the following fields are defined. Service Brokers MAY
-include additional fields within the response. When adding new fields, Service
-Brokers SHOULD use a unique prefix for the field names to reduce the chances of
-conflict with future specification defined fields.
+For error responses, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
