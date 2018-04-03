@@ -234,7 +234,14 @@ The following properties are defined for usage within a Kubernetes deployment:
   Version: 2.14
 
   The unique identifier for the Kubernetes cluster from which the request
-  was sent. This property MUST be a non-empty string serialized as follows:
+  was sent. This property can be useful when a Service Broker tries to
+  call back to a Platform that is managing multiple Kubernetes clusters.
+  Typically this value will be static for the lifetime of the cluster,
+  however, that is a Platform implementation choice. Brokers ought to take
+  care that, while atypical, it is possible for the value to change over
+  time.
+  
+  This property MUST be a non-empty string serialized as follows:
 
   ```
   "clusterid": "id-goes-here"
