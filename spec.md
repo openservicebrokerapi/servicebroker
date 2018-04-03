@@ -13,6 +13,7 @@
   - [Service Broker Errors](#service-broker-errors)
   - [Catalog Management](#catalog-management)
     - [Adding a Service Broker to the Platform](#adding-a-service-broker-to-the-platform)
+  - [Service Dependencies](#service-dependencies)
   - [Synchronous and Asynchronous Operations](#synchronous-and-asynchronous-operations)
     - [Synchronous Operations](#synchronous-operations)
     - [Asynchronous Operations](#asynchronous-operations)
@@ -422,6 +423,7 @@ how Platforms might expose these values to their users.
 | free | boolean | When false, Service Instances of this plan have a cost. The default is true. |
 | bindable | boolean | Specifies whether Service Instances of the Service Plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
 | schemas | [Schemas](#schemas-object) | Schema definitions for Service Instances and bindings for the plan. |
+| dependencies | [Dependencies](#dependencies) | Dependencies |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -591,6 +593,204 @@ schema being used.
 After implementing the first endpoint `GET /v2/catalog` documented
 [above](#catalog-management), the Service Broker will need to be registered
 with your Platform to make your services and plans available to end users.
+
+## Service Dependencies
+
+Broker authors can define dependencies of their services to other services.
+Dependencies are declared in the catalog at the plan level.
+There are three types of dependencies.
+
+* Open dependencies are arbitrary dependencies.
+  The service instance accepts any bindings and service instance IDs and
+  evaluates them at runtime.
+* Service dependencies are specified by a service or a set of plans.
+  When the service instance is provisioned, the platform has to provide a
+  binding or a service instance ID of a matching service instance.
+* Instance dependencies declare dependencies to a specific instance either
+  by a service instance ID or by a service instance alias.
+
+Dependencies are injected as parameters when a service instance is provisioned.
+The names of the parameters are declared in the catalog.
+
+The parameter values are objects and are different for bindable and
+non-bindable services. They all have the following fields in common.
+
+| Field | Type | Description |
+| --- | --- | --- |
+| service_id* | string | Service ID of the instance. |
+| service_name* | string | Service name of the instance. |
+| plan_id* | string | Plan ID of the instance. |
+| plan_name* | string | Plan name of the instance. |
+
+\* Fields with an asterisk are REQUIRED.
+
+For bindable services, the value MUST contain be the response of a binding request. 
+
+```
+{
+  "parameters": {
+    "database": {
+      "service_id": "71ef3933-8520-4f26-b808-f483d23f94a6",
+      "service_name": "mysql",
+      "plan_id": "1b367d58-6f17-4cb3-9ef8-3a69e752b826",
+      "plan_name": "small",
+      "credentials": {
+        "uri": "mysql://mysqluser:pass@mysqlhost:3306/dbname",
+        "username": "mysqluser",
+        "password": "pass",
+        "host": "mysqlhost",
+        "port": 3306,
+        "database": "dbname"
+      }
+    }
+  }
+}
+```
+
+Instances of non-bindable services can only be provided to the same broker.
+The platform MUST set the instance ID into the parameter value object.
+
+| Field | Type | Description |
+| --- | --- | --- |
+| instance_id* | string | Service instance ID. |
+
+\* Fields with an asterisk are REQUIRED.
+
+```
+{
+  "parameters": {
+    "database": {
+      "service_id": "90c7c453-c6a3-47ef-8284-5a2c00f4f18b",
+      "service_name": "the-database",
+      "plan_id": "d9301d66-7621-4526-9b97-63e93ddc2d13",
+      "plan_name": "big",
+      "instance_id": "0c7ec11f-977b-4027-a4d2-3dd81a9fbeb6"
+    }
+  }
+```
+
+The value of an open dependencies parameter is an array of objects, following
+the structures above. Additionally, the platform MAY add a dependency name,
+set by the user to each object.
+
+| Field | Type | Description |
+| --- | --- | --- |
+| name* | string | Dependency name. |
+
+\* Fields with an asterisk are REQUIRED.
+
+```
+{
+  "parameters": {
+    "some_dependencies ": [
+      {
+        "name": "master-database",
+        "service_id": "71ef3933-8520-4f26-b808-f483d23f94a6",
+        "service_name": "mysql",
+        "plan_id": "1b367d58-6f17-4cb3-9ef8-3a69e752b826",
+        "plan_name": "small",
+        "credentials": {
+          "uri": "mysql://mysqluser:pass@mysqlhost:3306/dbname",
+          "username": "mysqluser",
+          "password": "pass",
+          "host": "mysqlhost",
+          "port": 3306,
+          "database": "dbname"
+        }
+      },
+      {
+        "name": "internal-store",
+        "service_id": "90c7c453-c6a3-47ef-8284-5a2c00f4f18b",
+        "service_name": "the-database",
+        "plan_id": "d9301d66-7621-4526-9b97-63e93ddc2d13",
+        "plan_name": "big",
+        "instance_id": "0c7ec11f-977b-4027-a4d2-3dd81a9fbeb6"
+      }
+    ]
+  }
+}
+```
+
+### Dependencies
+
+| Field | Type | Description |
+| --- | --- | --- |
+| open\_dependencies\_parameter | string | A parameter name used for an open list of dependencies. |
+| services | [array-of-service-dependency-objects](#service-dependencies) | A list of service dependencies. |
+| instances | [array-of-instance-dependency-objects](#instance-dependencies) | A list of instance dependencies. |
+
+\* Fields with an asterisk are REQUIRED.
+
+### Service Dependencies
+
+| Field | Type | Description |
+| --- | --- | --- |
+| parameter* | string | Name of the parameter. MUST be a non-empty string and MUST be unique within all dependency parameters. |
+| description* | string | A short description of the dependency. MUST be a non-empty string. |
+| optional  | boolean | Whether the dependency is optional or not. Defaults to false. |
+| service_id | string | Service ID of the instance. MUST be a non-empty string. MUST NOT be used in conjunction with the fields `plan_ids` and `service_name`. |
+| plan_ids | array-of-strings | An array of plan IDs. The instance must match one of those plans. MUST be a non-empty array of non-empty strings. MUST NOT be used in conjunction with the fields `service_id` and `service_name`. |
+| service_name | string | Service name of the instance. MUST be a non-empty string. MUST NOT be used in conjunction with the fields `service_id` and `plan_ids`. |
+| plan_names | array-of-strings | An array of plan names. The instance must match one of those plans. MUST be a non-empty array of non-empty strings. REQUIRES the field `service_name`. |
+
+\* Fields with an asterisk are REQUIRED.
+
+### Instance Dependencies
+
+| Field | Type | Description |
+| --- | --- | --- |
+| parameter* | string | Name of the parameter. MUST be a non-empty string and MUST be unique within all dependency parameters. |
+| description* | string | A short description of the dependency. MUST be a non-empty string. |
+| optional  | boolean | Whether the dependency is optional or not. Defaults to false. |
+| instance\_id\_parameter | string | The name of the parameter that contains the service instance ID of an existing service. MUST be a non-empty string. MUST NOT be used in conjunction with the field `alias_parameter`. |
+| alias_parameter | string | The name of the parameter that contains the alias of an existing service. MUST be a non-empty string. MUST NOT be used in conjunction with the field `instance_id_parameter`. |
+
+\* Fields with an asterisk are REQUIRED.
+
+```
+{
+  "dependencies": {
+    "open_dependencies_parameter": "deps",
+    "services": [
+      {
+        "parameter": "uuid-service",
+        "description": "UUID Service to create UUIs.",
+        "service_id": "4ec72acd-b8fa-4be0-bdc2-ffb2d1104185",
+        "optional": true
+      },
+      {
+        "parameter": "random",
+        "description": "Random numbers.",
+        "plan_ids": [
+          "80d96caa-8ae7-41f7-9e80-349de02397df"
+        ],
+        "optional": false
+      },
+      {
+        "parameter": "memcache",
+        "description": "Cache server.",
+        "service_name": "memcache"
+      },
+      {
+        "parameter": "database",
+        "description": "Main database instance.",
+        "service_name": "mysql",
+        "plan_names": [
+          "big",
+          "huge"
+        ]
+      }
+    ],
+    "instances": [
+      {
+        "parameter": "queue",
+        "description": "Message queue.",
+        "alias_parameter": "queue_alias"
+      }
+    ]
+  }
+}
+```
 
 ## Synchronous and Asynchronous Operations
 
@@ -809,6 +1009,7 @@ The following HTTP Headers are defined for this operation:
 | organization_guid* | string | Deprecated in favor of `context`. The Platform GUID for the organization under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | space_guid* | string | Deprecated in favor of `context`. The identifier for the project space within the Platform organization. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | parameters | object | Configuration options for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
+| alias | string | Alias for this instance. |
 
 \* Fields with an asterisk are REQUIRED.
 
