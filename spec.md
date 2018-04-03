@@ -451,7 +451,9 @@ The following rules apply if `parameters` is included anywhere in the catalog:
 * The `$schema` key MUST be present in the schema declaring the version of JSON
 schema being used unless the schema is composed of only a `$ref`.
 * Schemas MUST NOT contain any external references except for schemas found
-  under `/schemas{/*}` (see [$ref Usage](#ref-usage) for further information).
+  under `/v2/catalog/schemas` or `osb_v2:` style `$ref`s via
+  `/v2/catalog/schemas/:component_path` (see [$ref Usage](#ref-usage) for
+  further information).
 * Schemas MUST NOT be larger than 64kB.
 
 ```
@@ -613,7 +615,7 @@ endpoint without a `:component_path`.
 If the `osb_v2:` scheme is used by the Service Broker, then the Platform MAY
 fetch the component JSON Schema directly using the following convention:
 
- - Given: `osb_v2:///{:component_path}`, fetch
+ - Given: `osb_v2:///:component_path`, fetch
    `/v2/catalog/schemas/:component_path` and then the Platform is responsible
    to continue fetching any unknown `:component_path` URIs. Care ought to be
    taken by the platform to not fetch duplicate definitions.
@@ -658,7 +660,7 @@ For Service Brokers that support `$ref`, they:
   * MUST respond with all JSON Schema documents for `/schemas` requests that are
     referenced in the catalog.
   * MAY provide `$ref`'s with the `osb_v2:` scheme, then:
-    * MUST respond to `/schemas/:component_id` requests.
+    * MUST respond to `/schemas/:component_path` requests.
 
 ### Request
 
