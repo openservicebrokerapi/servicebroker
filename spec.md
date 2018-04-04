@@ -1459,7 +1459,8 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id' -
 | 200 OK | The expected response body is below. |
 | 404 Not Found | MUST be returned if the Service Instance does not exist or if a provisioning operation is still in progress. |
 
-Responses with any other status code will be interpreted as a failure.
+Responses with any other status code will be interpreted as a failure and the
+Platform MUST continue to remember the Service Instance.
 
 ##### Body
 
@@ -1492,7 +1493,7 @@ endpoint for all plans of the service.
 ##### Route
 `GET /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
-The `:instance_id` is the ID of a previously-provisioned Service Instance. The
+The `:instance_id` is the ID of a previously provisioned Service Instance. The
 `:binding_id` is the ID of a previously provisioned binding for that instance.
 
 ##### cURL
@@ -1507,7 +1508,8 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/se
 | 200 OK | The expected response body is below. |
 | 404 Not Found | MUST be returned if the Service Binding does not exist or if a binding operation is still in progress. |
 
-Responses with any other status code will be interpreted as a failure.
+Responses with any other status code will be interpreted as a failure and the
+Platform MUST continue to remember the Service Binding.
 
 ##### Body
 

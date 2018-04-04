@@ -147,6 +147,24 @@ paths:
           description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
+    get:
+      summary: gets a service instance
+      tags:
+        - ServiceInstances
+      operationId: serviceInstance.get
+      parameters:
+        - $ref: '#/parameters/APIVersion'
+        - $ref: '#/parameters/OriginatingIdentity'
+        - $ref: '#/parameters/instance_id'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ServiceInstanceResource'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
   '/v2/service_instances/{instance_id}/last_operation':
     parameters:
       - $ref: '#/parameters/APIVersion'
@@ -246,6 +264,26 @@ paths:
           description: Gone
           schema:
             $ref: '#/definitions/Error'
+    get:
+      summary: gets a service binding
+      tags:
+        - ServiceBindings
+      operationId: serviceBinding.get
+      parameters:
+        - $ref: '#/parameters/APIVersion'
+        - $ref: '#/parameters/OriginatingIdentity'
+        - $ref: '#/parameters/instance_id'
+        - $ref: '#/parameters/binding_id'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ServiceBindingResource'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+
 parameters:
   APIVersion:
     name: X-Broker-API-Version
@@ -391,6 +429,17 @@ definitions:
         $ref: '#/definitions/JSONSchemaObject'
   JSONSchemaObject:
     type: object
+  ServiceInstanceResource:
+    type: object
+    properties:
+      service_id:
+        type: string
+      plan_id:
+        type: string
+      dashboard_url:
+        type: string
+      parameters:
+        $ref: '#/definitions/Object'
   ServiceInstanceProvisionRequest:
     type: object
     required:
@@ -472,6 +521,21 @@ definitions:
           - failed
       description:
         type: string
+  ServiceBindingResource:
+    type: object
+    properties:
+      credentials:
+        $ref: '#/definitions/Object'
+      syslog_drain_url:
+        type: string
+      route_service_url:
+        type: string
+      volume_mounts:
+        type: array
+        items:
+          $ref: '#/definitions/ServiceBindingVolumeMount'
+      parameters:
+        $ref: '#/definitions/Object'
   ServiceBindingRequest:
     type: object
     required:
