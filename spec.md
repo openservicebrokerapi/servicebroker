@@ -20,13 +20,13 @@
   - [Polling Last Operation](#polling-last-operation)
     - [Polling Interval and Duration](#polling-interval-and-duration)
   - [Provisioning](#provisioning)
+  - [Fetching a Service Instance](#fetching-a-service-instance)
   - [Updating a Service Instance](#updating-a-service-instance)
   - [Binding](#binding)
     - [Types of Binding](#types-of-binding)
+  - [Fetching a Service Binding](#fetching-a-service-binding)
   - [Unbinding](#unbinding)
   - [Deprovisioning](#deprovisioning)
-  - [Fetching a Service Instance](#fetching-a-service-instance)
-  - [Fetching a Service Binding](#fetching-a-service-binding)
   - [Orphans](#orphans)
 
 ## API Overview
@@ -886,6 +886,54 @@ For success responses, the following fields are defined:
 }
 ```
 
+## Fetching a Service Instance
+
+If `"instances_retrievable" :true` is declared for a service in the
+[Catalog](#catalog-management) endpoint, Service Brokers MUST support this
+endpoint for all plans of the service.
+
+### Request
+
+##### Route
+`GET /v2/service_instances/:instance_id`
+
+`:instance_id` is the identifier of a previously provisioned instance.
+
+##### cURL
+```
+$ curl 'http://username:password@broker-url/v2/service_instances/:instance_id' -X GET -H "X-Broker-API-Version: 2.13"
+```
+
+### Response
+
+| Status Code | Description |
+| --- | --- |
+| 200 OK | The expected response body is below. |
+| 404 Not Found | MUST be returned if the Service Instance does not exist or if a provisioning operation is still in progress. |
+
+Responses with any other status code will be interpreted as a failure and the
+Platform MUST continue to remember the Service Instance.
+
+##### Body
+
+For success responses, the following fields are defined:
+
+| Response field | Type | Description |
+| --- | --- | --- |
+| service_id | string | The ID of the service from the catalog that is associated with the Service Instance. |
+| plan_id | string | The ID of the plan from the catalog that is associated with the Service Instance. |
+| dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. |
+| parameters | object | Configuration parameters for the Service Instance. |
+
+```
+{
+  "dashboard_url": "http://example-dashboard.example.com/9189kdfsk0vfnku",
+  "parameters": {
+    "billing-account": "abcde12345"
+  }
+}
+```
+
 ## Updating a Service Instance
 
 By implementing this endpoint, Service Broker authors can enable users to
@@ -1291,6 +1339,63 @@ can be mounted on all app instances simultaneously.
 }
 ```
 
+## Fetching a Service Binding
+
+If `"bindings_retrievable" :true` is declared for a service in the
+[Catalog](#catalog-management) endpoint, Service Brokers MUST support this
+endpoint for all plans of the service.
+
+### Request
+
+##### Route
+`GET /v2/service_instances/:instance_id/service_bindings/:binding_id`
+
+The `:instance_id` is the ID of a previously provisioned Service Instance. The
+`:binding_id` is the ID of a previously provisioned binding for that instance.
+
+##### cURL
+```
+$ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:binding_id' -X GET -H "X-Broker-API-Version: 2.13"
+```
+
+### Response
+
+| Status Code | Description |
+| --- | --- |
+| 200 OK | The expected response body is below. |
+| 404 Not Found | MUST be returned if the Service Binding does not exist or if a binding operation is still in progress. |
+
+Responses with any other status code will be interpreted as a failure and the
+Platform MUST continue to remember the Service Binding.
+
+##### Body
+
+For success responses, the following fields are defined:
+
+| Response Field | Type | Description |
+| --- | --- | --- |
+| credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. |
+| syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform MUST consider the response invalid. |
+| route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
+| volume_mounts | array-of-objects | An array of configuration for mounting volumes. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
+| parameters | object | Configuration parameters for the Service Binding. |
+
+```
+{
+  "credentials": {
+    "uri": "mysql://mysqluser:pass@mysqlhost:3306/dbname",
+    "username": "mysqluser",
+    "password": "pass",
+    "host": "mysqlhost",
+    "port": 3306,
+    "database": "dbname"
+  },
+  "parameters": {
+    "billing-account": "abcde12345"
+  }
+}
+```
+
 ## Unbinding
 
 Note: Service Brokers that do not provide any bindable services or plans do
@@ -1431,111 +1536,6 @@ For success responses, the following fields are defined:
 ```
 {
   "operation": "task_10"
-}
-```
-
-## Fetching a Service Instance
-
-If `"instances_retrievable" :true` is declared for a service in the
-[Catalog](#catalog-management) endpoint, Service Brokers MUST support this
-endpoint for all plans of the service.
-
-### Request
-
-##### Route
-`GET /v2/service_instances/:instance_id`
-
-`:instance_id` is the identifier of a previously provisioned instance.
-
-##### cURL
-```
-$ curl 'http://username:password@broker-url/v2/service_instances/:instance_id' -X GET -H "X-Broker-API-Version: 2.13"
-```
-
-### Response
-
-| Status Code | Description |
-| --- | --- |
-| 200 OK | The expected response body is below. |
-| 404 Not Found | MUST be returned if the Service Instance does not exist or if a provisioning operation is still in progress. |
-
-Responses with any other status code will be interpreted as a failure and the
-Platform MUST continue to remember the Service Instance.
-
-##### Body
-
-For success responses, the following fields are defined:
-
-| Response field | Type | Description |
-| --- | --- | --- |
-| service_id | string | The ID of the service from the catalog that is associated with the Service Instance. |
-| plan_id | string | The ID of the plan from the catalog that is associated with the Service Instance. |
-| dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. |
-| parameters | object | Configuration parameters for the Service Instance. |
-
-```
-{
-  "dashboard_url": "http://example-dashboard.example.com/9189kdfsk0vfnku",
-  "parameters": {
-    "billing-account": "abcde12345"
-  }
-}
-```
-
-## Fetching a Service Binding
-
-If `"bindings_retrievable" :true` is declared for a service in the
-[Catalog](#catalog-management) endpoint, Service Brokers MUST support this
-endpoint for all plans of the service.
-
-### Request
-
-##### Route
-`GET /v2/service_instances/:instance_id/service_bindings/:binding_id`
-
-The `:instance_id` is the ID of a previously provisioned Service Instance. The
-`:binding_id` is the ID of a previously provisioned binding for that instance.
-
-##### cURL
-```
-$ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:binding_id' -X GET -H "X-Broker-API-Version: 2.13"
-```
-
-### Response
-
-| Status Code | Description |
-| --- | --- |
-| 200 OK | The expected response body is below. |
-| 404 Not Found | MUST be returned if the Service Binding does not exist or if a binding operation is still in progress. |
-
-Responses with any other status code will be interpreted as a failure and the
-Platform MUST continue to remember the Service Binding.
-
-##### Body
-
-For success responses, the following fields are defined:
-
-| Response Field | Type | Description |
-| --- | --- | --- |
-| credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. |
-| syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform MUST consider the response invalid. |
-| route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
-| volume_mounts | array-of-objects | An array of configuration for mounting volumes. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
-| parameters | object | Configuration parameters for the Service Binding. |
-
-```
-{
-  "credentials": {
-    "uri": "mysql://mysqluser:pass@mysqlhost:3306/dbname",
-    "username": "mysqluser",
-    "password": "pass",
-    "host": "mysqlhost",
-    "port": 3306,
-    "database": "dbname"
-  },
-  "parameters": {
-    "billing-account": "abcde12345"
-  }
 }
 ```
 
