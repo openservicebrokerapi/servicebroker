@@ -217,6 +217,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    get:
+      summary: gets a service instance
+      tags:
+        - ServiceInstances
+      operationId: serviceInstance.get
+      parameters:
+        - $ref: '#/components/parameters/APIVersion'
+        - $ref: '#/components/parameters/OriginatingIdentity'
+        - name: instance_id
+          in: path
+          description: instance id of instance to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceInstanceResource'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /v2/service_instances/{instance_id}/last_operation:
     get:
@@ -377,6 +404,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    get:
+      summary: gets a service binding
+      tags:
+        - ServiceBindings
+      operationId: serviceBinding.get
+      parameters:
+        - $ref: '#/components/parameters/APIVersion'
+        - $ref: '#/components/parameters/OriginatingIdentity'
+        - name: instance_id
+          in: path
+          description: instance id of instance associated with the binding
+          required: true
+          schema:
+            type: string
+        - name: binding_id
+          in: path
+          description: binding id of binding to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceBindingResource'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 components:
   parameters:
@@ -509,6 +569,18 @@ components:
     JSONSchema:
       $ref: 'http://json-schema.org/draft-04/schema'
 
+    ServiceInstanceResource:
+      type: object
+      properties:
+        service_id:
+          type: string
+        plan_id:
+          type: string
+        dashboard_url:
+          type: string
+        parameters:
+          $ref: '#/components/schemas/Object'
+
     ServiceInstanceProvisionRequest:
       type: object
       required:
@@ -596,6 +668,22 @@ components:
             - failed
         description:
           type: string
+
+    ServiceBindingResource:
+      type: object
+      properties:
+        credentials:
+          $ref: '#/components/schemas/Object'
+        syslog_drain_url:
+          type: string
+        route_service_url:
+          type: string
+        volume_mounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceBindingVolumeMount'
+        parameters:
+          $ref: '#/components/schemas/Object'
 
     ServiceBindingRequest:
       type: object
