@@ -23,4 +23,4 @@
 | Generic Broker Actions | _OPEN_ | - | - |
 | JSON Schema Endpoint | [_OPEN_](https://github.com/openservicebrokerapi/servicebroker/pull/402) | - | - |
 | JSON Schema for Responses | [_OPEN_](https://github.com/openservicebrokerapi/servicebroker/pull/392) | - | - |
-| Depercated Classes and Plans | _OPEN_ | - | - |
+| Deprecated Classes and Plans | _OPEN_ | - | - |
