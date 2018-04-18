@@ -292,7 +292,7 @@ use these error codes for the specified failure scenarios.
 | AsyncRequired | This request requires client support for asynchronous service operations. | The query parameter `accepts_incomplete=true` MUST be included the request. |
 | ConcurrencyError | The Service Broker does not support concurrent requests that mutate the same resource. | Clients MUST wait until pending requests have completed for the specified resources. |
 | RequiresApp | The request body is missing the `app_guid` field. | The `app_guid` MUST be included in the request body. |
-| DeprecatedError | The Service Broker does not support provisiong (or updating to) a deprecated service or plan. | Another service or plan should be specified. |
+| DeprecatedError | The Service Broker does not support provisioning (or updating to) a deprecated service or plan. | Another service or plan should be specified. |
 
 ## Catalog Management
 
@@ -396,7 +396,7 @@ It is therefore RECOMMENDED that implementations avoid such strings.
 | dashboard_client | [DashboardClient](#dashboard-client-object) | Contains the data necessary to activate the Dashboard SSO feature for this service. |
 | plan_updateable | boolean | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute `plan_updatable` as `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
 | plans* | array of [Plan](#plan-object) objects | A list of plans for this service, schema is defined below. MUST contain at least one plan. |
-| deprecation | [Deprecation](#deprecation-object) | Contains details of the deprecation status of the service. This field is OPTIONAL. If ommited, the service is not deprecated. See [deprecating services and plans](#deprecating-services-and-plans) for more information. |
+| deprecation | [Deprecation](#deprecation-object) | Contains details of the deprecation status of the service. This field is OPTIONAL. If omitted, the service is not deprecated. See [deprecating services and plans](#deprecating-services-and-plans) for more information. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -413,7 +413,7 @@ how Platforms might expose these values to their users.
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| id | string | The id of the Oauth client that the dashboard will use. If present, MUST be a non-empty string. |
+| id | string | The id of the OAuth client that the dashboard will use. If present, MUST be a non-empty string. |
 | secret | string | A secret for the dashboard client. If present, MUST be a non-empty string. |
 | redirect_uri | string | A URI for the service dashboard. Validated by the OAuth token server when the dashboard requests a token. |
 
@@ -617,12 +617,12 @@ with your Platform to make your services and plans available to end users.
 
 A Service Broker can signal to a Platform (through the Catalog) that a service
 or plan is deprecated. The Service Broker MAY provide optional messaging and
-alterntives for the deprecated service or plan. This gives the Platform the
+alternatives for the deprecated service or plan. This gives the Platform the
 opportunity to display meaningful advice to their users to migrate away from
 the deprecated service or plan.
 
 Service Brokers MUST allow existing Service Instances to be updated as they
-were before deprecration. Service Brokers MAY block provisioning of a Service
+were before depreciation. Service Brokers MAY block provisioning of a Service
 Instance using a deprecated service or plan, or block updating an existing
 Service Instance to a deprecated plan by return error code `DeprecatedError`
 (see [Service Broker Errors](#service-broker-errors)).
@@ -667,7 +667,7 @@ update, and deprovision.
 
 For a Service Broker to return an asynchronous response, the query parameter
 `accepts_incomplete=true` MUST be included the request. If the parameter is not
-included or is set to `false`, and the Service Broker cannot fulfil the request
+included or is set to `false`, and the Service Broker cannot fulfill the request
 synchronously (guaranteeing that the operation is complete on response), then
 the Service Broker SHOULD reject the request with the status code `422
 Unprocessable Entity` and a response body containing error code
