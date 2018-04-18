@@ -628,6 +628,8 @@ schema being used.
 | service_id | string | If present, it MUST be the ID of a service. |
 | plan_id | string | If present, it MUST be the ID of a plan. |
 
+\* Fields with an asterisk are REQUIRED.
+
 ### Adding a Service Broker to the Platform
 
 After implementing the first endpoint `GET /v2/catalog` documented
