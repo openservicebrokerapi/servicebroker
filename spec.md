@@ -594,7 +594,16 @@ schema being used.
       "id": "009aba-XXXX-XXXX-XXXX-dace631cd648",
       "description": "This is deprecated.",
       "free": false,
-      "deprecation": {}
+      "deprecation": {
+        "description": "Don't use this anymore.",
+        "since": "2018-04-20",
+        "eol": "2020-02-28",
+        "alternatives": [{
+            "description": "Use this plan instead.",
+            "plan_id": "0f4008b5-XXXX-XXXX-XXXX-dace631cd648"
+          }
+        ]
+      }
     }]
   }]
 }
@@ -607,9 +616,17 @@ schema being used.
 | description | string | A short description of the deprecation. |
 | since | date string | ISO 8601 formatted date when the Service Broker deprecated the service or plan. |
 | eol | date string | ISO 8601 formatted date when the Service Broker expects to remove the service or plan from the catalog. |
-| alternatives | array of strings | An array of alternatives services or plans that should be considered from the broker. This is a list of names. If the deprecated object is a service, these are service names. If the deprecated object is a plan, these are plan names within the same service. |
+| alternatives |  array of [CatalogObjectId](#catalog-object-id-object) objects  | An array of services or plans that the Service Broker considers to be good alternatives. |
 
 \* Fields with an asterisk are REQUIRED.
+
+##### Catalog Object Id Object 
+
+| Response Field | Type | Description |
+| --- | --- | --- |
+| description | string | A short description to provide contextual information about this catalog object reference. |
+| service_id | string | If present, it MUST be the ID of a service. |
+| plan_id | string | If present, it MUST be the ID of a plan. |
 
 ### Adding a Service Broker to the Platform
 
