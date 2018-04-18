@@ -13,6 +13,7 @@
   - [Service Broker Errors](#service-broker-errors)
   - [Catalog Management](#catalog-management)
     - [Adding a Service Broker to the Platform](#adding-a-service-broker-to-the-platform)
+    - [Deprecating Services and Plans](#deprecating-services-and-plans)
   - [Synchronous and Asynchronous Operations](#synchronous-and-asynchronous-operations)
     - [Synchronous Operations](#synchronous-operations)
     - [Asynchronous Operations](#asynchronous-operations)
@@ -291,6 +292,7 @@ use these error codes for the specified failure scenarios.
 | AsyncRequired | This request requires client support for asynchronous service operations. | The query parameter `accepts_incomplete=true` MUST be included the request. |
 | ConcurrencyError | The Service Broker does not support concurrent requests that mutate the same resource. | Clients MUST wait until pending requests have completed for the specified resources. |
 | RequiresApp | The request body is missing the `app_guid` field. | The `app_guid` MUST be included in the request body. |
+| DeprecatedError | The Service Broker does not support provisiong (or updating to) a deprecated service or plan. | Another service or plan should be specified. |
 
 ## Catalog Management
 
@@ -319,8 +321,8 @@ Service Broker authors are expected to be cautious when removing services and
 plans from their catalogs, as Platforms might have provisioned Service
 Instances of these plans. For example, Platforms might restrict the actions
 that users can perform on existing Service Instances if the associated service
-or plan is deleted. Consider your deprecation strategy.
-
+or plan is deleted. Consider your [deprecation](#deprecating-services-and-plans)
+strategy.
 
 The following sections describe catalog requests and responses in the Service
 Broker API.
@@ -394,6 +396,7 @@ It is therefore RECOMMENDED that implementations avoid such strings.
 | dashboard_client | [DashboardClient](#dashboard-client-object) | Contains the data necessary to activate the Dashboard SSO feature for this service. |
 | plan_updateable | boolean | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute `plan_updatable` as `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
 | plans* | array of [Plan](#plan-object) objects | A list of plans for this service, schema is defined below. MUST contain at least one plan. |
+| deprecation | [Deprecation](#deprecation-object) | Contains details of the deprecation status of the service. This field is OPTIONAL. If ommited, the service is not deprecated. See [deprecating services and plans](#deprecating-services-and-plans) for more information. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -426,6 +429,7 @@ how Platforms might expose these values to their users.
 | free | boolean | When false, Service Instances of this plan have a cost. The default is true. |
 | bindable | boolean | Specifies whether Service Instances of the Service Plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
 | schemas | [Schemas](#schemas-object) | Schema definitions for Service Instances and bindings for the plan. |
+| deprecation | [Deprecation](#deprecation-object) | Contains details of the deprecation status of the plan. This field is OPTIONAL. If ommited, the plan is not deprecated. See [deprecating services and plans](#deprecating-services-and-plans) for more information. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -591,12 +595,40 @@ schema being used.
 }
 ```
 
+##### Deprecation Object 
+
+| Response Field | Type | Description |
+| --- | --- | --- |
+| deprecated* | boolean | Indicates that this service or plan is deprecated and will be removed in the future. See [deprecating services and plans](#deprecating-services-and-plans) for more information. |
+| description | string | A short description of the deprecation. |
+| since | date string | ISO 8601 formatted date when the Service Broker deprecated the service or plan. |
+| eol | date string | ISO 8601 formatted date when the Service Broker expects to remove the service or plan from the catalog. |
+| alterntives | array of strings | An array of alterntives services or plans that should be concidered from the broker. This is a list of names. If the debrecated object is a service, these are service names. If the debrecated object is a plan, these are plan names within the same service. |
+
+\* Fields with an asterisk are REQUIRED.
 
 ### Adding a Service Broker to the Platform
 
 After implementing the first endpoint `GET /v2/catalog` documented
 [above](#catalog-management), the Service Broker will need to be registered
 with your Platform to make your services and plans available to end users.
+
+### Deprecating services and plans
+
+A Service Broker can signal to a Platform (through the Catalog) that a service
+or plan is deprecated. The Service Broker MAY provide optional messaging and
+alterntives for the deprecated service or plan. This gives the Platform the
+opportunity to display meaningful advice to their users to migrate away from
+the deprecated service or plan.
+
+Service Brokers MUST allow existing Service Instances to be updated as they
+were before deprecration. Service Brokers MAY block provisioning of a Service
+Instance using a deprecated service or plan, or block updating an existing
+Service Instance to a deprecated plan by return error code `DeprecatedError`
+(see [Service Broker Errors](#service-broker-errors)).
+
+The Service Broker SHOULD allow the Platform to continue to
+provision new Service Instances of the deprecated service or plan. 
 
 ## Synchronous and Asynchronous Operations
 
