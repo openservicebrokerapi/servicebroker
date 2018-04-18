@@ -292,7 +292,6 @@ use these error codes for the specified failure scenarios.
 | AsyncRequired | This request requires client support for asynchronous service operations. | The query parameter `accepts_incomplete=true` MUST be included the request. |
 | ConcurrencyError | The Service Broker does not support concurrent requests that mutate the same resource. | Clients MUST wait until pending requests have completed for the specified resources. |
 | RequiresApp | The request body is missing the `app_guid` field. | The `app_guid` MUST be included in the request body. |
-| DeprecatedError | The Service Broker does not support provisioning (or updating to) a deprecated service or plan. | Another service or plan should be specified. |
 
 ## Catalog Management
 
@@ -396,7 +395,7 @@ It is therefore RECOMMENDED that implementations avoid such strings.
 | dashboard_client | [DashboardClient](#dashboard-client-object) | Contains the data necessary to activate the Dashboard SSO feature for this service. |
 | plan_updateable | boolean | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute `plan_updatable` as `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
 | plans* | array of [Plan](#plan-object) objects | A list of plans for this service, schema is defined below. MUST contain at least one plan. |
-| deprecation | [Deprecation](#deprecation-object) | Contains details of the deprecation status of the service. This field is OPTIONAL. If omitted, the service is not deprecated. See [deprecating services and plans](#deprecating-services-and-plans) for more information. |
+| deprecation | [Deprecation](#deprecation-object) | Contains details of the deprecation status of the service. This field is OPTIONAL. If specified, the service is deprecated. See [deprecating services and plans](#deprecating-services-and-plans) for more information. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -429,7 +428,7 @@ how Platforms might expose these values to their users.
 | free | boolean | When false, Service Instances of this plan have a cost. The default is true. |
 | bindable | boolean | Specifies whether Service Instances of the Service Plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
 | schemas | [Schemas](#schemas-object) | Schema definitions for Service Instances and bindings for the plan. |
-| deprecation | [Deprecation](#deprecation-object) | Contains details of the deprecation status of the plan. This field is OPTIONAL. If omitted, the plan is not deprecated. See [deprecating services and plans](#deprecating-services-and-plans) for more information. |
+| deprecation | [Deprecation](#deprecation-object) | Contains details of the deprecation status of the plan. This field is OPTIONAL. If specified, the plan is deprecated. See [deprecating services and plans](#deprecating-services-and-plans) for more information. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -590,6 +589,12 @@ schema being used.
           "40 concurrent connections"
         ]
       }
+    }, {
+      "name": "fake-deprecated-plan",
+      "id": "009aba-XXXX-XXXX-XXXX-dace631cd648",
+      "description": "This is deprecated.",
+      "free": false,
+      "deprecation": {}
     }]
   }]
 }
@@ -620,14 +625,12 @@ alternatives for the deprecated service or plan. This gives the Platform the
 opportunity to display meaningful advice to their users to migrate away from
 the deprecated service or plan.
 
-Service Brokers MUST allow existing Service Instances to be updated as they
-were before depreciation. Service Brokers MAY block provisioning of a Service
-Instance using a deprecated service or plan, or block updating an existing
-Service Instance to a deprecated plan by return error code `DeprecatedError`
-(see [Service Broker Errors](#service-broker-errors)).
+Service Brokers MUST allow existing Service Instances to be updated and
+bindable as they were before depreciation. Deprecation MUST NOT effect the
+usability of existing Service Instances and Bindings.
 
 The Service Broker SHOULD allow the Platform to continue to
-provision new Service Instances of the deprecated service or plan. 
+provision new Service Instances of the deprecated service or plan.
 
 ## Synchronous and Asynchronous Operations
 
