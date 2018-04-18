@@ -596,8 +596,8 @@ schema being used.
       "free": false,
       "deprecation": {
         "description": "Don't use this anymore.",
-        "since": "2018-04-20",
-        "eol": "2020-02-28",
+        "since": "2018-04-20T17:00:00+00:00",
+        "eol": "2020-02-28T08:00:00+00:00",
         "alternatives": [{
             "description": "Use this plan instead.",
             "plan_id": "0f4008b5-XXXX-XXXX-XXXX-dace631cd648"
@@ -614,8 +614,8 @@ schema being used.
 | Response Field | Type | Description |
 | --- | --- | --- |
 | description | string | A short description of the deprecation. |
-| since | date string | ISO 8601 formatted date when the Service Broker deprecated the service or plan. |
-| eol | date string | ISO 8601 formatted date when the Service Broker expects to remove the service or plan from the catalog. |
+| since | date string | Date and time when the Service Broker deprecated the service or plan. If specified, it is expected to be an ISO 8601 formatted date and time, with time zone. |
+| eol | date string | Date and time when the Service Broker expects to end-of-life (remove) the service or plan from the catalog. If specified, it is expected to be an ISO 8601 formatted date and time, with time zone. |
 | alternatives | array of [CatalogObjectId](#catalog-object-id-object) objects | An array of services or plans that the Service Broker considers to be good alternatives. |
 
 \* Fields with an asterisk are REQUIRED.
