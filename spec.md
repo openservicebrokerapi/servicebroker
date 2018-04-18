@@ -616,7 +616,7 @@ schema being used.
 | description | string | A short description of the deprecation. |
 | since | date string | ISO 8601 formatted date when the Service Broker deprecated the service or plan. |
 | eol | date string | ISO 8601 formatted date when the Service Broker expects to remove the service or plan from the catalog. |
-| alternatives |  array of [CatalogObjectId](#catalog-object-id-object) objects  | An array of services or plans that the Service Broker considers to be good alternatives. |
+| alternatives | array of [CatalogObjectId](#catalog-object-id-object) objects | An array of services or plans that the Service Broker considers to be good alternatives. |
 
 \* Fields with an asterisk are REQUIRED.
 
