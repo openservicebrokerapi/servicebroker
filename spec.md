@@ -429,7 +429,7 @@ how Platforms might expose these values to their users.
 | free | boolean | When false, Service Instances of this plan have a cost. The default is true. |
 | bindable | boolean | Specifies whether Service Instances of the Service Plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
 | schemas | [Schemas](#schemas-object) | Schema definitions for Service Instances and bindings for the plan. |
-| deprecation | [Deprecation](#deprecation-object) | Contains details of the deprecation status of the plan. This field is OPTIONAL. If ommited, the plan is not deprecated. See [deprecating services and plans](#deprecating-services-and-plans) for more information. |
+| deprecation | [Deprecation](#deprecation-object) | Contains details of the deprecation status of the plan. This field is OPTIONAL. If omitted, the plan is not deprecated. See [deprecating services and plans](#deprecating-services-and-plans) for more information. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -599,11 +599,10 @@ schema being used.
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| deprecated* | boolean | Indicates that this service or plan is deprecated and will be removed in the future. See [deprecating services and plans](#deprecating-services-and-plans) for more information. |
 | description | string | A short description of the deprecation. |
 | since | date string | ISO 8601 formatted date when the Service Broker deprecated the service or plan. |
 | eol | date string | ISO 8601 formatted date when the Service Broker expects to remove the service or plan from the catalog. |
-| alterntives | array of strings | An array of alterntives services or plans that should be concidered from the broker. This is a list of names. If the debrecated object is a service, these are service names. If the debrecated object is a plan, these are plan names within the same service. |
+| alternatives | array of strings | An array of alternatives services or plans that should be considered from the broker. This is a list of names. If the deprecated object is a service, these are service names. If the deprecated object is a plan, these are plan names within the same service. |
 
 \* Fields with an asterisk are REQUIRED.
 
