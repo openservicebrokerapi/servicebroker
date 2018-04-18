@@ -637,7 +637,7 @@ with your Platform to make your services and plans available to end users.
 ### Deprecating services and plans
 
 A Service Broker can signal to a Platform (through the Catalog) that a service
-or plan is deprecated. The Service Broker MAY provide optional messaging and
+or plan is deprecated. The Service Broker MAY provide messaging and
 alternatives for the deprecated service or plan. This gives the Platform the
 opportunity to display meaningful advice to their users to migrate away from
 the deprecated service or plan.
