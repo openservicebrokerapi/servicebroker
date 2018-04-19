@@ -654,7 +654,10 @@ An asynchronous response triggers the Platform to poll the endpoint
 indicates that the requested operation has succeeded or failed. Service Brokers
 MAY include a status message with each response for the `last_operation`
 endpoint that provides visibility to end users as to the progress of the
-operation.
+operation. For Service Brokers which can't return the resource message in
+asynchronous response, they SHOULD guarantee resource message included in the
+response of the `last_operation` endpoint when the asynchronous operation
+completed.
 
 ## Blocking Operations
 
@@ -749,6 +752,7 @@ For success responses, the following fields are defined:
 | --- | --- | --- |
 | state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the Platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the Platform to cease polling. |
 | description | string | A user-facing message displayed to the Platform API client. Can be used to tell the user details about the status of the operation. If present, MUST be a non-empty string. |
+| resource | object | An opaque object of resource message for fetching the result of the operation. If present, MUST be included when `state` is `succeeded`. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -756,6 +760,16 @@ For success responses, the following fields are defined:
 {
   "state": "in progress",
   "description": "Creating service (10% complete)."
+}
+```
+or
+```
+{
+  "state": "succeeded",
+  "description": "Service created.",
+  "resource": {
+    "dashboard_url": "http://example-dashboard.example.com/9189kdfsk0vfnku"
+  }
 }
 ```
 
