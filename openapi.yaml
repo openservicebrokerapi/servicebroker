@@ -544,6 +544,8 @@ components:
 
     Deprecation:
       type: object
+      required:
+        - description
       properties:
         description:
           type: string

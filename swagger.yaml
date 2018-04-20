@@ -409,6 +409,8 @@ definitions:
         $ref: '#/definitions/Deprecation'
   Deprecation:
     type: object
+    required:
+      - description
     properties:
       description:
         type: string
