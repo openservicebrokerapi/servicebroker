@@ -648,8 +648,8 @@ Service Brokers MUST allow existing Service Instances to be updated and
 bindable as they were before depreciation. Deprecation MUST NOT effect the
 usability of existing Service Instances and Bindings.
 
-The Service Broker SHOULD allow the Platform to continue to
-provision new Service Instances of the deprecated service or plan.
+The Service Broker MUST allow the Platform to continue to provision new Service
+Instances of the deprecated service or plan.
 
 ## Synchronous and Asynchronous Operations
 
