@@ -614,8 +614,8 @@ schema being used.
 | Response Field | Type | Description |
 | --- | --- | --- |
 | description | string | A short description of the deprecation. |
-| since | date string | Date and time when the Service Broker deprecated the service or plan. If specified, it is expected to be an ISO 8601 formatted date and time, with time zone. |
-| eol | date string | Date and time when the Service Broker expects to end-of-life (remove) the service or plan from the catalog. If specified, it is expected to be an ISO 8601 formatted date and time, with time zone. |
+| since | date string | Date and time when the Service Broker deprecated the service or plan. If specified, this field MUST be an ISO 8601 formatted date and time, with time zone. |
+| eol | date string | Date and time when the Service Broker expects to end-of-life (remove) the service or plan from the catalog. If specified, this field MUST be an ISO 8601 formatted date and time, with time zone. |
 | alternatives | array of [CatalogObjectId](#catalog-object-id-object) objects | An array of services or plans that the Service Broker considers to be good alternatives. |
 
 \* Fields with an asterisk are REQUIRED.
