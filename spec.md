@@ -596,8 +596,6 @@ schema being used.
       "free": false,
       "deprecation": {
         "description": "Don't use this anymore.",
-        "since": "2018-04-20T17:00:00+00:00",
-        "eol": "2020-02-28T08:00:00+00:00",
         "alternatives": [{
             "description": "Use this plan instead.",
             "plan_id": "0f4008b5-XXXX-XXXX-XXXX-dace631cd648"
@@ -613,10 +611,8 @@ schema being used.
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| description | string | A short description of the deprecation. |
-| since | date string | Date and time when the Service Broker deprecated the service or plan. If specified, this field MUST be an ISO 8601 formatted date and time, with time zone. |
-| eol | date string | Date and time when the Service Broker expects to end-of-life (remove) the service or plan from the catalog. If specified, this field MUST be an ISO 8601 formatted date and time, with time zone. |
-| alternatives | array of [CatalogObjectId](#catalog-object-id-object) objects | An array of services or plans that the Service Broker considers to be good alternatives. |
+| description* | string | A short description of the deprecation. MUST be a non-empty string. |
+| alternatives | array of [CatalogObjectId](#catalog-object-id-object) objects | An array of services or plans that the Service Broker considers to be good alternatives. If present, MUST contain at least one alternative. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -625,8 +621,8 @@ schema being used.
 | Response Field | Type | Description |
 | --- | --- | --- |
 | description | string | A short description to provide contextual information about this catalog object reference. |
-| service_id | string | If present, it MUST be the ID of a service. |
-| plan_id | string | If present, it MUST be the ID of a plan. |
+| service_id | string | If present, it MUST be the ID of a service. If omitted, `plan_id` MUST be present. |
+| plan_id | string | If present, it MUST be the ID of a plan. If omitted, `service_id` MUST be present. |
 
 \* Fields with an asterisk are REQUIRED.
 
