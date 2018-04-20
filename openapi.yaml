@@ -504,6 +504,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Plan'
+        deprecation:
+          $ref: '#/components/schemas/Deprecation'
 
     DashboardClient:
       type: object
@@ -537,6 +539,28 @@ components:
           type: boolean
         schemas:
           $ref: '#/components/schemas/Schemas'
+        deprecation:
+          $ref: '#/components/schemas/Deprecation'
+
+    Deprecation:
+      type: object
+      properties:
+        description:
+          type: string
+        alternatives:
+          type: array
+          items:
+            $ref: '#/components/schemas/CatalogObject'
+
+    CatalogObject:
+      type: object
+      properties:
+        description:
+          type: string
+        service_id:
+          type: string
+        plan_id:
+          type: string
 
     Schemas:
       type: object

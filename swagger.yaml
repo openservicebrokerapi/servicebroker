@@ -372,6 +372,8 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Plan'
+      deprecation:
+        $ref: '#/definitions/Deprecation'
   DashboardClient:
     type: object
     properties:
@@ -403,6 +405,26 @@ definitions:
         type: boolean
       schemas:
         $ref: '#/definitions/SchemasObject'
+      deprecation:
+        $ref: '#/definitions/Deprecation'
+  Deprecation:
+    type: object
+    properties:
+      description:
+        type: string
+      alternatives:
+        type: array
+        items:
+          $ref: '#/definitions/CatalogObject'
+  CatalogObject:
+    type: object
+    properties:
+      description:
+        type: string
+      service_id:
+        type: string
+      plan_id:
+        type: string
   SchemasObject:
     type: object
     properties:
