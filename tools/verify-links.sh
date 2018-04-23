@@ -26,11 +26,11 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-REPO_ROOT=$(dirname "${BASH_SOURCE}")/..
-
 verbose=""
 debugFlag=""
 maxRetries="1"
+skipExternal=""
+skips=""
 stop=""
 tmp=/tmp/out${RANDOM}
 
@@ -46,10 +46,10 @@ foundAnchor=""
 function findPreviousFile() {
   for f in "${seenFiles[@]}" ; do
     orig=${f%%:*}
-	if [[ "${orig}" == "$1" ]]; then
-	  foundAnchor=${f#*:}
-	  return 0
-	fi
+    if [[ "${orig}" == "$1" ]]; then
+      foundAnchor=${f#*:}
+      return 0
+    fi
   done
 
   # Didn't it so create a new anchorFile and save it for next time
@@ -72,18 +72,32 @@ while [[ "$#" != "0" && "$1" == "-"* ]]; do
   opts="${1:1}"
   while [[ "$opts" != "" ]]; do
     case "${opts:0:1}" in
-      v) verbose="1" ;;
       d) debugFlag="1" ; verbose="1" ;;
+      s) word=${opts:1}
+         if [[ "${word}" == "" && "$2" != "" && "$2" != "-"* ]]; then
+           word=$2
+           shift
+         fi
+         if [[ "${word}" == "" ]]; then
+           echo "Missing arg for -s flag"
+           exit 1
+         fi
+         skips="${skips} ${word}"
+         opts="" ;;
       t) maxRetries="5" ;;
+      v) verbose="1" ;;
+      x) skipExternal="1" ;;
       -) stop="1" ;;
       ?) echo "Usage: $0 [OPTION]... [DIR|FILE]..."
          echo "Verify all links in markdown files."
          echo
-         echo "  -v   show each file as it is checked"
-         echo "  -d   show each href as it is found"
-         echo "  -t   retry GETs to http(s) URLs 5 times"
-         echo "  -?   show this help text"
-         echo "  --   treat remainder of args as dir/files"
+         echo "  -d         show each href as it is found"
+         echo "  -sWORD     skip files with 'WORD' in them"
+         echo "  -t         retry GETs to http(s) URLs 5 times"
+         echo "  -v         show each file as it is checked"
+         echo "  -x         skip checking non-local hrefs"
+         echo "  -?         show this help text"
+         echo "  --         treat remainder of args as dir/files"
          exit 0 ;;
       *) echo "Unknown option '${opts:0:1}'"
          exit 1 ;;
@@ -103,10 +117,25 @@ done
 arg=""
 
 if [ "$*" == "" ]; then
-  arg="${REPO_ROOT}"
+  arg="."
 fi
 
-mdFiles=$(find $* $arg -name "*.md" | sort | grep -v vendor | grep -v glide)
+# Default to skipping some well-known golang dirs
+SKIPS="${SKIPS:=vendor glide} ${skips}"
+
+mdFiles=$(find $* $arg -name "*.md" | sort | (
+  while read line ; do
+    skip=false
+    for pattern in ${SKIPS:=}; do
+      if [[ "${line}" == *"${pattern}"* ]]; then
+        skip=true
+        break
+      fi
+    done
+    [[ "${skip}" == "true" ]] && continue
+    echo $line
+  done
+))
 
 clean
 for file in ${mdFiles}; do
@@ -124,9 +153,11 @@ for file in ${mdFiles}; do
   #         This makes it so that each href is on a line by itself
   #  sed  - prefix each line with a space so the grep can do [^\\]
   #  grep - find all lines that match [...](...)
+  # Macs require this funky newline stuff
   cat $file | \
     tr '\n' ' ' | \
-    sed "s/)/)\n/g" | \
+    sed 's/)/)\
+/g' | \
     sed "s/^/ /g" | \
     grep "[^\\]\[.*\](.*)" > ${tmp}1 || continue
 
@@ -135,16 +166,25 @@ for file in ${mdFiles}; do
   sed "s/.*\[*\]\([^()]*\)/\1/" < ${tmp}1 > ${tmp}2  || continue
 
   cat ${tmp}2 | while read line ; do
-    # Strip off the leading and trailing parens, and then spaces
+    # Strip off the leading and trailing parens
     ref=${line#*(}
     ref=${ref%)*}
-    ref=$(echo $ref | sed "s/ *//" | sed "s/ *$//")
+
+    # Strip off any "title" associated with the href
+    ref=$(echo $ref | sed 's/ ".*//')
+
+    # Strip off leading and trailing spaces
+    ref=$(echo $ref | sed "s/^ *//" | sed "s/ *$//")
 
     # Show all hrefs - mainly for verifying in our tests
     debug "Checking: '$ref'"
 
     # An external href (ie. starts with http)
     if [ "${ref:0:4}" == "http" ]; then
+      if [ "$skipExternal" == "1" ]; then
+        continue
+      fi
+
       try=0
       while true ; do
         if curl -f -s -k --connect-timeout 10 ${ref} > /dev/null 2>&1 ; then
@@ -193,7 +233,7 @@ for file in ${mdFiles}; do
       ref=$(echo ${ref} | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
 
       # If we've seen this file before then grab its processed tmp file
-	  if findPreviousFile "${fullpath}" ; then
+      if findPreviousFile "${fullpath}" ; then
         anchorFile="${foundAnchor}"
       else
         anchorFile="${foundAnchor}"
@@ -202,13 +242,15 @@ for file in ${mdFiles}; do
         used="" # anchors used, seen+twiddled ones
 
         # Find all section headers in the file.
+        # extract 'xxx' from [xxx](yyy)
         # Remove leading & trailing spaces.
         # Lower case it.
         # Convert spaces to "-".
         # Drop all non alphanumeric chars.
         # Twiddle section anchor if we've seen it before.
         grep "^[[:space:]]*#" < ${fullpath} | \
-          sed 's/[[:space:]]*##*[[:space:]]*//' | \
+          sed "s/\[\(.*\)\](.*)/\1/" | \
+          sed 's/^[[:space:]]*##*[[:space:]]*//' | \
           sed 's/[[:space:]]*$//' | \
           tr '[:upper:]' '[:lower:]' | \
           sed "s/  */-/g" | \
@@ -237,8 +279,10 @@ for file in ${mdFiles}; do
           done > ${anchorFile} || true
 
         # Add sections of the form <a name="xxx">
+        # Macs require this funky newline stuff
         grep "<a name=" <${fullpath} | \
-          sed 's/<a name="/\n<a name="/g' | \
+          sed 's/<a name="/\
+<a name="/g' | \
           sed 's/^.*<a name="\(.*\)">.*$/\1/' | \
           sort | uniq >> ${anchorFile} || true
 
@@ -272,5 +316,8 @@ for file in ${mdFiles}; do
 
   done
 done
-
-if [ -s ${tmp}3 ]; then exit 1 ; fi
+rc=0
+if [ -a ${tmp}3 ]; then
+  rc=1
+fi
+exit $rc
