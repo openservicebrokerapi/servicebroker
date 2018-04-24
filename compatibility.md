@@ -15,12 +15,13 @@
 | `clusterid` in context | v2.14 | - | ✔️ |
 | allow periods and uppercase letters in name fields | v2.14 | - | ✔️ |
 | Opaque Bearer Token Authentication | v2.14 | - | ✔️ |
-| GET endpoint for Service Instance | v2.14 | - | - |
-| GET endpoint for Service Binding | v2.14 | - | ✔️ |
+| Async Bindings | v2.14 | - | ✔️ |
+| GET endpoint for Service Instance | v2.14 | ✔️ | - |
+| GET endpoint for Service Binding | v2.14 | ✔️ | ✔️ |
 | *v2.14* | _TBD_ | - | - |
 | `dashboard_url` is updatable on Service Instance Update | [_OPEN_](https://github.com/openservicebrokerapi/servicebroker/pull/437) | - | - |
 | Generic Actions | [_OPEN_](https://github.com/openservicebrokerapi/servicebroker/pull/431) | - | - |
 | Generic Broker Actions | _OPEN_ | - | - |
 | JSON Schema Endpoint | [_OPEN_](https://github.com/openservicebrokerapi/servicebroker/pull/402) | - | - |
 | JSON Schema for Responses | [_OPEN_](https://github.com/openservicebrokerapi/servicebroker/pull/392) | - | - |
-| Deprecated Classes and Plans | _OPEN_ | - | - |
+| Deprecated Classes and Plans | [_OPEN_](https://github.com/openservicebrokerapi/servicebroker/pull/504) | - | - |
