@@ -54,6 +54,11 @@ Uses the [`osb-broker-lib`](https://github.com/pmorie/osb-broker-lib) and
 [`go-open-service-broker-client`](https://github.com/pmorie/go-open-service-broker-client)
 projects.
 
+[On-Demand Service Broker](https://github.com/pivotal-cf/on-demand-service-
+broker-release): A service-agnostic broker implementation for Cloud Foundry
+that deploys services delivered by BOSH. Users implement an adapter between
+the broker and BOSH to deploy service instances.
+
 # Service Broker Libraries
 
 [`brokerapi`](https://github.com/pivotal-cf/brokerapi):
