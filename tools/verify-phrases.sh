@@ -124,7 +124,7 @@ function checkFile {
           continue
         fi
         # Now split on words
-        echo "$line" | sed "s/[a-zA-Z_\-]\+/\n&\n/g"
+        echo "$line" | sed "s/[a-zA-Z_\-]+/\n&\n/g"
       done
     ) | \
 	while read word ; do
