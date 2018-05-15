@@ -1374,7 +1374,7 @@ For success responses, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. If credentials have been stored in a format that does not allow retrieval of a usable result (e.g. a salted and hashed password), the broker MAY omit the field from `credentials`. This can result in a return value that is not usable to access the service. |
+| credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. If credentials have been stored in a format that does not allow retrieval of a usable result (e.g. a salted and hashed password), the broker MAY omit this field. This can result in a return value that is not usable to access the service. |
 | syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform MUST consider the response invalid. |
 | route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | volume_mounts | array-of-objects | An array of configuration for mounting volumes. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
