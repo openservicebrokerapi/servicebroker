@@ -321,6 +321,10 @@ Instances of these plans. For example, Platforms might restrict the actions
 that users can perform on existing Service Instances if the associated service
 or plan is deleted. Consider your deprecation strategy.
 
+Platforms MAY have limits on the length of strings that they can handle or
+display to end users, such as the description of a Service or Service Plan. It
+is RECOMMENDED that strings do not exceed 255 characters to increase the
+likelihood of having compatibility with any Platform.
 
 The following sections describe catalog requests and responses in the Service
 Broker API.
