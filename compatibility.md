@@ -12,7 +12,7 @@
 | `volume_mounts` bindings | v2.13 | ✔️ | - |
 | `originating identity` header | v2.13 | ✔️ | ✔️ |
 | [*v2.13*](release-notes.md#v213) | Sep 27, 2017 | ✔️ | ✔️ |
-| `clusterid` in context | v2.14 | - | ✔️ |
+| k8s `context.clusterid` | v2.14 | n/a | ✔️ |
 | allow periods and uppercase letters in name fields | v2.14 | - | ✔️ |
 | Opaque Bearer Token Authentication | v2.14 | - | ✔️ |
 | Async Bindings | v2.14 | - | ✔️ |
