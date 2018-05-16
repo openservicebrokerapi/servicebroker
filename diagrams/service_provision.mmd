@@ -1,0 +1,27 @@
+%% Sequence Diagram for Provisioning a service instance
+sequenceDiagram
+  participant Platform
+  participant API  
+  participant Service Broker
+
+note over Platform: Provision service instance (synchronously)
+
+Platform ->>+ Service Broker: PUT /v2/service_instances/:id
+
+Service Broker -->> Platform:{ “dashboard_url”: ... }
+
+note over Platform: Provision service instance (asynchronously)
+
+Platform ->>+ Service Broker: PUT /v2/service_instances/:id?accepts_incomplete=true
+Service Broker -->> Platform:{ “operation”: ... } 
+
+loop Polling last operation
+
+Platform ->>+ Service Broker: GET /v2/service_instances/:instance_id/last_operation
+Service Broker ->>+ Service Broker:{ “state”: “in progress” }
+Service Broker -->> Platform:{ “state”: “succeeded” }
+
+end
+
+
+

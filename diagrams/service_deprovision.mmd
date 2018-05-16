@@ -1,0 +1,25 @@
+%% Sequence Diagram for Deprovisioning a service instance
+
+sequenceDiagram
+  participant Platform
+  participant API  
+  participant Service Broker
+
+note over Platform: Deprovision service instance (synchronously)
+
+Platform ->>+ Service Broker: DELETE /v2/service_instances/:id
+Service Broker -->> Platform:{...}
+
+note over Platform: Deprovision service instance (asynchronously)
+
+Platform ->>+ Service Broker: DELETE /v2/service_instances/:id?accepts_incomplete=true
+Service Broker -->> Platform:{ “operation”: ... } 
+
+loop Polling last operation
+
+Platform ->>+ Service Broker: GET /v2/service_instances/:instance_id/last_operation
+Service Broker ->>+ Service Broker:{ “state”: “in progress” }
+Service Broker -->> Platform:{ “state”: “succeeded” }
+
+end
+

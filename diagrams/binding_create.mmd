@@ -1,0 +1,11 @@
+%% Sequence Diagram for Creating a Service Binding
+
+sequenceDiagram
+  participant Platform
+  participant API  
+  participant Service Broker
+
+note over Platform: Create service binding
+
+Platform ->>+ Service Broker: PUT /v2/service_instances/:id/service_bindings/:id
+Service Broker -->> Platform: {...}
