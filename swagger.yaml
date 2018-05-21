@@ -1,0 +1,639 @@
+# This is the Open API 2.0 (Swagger) interface for Open Service Broker API.
+# Every attempt will be made to make the Open API 2.0 version of OSB API
+# accurately represent the written specification. If the spec and this document
+# conflict, the spec is the authority.
+
+swagger: '2.0'
+
+info:
+  title: Open Service Broker API
+  description: >-
+    The Open Service Broker API defines an HTTP(S) interface between Platforms
+    and Service Brokers.
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+  contact:
+    name: Open Service Broker API
+    url: 'https://www.openservicebrokerapi.org/'
+    email: open-service-broker-api@googlegroups.com
+  version: v2.13
+paths:
+  /v2/catalog:
+    get:
+      summary: get the catalog of services that the service broker offers
+      tags:
+        - Catalog
+      operationId: catalog.get
+      parameters:
+        - $ref: '#/parameters/APIVersion'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: catalog response
+          schema:
+                $ref: '#/definitions/Catalog'
+  '/v2/service_instances/{instance_id}':
+    parameters:
+      - $ref: '#/parameters/APIVersion'
+      - $ref: '#/parameters/OriginatingIdentity'
+      - $ref: '#/parameters/instance_id'
+    put:
+      summary: provision a service instance
+      tags:
+        - ServiceInstances
+      operationId: serviceInstance.provision
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: parameters for the requested service instance provision
+          required: true
+          schema:
+            $ref: '#/definitions/ServiceInstanceProvisionRequest'
+        - $ref: '#/parameters/accepts_incomplete'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ServiceInstanceProvision'
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/ServiceInstanceProvision'
+        '202':
+          description: Accepted
+          schema:
+            $ref: '#/definitions/ServiceInstanceAsyncProvision'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '422':
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+    patch:
+      summary: update a service instance
+      tags:
+        - ServiceInstances
+      operationId: serviceInstance.update
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: parameters for the requested service instance update
+          required: true
+          schema:
+            $ref: '#/definitions/ServiceInstanceUpdateRequest'
+        - $ref: '#/parameters/accepts_incomplete'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+        '202':
+          description: Accepted
+          schema:
+            $ref: '#/definitions/AsyncOperation'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '422':
+          description: Unprocessable entity
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: deprovision a service instance
+      tags:
+        - ServiceInstances
+      operationId: serviceInstance.deprovision
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/accepts_incomplete'
+        - $ref: '#/parameters/service_id'
+        - $ref: '#/parameters/plan_id'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+        '202':
+          description: Accepted
+          schema:
+            $ref: '#/definitions/AsyncOperation'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '410':
+          description: Gone
+          schema:
+            $ref: '#/definitions/Error'
+        '422':
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+    get:
+      summary: gets a service instance
+      tags:
+        - ServiceInstances
+      operationId: serviceInstance.get
+      parameters:
+        - $ref: '#/parameters/APIVersion'
+        - $ref: '#/parameters/OriginatingIdentity'
+        - $ref: '#/parameters/instance_id'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ServiceInstanceResource'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+  '/v2/service_instances/{instance_id}/last_operation':
+    parameters:
+      - $ref: '#/parameters/APIVersion'
+      - $ref: '#/parameters/instance_id'
+    get:
+      summary: last requested operation state for service instance
+      tags:
+        - ServiceInstances
+      operationId: serviceInstance.lastOperation.get
+      produces:
+        - application/json
+      parameters:
+        - name: service_id
+          in: query
+          description: id of the service associated with the instance
+          type: string
+        - name: plan_id
+          in: query
+          description: id of the plan associated with the instance
+          type: string
+        - name: operation
+          in: query
+          description: a provided identifier for the operation
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ServiceInstanceLastOperation'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '410':
+          description: Gone
+          schema:
+            $ref: '#/definitions/Error'
+  '/v2/service_instances/{instance_id}/service_bindings/{binding_id}':
+    parameters:
+      - $ref: '#/parameters/APIVersion'
+      - $ref: '#/parameters/OriginatingIdentity'
+      - $ref: '#/parameters/instance_id'
+      - $ref: '#/parameters/binding_id'
+    put:
+      summary: generation of a service binding
+      tags:
+        - ServiceBindings
+      operationId: serviceBinding.binding
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: parameters for the requested service binding
+          required: true
+          schema:
+            $ref: '#/definitions/ServiceBindingRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ServiceBinding'
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/ServiceBinding'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '422':
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: deprovision of a service binding
+      tags:
+        - ServiceBindings
+      operationId: serviceBinding.unbinding
+      parameters:
+        - $ref: '#/parameters/service_id'
+        - $ref: '#/parameters/plan_id'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '410':
+          description: Gone
+          schema:
+            $ref: '#/definitions/Error'
+    get:
+      summary: gets a service binding
+      tags:
+        - ServiceBindings
+      operationId: serviceBinding.get
+      parameters:
+        - $ref: '#/parameters/APIVersion'
+        - $ref: '#/parameters/OriginatingIdentity'
+        - $ref: '#/parameters/instance_id'
+        - $ref: '#/parameters/binding_id'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ServiceBindingResource'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+
+parameters:
+  APIVersion:
+    name: X-Broker-API-Version
+    in: header
+    description: version number of the Service Broker API that the Platform will use
+    required: true
+    type: string
+  OriginatingIdentity:
+    name: X-Broker-API-Originating-Identity
+    in: header
+    description: identity of the user that initiated the request from the Platform
+    type: string
+  instance_id:
+    name: instance_id
+    in: path
+    description: instance id of instance to provision
+    required: true
+    type: string
+  accepts_incomplete:
+    name: accepts_incomplete
+    in: query
+    description: asynchronous operations supported
+    type: boolean
+  service_id:
+    name: service_id
+    in: query
+    description: id of the service associated with the instance being deleted
+    required: true
+    type: string
+  plan_id:
+    name: plan_id
+    in: query
+    description: id of the plan associated with the instance being deleted
+    required: true
+    type: string
+  binding_id:
+    name: binding_id
+    in: path
+    description: binding id of binding to create
+    required: true
+    type: string
+definitions:
+  Catalog:
+    type: object
+    properties:
+      services:
+        type: array
+        items:
+          $ref: '#/definitions/Service'
+  Service:
+    type: object
+    required:
+      - name
+      - id
+      - description
+      - bindable
+      - plans
+    properties:
+      name:
+        type: string
+      id:
+        type: string
+      description:
+        type: string
+      tags:
+        type: array
+        items:
+          type: string
+      requires:
+        type: array
+        items:
+          type: string
+          enum:
+            - syslog_drain
+            - route_forwarding
+            - volume_mount
+      bindable:
+        type: boolean
+      metadata:
+        $ref: '#/definitions/Metadata'
+      dashboard_client:
+        $ref: '#/definitions/DashboardClient'
+      plan_updateable:
+        type: boolean
+      plans:
+        type: array
+        items:
+          $ref: '#/definitions/Plan'
+  DashboardClient:
+    type: object
+    properties:
+      id:
+        type: string
+      secret:
+        type: string
+      redirect_uri:
+        type: string
+  Plan:
+    type: object
+    required:
+      - id
+      - name
+      - description
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      metadata:
+        $ref: '#/definitions/Metadata'
+      free:
+        type: boolean
+        default: true
+      bindable:
+        type: boolean
+      schemas:
+        $ref: '#/definitions/SchemasObject'
+  SchemasObject:
+    type: object
+    properties:
+      service_instance:
+        $ref: '#/definitions/ServiceInstanceSchemaObject'
+      service_binding:
+        $ref: '#/definitions/ServiceBindingSchemaObject'
+  ServiceInstanceSchemaObject:
+    type: object
+    properties:
+      create:
+        $ref: '#/definitions/SchemaParameters'
+      update:
+        $ref: '#/definitions/SchemaParameters'
+  ServiceBindingSchemaObject:
+    type: object
+    properties:
+      create:
+        $ref: '#/definitions/SchemaParameters'
+  SchemaParameters:
+    type: object
+    properties:
+      parameters:
+        $ref: '#/definitions/JSONSchemaObject'
+  JSONSchemaObject:
+    type: object
+  ServiceInstanceResource:
+    type: object
+    properties:
+      service_id:
+        type: string
+      plan_id:
+        type: string
+      dashboard_url:
+        type: string
+      parameters:
+        $ref: '#/definitions/Object'
+  ServiceInstanceProvisionRequest:
+    type: object
+    required:
+      - service_id
+      - plan_id
+      - organization_guid
+      - space_guid
+    properties:
+      service_id:
+        type: string
+      plan_id:
+        type: string
+      context:
+        $ref: '#/definitions/Context'
+      organization_guid:
+        type: string
+        x-deprecated: true
+      space_guid:
+        type: string
+        x-deprecated: true
+      parameters:
+        $ref: '#/definitions/Object'
+  ServiceInstanceProvision:
+    type: object
+    properties:
+      dashboard_url:
+        type: string
+  ServiceInstanceAsyncProvision:
+    type: object
+    properties:
+      dashboard_url:
+        type: string
+      operation:
+        type: string
+  ServiceInstanceUpdateRequest:
+    type: object
+    required:
+      - service_id
+    properties:
+      context:
+        $ref: '#/definitions/Context'
+      service_id:
+        type: string
+      plan_id:
+        type: string
+      parameters:
+        $ref: '#/definitions/Object'
+      previous_values:
+        $ref: '#/definitions/ServiceInstancePreviousValues'
+  ServiceInstancePreviousValues:
+    type: object
+    properties:
+      service_id:
+        type: string
+        x-deprecated: true
+      plan_id:
+        type: string
+      organization_id:
+        type: string
+        x-deprecated: true
+      space_id:
+        type: string
+        x-deprecated: true
+  AsyncOperation:
+    type: object
+    properties:
+      operation:
+        type: string
+  ServiceInstanceLastOperation:
+    type: object
+    required:
+      - state
+    properties:
+      state:
+        type: string
+        enum:
+          - in progress
+          - succeeded
+          - failed
+      description:
+        type: string
+  ServiceBindingResource:
+    type: object
+    properties:
+      credentials:
+        $ref: '#/definitions/Object'
+      syslog_drain_url:
+        type: string
+      route_service_url:
+        type: string
+      volume_mounts:
+        type: array
+        items:
+          $ref: '#/definitions/ServiceBindingVolumeMount'
+      parameters:
+        $ref: '#/definitions/Object'
+  ServiceBindingRequest:
+    type: object
+    required:
+      - service_id
+      - plan_id
+    properties:
+      context:
+        $ref: '#/definitions/Context'
+      service_id:
+        type: string
+      plan_id:
+        type: string
+      app_guid:
+        type: string
+        x-deprecated: true
+      bind_resource:
+        $ref: '#/definitions/ServiceBindingResourceObject'
+      parameters:
+        $ref: '#/definitions/Object'
+  ServiceBindingResourceObject:
+    type: object
+    properties:
+      app_guid:
+        type: string
+      route:
+        type: string
+  ServiceBinding:
+    type: object
+    properties:
+      credentials:
+        $ref: '#/definitions/Object'
+      syslog_drain_url:
+        type: string
+      route_service_url:
+        type: string
+      volume_mounts:
+        type: array
+        items:
+          $ref: '#/definitions/ServiceBindingVolumeMount'
+  ServiceBindingVolumeMount:
+    type: object
+    required:
+      - driver
+      - container_dir
+      - mode
+      - device_type
+      - device
+    properties:
+      driver:
+        type: string
+      container_dir:
+        type: string
+      mode:
+        type: string
+        enum:
+          - r
+          - rw
+      device_type:
+        type: string
+        enum:
+          - shared
+      device:
+        $ref: '#/definitions/ServiceBindingVolumeMountDevice'
+  ServiceBindingVolumeMountDevice:
+    type: object
+    required:
+      - volume_id
+    properties:
+      volume_id:
+        type: string
+      mount_config:
+        $ref: '#/definitions/Object'
+  Context:
+    description: >-
+      See [Context
+      Conventions](https://github.com/openservicebrokerapi/servicebroker/blob/master/profile.md#context-object)
+      for more details.
+    type: object
+  Metadata:
+    description: >-
+      See [Service Metadata
+      Conventions](https://github.com/openservicebrokerapi/servicebroker/blob/master/profile.md#service-metadata)
+      for more details.
+    type: object
+  Object:
+    type: object
+  Error:
+    type: object
+    properties:
+      error:
+        type: string
+      description:
+        type: string
+securityDefinitions:
+  basicAuth:
+    type: basic
+security:
+  - basicAuth: []
+externalDocs:
+  description: The offical Open Service Broker API specification
+  url: 'https://github.com/openservicebrokerapi/servicebroker/'

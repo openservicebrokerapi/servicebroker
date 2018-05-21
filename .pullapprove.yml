@@ -1,18 +1,23 @@
-approve_by_comment: true
-approve_regex: '(?i)LGTM'
-reject_regex: '(?i)NOT LGTM'
-reset_on_push: true
-signed_off_by:
-  required: false
-reviewers:
-  required: 4
-  members:
-    - duglin
-    - vaikas-google
-    - shalako
-    - pmorie
-    - fmui
-    - zrob
-    - avade
-    - mattmcneeney
-    - n3wscott
+version: 2
+requirements:
+  signed_off_by:
+    required: false
+groups:
+  admins:
+    reset_on_push:
+      enabled: true
+    approve_by_comment:
+      enabled: true
+      approve_regex: '(?i)LGTM'
+      reject_regex: '(?i)NOT LGTM'
+    required: 4
+    users:
+      - duglin
+      - vaikas-google
+      - kibbles-n-bytes
+      - pmorie
+      - fmui
+      - zrob
+      - avade
+      - mattmcneeney
+      - n3wscott

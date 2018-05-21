@@ -25,6 +25,8 @@ version of the specification, however are still subject to change.
 
 [Roadmap and release planning](https://github.com/openservicebrokerapi/servicebroker/projects/1)
 
+[OSBAPI V3: Call for Input](https://docs.google.com/document/d/1zayT_7IECl-8DOtlp0kdfzIfSZMG7Y_N-SRPggs8eHg/edit)
+
 ## Communications
 
 - [Slack Channel](http://slack.openservicebrokerapi.org)

@@ -2,6 +2,7 @@
 
 - [Introduction](#introduction)
 - [Platform Implementations](#platform-implementations)
+- [Quickstarts](#quickstarts)
 - [Service Broker Libraries](#service-broker-libraries)
 - [Other Libraries](#other-libraries)
 - [Example Service Brokers](#example-service-brokers)
