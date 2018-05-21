@@ -613,54 +613,12 @@ schema being used unless the schema is composed of only a `$ref`.
 }
 ```
 
-
 ## JSON Schemas
 
 The JSON Schemas endpoint is used to define reusable definitions of JSON Schema
 Objects referenced throughout the [Catalog](#catalog-management). If a Platform
 intends to support JSON Schemas, it MUST examine the response from the catalog
-to determine if the Service Broker is using `$ref` JSON Schemas. The Service
-Broker can signal to the Platform that JSON Schema components are supported by
-using the `osb_v2:` scheme. Components are a way to allow Platforms to only
-fetch sub-schemas.
-
-The root JSON Schema document can be found by getting the JSON Schemas
-endpoint without a `:component_path`.
-
-If the `osb_v2:` scheme is used by the Service Broker, then the Platform MAY
-fetch the component JSON Schema directly using the following convention:
-
- - Given: `osb_v2:///:component_path`, fetch
-   `/v2/catalog/schemas/:component_path` and then the Platform is responsible
-   to continue fetching any unknown `:component_path` URIs. Care ought to be
-   taken by the platform to not fetch duplicate definitions.
-
-A Platform MAY ignore the `osb_v2:` scheme and just fetch `/v2/catalog/schemas`
-which will contain all sub-Schema documents. This reduces the complexity of the
-Platform but increases the potential payload size of the JSON Schemas.
-
-A Platform SHOULD fetch the root Schema document for any other `$ref` URIs
-found that do not match the `osb_v2:` scheme. The Service Broker MUST provide
-the JSON Schema Object for the referenced URI in a subschema returned.
-
-Note: If the Service Broker provides a mix of `osb_v2:` in addition to other
-schemes that result in fetching both `/v2/catalog/schemas/:component_path` and
-`/v2/catalog/schemas`, the Platform will have colliding JSON Schema `$ids`. In
-this case the Platform SHOULD ignore the component paths and use the root
-schema. Service Brokers SHOULD avoid mixing `osb_v2:` and other schemes.
-
-When the osb_v2: scheme is used, the data referenced by a component path MUST
-NOT change and can only be deleted when there are no longer any references to
-it in the Service Broker's schema. Additionally, once deleted, that component
-path MUST NOT ever be used again by this Service Broker, unless the schema
-referenced is the exact same as the previously referenced schema.
-
-A note about the scheme, at the time of this writing, there were no found client
-libraries that fully support the [JSON Schema](http://json-schema.org/) spec in
-the usage of URI for `$ref`. Only URL was supported in libraries. So as a
-compromise the `osb_v2:` scheme SHOULD be followed by three forward slashes
-(`///`). This indicates the authority is implied (authority is '').
-
+to determine if the Service Broker is using [`$ref`](#ref-usage) JSON Schemas. 
 
 #### $ref Usage
 
@@ -672,97 +630,48 @@ adverse behaviors.
 
 For Service Brokers that support `$ref`, they:
 
-  * MUST respond with all JSON Schema documents for `/schemas` requests that are
-    referenced in the catalog.
   * MAY provide `$ref`'s with the `osb_v2:` scheme, then:
-    * MUST respond to `/schemas/:component_path` requests.
+    * MUST respond to `/v2/catalog/schemas/:component_path` requests.
+  * MAY provide `$ref`'s with an external URI, but this will be interpreted as
+    `:component_path` of `''` and the platform should fetch
+    `/v2/catalog/schemas`.
+    * Root `/v2/catalog/schemas` MUST provide a single JSON document that
+      contains all JSON Schemas Objects that are referenced in the catalog.
+    * Root `/v2/catalog/schemas` MUST be supported by Service Brokers that
+      provide `$ref`'s of an external URIs or empty `:component_path`s in their
+      catalog.
+  * SHOULD NOT provide a Catalog that contains both `$ref`'s with `osb_v2:///`
+    and external URLs.
+
+The Service Broker can signal to the Platform that JSON Schema component paths
+are supported by using the `osb_v2:` scheme. Component paths are a way to allow
+Platforms to fetch sub-schemas as a optimization, such as allowing platform
+side schemas caching or reducing catalog payload size.
+
+If `$ref` is used by the Service Broker within the Catalog, then the Platform
+SHOULD fetch the component JSON Schema directly using the following convention:
+
+ - Given: `osb_v2:///:component_path`, fetch
+   `/v2/catalog/schemas/:component_path`, then the Platform is responsible
+   to continue fetching any unknown `:component_path` URIs. Care ought to be
+   taken by the platform to not aggregate duplicate definitions.
+ - Given an external URL, fetch `/v2/catalog/schemas`. Platforms SHOULD NOT
+   fetch external JSON Schema documents.
+
+When the `osb_v2:///` scheme is used, the data referenced by a
+`:component_path` MUST NOT change and can only be deleted when no longer
+referenced by the Service Broker's catalog. Additionally, once deleted, that
+`:component_path` MUST NOT be used again by this Service Broker, unless the
+schema referenced is the exact same as the previously referenced schema.
+
+A note about `osb_v2:///` scheme: at the time of this writing, there were no
+found client libraries that fully support the [JSON
+Schema](http://json-schema.org/) spec in the usage of URI for `$ref`. Only URL
+was supported in libraries. So as a compromise the `osb_v2:` scheme SHOULD be
+followed by three forward slashes (`///`). This indicates the authority is
+implied (authority is '').
 
 ### Request
-
-#### Route
-
-`GET /v2/catalog/schemas`
-
-#### Headers
-
-The following HTTP Headers are defined for this operation:
-
-| Header | Type | Description |
-| --- | --- | --- |
-| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
-
-\* Headers with an asterisk are REQUIRED.
-
-#### cURL
-
-```
-$ curl http://username:password@service-broker-url/v2/catalog/schemas -H "X-Broker-API-Version: 2.14"
-```
-
-### Response
-
-| Status Code | Description |
-| --- | --- |
-| 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
-
-
-#### Body
-
-The root JSON Schema document is a complete collection of JSON Schemas
-refrenced in the Service Broker's catalog using `$ref`. The body MUST contain
-all JSON Schema object definitions found in the catalog and referenced
-sub-schemas.
-
-| Response Field | Type | Description |
-| --- | --- | --- |
-| $schema* | string | The JSON Schema declaring the version of JSON schema being used. |
-| $id* | string | The top level JSON Schema ID for this document. |
-| definitions* | Dictionary-of-JSON Schema Object | A collection of JSON sub-Schema Objects. |
-
-Please refer to the [JSON Schema](http://json-schema.org/) specification for
-more details on JSON Schema.
-
-\* Fields with an asterisk are REQUIRED.
-
-```
-{
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "$id": "osb_v2:///schemas/",
-  "definitions": {
-    "foo/v1": {
-      "$id": "osb_v2:///fakeservice/v1",
-      "definitions": {
-        "BillingAccount" : {
-          "$id" : "#BillingAccountParameters",
-          "type": "object",
-          "properties": {
-            "billing-account": {
-              "description": "Billing account number used to charge use of shared fake server.",
-              "type": "string"
-            }
-          }
-        },
-        "bindings": {
-          "$id" : "/bindings",
-          "definitions": {
-            "$id" : "#AccountParameters",
-            "type": "object",
-            "properties": {
-              "billing": {
-                "$ref": "osb_v2:///fakeservice/v1#BillingAccountParameters"
-              },
-              "quota-account": {
-                "description": "Quota account number used to charge use of fake bandwidth.",
-                "type": "string"
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-```
 
 #### Route
 
@@ -779,8 +688,9 @@ The following HTTP Headers are defined for this operation:
 \* Headers with an asterisk are REQUIRED.
 
 #### cURL
+
 ```
-$ curl http://username:password@service-broker-url/v2/catalog/schemas/:component_path -H "X-Broker-API-Version: 2.13"
+$ curl http://username:password@service-broker-url/v2/catalog/schemas/fakeservice/v1 -H "X-Broker-API-Version: 2.14"
 ```
 
 ### Response
@@ -788,16 +698,70 @@ $ curl http://username:password@service-broker-url/v2/catalog/schemas/:component
 | Status Code | Description |
 | --- | --- |
 | 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
+| 404 Not Found | MUST be returned if the Service Broker does not provide JSON Schema document for the given `:component_path`. |
 
 
 #### Body
 
-| Response field | Type | Description |
+When `:component_path` is empty, the body MUST contain all JSON Schema object
+definitions found in the catalog and referenced sub-schemas.
+
+| Response Field | Type | Description |
 | --- | --- | --- |
 | $schema* | string | The JSON Schema declaring the version of JSON schema being used. |
-| $id* | string | The JSON Schema id to be referenced from elsewhere in the catalog. |
+| $id* | string | The top level JSON Schema ID for this document. |
+| definitions | Dictionary-of-JSON Schema Object | A collection of JSON sub-Schema Objects. |
+
+Please refer to the [JSON Schema](http://json-schema.org/) specification for
+more details on JSON Schema.
 
 \* Fields with an asterisk are REQUIRED.
+
+```
+$ curl http://username:password@service-broker-url/v2/catalog/schemas -H "X-Broker-API-Version: 2.14"
+```
+
+Returns:
+
+```
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "osb_v2:///schemas/",
+  "definitions": {
+    "fakeservice": {
+      "$id": "http://oem.example.com/fakeservice/",
+      "definitions": {
+        "BillingAccount" : {
+          "$id" : "#BillingAccountParameters",
+          "type": "object",
+          "properties": {
+            "billing-account": {
+              "description": "Billing account number used to charge use of shared fake server.",
+              "type": "string"
+            }
+          }
+        },
+        "Bindings": {
+          "$id" : "/bindings",
+          "definitions": {
+            "$id" : "#AccountParameters",
+            "type": "object",
+            "properties": {
+              "billing": {
+                "$ref": "http://oem.example.com/fakeservice/#BillingAccountParameters"
+              },
+              "quota-account": {
+                "description": "Quota account number used to charge use of fake bandwidth.",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
 
 ```
 $ curl http://username:password@service-broker-url/v2/catalog/schemas/fakeservice/v1 -H "X-Broker-API-Version: 2.14"
@@ -865,7 +829,6 @@ Returns:
   }
 }
 ```
-
 
 ### Adding a Service Broker to the Platform
 
