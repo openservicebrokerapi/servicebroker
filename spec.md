@@ -410,7 +410,7 @@ how Platforms might expose these values to their users.
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| id | string | The id of the Oauth client that the dashboard will use. If present, MUST be a non-empty string. |
+| id | string | The id of the OAuth client that the dashboard will use. If present, MUST be a non-empty string. |
 | secret | string | A secret for the dashboard client. If present, MUST be a non-empty string. |
 | redirect_uri | string | A URI for the service dashboard. Validated by the OAuth token server when the dashboard requests a token. |
 
@@ -1082,10 +1082,22 @@ For success responses, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
+| dashboard_url | string | The updated URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`0129d920a083838` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the update request, even if the service is updated asynchronously. If present, MUST be a non-empty string. |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
+
+The ability to include updated metadata in the response message was
+added in version 2.14. Any Platform sending an API Version Header with a
+value of 2.14 or greater MUST use the new values specified in the response
+message. Additionally, any metadata previously associated with a
+Service Instance but not included in the response message MUST remain
+unchanged within the Platform. Any Service Broker receiving a request
+with an API Version Header of 2.13 or less MUST NOT assume that the
+Platform will accept and use any metadata (aside from `operation`) included
+in the response message.
 
 ```
 {
+  "dashboard_url": "http://example-dashboard.example.com/0129d920a083838",
   "operation": "task_10"
 }
 ```
