@@ -5,7 +5,7 @@
 | --- | -- | --- | --- | --- |
 | `basic:` Authentication | pre-v2.10 | | ✔️ | ✔️ |
 | Opaque Tokens Authentication | pre-v2.10 | v2.14 | - | ✔️ |
-| `Credentials` binding | v2.10 | | ✔️ | ✔️ |
+| `credentials` binding | v2.10 | | ✔️ | ✔️ |
 | `syslog_drain` binding | v2.10 | | ✔️ | - |
 | `route_forwarding` binding | v2.10 | | ✔️ | - |
 | Plan Bindable | v2.11 | | ✔️ | ✔️ |
