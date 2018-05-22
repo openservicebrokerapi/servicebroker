@@ -2,7 +2,7 @@
 
 
 | Release or Feature | Introduced | Deprecated | Cloud Foundry | Kubernetes |
-| --- | -- | --- | --- |
+| --- | -- | --- | --- | --- |
 | Authentication - Basic | pre-v2.10 | | ✔️ | ✔️ |
 | Authentication - Opaque Tokens | pre-v2.10 | v2.14 | - | ✔️ |
 | Binding - Credentials | v2.10 | | ✔️ | ✔️ |
