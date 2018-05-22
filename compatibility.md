@@ -3,12 +3,11 @@
 
 | Release or Feature | Introduced | Deprecated | Cloud Foundry | Kubernetes |
 | --- | -- | --- | --- | --- |
-| Authentication - Basic | pre-v2.10 | | ✔️ | ✔️ |
-| Authentication - Opaque Tokens | pre-v2.10 | v2.14 | - | ✔️ |
-| Binding - Credentials | v2.10 | | ✔️ | ✔️ |
-| Binding - Log Drain | v2.10 | | ✔️ | - |
-| Binding - Route Services | v2.10 | | ✔️ | - |
-| Binding - Volume Services | v2.10 | | ✔️ | - |
+| `basic:` Authentication | pre-v2.10 | | ✔️ | ✔️ |
+| Opaque Tokens Authentication | pre-v2.10 | v2.14 | - | ✔️ |
+| `Credentials` binding | v2.10 | | ✔️ | ✔️ |
+| `syslog_drain` binding | v2.10 | | ✔️ | - |
+| `route_forwarding` binding | v2.10 | | ✔️ | - |
 | Plan Bindable | v2.11 | | ✔️ | ✔️ |
 | [*v2.11*](release-notes.md#v211) | Aug 11, 2016 | | ✔️ | ✔️ |
 | `context` for PUT,PATCH instance | v2.12 | | ✔️ | ✔️ |
