@@ -947,10 +947,10 @@ support per service by including `"plan_updateable": true` in its [catalog
 endpoint](#catalog-management).
 
 If `"plan_updateable": true` is declared for a plan in the
-[Catalog](#catalog-management) endpoint, the Platform MAY request an update of
-a Service Instance using the given plan. Otherwise, Platforms MUST NOT make an
-update request to the Service Broker for any Service Instance using the given
-plan.
+[Catalog](#catalog-management) endpoint, the Platform MAY request a plan change 
+on a Service Instance using the given plan. Otherwise, Platforms MUST NOT make 
+any plan change requests to the Service Broker for any Service Instance using the 
+given plan, but MAY request an update to the Service Instance parameters.
 
 Not all permutations of plan changes are expected to be supported. For
 example, a service might support upgrading from plan "shared small" to "shared
