@@ -951,10 +951,10 @@ support per service by including `"plan_updateable": true` in its [catalog
 endpoint](#catalog-management).
 
 If `"plan_updateable": true` is declared for a plan in the
-[Catalog](#catalog-management) endpoint, the Platform MAY request a plan change 
-on a Service Instance using the given plan. Otherwise, Platforms MUST NOT make 
-any plan change requests to the Service Broker for any Service Instance using the 
-given plan, but MAY request an update to the Service Instance parameters.
+[Catalog](#catalog-management) endpoint, the Platform MAY request a plan change
+on a Service Instance using the given plan. Otherwise, Platforms MUST NOT make
+any plan change requests to the Service Broker for any Service Instance using
+the given plan, but MAY request an update to the Service Instance parameters.
 
 Not all permutations of plan changes are expected to be supported. For
 example, a service might support upgrading from plan "shared small" to "shared
@@ -1086,18 +1086,8 @@ For success responses, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| dashboard_url | string | The updated URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`0129d920a083838` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the update request, even if the service is updated asynchronously. If present, MUST be a non-empty string. |
+| dashboard_url | string | The updated URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`0129d920a083838` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the update request, even if the service is being updated asynchronously. If present, MUST be a non-empty string. |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Last Operation](#polling-last-operation) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
-
-The ability to include updated metadata in the response message was
-added in version 2.14. Any Platform sending an API Version Header with a
-value of 2.14 or greater MUST use the new values specified in the response
-message. Additionally, any metadata previously associated with a
-Service Instance but not included in the response message MUST remain
-unchanged within the Platform. Any Service Broker receiving a request
-with an API Version Header of 2.13 or less MUST NOT assume that the
-Platform will accept and use any metadata (aside from `operation`) included
-in the response message.
 
 ```
 {
