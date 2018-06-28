@@ -309,7 +309,7 @@ For example:
 ### Example Broker Response Body
 
 The example below contains a catalog of one service, having one service plan.
-Of course, a broker can offering a catalog of many services, each having
+Of course, a broker can offer a catalog of many services, each having
 many plans.
 
 ```
