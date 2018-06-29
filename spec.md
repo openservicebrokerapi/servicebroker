@@ -527,7 +527,7 @@ For a broker to return an asynchronous response, the query parameter `accepts_in
 
 If the query parameter described above is present, and the broker executes the request asynchronously, the broker MUST return the asynchronous response `202 Accepted`. The response body SHOULD be the same as if the broker were serving the request synchronously.
 
-An asynchronous response triggers the platform marketplace to poll the endpoint `GET /v2/service_instances/:instance_id/last_operation` until the broker indicates that the requested operation has succeeded or failed. Brokers MAY include a status message with each response for the `last_operation` endpoint that provides visibility to end users as to the progress of the operation.
+An asynchronous response triggers the platform to poll the endpoint `GET /v2/service_instances/:instance_id/last_operation` until the broker indicates that the requested operation has succeeded or failed. Brokers MAY include a status message with each response for the `last_operation` endpoint that provides visibility to end users as to the progress of the operation.
 
 #### Blocking Operations
 
