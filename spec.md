@@ -46,7 +46,7 @@ vary by service. Examples include a single database on a multi-tenant server,
 a dedicated cluster, or an account on a web application.
 
 What a binding represents MAY also vary by service. In general creation of a
-binding either generates necessary for accessing the resource or
+binding either generates credentials necessary for accessing the resource or
 provides the Service Instance with information for a configuration change.
 
 A Platform MAY expose services from one or many Service Brokers, and an
