@@ -160,9 +160,9 @@ fields within the JSON objects. When adding new fields, unique prefixes
 SHOULD be used for the field names to reduce the chances of conflicts with
 with future specification defined fields or other extensions.
 
-Receivers of a messages defined by this specification that contain unknown
+Receivers of messages defined by this specification that contain unknown
 extension fields MUST ignore those fields and MUST NOT halt processing
-of those messages due to the presence of those fields. Receiver are under
+of those messages due to the presence of those fields. Receivers are under
 no obligation to understand or process unknown extension fields.
 
 ## Platform to Service Broker Authentication
