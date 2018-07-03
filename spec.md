@@ -46,7 +46,8 @@ vary by service. Examples include a single database on a multi-tenant server,
 a dedicated cluster, or an account on a web application.
 
 What a binding represents MAY also vary by service. In general creation of a
-binding either generates credentials necessary for accessing the resource or
+binding either generates 
+necessary for accessing the resource or
 provides the Service Instance with information for a configuration change.
 
 A Platform MAY expose services from one or many Service Brokers, and an
@@ -1280,7 +1281,7 @@ For success responses, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. |
+| credentials | object | A free-form hash of credentials that can be used by applications or users to access the Service Instance. This field MAY be omitted if the Service Broker either cannot return the credentials or does not want to for security reasons. Note that during an asynchronous bind operation the Service Broker MUST include this field in at least the first response after the Service Binding has been successfully created, otherwise the Platform will not have the credentials to pass along to the application/user. |
 | syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform MUST consider the response invalid. |
 | route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for remote storage devices to be mounted into an application container filesystem. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
