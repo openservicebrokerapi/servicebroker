@@ -294,6 +294,15 @@ use these error codes for the specified failure scenarios.
 | ConcurrencyError | The Service Broker does not support concurrent requests that mutate the same resource. | Clients MUST wait until pending requests have completed for the specified resources. |
 | RequiresApp | The request body is missing the `app_guid` field. | The `app_guid` MUST be included in the request body. |
 
+Unless otherwise specified, an HTTP status code in the 4xx range MUST result in
+the Service Broker's resources being semantically unchanged as a result of
+the incoming request message. Additionally, an HTTP status code in the 5xx
+range SHOULD result in the Service Broker's resources being semantically
+unchanged as a result of the incoming request message. Note, the 5xx error
+case is a "SHOULD" instead of a "MUST" because it might not be possible for
+a Service Broker to guarantee that it can revert all possible effects of a
+failed attempt at the requested operation.
+
 ### Content Type
 
 All requests and responses defined in this specification with accompanying
