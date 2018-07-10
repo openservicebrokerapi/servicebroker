@@ -4,7 +4,7 @@
   - [API Overview](#api-overview)
   - [Notations and Terminology](#notations-and-terminology)
   - [Changes](#changes)
-    - [Change Policy](#change-policy)
+    - [Change Policy](#change-policy-for-minor-versions)
     - [Changes Since v2.12](#changes-since-v212)
   - [API Version Header](#api-version-header)
   - [Platform to Service Broker Authentication](#platform-to-service-broker-authentication)
@@ -102,7 +102,7 @@ This specification defines the following terms:
 
 ## Changes
 
-### Change Policy
+### Change Policy for Minor Versions
 
 * Existing endpoints and fields MUST NOT be removed or renamed.
 * New OPTIONAL endpoints, or new HTTP methods for existing endpoints, MAY be
