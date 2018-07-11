@@ -696,7 +696,7 @@ to cease polling.
 #### Route
 `GET /v2/service_instances/:instance_id/last_operation`
 
-`:instance_id` MUST be a globally unique non-empty string.
+`:instance_id` MUST be the ID of a previously provisioned Service Instance.
 
 #### Parameters
 
@@ -779,8 +779,10 @@ regarding the Service Binding can then immediately be fetched using the
 #### Route
 `GET /v2/service_instances/:instance_id/service_bindings/:binding_id/last_operation`
 
-`:instance_id` MUST be a globally unique non-empty string.
-`:binding_id` MUST be a globally unique non-empty string.
+`:instance_id` MUST be the ID of a previously provisioned Service Instance.
+
+`:binding_id` MUST be the ID of a previously provisioned binding for that
+instance.
 
 #### Parameters
 
@@ -973,7 +975,8 @@ any circumstances.
 ##### Route
 `GET /v2/service_instances/:instance_id`
 
-`:instance_id` is the identifier of a previously provisioned instance.
+`:instance_id` MUST be the ID of a previously provisioned Service Instance.
+instance.
 
 ##### cURL
 ```
@@ -1441,8 +1444,10 @@ circumstances.
 ##### Route
 `GET /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
-The `:instance_id` is the ID of a previously provisioned Service Instance. The
-`:binding_id` is the ID of a previously provisioned binding for that instance.
+`:instance_id` MUST be the ID of a previously provisioned Service Instance.
+
+`:binding_id` MUST be the ID of a previously provisioned binding for that
+instance.
 
 ##### cURL
 ```
