@@ -13,6 +13,7 @@
   - [Service Broker Errors](#service-broker-errors)
   - [Catalog Management](#catalog-management)
     - [Adding a Service Broker to the Platform](#adding-a-service-broker-to-the-platform)
+  - [JSON Schemas](#json-schemas)
   - [Synchronous and Asynchronous Operations](#synchronous-and-asynchronous-operations)
     - [Synchronous Operations](#synchronous-operations)
     - [Asynchronous Operations](#asynchronous-operations)
@@ -332,6 +333,7 @@ Broker API.
 ### Request
 
 #### Route
+
 `GET /v2/catalog`
 
 #### Headers
@@ -345,6 +347,7 @@ The following HTTP Headers are defined for this operation:
 \* Headers with an asterisk are REQUIRED.
 
 #### cURL
+
 ```
 $ curl http://username:password@service-broker-url/v2/catalog -H "X-Broker-API-Version: 2.13"
 ```
@@ -418,7 +421,6 @@ how Platforms might expose these values to their users.
 | secret | string | A secret for the dashboard client. If present, MUST be a non-empty string. |
 | redirect_uri | string | A URI for the service dashboard. Validated by the OAuth token server when the dashboard requests a token. |
 
-
 ##### Plan Object
 
 | Response Field | Type | Description |
@@ -464,8 +466,11 @@ The following rules apply if `parameters` is included anywhere in the catalog:
 [JSON Schema draft v4](http://json-schema.org/).
 * Platforms SHOULD be prepared to support later versions of JSON schema.
 * The `$schema` key MUST be present in the schema declaring the version of JSON
-schema being used.
-* Schemas MUST NOT contain any external references.
+schema being used unless the schema is composed of only a `$ref`.
+* Schemas MUST NOT contain any external references except for schemas found
+  under `/v2/catalog/schemas` or `osb_v2:` style `$ref`s via
+  `/v2/catalog/schemas/:component_path` (see [$ref Usage](#ref-usage) for
+  further information).
 * Schemas MUST NOT be larger than 64kB.
 
 ```
@@ -530,8 +535,8 @@ schema being used.
               "$schema": "http://json-schema.org/draft-04/schema#",
               "type": "object",
               "properties": {
-                "billing-account": {
-                  "description": "Billing account number used to charge use of shared fake server.",
+                "billing-create-account": {
+                  "description": "Billing create account number used to charge use of shared fake server.",
                   "type": "string"
                 }
               }
@@ -539,28 +544,14 @@ schema being used.
           },
           "update": {
             "parameters": {
-              "$schema": "http://json-schema.org/draft-04/schema#",
-              "type": "object",
-              "properties": {
-                "billing-account": {
-                  "description": "Billing account number used to charge use of shared fake server.",
-                  "type": "string"
-                }
-              }
+              "$ref": "osb_v2:///fakeservice/v1#BillingAccountParameters"
             }
           }
         },
         "service_binding": {
           "create": {
             "parameters": {
-              "$schema": "http://json-schema.org/draft-04/schema#",
-              "type": "object",
-              "properties": {
-                "billing-account": {
-                  "description": "Billing account number used to charge use of shared fake server.",
-                  "type": "string"
-                }
-              }
+              "$ref": "osb_v2:///fakeservice/v1/bindings#AccountParameters"
             }
           }
         }
@@ -589,12 +580,259 @@ schema being used.
         "bullets": [
           "40 concurrent connections"
         ]
+      },
+      "schemas": {
+        "service_instance": {
+          "create": {
+            "parameters": {
+              "$ref": "osb_v2:///fakeservice/v1#BillingAccountParameters"
+            }
+          },
+          "update": {
+            "parameters": {
+              "$schema": "http://json-schema.org/draft-04/schema#",
+              "type": "object",
+              "propeties": {
+                "some-other-account": {
+                  "description": "Other fake account needed for update.",
+                  "type": "string"
+                },
+                "billing": {
+                  "$ref": "osb_v2:///fakeservice/v1#BillingAccountParameters"
+                }
+              }
+            }
+          }
+        },
+        "service_binding": {
+          "create": {
+            "parameters": {
+              "$ref": "osb_v2:///fakeservice/v1/bindings#AccountParameters"
+            }
+          }
+        }
       }
     }]
   }]
 }
 ```
 
+## JSON Schemas
+
+The JSON Schemas endpoint is used to define reusable definitions of JSON Schema
+Objects referenced throughout the [Catalog](#catalog-management). If a Platform
+intends to support JSON Schemas, it MUST examine the response from the catalog
+to determine if the Service Broker is using [`$ref`](#ref-usage) JSON Schemas. 
+
+#### $ref Usage
+
+Service Brokers MAY leverage `$ref` and external JSON Schemas only if the JSON
+Schema references can be found within the [JSON Schemas](#json-schemas) API
+endpoint. `$ref` usage is assumed to be delegation (linking), not inclusion
+(replacement). Libraries that implement `$ref` content replacement result in
+adverse behaviors.
+
+For Service Brokers that support `$ref`, they:
+
+  * MAY provide `$ref`'s with the `osb_v2:` scheme, then:
+    * MUST respond to `/v2/catalog/schemas/:component_path` requests.
+  * MAY provide `$ref`'s with an external URI, but this will be interpreted as
+    `:component_path` of `''` and the platform should fetch
+    `/v2/catalog/schemas`.
+    * Root `/v2/catalog/schemas` MUST provide a single JSON document that
+      contains all JSON Schemas Objects that are referenced in the catalog.
+    * Root `/v2/catalog/schemas` MUST be supported by Service Brokers that
+      provide `$ref`'s of an external URIs or empty `:component_path`s in their
+      catalog.
+  * SHOULD NOT provide a Catalog that contains both `$ref`'s with `osb_v2:///`
+    and external URLs.
+
+The Service Broker can signal to the Platform that JSON Schema component paths
+are supported by using the `osb_v2:` scheme. Component paths are a way to allow
+Platforms to fetch sub-schemas as a optimization, such as allowing platform
+side schemas caching or reducing catalog payload size.
+
+If `$ref` is used by the Service Broker within the Catalog, then the Platform
+SHOULD fetch the component JSON Schema directly using the following convention:
+
+ - Given: `osb_v2:///:component_path`, fetch
+   `/v2/catalog/schemas/:component_path`, then the Platform is responsible
+   to continue fetching any unknown `:component_path` URIs. Care ought to be
+   taken by the platform to not aggregate duplicate definitions.
+ - Given an external URL, fetch `/v2/catalog/schemas`. Platforms SHOULD NOT
+   fetch external JSON Schema documents.
+
+When the `osb_v2:///` scheme is used, the data referenced by a
+`:component_path` MUST NOT change and can only be deleted when no longer
+referenced by the Service Broker's catalog. Additionally, once deleted, that
+`:component_path` MUST NOT be used again by this Service Broker, unless the
+schema referenced is the exact same as the previously referenced schema.
+
+A note about `osb_v2:///` scheme: at the time of this writing, there were no
+found client libraries that fully support the [JSON
+Schema](http://json-schema.org/) spec in the usage of URI for `$ref`. Only URL
+was supported in libraries. So as a compromise the `osb_v2:` scheme SHOULD be
+followed by three forward slashes (`///`). This indicates the authority is
+implied (authority is '').
+
+### Request
+
+#### Route
+
+`GET /v2/catalog/schemas/:component_path`
+
+#### Headers
+
+The following HTTP Headers are defined for this operation:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
+
+\* Headers with an asterisk are REQUIRED.
+
+#### cURL
+
+```
+$ curl http://username:password@service-broker-url/v2/catalog/schemas/fakeservice/v1 -H "X-Broker-API-Version: 2.14"
+```
+
+### Response
+
+| Status Code | Description |
+| --- | --- |
+| 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
+| 404 Not Found | MUST be returned if the Service Broker does not provide JSON Schema document for the given `:component_path`. |
+
+
+#### Body
+
+When `:component_path` is empty, the body MUST contain all JSON Schema object
+definitions found in the catalog and referenced sub-schemas.
+
+| Response Field | Type | Description |
+| --- | --- | --- |
+| $schema* | string | The JSON Schema declaring the version of JSON schema being used. |
+| $id* | string | The top level JSON Schema ID for this document. |
+| definitions | Dictionary-of-JSON Schema Object | A collection of JSON sub-Schema Objects. |
+
+Please refer to the [JSON Schema](http://json-schema.org/) specification for
+more details on JSON Schema.
+
+\* Fields with an asterisk are REQUIRED.
+
+```
+$ curl http://username:password@service-broker-url/v2/catalog/schemas -H "X-Broker-API-Version: 2.14"
+```
+
+Returns:
+
+```
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "osb_v2:///schemas/",
+  "definitions": {
+    "fakeservice": {
+      "$id": "http://oem.example.com/fakeservice/",
+      "definitions": {
+        "BillingAccount" : {
+          "$id" : "#BillingAccountParameters",
+          "type": "object",
+          "properties": {
+            "billing-account": {
+              "description": "Billing account number used to charge use of shared fake server.",
+              "type": "string"
+            }
+          }
+        },
+        "Bindings": {
+          "$id" : "/bindings",
+          "definitions": {
+            "$id" : "#AccountParameters",
+            "type": "object",
+            "properties": {
+              "billing": {
+                "$ref": "http://oem.example.com/fakeservice/#BillingAccountParameters"
+              },
+              "quota-account": {
+                "description": "Quota account number used to charge use of fake bandwidth.",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+```
+$ curl http://username:password@service-broker-url/v2/catalog/schemas/fakeservice/v1 -H "X-Broker-API-Version: 2.14"
+```
+
+Returns:
+
+```
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "osb_v2:///fakeservice/v1",
+  "definitions": {
+    "BillingAccount" : {
+      "$id" : "#BillingAccountParameters",
+      "type": "object",
+      "properties": {
+        "billing-account": {
+          "description": "Billing account number used to charge use of shared fake server.",
+          "type": "string"
+        }
+      }
+    },
+    "bindings": {
+      "$id" : "/bindings",
+      "definitions": {
+        "$id" : "#AccountParameters",
+        "type": "object",
+        "properties": {
+          "billing": {
+            "$ref": "osb_v2:///fakeservice/v1#BillingAccountParameters"
+          },
+          "quota-account": {
+            "description": "Quota account number used to charge use of fake bandwidth.",
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+```
+$ curl http://username:password@service-broker-url/v2/catalog/schemas/fakeservice/v1/bindings -H "X-Broker-API-Version: 2.14"
+```
+
+Returns:
+
+```
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "osb_v2:///fakeservice/v1/bindings",
+  "definitions": {
+    "$id" : "#AccountParameters",
+    "type": "object",
+    "properties": {
+      "billing": {
+        "$ref": "osb_v2:///fakeservice/v1#BillingAccountParameters"
+      },
+      "quota-account": {
+        "description": "Quota account number used to charge use of fake bandwidth.",
+        "type": "string"
+      }
+    }
+  }
+}
+```
 
 ### Adding a Service Broker to the Platform
 
@@ -788,6 +1026,7 @@ account on an multi-tenant SaaS application.
 ### Request
 
 #### Route
+
 `PUT /v2/service_instances/:instance_id`
 
 `:instance_id` MUST be a globally unique non-empty string.
@@ -795,6 +1034,7 @@ This ID will be used for future requests (bind and deprovision), so the
 Service Broker will use it to correlate the resource it creates.
 
 #### Parameters
+
 | Parameter Name | Type | Description |
 | --- | --- | --- |
 | accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only provision a Service Instance of the requested plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
@@ -811,6 +1051,7 @@ The following HTTP Headers are defined for this operation:
 \* Headers with an asterisk are REQUIRED.
 
 #### Body
+
 | Request Field | Type | Description |
 | --- | --- | --- |
 | service_id* | string | MUST be the ID of a service from the catalog for this Service Broker. |
@@ -840,6 +1081,7 @@ The following HTTP Headers are defined for this operation:
 ```
 
 #### cURL
+
 ```
 $ curl http://username:password@service-broker-url/v2/service_instances/:instance_id?accepts_incomplete=true -d '{
   "service_id": "service-id-here",
@@ -966,6 +1208,7 @@ error message in response.
 ### Request
 
 #### Route
+
 `PATCH /v2/service_instances/:instance_id`
 
 `:instance_id` MUST be the ID of a previously provisioned Service Instance.
@@ -1046,6 +1289,7 @@ the user did not explicitly specify in their request for the update.
 ```
 
 #### cURL
+
 ```
 $ curl http://username:password@service-broker-url/v2/service_instances/:instance_id?accepts_incomplete=true -d '{
   "context": {
@@ -1135,6 +1379,7 @@ response if the associated [Catalog](#catalog-management) entry for the
 service did not include a `"requires":["syslog_drain"]` property.
 
 #### Route Services
+
 Route services are a class of Service Offerings that intermediate requests to
 applications, performing functions such as rate limiting or authorization. To
 indicate support for route services, the catalog entry for the Service MUST
@@ -1172,6 +1417,7 @@ did not include a `"requires":["volume_mount"]` property.
 ### Request
 
 #### Route
+
 `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
 `:instance_id` MUST be the ID of a previously provisioned Service Instance.
@@ -1246,6 +1492,7 @@ binding requests.
 
 
 #### cURL
+
 ```
 $ curl http://username:password@service-broker-url/v2/service_instances/:instance_id/service_bindings/:binding_id -d '{
   "context": {
@@ -1513,6 +1760,7 @@ The following HTTP Headers are defined for this operation:
 \* Headers with an asterisk are REQUIRED.
 
 #### cURL
+
 ```
 $ curl 'http://username:password@service-broker-url/v2/service_instances/:instance_id?accepts_incomplete=true
   &service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.13"
