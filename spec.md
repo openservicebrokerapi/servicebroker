@@ -1191,9 +1191,7 @@ services do not need to implement the endpoint for bind requests.
 #### Credentials
 
 Credentials are a set of information used by an Application or a user to
-utilize the Service Instance. If the Service Broker supports generation of
-credentials it MUST return `credentials` in the response for a request to
-create a Service Binding. Credentials SHOULD be unique whenever possible, so
+utilize the Service Instance. Credentials SHOULD be unique whenever possible, so
 access can be revoked for each binding without affecting consumers of other
 bindings for the Service Instance.
 
@@ -1205,10 +1203,6 @@ logs needs information for the location to which it will stream logs. A create
 binding response from a Service Broker that provides one of these services MUST
 include a `syslog_drain_url`. The Platform MUST use the `syslog_drain_url` value
 when sending logs to the service.
-
-Service Brokers MUST NOT include a `syslog_drain_url` in a create binding
-response if the associated [Catalog](#catalog-management) entry for the
-service did not include a `"requires":["syslog_drain"]` property.
 
 #### Route Services
 Route services are a class of Service Offerings that intermediate requests to
@@ -1231,19 +1225,11 @@ proxy application requests through instances of the service is managed
 out-of-band, the Service Broker MUST NOT return `route_service_url` in the
 response.
 
-Service Brokers MUST NOT include a `route_service_url` in a create binding
-response if the associated [Catalog](#catalog-management) entry for the
-service did not include a `"requires":["route_forwarding"]` property.
-
 #### Volume Services
 
 There are a class of services that provide network storage to applications
 via volume mounts in the application container. A create binding response from
 one of these services MUST include `volume_mounts`.
-
-Service Brokers MUST NOT include `volume_mounts` in a create binding response
-if the associated [Catalog](#catalog-management) entry for the service
-did not include a `"requires":["volume_mount"]` property.
 
 ### Request
 
@@ -1376,7 +1362,7 @@ For `200 OK` and `201 Created` response codes, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. |
+| credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. MUST be returned if the Service Broker supports generation of credentials. |
 | syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for remote storage devices to be mounted into an application container filesystem. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
