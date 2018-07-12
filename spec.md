@@ -1169,7 +1169,7 @@ For success responses, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| dashboard_url | string | The updated URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`0129d920a083838` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the update request, even if the Service Instance is being updated asynchronously. If present, MUST be a non-empty string. |
+| dashboard_url | string | The updated URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`0129d920a083838` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the update request, even if the Service Instance is being updated asynchronously. If present, MUST be a non-empty string. If not present, the Platform MUST retain the previous value of the `dashboard_url`. |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
 
 ```
