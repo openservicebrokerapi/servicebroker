@@ -2,7 +2,7 @@
 
 #### Previous releases
 | Release or Feature | Introduced | Deprecated | Cloud Foundry | Kubernetes |
-| --- | -- | --- | --- | --- |
+| --- | --- | --- | --- | --- |
 | `credentials` binding | v2.10 | | ✔️ | ✔️ |
 | `syslog_drain` binding | v2.10 | | ✔️ | - |
 | `route_forwarding` binding | v2.10 | | ✔️ | - |
