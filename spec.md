@@ -1362,6 +1362,14 @@ created on the Service Broker. However, while the platform will attempt
 to send an unbind request, Service Brokers MAY automatically delete
 any resources associated with the failed bind request on their own.
 
+#### Body (for a `202 Accepted` response code)
+
+For a `202 Accepted` response code, the following fields are defined:
+
+| Response Field | Type | Description |
+| --- | --- | --- |
+| operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) endpoint in a URL encoded query parameter. If present, MUST be a non-empty string. |
+
 #### Body (for `200 OK` and `201 Created` response codes)
 
 For `200 OK` and `201 Created` response codes, the following fields are defined:
@@ -1372,14 +1380,6 @@ For `200 OK` and `201 Created` response codes, the following fields are defined:
 | syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for remote storage devices to be mounted into an application container filesystem. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
-
-#### Body (for a `202 Accepted` response code)
-
-For a `202 Accepted` response code, the following fields are defined:
-
-| Response Field | Type | Description |
-| --- | --- | --- |
-| operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) endpoint in a URL encoded query parameter. If present, MUST be a non-empty string. |
 
 ##### Volume Mount Object
 
