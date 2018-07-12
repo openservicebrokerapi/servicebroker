@@ -1607,7 +1607,7 @@ Brokers.
 
 | Query-String Field | Type | Description |
 | --- | --- | --- |
-| service_id* | string | MUST be the ID of the Service Instance being deleted. |
+| service_id* | string | MUST be the ID of the service associated with the Service Instance being deleted. |
 | plan_id* | string | MUST be the ID of the plan associated with the Service Instance being deleted. |
 | accepts_incomplete | boolean | A value of true indicates that both the Platform and the requesting client support asynchronous deprovisioning. If this parameter is not included in the request, and the Service Broker can only deprovision a Service Instance of the requested plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
