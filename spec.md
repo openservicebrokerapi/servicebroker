@@ -1197,7 +1197,7 @@ bindings for the Service Instance.
 
 This field MAY be omitted if the Service Broker either cannot return the credentials
 or does not want to for security reasons. During an asynchronous bind 
-operation the Service Broker MUST include this field in at least the first response
+operation the Service Broker MUST include this field in at least the first GET response
 after the Service Binding has been successfully created, otherwise the Platform will
 not have the credentials to pass along. 
 
