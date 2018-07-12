@@ -1348,15 +1348,13 @@ created on the Service Broker. However, while the platform will attempt
 to send an unbind request, Service Brokers MAY automatically delete
 any resources associated with the failed bind request on their own.
 
-#### Body (for a `202 Accepted` response code)
+#### Body
 
 For a `202 Accepted` response code, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) endpoint in a URL encoded query parameter. If present, MUST be a non-empty string. |
-
-#### Body (for `200 OK` and `201 Created` response codes)
 
 For `200 OK` and `201 Created` response codes, the following fields are defined:
 
