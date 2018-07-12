@@ -1195,6 +1195,12 @@ utilize the Service Instance. Credentials SHOULD be unique whenever possible, so
 access can be revoked for each binding without affecting consumers of other
 bindings for the Service Instance.
 
+This field MAY be omitted if the Service Broker either cannot return the credentials
+or does not want to for security reasons. During an asynchronous bind 
+operation the Service Broker MUST include this field in at least the first response
+after the Service Binding has been successfully created, otherwise the Platform will
+not have the credentials to pass along. 
+
 #### Log Drain
 
 There are a class of Service Offerings that provide aggregation, indexing, and
@@ -1360,7 +1366,7 @@ For `200 OK` and `201 Created` response codes, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| credentials | object | A free-form hash of credentials that can be used by applications or users to access the Service Instance. This field MAY be omitted if the Service Broker either cannot return the credentials or does not want to for security reasons. Note that during an asynchronous bind operation the Service Broker MUST include this field in at least the first response after the Service Binding has been successfully created, otherwise the Platform will not have the credentials to pass along to the application/user. |
+| credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. MUST be returned if the Service Broker supports generation of credentials. |
 | syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for remote storage devices to be mounted into an application container filesystem. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
@@ -1459,7 +1465,7 @@ For success responses, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| credentials | object | A free-form hash of credentials that can be used by applications or users to access the Service Instance. This field MAY be omitted if the Service Broker either cannot return the credentials or does not want to for security reasons. Note that during an asynchronous bind operation the Service Broker MUST include this field in at least the first response after the Service Binding has been successfully created, otherwise the Platform will not have the credentials to pass along to the application/user. |
+| credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. MUST be returned if the Service Broker supports generation of credentials and the Service Binding was provisioned asynchronously. |
 | syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for mounting volumes. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
