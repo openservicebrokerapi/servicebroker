@@ -309,7 +309,7 @@ All requests and responses defined in this specification with accompanying
 bodies SHOULD contain a `Content-Type` header set to `application/json`.
 If the `Content-Type` is not set, Service Brokers and Platforms MAY still
 attempt to process the body. If a Service Broker rejects a request due
-to a mismatched `Content-Type` or the body is unprocessable it SHOULD 
+to a mismatched `Content-Type` or the body is unprocessable it SHOULD
 respond with `400 Bad Request`.
 
 ## Catalog Management
@@ -655,7 +655,7 @@ If the query parameter described above is present, and the Service Broker
 executes the request asynchronously, the Service Broker MUST return the
 asynchronous response `202 Accepted`.
 
-An asynchronous response triggers the Platform to poll the Service Instance 
+An asynchronous response triggers the Platform to poll the Service Instance
 or Service Binding's `last_operation` endpoint until the Service Broker
 indicates that the requested operation has succeeded or failed. Service Brokers
 MAY include a status message with each response for the `last_operation`
@@ -705,7 +705,7 @@ to cease polling.
 | Query-String Field | Type | Description |
 | --- | --- | --- |
 | service_id | string | If present, it MUST be the ID of the service being used. |
-| plan_id | string | If present, it MUST be the ID of the plan for the service being use. |
+| plan_id | string | If present, it MUST be the ID of the plan for the Service Instance. If this endpoint is being polled as a result of changing the plan through a [Service Instance Update](#updating-a-service-instance), the ID of the plan prior to the update MUST be used. |
 | operation | string | A Service Broker-provided identifier for the operation. When a value for `operation` is included with asynchronous responses for [Provision](#provisioning), [Update](#updating-a-service-instance), and [Deprovision](#deprovisioning) requests, the Platform MUST provide the same value using this query parameter as a percent-encoded string. If present, MUST be a non-empty string. |
 
 Note: Although the request query parameters `service_id` and `plan_id` are not
