@@ -1,6 +1,5 @@
 # Platform Compatibility for OSBAPI
 
-#### Previous releases
 | Release or Feature | Introduced | Cloud Foundry | Kubernetes |
 | --- | --- | --- | --- |
 | `credentials` binding | v2.10 | ✔️ | ✔️ |
