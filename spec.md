@@ -47,7 +47,7 @@ reserved resource a Service Instance. What a Service Instance represents can
 vary by service. Examples include a single database on a multi-tenant server,
 a dedicated cluster, or an account on a web application.
 
-What a Service Binding represents MAY also vary by service. In general creation
+What a Service Binding represents MAY also vary by service. In general, creation
 of a Service Binding either generates credentials necessary for accessing the
 resource or provides the Service Instance with information for a configuration change.
 
@@ -979,7 +979,6 @@ any circumstances.
 `GET /v2/service_instances/:instance_id`
 
 `:instance_id` MUST be the ID of a previously provisioned Service Instance.
-instance.
 
 ##### cURL
 ```
@@ -1071,7 +1070,7 @@ The following HTTP Headers are defined for this operation:
 | --- | --- | --- |
 | context | object | Contextual data under which the Service Instance is created. |
 | service_id* | string | MUST be the ID of a service from the catalog for this Service Broker. |
-| plan_id | string | If present, MUST be the ID of a plan from the service that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the plan of the instance as a result of this request. |
+| plan_id | string | If present, MUST be the ID of a plan from the service that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the plan of the Service Instance as a result of this request. |
 | parameters | object | Configuration parameters for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. See "Note" below. |
 | previous_values | [PreviousValues](#previous-values-object) | Information about the Service Instance prior to the update. |
 
