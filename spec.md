@@ -653,8 +653,8 @@ If the query parameter described above is present, and the Service Broker
 executes the request asynchronously, the Service Broker MUST return the
 asynchronous response `202 Accepted`.
 
-An asynchronous response triggers the Platform to poll the endpoint
-`GET /v2/service_instances/:instance_id/last_operation` until the Service Broker
+An asynchronous response triggers the Platform to poll the Service Instance 
+or Service Binding's `last_operation` endpoint until the Service Broker
 indicates that the requested operation has succeeded or failed. Service Brokers
 MAY include a status message with each response for the `last_operation`
 endpoint that provides visibility to end users as to the progress of the
