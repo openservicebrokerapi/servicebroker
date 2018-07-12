@@ -17,17 +17,3 @@
 | `originating identity` header | v2.13 | | ✔️ | ✔️ |
 | Opaque Bearer Token Authentication | v2.13 | | - | ✔️ |
 | [*v2.13*](release-notes.md#v213) | Sep 27, 2017 | | ✔️ | ✔️ |
-
-
-#### Coming soon
-| Release or Feature | Introduced | Deprecated | Cloud Foundry | Kubernetes |
-| --- | -- | --- | --- | --- |
-| Async Bindings | v2.14 | | - | ✔️ |
-| GET endpoint for Service Instances | v2.14 | | ✔️ | - |
-| GET endpoint for Service Bindings | v2.14 | | ✔️ | ✔️ |
-| `dashboard_url` is updatable on Service Instance update | v2.14 | | - | - |
-| *v2.14* | _TBD_ | | - | - |
-| Generic Extensions (Actions) | [_OPEN_](https://github.com/openservicebrokerapi/servicebroker/pull/431) | | - | - |
-| JSON Schema Endpoint | [_OPEN_](https://github.com/openservicebrokerapi/servicebroker/pull/402) | | - | - |
-| JSON Schema for Responses | [_OPEN_](https://github.com/openservicebrokerapi/servicebroker/pull/392) | | - | - |
-| Deprecated Classes and Plans | [_OPEN_](https://github.com/openservicebrokerapi/servicebroker/pull/504) | | - | - |
