@@ -809,7 +809,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id/ser
 | --- | --- |
 | 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
-| 410 Gone | Appropriate only for asynchronous delete operations. The Platform MUST consider this response a success and remove the resource from its database. The expected response body is `{}`. Returning this while the Platform is polling for create operations SHOULD be interpreted as an invalid response and the Platform SHOULD continue polling. |
+| 410 Gone | Appropriate only for asynchronous delete operations. The Platform MUST consider this response a success and remove the resource from its database. Returning this while the Platform is polling for create operations SHOULD be interpreted as an invalid response and the Platform SHOULD continue polling. |
 
 Responses with any other status code SHOULD be interpreted as an error or
 invalid response. The Platform SHOULD continue polling until the broker returns
@@ -1351,7 +1351,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | --- | --- |
 | 200 OK | MUST be returned if the binding already exists and the requested parameters are identical to the existing binding. The expected response body is below. |
 | 201 Created | MUST be returned if the binding was created as a result of this request. The expected response body is below. |
-| 202 Accepted | MUST be returned if the binding is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) endpoint for operation status. Information regarding the Service Binding (i.e. credentials) MUST NOT be returned in this asynchronous request. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the binding is not yet fully created. |
+| 202 Accepted | MUST be returned if the binding is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) endpoint for operation status. Information regarding the Service Binding (i.e. credentials) MUST NOT be returned in this response. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the binding is not yet fully created. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
 | 409 Conflict | MUST be returned if a Service Binding with the same id, for the same Service Instance, already exists but with different parameters. |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker requires that `app_guid` be included in the request body. The response body MUST contain error code `"RequiresApp"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service supports generation of credentials through binding an application only."`. Additionally, if the Service Broker rejects the request due to a concurrent request to create a binding for the same Service Instance, then this error MUST be returned (see [Blocking Operations](#blocking-operations)). This MUST also be returned if the Service Broker only supports asynchronous bindings for the Service Instance and the request did not include `?accepts_incomplete=true`. In this case, the response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Instance requires client support for asynchronous binding operations."`. |
@@ -1368,10 +1368,10 @@ For success responses, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. MUST be returned for a synchronous request if the Service Broker supports generation of credentials. |
-| syslog_drain_url | string | A URL to which logs MUST be streamed. If the service declares `"requires":["syslog_drain"]` in the [Catalog](#catalog-management) endpoint, this MUST be returned for a synchronous request or the Platform can consider the response invalid. |
-| route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. If the service declares `"requires":["route_forwarding"]` in the [Catalog](#catalog-management) endpoint and `"bind_resource":{"route":"some-address.com"}` is included in the request, this MUST be returned for a synchronous request or the Platform can consider the response invalid. |
-| volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for remote storage devices to be mounted into an application container filesystem. If the service declares `"requires":["volume_mount"]` in the [Catalog](#catalog-management) endpoint, this MUST be returned for a synchronous request or the Platform can consider the response invalid. |
+| credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. MUST be returned for a synchronous binding if the Service Broker supports generation of credentials. |
+| syslog_drain_url | string | A URL to which logs MUST be streamed. If the service declares `"requires":["syslog_drain"]` in the [Catalog](#catalog-management) endpoint, this MUST be returned for a synchronous binding or the Platform can consider the response invalid. |
+| route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. If the service declares `"requires":["route_forwarding"]` in the [Catalog](#catalog-management) endpoint and `"bind_resource":{"route":"some-address.com"}` is included in the request, this MUST be returned for a synchronous binding or the Platform can consider the response invalid. |
+| volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for remote storage devices to be mounted into an application container filesystem. If the service declares `"requires":["volume_mount"]` in the [Catalog](#catalog-management) endpoint, this MUST be returned for a synchronous binding or the Platform can consider the response invalid. |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) endpoint in a URL encoded query parameter. If present, MUST be a non-empty string. |
 
 ##### Volume Mount Object
@@ -1436,8 +1436,6 @@ endpoint for all services and plans that support bindings (`"bindable": true`)
 and this endpoint MUST be available immediately after the
 [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings)
 endpoint returns `"state": "succeeded"` for a [Binding](#binding) operation.
-Otherwise, Platforms SHOULD NOT attempt to call this endpoint under any
-circumstances.
 
 ### Request
 
