@@ -107,9 +107,9 @@ described below:
   implemented by a platform developer, see the [process](#contributing) above.
 - Once a pull request is approved, it will be merged into the 'master' branch
   and labels should be removed any related issues and PRs as necessary.
-- If the pull request is significant enough to warrant note a difference in
+- If the pull request is significant enough to warrant noting a difference in
   compatibility between platforms, the feature should be noted in the table for
-  [Platform Compatibility for OSBAPI](compatibility.md)
+  [Platform Compatibility for OSBAPI](compatibility.md).
 
 ## Release Process
 
