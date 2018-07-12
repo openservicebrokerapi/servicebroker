@@ -635,9 +635,6 @@ provided by the client.
 
 ### Asynchronous Operations
 
-Note: Asynchronous operations are currently supported only for provision,
-update, and deprovision.
-
 For a Service Broker to return an asynchronous response, the query parameter
 `accepts_incomplete=true` MUST be included the request. If the parameter is not
 included or is set to `false`, and the Service Broker cannot fulfil the request
