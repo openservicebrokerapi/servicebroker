@@ -26,6 +26,8 @@ or REQUIRED level requirements defined herein.
   - [Cloud Foundry Bind Resource Object](#cloud-foundry-bind-resource-object)
 - [Service Metadata](#service-metadata)
   - [Cloud Foundry Service Metadata](#cloud-foundry-service-metadata)
+- [Catalog Extensions](#catalog-extensions)
+  - [Cloud Foundry Catalog Extensions](#cloud-foundry-catalog-extensions)
 
 ## Notations and Terminology
 
@@ -240,7 +242,7 @@ The following properties are defined for usage within a Kubernetes deployment:
   however, that is a Platform implementation choice. Brokers ought to take
   care that, while atypical, it is possible for the value to change over
   time.
-  
+
   This property MUST be a non-empty string serialized as follows:
 
   ```
@@ -428,3 +430,39 @@ specific behaviour.
 | Broker API Field | Type | Description |
 | --- | --- | --- |
 | metadata.shareable | string | Allows Service Instances to be shared across orgs and spaces. |
+
+## Catalog Extensions
+
+In addition to the fields described in the [Catalog](spec.md#catalog-management),
+Service Brokers MAY also expose the following fields to enable Platform specific behaviour.
+
+#### Cloud Foundry Catalog Extensions
+
+| Field | Type | Description |
+| --- | --- | --- |
+| services[n].dashboard_client | [DashboardClient](#dashboard-client-object) | Contains the data necessary to activate the Dashboard SSO feature for this service. |
+
+##### Dashboard Client Object
+
+| Response Field | Type | Description |
+| --- | --- | --- |
+| id | string | The id of the OAuth client that the dashboard will use. If present, MUST be a non-empty string. |
+| secret | string | A secret for the dashboard client. If present, MUST be a non-empty string. |
+| redirect_uri | string | A URI for the service dashboard. Validated by the OAuth token server when the dashboard requests a token. |
+
+#### Example Catalog
+
+```
+{
+  "services": [{
+    "name": "fake-service",
+    "id": "acb56d7c-XXXX-XXXX-XXXX-feb140a59a66",
+    "description": "A fake service.",
+    "dashboard_client": {
+      "id": "398e2f8e-XXXX-XXXX-XXXX-19a71ecbcf64",
+      "secret": "277cabb0-XXXX-XXXX-XXXX-7822c0a90e5d",
+      "redirect_uri": "http://localhost:1234"
+    }
+  }]
+}
+```

@@ -415,7 +415,7 @@ It is therefore RECOMMENDED that implementations avoid such strings.
 | instances_retrievable | boolean | Specifies whether the [Fetching a Service Instance](#fetching-a-service-instance) endpoint is supported for all plans. |
 | bindings_retrievable | boolean | Specifies whether the [Fetching a Service Binding](#fetching-a-service-binding) endpoint is supported for all plans. |
 | metadata | object | An opaque object of metadata for a Service Offering. It is expected that Platforms will treat this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and Platforms for fields that aid in the display of catalog data. |
-| dashboard_client | [DashboardClient](#dashboard-client-object) | Contains the data necessary to activate the Dashboard SSO feature for this service. |
+| dashboard_client | [DashboardClient](profile.md#dashboard-client-object) | A Cloud Foundry extension described in [Catalog Extensions](profile.md#catalog-extensions). Contains the data necessary to activate the Dashboard SSO feature for this service. |
 | plan_updateable | boolean | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute `plan_updatable` as `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
 | plans* | array of [Plan](#plan-object) objects | A list of plans for this service, schema is defined below. MUST contain at least one plan. |
 
@@ -429,15 +429,6 @@ prefix their service names with some unique value (such as the name of their
 company). Additionally, some Platforms might modify the service names before
 presenting them to their users. This specification places no requirements on
 how Platforms might expose these values to their users.
-
-##### Dashboard Client Object
-
-| Response Field | Type | Description |
-| --- | --- | --- |
-| id | string | The id of the OAuth client that the dashboard will use. If present, MUST be a non-empty string. |
-| secret | string | A secret for the dashboard client. If present, MUST be a non-empty string. |
-| redirect_uri | string | A URI for the service dashboard. Validated by the OAuth token server when the dashboard requests a token. |
-
 
 ##### Plan Object
 
@@ -509,11 +500,6 @@ schema being used.
         "longDescription": "A long time ago, in a galaxy far far away..."
       },
       "displayName": "The Fake Service Broker"
-    },
-    "dashboard_client": {
-      "id": "398e2f8e-XXXX-XXXX-XXXX-19a71ecbcf64",
-      "secret": "277cabb0-XXXX-XXXX-XXXX-7822c0a90e5d",
-      "redirect_uri": "http://localhost:1234"
     },
     "plan_updateable": true,
     "plans": [{
