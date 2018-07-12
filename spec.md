@@ -1199,12 +1199,6 @@ Note: some brokers (due to security concerns cannot return the credentials) MAY
 choose to only return the credentials for a binding once even though there could
 be replayed binding requests or GETs of the binding resource.
 
-This field MAY be omitted if the Service Broker either cannot return the credentials
-or does not want to for security reasons. During an asynchronous bind 
-operation the Service Broker MUST include this field in at least the first GET response
-after the Service Binding has been successfully created, otherwise the Platform will
-not have the credentials to pass along. 
-
 #### Log Drain
 
 There are a class of Service Offerings that provide aggregation, indexing, and
