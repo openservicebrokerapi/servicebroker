@@ -83,23 +83,23 @@ This specification defines the following terms:
   some action. However, there can also be non-interactive Services that can
   perform the desired actions without direct prompting from the Application.
 
+- *Service Broker*: Service Brokers manage the lifecycle of Services. Platforms
+  interact with Service Brokers to provision, and manage, Service Instances
+  and Service Bindings.
+
+- *Service Offering*: The advertisement of a Service that a Service Broker
+  supports.
+
+- *Service Plan*: The representation of the costs and benefits for a given
+  variant of the Service, potentially as a tier.
+
+- *Service Instance*: An instantiation of a Service Offering and Service Plan.
+
 - *Service Binding*: Represents the request to use a Service Instance. As part
   of this request there might be a reference to the entity, also known as the
   Application, that will use the Service Instance. Service Bindings will often
   contain the credentials that can then be used to communicate with the Service
   Instance.
-
-- *Service Broker*: Service Brokers manage the lifecycle of Services. Platforms
-  interact with Service Brokers to provision, and manage, Service Instances
-  and Service Bindings.
-
-- *Service Instance*: An instantiation of a Service Offering.
-
-- *Service Offering*: The advertisement of a service that a Service Broker
-  supports.
-
-- *Service Plan*: The representation of the costs and benefits for a given
-  variant of the service, potentially as a tier.
 
 
 ## Changes
