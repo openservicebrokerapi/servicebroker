@@ -7,8 +7,9 @@
 | `syslog_drain` binding | v2.10 | | ✔️ | - |
 | `route_forwarding` binding | v2.10 | | ✔️ | - |
 | `volume_mounts` binding | v2.10 | | ✔️ | - |
-| [*v2.11*](release-notes.md#v211) | Nov 15, 2016 | | ✔️ | ✔️ |
+| [*v2.10*](release-notes.md#v210) | Early 2016 | | ✔️ | ✔️ |
 | Bindable and non-bindable plans | v2.11 | | ✔️ | ✔️ |
+| [*v2.11*](release-notes.md#v211) | Nov 15, 2016 | | ✔️ | ✔️ |
 | `context` for creating and updating a service instance | v2.12 | | ✔️ | ✔️ |
 | [*v2.12*](release-notes.md#v212) | June 13, 2017 | | ✔️ | ✔️ |
 | `schemas` in catalog | v2.13 | | ✔️ | ✔️ |
