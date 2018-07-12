@@ -1195,6 +1195,10 @@ utilize the Service Instance. Credentials SHOULD be unique whenever possible, so
 access can be revoked for each binding without affecting consumers of other
 bindings for the Service Instance.
 
+Note: some brokers (due to security concerns cannot return the credentials) MAY 
+choose to only return the credentials for a binding once even though there could
+be replayed binding requests or GETs of the binding resource.
+
 This field MAY be omitted if the Service Broker either cannot return the credentials
 or does not want to for security reasons. During an asynchronous bind 
 operation the Service Broker MUST include this field in at least the first GET response
