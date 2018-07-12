@@ -1354,6 +1354,7 @@ For a `202 Accepted` response code, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
+| credentials | object | A free-form hash of credentials that can be used by applications or users to access the Service Instance. This field MAY be omitted if the Service Broker either cannot return the credentials or does not want to for security reasons. Note that during an asynchronous bind operation the Service Broker MUST include this field in at least the first response after the Service Binding has been successfully created, otherwise the Platform will not have the credentials to pass along to the application/user. |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) endpoint in a URL encoded query parameter. If present, MUST be a non-empty string. |
 
 For `200 OK` and `201 Created` response codes, the following fields are defined:
