@@ -1369,9 +1369,9 @@ For success responses, the following fields are defined:
 | Response Field | Type | Description |
 | --- | --- | --- |
 | credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. MUST be returned for a synchronous binding if the Service Broker supports generation of credentials. |
-| syslog_drain_url | string | A URL to which logs MUST be streamed. If the service declares `"requires":["syslog_drain"]` in the [Catalog](#catalog-management) endpoint, this MUST be returned for a synchronous binding or the Platform can consider the response invalid. |
-| route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. If the service declares `"requires":["route_forwarding"]` in the [Catalog](#catalog-management) endpoint and `"bind_resource":{"route":"some-address.com"}` is included in the request, this MUST be returned for a synchronous binding or the Platform can consider the response invalid. |
-| volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for remote storage devices to be mounted into an application container filesystem. If the service declares `"requires":["volume_mount"]` in the [Catalog](#catalog-management) endpoint, this MUST be returned for a synchronous binding or the Platform can consider the response invalid. |
+| syslog_drain_url | string | A URL to which logs MUST be streamed. For synchronous bindings, `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
+| route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. For synchronous bindings, `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
+| volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for remote storage devices to be mounted into an application container filesystem. For synchronous bindings, `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) endpoint in a URL encoded query parameter. If present, MUST be a non-empty string. |
 
 ##### Volume Mount Object
@@ -1469,9 +1469,9 @@ For success responses, the following fields are defined:
 | Response Field | Type | Description |
 | --- | --- | --- |
 | credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. MUST be returned if the Service Broker supports generation of credentials and the Service Binding was provisioned asynchronously. |
-| syslog_drain_url | string | A URL to which logs MUST be streamed. MUST be returned if the service declares `"requires":["syslog_drain"]` in the [Catalog](#catalog-management) endpoint and the Service Binding was provisioned asynchronously. |
-| route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. MUST be returned if the service declares `"requires":["route_forwarding"]` in the [Catalog](#catalog-management) endpoint and the Service Binding was provisioned asynchronously and the original request contained `"bind_resource":{"route":"some-address.com"}`. |
-| volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for mounting volumes. MUST be returned if the service declares `"requires":["volume_mount"]` in the [Catalog](#catalog-management) endpoint and the Service Binding was provisioned asynchronously. |
+| syslog_drain_url | string | A URL to which logs MUST be streamed. For asynchronous bindings, `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
+| route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. For asynchronous bindings, `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
+| volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for mounting volumes. For asynchronous bindings, `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | parameters | object | Configuration parameters for the Service Binding. |
 
 ```
