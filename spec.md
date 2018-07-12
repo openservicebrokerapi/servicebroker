@@ -11,6 +11,7 @@
   - [URL Properties](#url-properties)
   - [Originating Identity](#originating-identity)
   - [Service Broker Errors](#service-broker-errors)
+  - [Content Type](#content-type)
   - [Catalog Management](#catalog-management)
     - [Adding a Service Broker to the Platform](#adding-a-service-broker-to-the-platform)
   - [Synchronous and Asynchronous Operations](#synchronous-and-asynchronous-operations)
@@ -292,6 +293,15 @@ use these error codes for the specified failure scenarios.
 | AsyncRequired | This request requires client support for asynchronous service operations. | The query parameter `accepts_incomplete=true` MUST be included the request. |
 | ConcurrencyError | The Service Broker does not support concurrent requests that mutate the same resource. | Clients MUST wait until pending requests have completed for the specified resources. |
 | RequiresApp | The request body is missing the `app_guid` field. | The `app_guid` MUST be included in the request body. |
+
+### Content Type
+
+All requests and responses defined in this specification with accompanying
+bodies SHOULD contain a `Content-Type` header set to `application/json`.
+If the `Content-Type` is not set, Service Brokers and Platforms MAY still
+attempt to process the body. If a Service Broker rejects a request due
+to a mismatched `Content-Type` or the body is unprocessable it SHOULD 
+respond with `400 Bad Request`.
 
 ## Catalog Management
 
