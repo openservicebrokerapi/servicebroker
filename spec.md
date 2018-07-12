@@ -1186,6 +1186,13 @@ declare them as such using `"bindable": true` in the
 [Catalog](#catalog-management). Service Brokers that do not offer any bindable
 services do not need to implement the endpoint for bind requests.
 
+Service Brokers MAY choose to only return the information that represents a
+Service Binding once, either when the Service Binding is being created synchronously,
+or when the Service Binding is first fetched via the 
+[Fetching a Service Binding](#fetching-a-service-binding) endpoint. However,
+in order for the Platform to successfully use the Service Binding, the information
+MUST be returned at least once.
+
 ### Types of Binding
 
 #### Credentials
@@ -1194,10 +1201,6 @@ Credentials are a set of information used by an Application or a user to
 utilize the Service Instance. Credentials SHOULD be unique whenever possible, so
 access can be revoked for each binding without affecting consumers of other
 bindings for the Service Instance.
-
-Note: some brokers (due to security concerns cannot return the credentials) MAY 
-choose to only return the credentials for a binding once even though there could
-be replayed binding requests or GETs of the binding resource.
 
 #### Log Drain
 
