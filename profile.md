@@ -240,7 +240,7 @@ The following properties are defined for usage within a Kubernetes deployment:
   however, that is a Platform implementation choice. Brokers ought to take
   care that, while atypical, it is possible for the value to change over
   time.
-  
+
   This property MUST be a non-empty string serialized as follows:
 
   ```
@@ -355,7 +355,7 @@ For example:
 #### Example Service Broker Response Body
 
 The example below contains a catalog of one service, having one Service Plan.
-Of course, a Service Broker can offering a catalog of many services, each having
+Of course, a Service Broker can offer a catalog of many services, each having
 many plans.
 
 ```json
