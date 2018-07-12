@@ -138,21 +138,36 @@ For changes in older versions, see the [release notes](https://github.com/opense
 
 ## API Version Header
 
-Requests from the Platform to the Service Broker MUST contain a header that
-declares the version number of the Open Service Broker API that the Platform
-is using:
+This specification defines an HTTP header that MUST be included in all
+messages (requests and responses) by endpoints adhering to this specification:
 
 `X-Broker-API-Version: 2.13`
 
+This header declares the version number of the Open Service Broker API
+specification that the sender is using.
+
 The version numbers are in the format `MAJOR.MINOR` using semantic versioning.
 
-This header allows Service Brokers to reject requests from Platforms for
-versions they do not support. While minor API revisions will always be
+When included in a request message, it allows the receiver to reject requests
+for versions they do not support. While minor API revisions will always be
 additive, it is possible that Service Brokers depend on a feature from a newer
 version of the API that is supported by the Platform. In this scenario the
 Service Broker MAY reject the request with `412 Precondition Failed` and
 provide a message that informs the operator of the API version that is to be
 used instead.
+
+When included in a response message, it allows the receiver to understand
+which version of the Open Service Broker API specification it MUST adhere to
+when processing the message. Due to the message being a response, and there
+not being a way to reject it, receivers MUST support all previous minor
+versions of the specification corresponding to the version number used in the
+request message. Likewise, response message's version number MUST:
+- use the same major number as the corresponding request
+- use a minor version number equal to, or less than, the correspdoning request
+
+If a Service Broker does not include this header in a response message
+then the Platform MUST assume the Service Broker only supports version
+`2.13` or older.
 
 ## Vendor Extension Fields
 
