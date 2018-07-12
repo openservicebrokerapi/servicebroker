@@ -39,6 +39,11 @@ version of the specification, however are still subject to change.
 
 ## Getting Started
 
-The [Getting Started](gettingStarted.md) document provides a list of
-sample Service Brokers, frameworks and libraries that might be useful to developers
+The [Getting Started](gettingStarted.md) document provides a list of sample
+Service Brokers, frameworks and libraries that might be useful to developers
 wanting to implement a Platform or Service Broker.
+
+The [Platform Compatibility](compatibility.md) document is a quick way to track
+the state of current and pending feature additions, how they align with
+releases, and which platforms are currently supporting them.
+
