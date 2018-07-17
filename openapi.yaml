@@ -85,7 +85,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServiceInstanceAsyncProvision'
+                $ref: '#/components/schemas/ServiceInstanceAsyncOperation'
         '400':
           description: Bad Request
           content:
@@ -142,7 +142,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AsyncOperation'
+                $ref: '#/components/schemas/ServiceInstanceAsyncOperation'
         '400':
           description: Bad Request
           content:
@@ -280,7 +280,62 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServiceInstanceLastOperation'
+                $ref: '#/components/schemas/LastOperationResource'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '410':
+          description: Gone
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /v2/service_instances/{instance_id}/service_bindings/{binding_id}/last_operation:
+    get:
+      summary: last requested operation state for service binding
+      tags:
+        - ServiceBindings
+      operationId: serviceBinding.lastOperation.get
+      parameters:
+        - $ref: '#/components/parameters/APIVersion'
+        - name: instance_id
+          in: path
+          description: instance id of instance to find last operation applied to it
+          required: true
+          schema:
+            type: string
+        - name: binding_id
+          in: path
+          description: binding id of service binding to find last operation applied to it
+          required: true
+          schema:
+            type: string
+        - name: service_id
+          in: query
+          description: id of the service associated with the instance
+          schema:
+            type: string
+        - name: plan_id
+          in: query
+          description: id of the plan associated with the instance
+          schema:
+            type: string
+        - name: operation
+          in: query
+          description: a provided identifier for the operation
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LastOperationResource'
         '400':
           description: Bad Request
           content:
@@ -315,6 +370,11 @@ paths:
           required: true
           schema:
             type: string
+        - name: accepts_incomplete
+          in: query
+          description: asynchronous operations supported
+          schema:
+            type: boolean
       requestBody:
         description: parameters for the requested service binding
         required: true
@@ -335,6 +395,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceBinding'
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncOperation'
         '400':
           description: Bad Request
           content:
@@ -385,6 +451,11 @@ paths:
           required: true
           schema:
             type: string
+        - name: accepts_incomplete
+          in: query
+          description: asynchronous operations supported
+          schema:
+            type: boolean
       responses:
         '200':
           description: OK
@@ -392,6 +463,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Object'
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncOperation'
         '400':
           description: Bad Request
           content:
@@ -610,7 +687,7 @@ components:
         dashboard_url:
           type: string
 
-    ServiceInstanceAsyncProvision:
+    ServiceInstanceAsyncOperation:
       type: object
       properties:
         dashboard_url:
@@ -655,7 +732,7 @@ components:
         operation:
           type: string
 
-    ServiceInstanceLastOperation:
+    LastOperationResource:
       type: object
       required:
         - state

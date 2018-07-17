@@ -1,5 +1,61 @@
 # Service Broker API Release Notes
 
+## [v2.14](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md)
+2018-07-24
+
+* Added GET endpoints for fetching a
+  [Service Instance](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#fetching-a-service-instance)
+  and
+  [Service Binding](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#fetching-a-service-binding)
+* Added support for asynchronous Service Bindings
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/334))
+  and a new
+  [last operation endpoint for Service Bindings](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#polling-last-operation-for-service-bindings)
+  endpoint
+* Added clarity around concurrent updates
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/300))
+* Added clarity on how Platform's can clean up after a failed provision or bind
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/353))
+* Added Opaque Bearer Tokens to the
+  [Platform to Service Broker Authentication](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#platform-to-service-broker-authentication)
+  section
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/398))
+* Provided guidance for CLI-friendly names
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/425))
+* Allow for uppercase characters in Service and Service Plan names
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/433))
+* Clarify that extra fields in requests and responses are allowed
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/436))
+* Allow an updated `dashboard_url` to be provided when updating a Service
+  Instance ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/437))
+* Added an [OpenAPI 2.0 implementation](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/openapi.yaml)
+* Allow for periods in name fields
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/452))
+* Removed the need for Platforms to perform orphan mitigation when receiving an
+  `HTTP 408` response code
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/456))
+* Moved the `dashboard_client` field to
+  [Cloud Foundry Catalog Extensions](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/profile.md#cloud-foundry-catalog-extensions)
+* Added a [compatibility matrix](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/compatibility.md)
+  describing which optional features in the specification are supported by
+  different Platforms
+* Added clarity for returning Service Binding information via the GET endpoints
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/517))
+* Added guidance for supported string lengths
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/518))
+* Clarified that the `plan_updateable` field affects modifying the Service Plan,
+  not parameters ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/519))
+* Clarified which Service Plan ID to use for polling the last operation endpoint
+  after an update ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/522))
+* Clarified Platform behaviour when a dashboard URL is not returned
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/527))
+* Fixed an incompatible change introduced in v2.12
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/540))
+* Added clarity around the state of resources after a failure
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/541))
+* Added [Content Type](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#content-type)
+  guidelines
+
 ## [v2.13](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md)
 2017-09-19
 
