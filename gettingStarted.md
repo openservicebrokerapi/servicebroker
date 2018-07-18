@@ -107,8 +107,15 @@ components, and restarts or recreates unhealthy VMs. The Service Broker code alo
 can be found [here](https://github.com/cloudfoundry/cf-mysql-broker).
 
 [On Demand Service Broker](https://github.com/pivotal-cf/on-demand-service-broker):
-This is a generic service broker for BOSH deployed services. The broker deploys any BOSH release on demand. It is used by the [Redis for PCF](https://www.cloudfoundry.org/the-foundry/redis-for-pcf/), [MySQL for PCF](https://pivotal.io/platform/services-marketplace/data-management/mysql), [RabbitMQ for PCF](https://www.cloudfoundry.org/the-foundry/rabbitmq-for-pcf/) and [Pivotal Cloud Cache](https://pivotal.io/platform/services-marketplace/data-management/pivotal-cloud-cache) service brokers. The On Demand Broker is open source, and typically deployed via [its BOSH release](https://github.com/pivotal-cf/on-demand-service-broker-release).
-
+This is a generic service broker for BOSH deployed services. The broker
+deploys any BOSH release on demand. It is used by the
+[Redis for PCF](https://www.cloudfoundry.org/the-foundry/redis-for-pcf/), 
+[MySQL for PCF](https://pivotal.io/platform/services-marketplace/data-management/mysql), 
+[RabbitMQ for PCF](https://www.cloudfoundry.org/the-foundry/rabbitmq-for-pcf/)
+and 
+[Pivotal Cloud Cache](https://pivotal.io/platform/services-marketplace/data-management/pivotal-cloud-cache) 
+service brokers. The On Demand Broker is open source, and typically deployed via
+[its BOSH release](https://github.com/pivotal-cf/on-demand-service-broker-release).
 
 ## Java
 
