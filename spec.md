@@ -253,14 +253,13 @@ the [profile](profile.md) document for more information.
 
 For example:
 ```
-X-Broker-API-Originating-Identity: cloudfoundry eyANCiAgInVzZXJfaWQiOiAiNjgzZWE3NDgtMzA5Mi00ZmY0LWI2NTYtMzljYWNjNGQ1MzYwIiwNCiAgInVzZXJfbmFtZSI6ICJqb2VAZXhhbXBsZS5jb20iDQp9
+X-Broker-API-Originating-Identity: cloudfoundry eyANCiAgInVzZXJfaWQiOiAiNjgzZWE3NDgtMzA5Mi00ZmY0LWI2NTYtMzljYWNjNGQ1MzYwIg0KfQ==
 ```
 
 Where the `value`, when decoded, is:
 ```
 {
-  "user_id": "683ea748-3092-4ff4-b656-39cacc4d5360",
-  "user_name": "joe@example.com"
+  "user_id": "683ea748-3092-4ff4-b656-39cacc4d5360"
 }
 ```
 
