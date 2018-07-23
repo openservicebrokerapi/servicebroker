@@ -47,9 +47,9 @@ reserved resource a Service Instance. What a Service Instance represents can
 vary by service. Examples include a single database on a multi-tenant server,
 a dedicated cluster, or an account on a web application.
 
-What a binding represents MAY also vary by service. In general creation of a
-binding either generates credentials necessary for accessing the resource or
-provides the Service Instance with information for a configuration change.
+What a Service Binding represents MAY also vary by service. In general, creation
+of a Service Binding either generates credentials necessary for accessing the
+resource or provides the Service Instance with information for a configuration change.
 
 A Platform MAY expose services from one or many Service Brokers, and an
 individual Service Broker MAY support one or many Platforms using different URL
@@ -440,7 +440,7 @@ how Platforms might expose these values to their users.
 | metadata | object | An opaque object of metadata for a Service Plan. It is expected that Platforms will treat this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and Platforms for fields that aid in the display of catalog data. |
 | free | boolean | When false, Service Instances of this plan have a cost. The default is true. |
 | bindable | boolean | Specifies whether Service Instances of the Service Plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
-| schemas | [Schemas](#schemas-object) | Schema definitions for Service Instances and bindings for the plan. |
+| schemas | [Schemas](#schemas-object) | Schema definitions for Service Instances and Service Bindings for the plan. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -677,10 +677,11 @@ Note that per the [Orphans](#orphans) section, this error response does not
 cause orphan mitigation to be initiated. Therefore, Platforms receiving this
 error response SHOULD resend the request at a later time.
 
-Brokers MAY choose to treat the creation of a binding as a mutation of the
-corresponding Service Instance - it is an implementation choice. Doing so would
-cause Platforms to serialize multiple binding creation requests when they are
-directed at the same Service Instance if concurrent updates are not supported.
+Brokers MAY choose to treat the creation of a Service Binding as a mutation of
+the corresponding Service Instance - it is an implementation choice. Doing so
+would cause Platforms to serialize multiple Service Binding creation requests
+when they are directed at the same Service Instance if concurrent updates are
+not supported.
 
 ## Polling Last Operation for Service Instances
 
@@ -783,7 +784,7 @@ regarding the Service Binding can then immediately be fetched using the
 
 `:instance_id` MUST be the ID of a previously provisioned Service Instance.
 
-`:binding_id` MUST be the ID of a previously provisioned binding for that
+`:binding_id` MUST be the ID of a previously provisioned Service Binding for that
 instance.
 
 #### Parameters
@@ -978,7 +979,6 @@ any circumstances.
 `GET /v2/service_instances/:instance_id`
 
 `:instance_id` MUST be the ID of a previously provisioned Service Instance.
-instance.
 
 ##### cURL
 ```
@@ -1070,7 +1070,7 @@ The following HTTP Headers are defined for this operation:
 | --- | --- | --- |
 | context | object | Contextual data under which the Service Instance is created. |
 | service_id* | string | MUST be the ID of a service from the catalog for this Service Broker. |
-| plan_id | string | If present, MUST be the ID of a plan from the service that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the plan of the instance as a result of this request. |
+| plan_id | string | If present, MUST be the ID of a plan from the service that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the plan of the Service Instance as a result of this request. |
 | parameters | object | Configuration parameters for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. See "Note" below. |
 | previous_values | [PreviousValues](#previous-values-object) | Information about the Service Instance prior to the update. |
 
@@ -1201,8 +1201,8 @@ returned at least once.
 
 Credentials are a set of information used by an Application or a user to
 utilize the Service Instance. Credentials SHOULD be unique whenever possible, so
-access can be revoked for each binding without affecting consumers of other
-bindings for the Service Instance.
+access can be revoked for each Service Binding without affecting consumers of other
+Service Bindings for the Service Instance.
 
 #### Log Drain
 
@@ -1228,7 +1228,7 @@ binding multiple routable addresses to the same Service Instance.
 
 If a service is deployed in a configuration to support this behavior, the
 Service Broker MUST return a `route_service_url` in the response for a request
-to create a binding, so that the Platform knows where to proxy the application
+to create a Service Binding, so that the Platform knows where to proxy the application
 request. If the service is deployed such that the network configuration to
 proxy application requests through instances of the service is managed
 out-of-band, the Service Broker MUST NOT return `route_service_url` in the
@@ -1237,7 +1237,7 @@ response.
 #### Volume Services
 
 There are a class of services that provide network storage to applications
-via volume mounts in the application container. A create binding response from
+via volume mounts in the application container. A create Service Binding response from
 one of these services MUST include `volume_mounts`.
 
 ### Request
@@ -1274,8 +1274,8 @@ The following HTTP Headers are defined for this operation:
 | context | object | Contextual data under which the Service Binding is created. |
 | service_id* | string | MUST be the ID of the service that is being used. |
 | plan_id* | string | MUST be the ID of the plan from the service that is being used. |
-| app_guid | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the binding to be created. If present, MUST be a non-empty string. |
-| bind_resource | [BindResource](#bind-resource-object) | A JSON object that contains data for Platform resources associated with the binding to be created. See [Bind Resource Object](#bind-resource-object) for more information. |
+| app_guid | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the Service Binding to be created. If present, MUST be a non-empty string. |
+| bind_resource | [BindResource](#bind-resource-object) | A JSON object that contains data for Platform resources associated with the Service Binding to be created. See [Bind Resource Object](#bind-resource-object) for more information. |
 | parameters | object | Configuration parameters for the Service Binding. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
 
 \* Fields with an asterisk are REQUIRED.
@@ -1293,10 +1293,10 @@ additional ones as needed (see
 
 | Request Field | Type | Description |
 | --- | --- | --- |
-| app_guid | string | GUID of an application associated with the binding. For [credentials](#types-of-binding) bindings. MUST be unique within the scope of the Platform. |
-| route | string | URL of the application to be intermediated. For [route services](#route-services) bindings. |
+| app_guid | string | GUID of an application associated with the Service Binding. For [credentials](#types-of-binding) bindings. MUST be unique within the scope of the Platform. |
+| route | string | URL of the application to be intermediated. For [route services](#route-services) Service Bindings. |
 
-`app_guid` represents the scope to which the binding will apply within
+`app_guid` represents the scope to which the Service Binding will apply within
 the Platform. For example, in Cloud Foundry it might map to an "application"
 while in Kubernetes it might map to a "namespace". The scope of what a
 Platform maps the `app_guid` to is Platform specific and MAY vary across
@@ -1344,12 +1344,12 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 
 | Status Code | Description |
 | --- | --- |
-| 200 OK | SHOULD be returned if the binding already exists and the requested parameters are identical to the existing binding. The expected response body is below. |
-| 201 Created | MUST be returned if the binding was created as a result of this request. The expected response body is below. |
-| 202 Accepted | MUST be returned if the binding is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) endpoint for operation status. Information regarding the Service Binding (i.e. credentials) MUST NOT be returned in this response. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the binding is not yet fully created. |
+| 200 OK | SHOULD be returned if the Service Binding already exists and the requested parameters are identical to the existing Service Binding. The expected response body is below. |
+| 201 Created | MUST be returned if the Service Binding was created as a result of this request. The expected response body is below. |
+| 202 Accepted | MUST be returned if the binding is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) endpoint for operation status. Information regarding the Service Binding (i.e. credentials) MUST NOT be returned in this response. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the Service Binding is not yet fully created. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
 | 409 Conflict | MUST be returned if a Service Binding with the same id, for the same Service Instance, already exists but with different parameters. |
-| 422 Unprocessable Entity | MUST be returned if the Service Broker requires that `app_guid` be included in the request body. The response body MUST contain error code `"RequiresApp"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service supports generation of credentials through binding an application only."`. Additionally, if the Service Broker rejects the request due to a concurrent request to create a binding for the same Service Instance, then this error MUST be returned (see [Blocking Operations](#blocking-operations)). This MUST also be returned if the Service Broker only supports asynchronous bindings for the Service Instance and the request did not include `?accepts_incomplete=true`. In this case, the response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Instance requires client support for asynchronous binding operations."`. |
+| 422 Unprocessable Entity | MUST be returned if the Service Broker requires that `app_guid` be included in the request body. The response body MUST contain error code `"RequiresApp"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service supports generation of credentials through binding an application only."`. Additionally, if the Service Broker rejects the request due to a concurrent request to create a Service Binding for the same Service Instance, then this error MUST be returned (see [Blocking Operations](#blocking-operations)). This MUST also be returned if the Service Broker only supports asynchronous bindings for the Service Instance and the request did not include `?accepts_incomplete=true`. In this case, the response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Instance requires client support for asynchronous binding operations."`. |
 
 Responses with any other status code MUST be interpreted as a failure and an
 unbind request MUST be sent to the Service Broker to prevent an orphan being
@@ -1444,7 +1444,7 @@ endpoint returns `"state": "succeeded"` for a [Binding](#binding) operation.
 
 `:instance_id` MUST be the ID of a previously provisioned Service Instance.
 
-`:binding_id` MUST be the ID of a previously provisioned binding for that
+`:binding_id` MUST be the ID of a previously provisioned Service Binding for that
 instance.
 
 ##### cURL
@@ -1501,7 +1501,7 @@ Note: Service Brokers that do not provide any bindable services or plans do
 not need to implement this endpoint.
 
 When a Service Broker receives an unbind request from a Platform, it MUST
-delete any resources associated with the binding. In the case where
+delete any resources associated with the Service Binding. In the case where
 credentials were generated, this might result in requests to the Service
 Instance failing to authenticate.
 
@@ -1513,15 +1513,15 @@ Instance failing to authenticate.
 
 `:instance_id` MUST be the ID of a previously provisioned Service Instance.
 
-`:binding_id` MUST be the the ID of a previously provisioned binding for that
+`:binding_id` MUST be the the ID of a previously provisioned Service Binding for that
 Service Instance.
 
 #### Parameters
 
 | Query-String Field | Type | Description |
 | --- | --- | --- |
-| service_id* | string | MUST be the ID of the service associated with the binding being deleted. |
-| plan_id* | string | MUST be the ID of the plan associated with the binding being deleted. |
+| service_id* | string | MUST be the ID of the service associated with the Service Binding being deleted. |
+| plan_id* | string | MUST be the ID of the plan associated with the Service Binding being deleted. |
 | accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only perform an unbinding operation asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
 \* Query parameters with an asterisk are REQUIRED.
@@ -1548,10 +1548,10 @@ $ curl 'http://username:password@service-broker-url/v2/service_instances/:instan
 
 | Status Code | Description |
 | --- | --- |
-| 200 OK | MUST be returned if the binding was deleted as a result of this request. The expected response body is `{}`. |
+| 200 OK | MUST be returned if the Service Binding was deleted as a result of this request. The expected response body is `{}`. |
 | 202 Accepted | MUST be returned if the unbinding is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) endpoint for operation status. Note that a re-sent `DELETE` request MUST return a `202 Accepted`, not a `200 OK`, if the unbinding request has not completed yet. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
-| 410 Gone | MUST be returned if the binding does not exist. |
+| 410 Gone | MUST be returned if the Service Binding does not exist. |
 | 422 Unprocessable Entity | MUST also be returned if the Service Broker only supports asynchronous unbinding for the Service Instance and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Instance requires client support for asynchronous binding operations."`. |
 
 Responses with any other status code MUST be interpreted as a failure and the
@@ -1579,10 +1579,10 @@ When a Service Broker receives a deprovision request from a Platform, it MUST
 delete any resources it created during the provision. Usually this means that
 all resources are immediately reclaimed for future provisions.
 
-Platforms MUST delete all bindings for a service prior to attempting to
+Platforms MUST delete all Service Bindings for a service prior to attempting to
 deprovision the service. This specification does not specify what a Service
 Broker is to do if it receives a deprovision request while there are still
-bindings associated with it.
+Service Bindings associated with it.
 
 ### Request
 
