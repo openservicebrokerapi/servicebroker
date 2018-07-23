@@ -259,7 +259,8 @@ X-Broker-API-Originating-Identity: cloudfoundry eyANCiAgInVzZXJfaWQiOiAiNjgzZWE3
 Where the `value`, when decoded, is:
 ```
 {
-  "user_id": "683ea748-3092-4ff4-b656-39cacc4d5360"
+  "user_id": "683ea748-3092-4ff4-b656-39cacc4d5360",
+  "user_name": "joe@example.com"
 }
 ```
 
