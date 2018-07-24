@@ -149,7 +149,7 @@ that do not understand them.
 * Moved the `dashboard_client` field to
   [Cloud Foundry Catalog Extensions](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/profile.md#cloud-foundry-catalog-extensions)
 * Added a [compatibility matrix](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/compatibility.md)
-  describing which optional features in the specification are supported by
+  describing which OPTIONAL features in the specification are supported by
   different Platforms
 * Added clarity for returning Service Binding information via the GET endpoints
   ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/517))
