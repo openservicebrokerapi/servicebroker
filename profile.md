@@ -1,4 +1,4 @@
-# Open Service Broker API Profile (master - might contain changes that are not yet released)
+# Open Service Broker API Profile (v2.14)
 
 ## Abstract
 

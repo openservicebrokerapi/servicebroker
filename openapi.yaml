@@ -524,7 +524,7 @@ components:
       required: true
       schema:
         type: string
-      default: '2.13'
+      default: '2.14'
 
     OriginatingIdentity:
       name: X-Broker-API-Originating-Identity
