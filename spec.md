@@ -5,7 +5,7 @@
   - [Notations and Terminology](#notations-and-terminology)
   - [Changes](#changes)
     - [Change Policy](#change-policy-for-minor-versions)
-    - [Changes Since v2.12](#changes-since-v212)
+    - [Changes Since v2.13](#changes-since-v213)
   - [API Version Header](#api-version-header)
   - [Platform to Service Broker Authentication](#platform-to-service-broker-authentication)
   - [URL Properties](#url-properties)
@@ -113,27 +113,60 @@ added to enable support for new features.
 These fields MUST be OPTIONAL and SHOULD be ignored by clients and servers
 that do not understand them.
 
-### Changes Since v2.12
+### Changes Since v2.13
 
-* Added [`schemas`](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#schema-object)
-  field to services in the catalog that Service Brokers can use to declare the
-  configuration parameters their service accepts for creating a Service
-  Instance, updating a Service Instance and creating a Service Binding.
-* Added [`context`](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#binding)
-  field to request body for creating a Service Binding.
-* Added [warning text](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#url-properties)
-  about using characters outside of the "Unreserved Characters" set in IDs.
-* Added information about
-  [`volume_mounts`](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#volume-mounts-object)
-  objects.
-* `instance_id` and `binding_id` MUST be globally unique non-empty strings.
-* Allow [non-BasicAuth authentication mechanisms](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#authentication).
-* Added a [Getting Started](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/gettingStarted.md)
-  page including sample Service Brokers.
-* Define what a [CLI-friendly string](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#catalog-management)
-  is.
-* Add [service/plan metadata conventions](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/profile.md#service-metadata).
-* Add [originating identity HTTP header](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#originating-identity).
+* Added GET endpoints for fetching a
+  [Service Instance](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#fetching-a-service-instance)
+  and
+  [Service Binding](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#fetching-a-service-binding)
+* Added support for asynchronous Service Bindings
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/334))
+  and a new
+  [last operation endpoint for Service Bindings](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#polling-last-operation-for-service-bindings)
+  endpoint
+* Added clarity around concurrent updates
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/300))
+* Added clarity on how Platform's can clean up after a failed provision or bind
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/353))
+* Added Opaque Bearer Tokens to the
+  [Platform to Service Broker Authentication](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#platform-to-service-broker-authentication)
+  section
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/398))
+* Provided guidance for CLI-friendly names
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/425))
+* Allow for uppercase characters in Service and Service Plan names
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/433))
+* Clarify that extra fields in requests and responses are allowed
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/436))
+* Allow an updated `dashboard_url` to be provided when updating a Service
+  Instance ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/437))
+* Added an [OpenAPI 2.0 implementation](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/openapi.yaml)
+* Allow for periods in name fields
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/452))
+* Removed the need for Platforms to perform orphan mitigation when receiving an
+  `HTTP 408` response code
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/456))
+* Moved the `dashboard_client` field to
+  [Cloud Foundry Catalog Extensions](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/profile.md#cloud-foundry-catalog-extensions)
+* Added a [compatibility matrix](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/compatibility.md)
+  describing which optional features in the specification are supported by
+  different Platforms
+* Added clarity for returning Service Binding information via the GET endpoints
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/517))
+* Added guidance for supported string lengths
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/518))
+* Clarified that the `plan_updateable` field affects modifying the Service Plan,
+  not parameters ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/519))
+* Clarified which Service Plan ID to use for polling the last operation endpoint
+  after an update ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/522))
+* Clarified Platform behaviour when a dashboard URL is not returned
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/527))
+* Fixed an incompatible change introduced in v2.12
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/540))
+* Added clarity around the state of resources after a failure
+  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/541))
+* Added [Content Type](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#content-type)
+  guidelines
 
 For changes in older versions, see the [release notes](https://github.com/openservicebrokerapi/servicebroker/blob/master/release-notes.md).
 
@@ -143,7 +176,7 @@ Requests from the Platform to the Service Broker MUST contain a header that
 declares the version number of the Open Service Broker API that the Platform
 is using:
 
-`X-Broker-API-Version: 2.13`
+`X-Broker-API-Version: 2.14`
 
 The version numbers are in the format `MAJOR.MINOR` using semantic versioning.
 
@@ -366,7 +399,7 @@ The following HTTP Headers are defined for this operation:
 
 #### cURL
 ```
-$ curl http://username:password@service-broker-url/v2/catalog -H "X-Broker-API-Version: 2.13"
+$ curl http://username:password@service-broker-url/v2/catalog -H "X-Broker-API-Version: 2.14"
 ```
 
 ### Response
@@ -725,7 +758,7 @@ The following HTTP Headers are defined for this operation:
 
 #### cURL
 ```
-$ curl http://username:password@service-broker-url/v2/service_instances/:instance_id/last_operation -H "X-Broker-API-Version: 2.13"
+$ curl http://username:password@service-broker-url/v2/service_instances/:instance_id/last_operation -H "X-Broker-API-Version: 2.14"
 ```
 
 ### Response
@@ -926,7 +959,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
     "parameter1": 1,
     "parameter2": "foo"
   }
-}' -X PUT -H "X-Broker-API-Version: 2.13" -H "Content-Type: application/json"
+}' -X PUT -H "X-Broker-API-Version: 2.14" -H "Content-Type: application/json"
 ```
 
 ### Response
@@ -982,7 +1015,7 @@ any circumstances.
 
 ##### cURL
 ```
-$ curl 'http://username:password@broker-url/v2/service_instances/:instance_id' -X GET -H "X-Broker-API-Version: 2.13"
+$ curl 'http://username:password@broker-url/v2/service_instances/:instance_id' -X GET -H "X-Broker-API-Version: 2.14"
 ```
 
 ### Response
@@ -1142,7 +1175,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
     "organization_id": "org-guid-here",
     "space_id": "space-guid-here"
   }
-}' -X PATCH -H "X-Broker-API-Version: 2.13" -H "Content-Type: application/json"
+}' -X PATCH -H "X-Broker-API-Version: 2.14" -H "Content-Type: application/json"
 ```
 
 ### Response
@@ -1337,7 +1370,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
     "parameter1-name-here": 1,
     "parameter2-name-here": "parameter2-value-here"
   }
-}' -X PUT -H "X-Broker-API-Version: 2.13" -H "Content-Type: application/json"
+}' -X PUT -H "X-Broker-API-Version: 2.14" -H "Content-Type: application/json"
 ```
 
 ### Response
@@ -1449,7 +1482,7 @@ instance.
 
 ##### cURL
 ```
-$ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:binding_id' -X GET -H "X-Broker-API-Version: 2.13"
+$ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:binding_id' -X GET -H "X-Broker-API-Version: 2.14"
 ```
 
 ### Response
@@ -1541,7 +1574,7 @@ The following HTTP Headers are defined for this operation:
 
 ```
 $ curl 'http://username:password@service-broker-url/v2/service_instances/:instance_id/
-  service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here&accepts_incomplete=true' -X DELETE -H "X-Broker-API-Version: 2.13"
+  service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here&accepts_incomplete=true' -X DELETE -H "X-Broker-API-Version: 2.14"
 ```
 
 ### Response
@@ -1620,7 +1653,7 @@ The following HTTP Headers are defined for this operation:
 #### cURL
 ```
 $ curl 'http://username:password@service-broker-url/v2/service_instances/:instance_id?accepts_incomplete=true
-  &service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.13"
+  &service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.14"
 ```
 
 ### Response
