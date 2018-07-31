@@ -1040,6 +1040,9 @@ For success responses, the following fields are defined:
 | dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. |
 | parameters | object | Configuration parameters for the Service Instance. |
 
+Service Brokers MAY choose to not return parameters when a Service Instance is fetched - for example,
+if it contains sensitive information.
+
 ```
 {
   "dashboard_url": "http://example-dashboard.example.com/9189kdfsk0vfnku",
@@ -1506,6 +1509,9 @@ For success responses, the following fields are defined:
 | route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for mounting volumes. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | parameters | object | Configuration parameters for the Service Binding. |
+
+Service Brokers MAY choose to not return parameters when a Service Binding is fetched - for example,
+if it contains sensitive information.
 
 ```
 {
