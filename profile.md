@@ -78,7 +78,7 @@ For example, a `value` of:
 ```
 would appear in the HTTP Header as:
 ```
-X-Broker-API-Originating-Identity: cloudfoundry eyANCiAgInVzZXJfaWQiOiAiNjgzZWE3NDgtMzA5Mi00ZmY0LWI2NTYtMzljYWNjNGQ1MzYwIiwNCiAgInVzZXJfbmFtZSI6ICJqb2VAZXhhbXBsZS5jb20iDQp9
+X-Broker-API-Originating-Identity: cloudfoundry eyANCiAgInVzZXJfaWQiOiAiNjgzZWE3NDgtMzA5Mi00ZmY0LWI2NTYtMzljYWNjNGQ1MzYwIg0KfQ==
 ```
 
 ### Kubernetes Originating Identity Header
@@ -109,7 +109,7 @@ For example, a `value` of:
 ```
 would appear in the HTTP Header as:
 ```
-X-Broker-API-Originating-Identity: kubernetes eyANCiAgInVzZXJuYW1lIjogImR1a2UiLA0KICAidWlkIjogImMyZGRlMjQyLTVjZTQtMTFlNy05ODhjLTAwMGMyOTQ2ZjE0ZiIsDQogICJncm91cHMiOiB7ICJhZG1pbiIsICJkZXYiIH0NCn0=
+X-Broker-API-Originating-Identity: kubernetes ew0KICAidXNlcm5hbWUiOiAiZHVrZSIsDQogICJ1aWQiOiAiYzJkZGUyNDItNWNlNC0xMWU3LTk4OGMtMDAwYzI5NDZmMTRmIiwNCiAgImdyb3VwcyI6IFsgImFkbWluIiwgImRldiIgXSwNCiAgImV4dHJhIjogew0KICAgICJteWRhdGEiOiBbICJkYXRhMSIsICJkYXRhMyIgXQ0KICB9DQp9
 ```
 
 
