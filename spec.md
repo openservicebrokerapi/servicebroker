@@ -430,6 +430,7 @@ how Platforms might expose these values to their users.
 | free | boolean | When false, Service Instances of this plan have a cost. The default is true. |
 | bindable | boolean | Specifies whether Service Instances of the Service Plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
 | schemas | [Schemas](#schemas-object) | Schema definitions for Service Instances and bindings for the plan. |
+| current_service_instance_version | object | A free-form hash that represents the version of the service instance that the plan will deploy. MAY be used by the platform to update previously deployed service instances to the latest version of the service instance. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -994,6 +995,7 @@ The following HTTP Headers are defined for this operation:
 | service_id* | string | MUST be the ID of a service from the catalog for this Service Broker. |
 | plan_id | string | If present, MUST be the ID of a plan from the service that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the plan of the instance as a result of this request. |
 | parameters | object | Configuration parameters for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. See "Note" below. |
+| version | object | A free-form hash that represents the version to which the service instance should be updated to. Service Brokers SHOULD ensure that the client has provided a version supported by the broker. |
 | previous_values | [PreviousValues](#previous-values-object) | Information about the Service Instance prior to the update. |
 
 \* Fields with an asterisk are REQUIRED.
