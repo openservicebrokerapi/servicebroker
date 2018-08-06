@@ -68,7 +68,7 @@ paths:
         '202':
           description: Accepted
           schema:
-            $ref: '#/definitions/ServiceInstanceAsyncProvision'
+            $ref: '#/definitions/ServiceInstanceAsyncOperation'
         '400':
           description: Bad Request
           schema:
@@ -106,7 +106,7 @@ paths:
         '202':
           description: Accepted
           schema:
-            $ref: '#/definitions/AsyncOperation'
+            $ref: '#/definitions/ServiceInstanceAsyncOperation'
         '400':
           description: Bad Request
           schema:
@@ -193,7 +193,45 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/ServiceInstanceLastOperation'
+            $ref: '#/definitions/LastOperationResource'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '410':
+          description: Gone
+          schema:
+            $ref: '#/definitions/Error'
+  '/v2/service_instances/{instance_id}/service_bindings/{binding_id}/last_operation':
+    parameters:
+      - $ref: '#/parameters/APIVersion'
+      - $ref: '#/parameters/instance_id'
+      - $ref: '#/parameters/binding_id'
+    get:
+      summary: last requested operation state for service binding
+      tags:
+        - ServiceBindings
+      operationId: serviceBinding.lastOperation.get
+      produces:
+        - application/json
+      parameters:
+        - name: service_id
+          in: query
+          description: id of the service associated with the instance
+          type: string
+        - name: plan_id
+          in: query
+          description: id of the plan associated with the instance
+          type: string
+        - name: operation
+          in: query
+          description: a provided identifier for the operation
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/LastOperationResource'
         '400':
           description: Bad Request
           schema:
@@ -222,6 +260,7 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/ServiceBindingRequest'
+        - $ref: '#/parameters/accepts_incomplete'
       responses:
         '200':
           description: OK
@@ -231,6 +270,10 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/ServiceBinding'
+        '202':
+          description: Accepted
+          schema:
+            $ref: '#/definitions/AsyncOperation'
         '400':
           description: Bad Request
           schema:
@@ -251,11 +294,16 @@ paths:
       parameters:
         - $ref: '#/parameters/service_id'
         - $ref: '#/parameters/plan_id'
+        - $ref: '#/parameters/accepts_incomplete'
       responses:
         '200':
           description: OK
           schema:
             $ref: '#/definitions/Object'
+        '202':
+          description: Accepted
+          schema:
+            $ref: '#/definitions/AsyncOperation'
         '400':
           description: Bad Request
           schema:
@@ -467,7 +515,7 @@ definitions:
     properties:
       dashboard_url:
         type: string
-  ServiceInstanceAsyncProvision:
+  ServiceInstanceAsyncOperation:
     type: object
     properties:
       dashboard_url:
@@ -508,7 +556,7 @@ definitions:
     properties:
       operation:
         type: string
-  ServiceInstanceLastOperation:
+  LastOperationResource:
     type: object
     required:
       - state

@@ -2,16 +2,16 @@
 
 ![Open Service Broker API](https://github.com/openservicebrokerapi/servicebroker/blob/master/logo.png?raw=true)
 
-## Latest Release: v2.13
-[Specification](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md)
+## Latest Release: v2.14
+[Specification](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md)
 
-[OpenAPI doc](http://petstore.swagger.io/?url=https://raw.githubusercontent.com/openservicebrokerapi/servicebroker/v2.13/openapi.yaml)
+[OpenAPI doc](http://petstore.swagger.io/?url=https://raw.githubusercontent.com/openservicebrokerapi/servicebroker/v2.14/openapi.yaml)
 
-[Profile](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/profile.md)
+[Profile](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/profile.md)
 
 [Workflows](diagram.md)
 
-[Release notes](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/release-notes.md)
+[Release notes](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/release-notes.md)
 
 ## Working Changes (might contain changes that are not yet released)
 Changes in these documents have been accepted by the working group for the next
@@ -46,4 +46,3 @@ wanting to implement a Platform or Service Broker.
 The [Platform Compatibility](compatibility.md) document is a quick way to track
 the state of current and pending feature additions, how they align with
 releases, and which platforms are currently supporting them.
-
