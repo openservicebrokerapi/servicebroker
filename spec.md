@@ -782,6 +782,7 @@ For success responses, the following fields are defined:
 | --- | --- | --- |
 | state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the Platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the Platform to cease polling. |
 | description | string | A user-facing message that can be used to tell the user details about the status of the operation. If present, MUST be a non-empty string. |
+| instance_corrupt | boolean | For failed update and deprovisioning operations, this field indicates whether the instance is still usable or not. If the value is `true`, the Service Instance MUST be considered corrupt and the Platform SHOULD NOT allow the creation of new bindings. If the value is `false`, the Service Instance is in an unmodified and usable state. The default is true. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -1190,9 +1191,13 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
 | 422 Unprocessable entity | MUST be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the Service Instance (e.g. Service Instance utilization is over the quota of the requested plan). Additionally, a `422 Unprocessable Entity` MUST be returned if the Service Broker only supports asynchronous update for the requested plan and the request did not include `?accepts_incomplete=true`; in this case the response body MUST contain a error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. |
 
-Responses with any other status code MUST be interpreted as a failure.
 When the response includes a 4xx status code, the Service Broker MUST NOT
-apply any of the requested changes to the Service Instance.
+apply any of the requested changes to the Service Instance and the
+Service Instance MUST be in an unmodified and usable state.
+
+Responses with any other status code MUST be interpreted as a failure.
+The Service Instance MUST be considered corrupt and the Platform SHOULD NOT
+allow the creation of new bindings.
 
 #### Body
 
@@ -1672,8 +1677,13 @@ $ curl 'http://username:password@service-broker-url/v2/service_instances/:instan
 | 410 Gone | MUST be returned if the Service Instance does not exist. |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous deprovisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. |
 
+When the response includes a 4xx status code other than 410 Gone, the
+Service Instance MUST be in an unmodified and usable state.
+
 Responses with any other status code MUST be interpreted as a failure and the
-Platform MUST remember the Service Instance.
+Platform MUST remember the Service Instance. The Service Instance MUST be
+considered corrupt and the Platform SHOULD NOT allow the creation of
+new bindings.
 
 #### Body
 
