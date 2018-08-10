@@ -117,6 +117,9 @@ and
 service brokers. The On Demand Broker is open source, and typically deployed via
 [its BOSH release](https://github.com/pivotal-cf/on-demand-service-broker-release).
 
+[Open Service Broker for Huawei Cloud](https://github.com/huaweicloud/huaweicloud-service-broker):
+This Service Broker implements support for Huawei cloud services.
+
 ## Java
 
 [MySQL Java Broker](https://github.com/cloudfoundry-community/cf-mysql-java-broker):
