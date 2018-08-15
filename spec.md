@@ -708,6 +708,11 @@ Note that per the [Orphans](#orphans) section, this error response does not
 cause orphan mitigation to be initiated. Therefore, Platforms receiving this
 error response SHOULD resend the request at a later time.
 
+Service Broker MAY choose to only support concurrent requests for certain
+operations. For example, a specification compliant Service Broker can choose
+to reject concurrent requests in general but accept a deprovision request
+to halt the processing of a long running provision request.
+
 Brokers MAY choose to treat the creation of a Service Binding as a mutation of
 the corresponding Service Instance - it is an implementation choice. Doing so
 would cause Platforms to serialize multiple Service Binding creation requests
@@ -1537,6 +1542,11 @@ delete any resources associated with the Service Binding. In the case where
 credentials were generated, this might result in requests to the Service
 Instance failing to authenticate.
 
+If a Service Broker accepts the request to delete a Service Binding during
+the process of it being created, then it MUST have the net effect of halting
+the current creation process and deleting any resources associated with
+the Service Binding.
+
 ### Request
 
 #### Route
@@ -1584,7 +1594,7 @@ $ curl 'http://username:password@service-broker-url/v2/service_instances/:instan
 | 202 Accepted | MUST be returned if the unbinding is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) endpoint for operation status. Note that a re-sent `DELETE` request MUST return a `202 Accepted`, not a `200 OK`, if the unbinding request has not completed yet. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
 | 410 Gone | MUST be returned if the Service Binding does not exist. |
-| 422 Unprocessable Entity | MUST also be returned if the Service Broker only supports asynchronous unbinding for the Service Instance and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Instance requires client support for asynchronous binding operations."`. |
+| 422 Unprocessable Entity | MUST also be returned if the Service Broker only supports asynchronous unbinding for the Service Instance and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Instance requires client support for asynchronous binding operations."`. Additionally, this MUST be returned if the Service Binding is being processed by some other operation and therefore cannot be deleted at this time. The response body MUST contain error code `"ConcurrencyError"` (see [Service Broker Errors](#service-broker-errors)). |
 
 Responses with any other status code MUST be interpreted as a failure and the
 Platform MUST continue to remember the Service Binding.
@@ -1615,6 +1625,11 @@ Platforms MUST delete all Service Bindings for a service prior to attempting to
 deprovision the service. This specification does not specify what a Service
 Broker is to do if it receives a deprovision request while there are still
 Service Bindings associated with it.
+
+If a Service Broker accepts the request to delete a Service Instance during
+the process of it being created, then it MUST have the net effect of halting
+the current creation process and deleting any resources associated with
+the Service Instance.
 
 ### Request
 
@@ -1663,7 +1678,7 @@ $ curl 'http://username:password@service-broker-url/v2/service_instances/:instan
 | 202 Accepted | MUST be returned if the Service Instance deletion is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint for operation status. Note that a re-sent `DELETE` request MUST return a `202 Accepted`, not a `200 OK`, if the delete request has not completed yet. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
 | 410 Gone | MUST be returned if the Service Instance does not exist. |
-| 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous deprovisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. |
+| 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous deprovisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. Additionally, this MUST be returned if the Service Instance is being processed by some other operation and therefore cannot be deleted at this time. The response body MUST contain error code `"ConcurrencyError"` (see [Service Broker Errors](#service-broker-errors)). |
 
 Responses with any other status code MUST be interpreted as a failure and the
 Platform MUST remember the Service Instance.
