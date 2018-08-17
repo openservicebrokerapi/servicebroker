@@ -782,7 +782,7 @@ For success responses, the following fields are defined:
 | --- | --- | --- |
 | state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the Platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the Platform to cease polling. |
 | description | string | A user-facing message that can be used to tell the user details about the status of the operation. If present, MUST be a non-empty string. |
-| instance_corrupt | boolean | For failed update and deprovisioning operations, this field indicates whether the instance is still usable or not. If the value is `true`, the Service Instance MUST be considered corrupt and the Platform SHOULD NOT allow the creation of new bindings. If the value is `false`, the Service Instance is in an unmodified and usable state. The default is true. |
+| instance_corrupt | boolean | For failed update and deprovisioning operations, this field indicates whether the instance is still usable or not. If the value is `true`, the Service Instance MUST be considered corrupt and the Platform SHOULD NOT allow the creation of new bindings. If the value is `false`, the Service Instance is in an unmodified and usable state. If not specified, the state of the resource is unspecified by this specification. |
 
 \* Fields with an asterisk are REQUIRED.
 
