@@ -21,12 +21,14 @@
   - [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances)
   - [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings)
   - [Polling Interval and Duration](#polling-interval-and-duration)
+  - [Network Metadata](#network-metadata)
   - [Provisioning](#provisioning)
   - [Fetching a Service Instance](#fetching-a-service-instance)
   - [Updating a Service Instance](#updating-a-service-instance)
   - [Binding](#binding)
     - [Types of Binding](#types-of-binding)
   - [Fetching a Service Binding](#fetching-a-service-binding)
+  - [Adapting Service Binding Credentials](adapting-service-binding-credentials)
   - [Unbinding](#unbinding)
   - [Deprovisioning](#deprovisioning)
   - [Orphans](#orphans)
@@ -847,6 +849,78 @@ The frequency and maximum duration of polling MAY vary by Platform client. If
 a Platform has a max polling duration and this limit is reached, the Platform
 MUST cease polling and the operation state MUST be considered `failed`.
 
+## Network Metadata
+
+Most services provide one or more network endpoints to the Application.
+These endpoints may not be immediately or directly accessible by the
+Application. Network configuration adjustments on the service and the
+application side might be necessary to enable a network connection.
+
+There are many different types of connection configurations and network setups
+(firewalls, load balancers, security groups, VPNs, IaaS specific
+configurations, leased lines, etc.).
+This specification does not describe any of them. Instead, it provides
+extension points that allows the service side and the application side to
+negotiate the connection type and exchange the required configuration data.
+
+It is not excepted that the Service Broker deals with the network
+configuration. A network management component on the Service Broker side SHOULD
+intercept the OSBAPI calls and SHOULD provide and act on these extensions,
+if the service does not expose public endpoints.
+
+On the application side, the Platform SHOULD handle the network configuration.
+Whether the Platform does the configuration directly or delegates it to another
+component (for example, for infrastructure specific configurations), is an
+implementation detail.
+
+The semantics of a connection type together with its configuration data and
+its JSON representation is called a Network Profile.
+A Network Profile consists of at least of a globally unique and unchangeable
+profile ID, for example a URI.
+This specification defines only one Network Profile with the profile ID 
+`urn:openservicebrokerapi:network:direct` and no profile parameters.
+This profile indicates a direct connection from the Application to the
+Service Instance without any further configuration.
+Other specifications may define other Network Profiles.
+
+### Negotiation of the Network Profile
+
+Before a Service Instance is provisioned, the application side and the
+service side SHOULD negotiate how a connection between the Application and
+the Service Instance will be established.
+
+The negotiation works as follows:
+* A list of supported and desired Network Profiles is added by the Platform to the provisioning request. The Platform MAY choose to send a list with exactly one item to force a specific Network Profile. If this list is not provided, only direct connections to public endpoints are supported by the Platform.
+* The network management component on the service side compares the list with its supported Network Profiles. If there is no intersection, the provisioning MUST fail.
+* The network management component extends the provisioning response with a list of Network Profiles that both sides support. This list MAY contain only one item to force a specific Network Profile. If this list contains multiple items, the Platform picks one when a binding is created. Each binding MAY use a different Network Profile.
+
+
+### Exchange of Network Profile data 
+
+Depending on the Network Profile, connection configuration data has to be
+exchanged. The semantics and format are defined in the specification of the
+chosen Network Profile.
+This data MUST be attached to binding request and response.
+
+The Platform MAY need to open new endpoints for the Service, which are
+reachable from the Application. Therefore, the Platform has to know from the
+Service Broker, which endpoints have been opened by the Service Instance.
+This list of endpoints is also part of the binding response.
+
+### Adaptation of the Binding Credentials
+
+If the Platform established new endpoints, then the binding credentials have to
+adapted before they are handed over to the Application. Because only the
+Service Broker knows how to change the credentials, the task of correcting the
+credentials is
+[delegated back to the Service Broker](#adapting-service-binding-credentials).
+ 
+The Platform calls the Service Broker and provides the original credentials and a
+mapping table. This table maps the endpoints on the service side to the
+endpoints on the application side. The Service Broker responses with the
+adapted credentials. These are the credentials that Platform provides to the
+Application.
+
 ## Provisioning
 
 When the Service Broker receives a provision request from the Platform, it
@@ -891,8 +965,20 @@ The following HTTP Headers are defined for this operation:
 | organization_guid* | string | Deprecated in favor of `context`. The Platform GUID for the organization under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | space_guid* | string | Deprecated in favor of `context`. The identifier for the project space within the Platform organization. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | parameters | object | Configuration parameters for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
+| network_profiles | array of [NetworkProfiles](#network-profiles-object) objects | A non-empty list of supported and desired Network Profiles for this Service Instance. If this field is missing, only direct connections are supported. |
 
 \* Fields with an asterisk are REQUIRED.
+
+##### Network Profiles Object 
+
+| Request Field | Type | Description |
+| --- | --- | --- |
+| id* | string | MUST be the ID of the Network Profile. |
+
+\* Fields with an asterisk are REQUIRED.
+
+This object MAY contain additional Network Profile specific fields.
+
 
 ```
 {
@@ -907,7 +993,16 @@ The following HTTP Headers are defined for this operation:
   "parameters": {
     "parameter1": 1,
     "parameter2": "foo"
-  }
+  },
+  "network_profiles": [
+    {
+      "id": "urn:something:vpn",
+      "proto": "tcp"
+    },
+    {
+      "id": "urn:openservicebrokerapi:network:direct"
+    }
+  ]
 }
 ```
 
@@ -936,7 +1031,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 200 OK | SHOULD be returned if the Service Instance already exists, is fully provisioned, and the requested parameters are identical to the existing Service Instance. The expected response body is below. |
 | 201 Created | MUST be returned if the Service Instance was provisioned as a result of this request. The expected response body is below. |
 | 202 Accepted | MUST be returned if the Service Instance provisioning is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint for operation status. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the Service Instance is not yet fully provisioned. |
-| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
+| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data or if none of the provided Network Profiles are supported. |
 | 409 Conflict | MUST be returned if a Service Instance with the same id already exists but with different attributes. |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous provisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. |
 
@@ -954,11 +1049,18 @@ For success responses, the following fields are defined:
 | --- | --- | --- |
 | dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. If present, MUST be a non-empty string. |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
+| network_profiles | array of [NetworkProfiles](#network-profiles-object) objects | List of supported Network Profiles for this Service Instance. This list MUST match or MUST be a subset of the Network Profiles list of the request. If this field is missing, only direct connections to public endpoints are supported. |
 
 ```
 {
   "dashboard_url": "http://example-dashboard.example.com/9189kdfsk0vfnku",
-  "operation": "task_10"
+  "operation": "task_10",
+  "network_profiles": [
+    {
+      "id": "urn:something:vpn",
+      "proto": "tcp"
+    }
+  ]
 }
 ```
 
@@ -1277,6 +1379,7 @@ The following HTTP Headers are defined for this operation:
 | app_guid | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the Service Binding to be created. If present, MUST be a non-empty string. |
 | bind_resource | [BindResource](#bind-resource-object) | A JSON object that contains data for Platform resources associated with the Service Binding to be created. See [Bind Resource Object](#bind-resource-object) for more information. |
 | parameters | object | Configuration parameters for the Service Binding. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
+| network_data | object | Network configuration data depending on the Network Profile. This object MUST contain a field `network_profile_id`. The value of this field MUST be the ID of the Network Profile. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -1316,6 +1419,9 @@ binding requests.
   "parameters": {
     "parameter1-name-here": 1,
     "parameter2-name-here": "parameter2-value-here"
+  },
+  "network_data": {
+    "network_profile_id": "urn:something:vpn"
   }
 }
 ```
@@ -1336,6 +1442,9 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
   "parameters": {
     "parameter1-name-here": 1,
     "parameter2-name-here": "parameter2-value-here"
+  },
+  "network_data": {
+    "network_profile_id": "urn:something:vpn"
   }
 }' -X PUT -H "X-Broker-API-Version: 2.13" -H "Content-Type: application/json"
 ```
@@ -1373,6 +1482,8 @@ For `200 OK` and `201 Created` response codes, the following fields are defined:
 | syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for remote storage devices to be mounted into an application container filesystem. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
+| endpoints | array of strings | A list of network endpoints. The format of the strings is `<hostname or IP>:<port>`. The endpoints need not to be reachable and the host names need not to resolvable from outside the service network. |
+| network_data | object | Network configuration data depending on the Network Profile. This object MUST contain a field `network_profile_id`. The value of this field MUST be the ID of the Network Profile. |
 
 ##### Volume Mount Object
 
@@ -1407,6 +1518,13 @@ can be mounted on all app instances simultaneously.
     "host": "mysqlhost",
     "port": 3306,
     "database": "dbname"
+  },
+  "endpoints": [
+    "mysqlhost:3306"
+  ],
+  "network_data": {
+    "network_profile_id": "urn:something:vpn", 
+    "gateway": "example.org:12345"
   }
 }
 ```
@@ -1494,6 +1612,106 @@ For success responses, the following fields are defined:
   "operation": "task_10"
 }
 ```
+
+## Adapting Service Binding Credentials
+
+If the endpoints of a Service Instance are from an Application point of view
+are different to the endpoints provided in the binding credentials, then the
+binding credentials MUST be adapted before the Platform provides them to
+the Application.
+
+The Platform requests the corrected credentials from the Service Broker by
+providing the original credentials and a table that maps the original
+endpoints to the new endpoints.
+
+### Request
+
+##### Route
+
+`PUT /v2/service_instances/:instance_id/service_bindings/:binding_id/credentials`
+
+`:instance_id` MUST be the ID of a previously provisioned Service Instance.
+
+`:binding_id` MUST be the ID of a previously provisioned Service Binding for that
+instance.
+
+#### Headers
+
+The following HTTP Headers are defined for this operation:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
+
+\* Headers with an asterisk are REQUIRED.
+
+#### Body
+| Request Field | Type | Description |
+| --- | --- | --- |
+| credentials* | object | The free-form hash of credentials that the Platform has received from the Service Broker. |
+| endpoint_mappings* | array of [EndpointMapping](#endpoint-mapping-object) objects | A list of endpoint mapping. |
+
+\* Headers with an asterisk are REQUIRED.
+
+##### Endpoint Mapping Object
+
+| Request Field | Type | Description |
+| --- | --- | --- |
+| source* | string | The endpoint on the service side. The format of the strings is `<hostname or IP>:<port>`. |
+| target* | string | The mapped endpoint on the application side. The format of the strings is `<hostname or IP>:<port>`. |
+
+\* Headers with an asterisk are REQUIRED.
+
+```
+{
+  "credentials": {
+    "uri": "mysql://mysqluser:pass@mysqlhost:3306/dbname",
+    "username": "mysqluser",
+    "password": "pass",
+    "host": "mysqlhost",
+    "port": 3306,
+    "database": "dbname"
+  },
+  "endpoint_mappings": [
+    {
+      "source": "mysqlhost:3306",
+      "target": "appnethost:9876"
+    }
+  ]
+}
+```
+
+### Response
+
+| Status Code | Description |
+| --- | --- |
+| 200 OK | The expected response body is below. |
+| 404 Not Found | MUST be returned if the Service Binding does not exist or if a binding operation is still in progress. |
+
+Responses with any other status code MUST be interpreted as a failure and the
+Platform MUST continue to remember the Service Binding.
+
+##### Body
+
+For success responses, the following fields are defined:
+
+| Response Field | Type | Description |
+| --- | --- | --- |
+| credentials | object | The adapted free-form hash of the credentials. |
+
+```
+{
+  "credentials": {
+    "uri": "mysql://mysqluser:pass@appnethost:9876/dbname",
+    "username": "mysqluser",
+    "password": "pass",
+    "host": "appnethost",
+    "port": 9876,
+    "database": "dbname"
+  }
+}
+```
+
 
 ## Unbinding
 
