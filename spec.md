@@ -1526,11 +1526,6 @@ if it contains sensitive information.
   "parameters": {
     "billing-account": "abcde12345"
   }
-```
-
-```
-{
-  "operation": "task_10"
 }
 ```
 
