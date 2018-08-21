@@ -140,7 +140,7 @@ that do not understand them.
   ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/436))
 * Allow an updated `dashboard_url` to be provided when updating a Service
   Instance ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/437))
-* Added an [OpenAPI 2.0 implementation](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/openapi.yaml)
+* Added an [OpenAPI 2.0 implementation](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/swagger.yaml)
 * Allow for periods in name fields
   ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/452))
 * Removed the need for Platforms to perform orphan mitigation when receiving an
