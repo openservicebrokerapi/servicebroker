@@ -973,9 +973,9 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 409 Conflict | MUST be returned if a Service Instance with the same id already exists but with different attributes. |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous provisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. |
 
-Responses with any other status code MUST be interpreted as a failure and a
-deprovision request MUST be sent to the Service Broker to prevent an orphan
-being created on the Service Broker. However, while the platform will attempt
+Responses with any other status code MUST be interpreted as a failure. See
+the [Orphans](#orphans) section for more information related to whether
+orphan mitigation needs to be applied. While a Platform might attempt
 to send a deprovision request, Service Brokers MAY automatically delete
 any resources associated with the failed provisioning request on their own.
 
