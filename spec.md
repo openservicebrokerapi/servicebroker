@@ -169,7 +169,9 @@ no obligation to understand or process unknown extension fields.
 
 While the communication between a Platform and Service Broker MAY be unsecure,
 it is RECOMMENDED that all communications between a Platform and a Service
-Broker are secured via TLS and authenticated.
+Broker are secured via TLS and authenticated. If communications are secured
+via TLS, the Platform and Service Broker SHOULD agree whether the Service
+Broker will use a root-signed certificate or a self-signed certificate.
 
 Unless there is some out of band communication and agreement between a
 Platform and a Service Broker, the Platform MUST authenticate with the
@@ -186,10 +188,6 @@ for details on these mechanisms.
 If authentication is used, the Service Broker MUST authenticate the request
 using the predetermined authentication mechanism, and MUST return a `401 Unauthorized`
 response if the authentication fails.
-
-Additionally, the Service Broker MUST secure communications with TLS. The Platform
-and Service Broker SHOULD agree whether the Service Broker will use a root-signed
-certificate or a self-signed certificate.
 
 Note: Using an authentication mechanism that is agreed to via out of band
 communications could lead to interoperability issues with other Platforms.
