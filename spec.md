@@ -794,7 +794,7 @@ If the response contains `"state": "failed"` then the Platform MUST send a
 deprovision request to the Service Broker to prevent an orphan being created on
 the Service Broker. However, while the Platform will attempt
 to send a deprovision request, Service Brokers MAY automatically delete
-any resources associated with the failed bind request on their own.
+any resources associated with the failed provisioning request on their own.
 
 ## Polling Last Operation for Service Bindings
 
