@@ -1641,7 +1641,7 @@ endpoints to the new endpoints.
 
 ##### Route
 
-`PUT /v2/service_instances/:instance_id/service_bindings/:binding_id/credentials`
+`POST /v2/service_instances/:instance_id/service_bindings/:binding_id/adapt_credentials`
 
 `:instance_id` MUST be the ID of a previously provisioned Service Instance.
 
