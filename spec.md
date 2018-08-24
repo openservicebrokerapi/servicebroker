@@ -28,7 +28,7 @@
   - [Binding](#binding)
     - [Types of Binding](#types-of-binding)
   - [Fetching a Service Binding](#fetching-a-service-binding)
-  - [Adapting Service Binding Credentials](adapting-service-binding-credentials)
+  - [Adapting Service Binding Credentials](#adapting-service-binding-credentials)
   - [Unbinding](#unbinding)
   - [Deprovisioning](#deprovisioning)
   - [Orphans](#orphans)
@@ -1482,7 +1482,7 @@ For `200 OK` and `201 Created` response codes, the following fields are defined:
 | syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for remote storage devices to be mounted into an application container filesystem. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
-| endpoints | array of strings | A list of network endpoints. The format of the strings is `<hostname or IP>:<port>`. The endpoints need not to be reachable and the host names need not to resolvable from outside the service network. |
+| endpoints | array of [Endpoint](#endpoint-object) objects | A list of network endpoints. The endpoints need not to be reachable and the host names need not to resolvable from outside the service network. |
 | network_data | object | Network configuration data depending on the Network Profile. This object MUST contain a field `network_profile_id`. The value of this field MUST be the ID of the Network Profile. |
 
 ##### Volume Mount Object
@@ -1509,6 +1509,16 @@ can be mounted on all app instances simultaneously.
 
 \* Fields with an asterisk are REQUIRED.
 
+##### Endpoint Object
+
+| Response Field | Type | Description |
+| --- | --- | --- |
+| host* | string | The host name or IP. |
+| port* | string | The port. |
+| proto | string | The protocol. Valid values are `tcp` and `udp`. The default value is `tcp`. |
+
+\* Fields with an asterisk are REQUIRED.
+
 ```
 {
   "credentials": {
@@ -1520,7 +1530,10 @@ can be mounted on all app instances simultaneously.
     "database": "dbname"
   },
   "endpoints": [
-    "mysqlhost:3306"
+    {
+      "host": "mysqlhost",
+      "port:" 3306
+    }
   ],
   "network_data": {
     "network_profile_id": "urn:something:vpn", 
@@ -1616,7 +1629,7 @@ For success responses, the following fields are defined:
 ## Adapting Service Binding Credentials
 
 If the endpoints of a Service Instance are from an Application point of view
-are different to the endpoints provided in the binding credentials, then the
+different to the endpoints provided in the binding credentials, then the
 binding credentials MUST be adapted before the Platform provides them to
 the Application.
 
@@ -1657,8 +1670,8 @@ The following HTTP Headers are defined for this operation:
 
 | Request Field | Type | Description |
 | --- | --- | --- |
-| source* | string | The endpoint on the service side. The format of the strings is `<hostname or IP>:<port>`. |
-| target* | string | The mapped endpoint on the application side. The format of the strings is `<hostname or IP>:<port>`. |
+| source* | [Endpoint](#endpoint-object) object | The endpoint on the service side. |
+| target* | [Endpoint](#endpoint-object) object | The mapped endpoint on the application side. |
 
 \* Headers with an asterisk are REQUIRED.
 
@@ -1674,8 +1687,14 @@ The following HTTP Headers are defined for this operation:
   },
   "endpoint_mappings": [
     {
-      "source": "mysqlhost:3306",
-      "target": "appnethost:9876"
+      "source": {
+        "host": "mysqlhost",
+        "port": 3306
+      },
+      "target": {
+        "host": "appnethost",
+        "port": 9876
+      }
     }
   ]
 }
