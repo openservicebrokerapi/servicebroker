@@ -10,6 +10,7 @@
   - [Platform to Service Broker Authentication](#platform-to-service-broker-authentication)
   - [URL Properties](#url-properties)
   - [Originating Identity](#originating-identity)
+  - [Request Identity](#request-identity)
   - [Service Broker Errors](#service-broker-errors)
   - [Content Type](#content-type)
   - [Catalog Management](#catalog-management)
@@ -300,6 +301,26 @@ querying of the Service Broker's catalog, the Platform might not have an
 end-user with which to associate the request, therefore in those cases the
 originating identity header would not be included in those messages.
 
+# Request Identity
+
+A platform might wish to uniquely identify a specific request as it flows throughout the system.
+For example, this might be used for logging for request tracing purposes. In order to facilitate
+this, platforms will need to provide identifacation information to the Service Broker for each
+request. Platforms MAY support this feature, and if they do, they MUST adhere to the following:
+- For any OSBAPI request, there MUST be an associated `X-Broker-Request-Identity` header on
+  the HTTP request
+- The Service Broker MAY include this value in log messages generated as a result of the request
+- The Service Broker MUST include this header in the response to the request
+The format of the header MUST be:
+
+```
+X-Broker-API-Request-Identity: value
+```
+
+`value` MUST be a non-empty string indicating the identity of the
+request being sent. The specific value MAY be unique for each request
+sent to the broker. Using a GUID is RECOMMENDED.
+
 ## Service Broker Errors
 
 When a request to a Service Broker fails, the Service Broker MUST return an
@@ -392,6 +413,7 @@ The following HTTP Headers are defined for this operation:
 | Header | Type | Description |
 | --- | --- | --- |
 | X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
+| X-Broker-Request-Identity | string | See [Request-Identity](#request-identity). |
 
 \* Headers with an asterisk are REQUIRED.
 
@@ -509,6 +531,14 @@ The following rules apply if `parameters` is included anywhere in the catalog:
 schema being used.
 * Schemas MUST NOT contain any external references.
 * Schemas MUST NOT be larger than 64kB.
+
+#### Headers
+
+The following HTTP Headers are defined for this operation:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-Request-Identity | string | See [Request-Identity](#request-identity). |
 
 ```
 {
@@ -751,6 +781,7 @@ The following HTTP Headers are defined for this operation:
 | Header | Type | Description |
 | --- | --- | --- |
 | X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
+| X-Broker-Request-Identity | string | See [Request-Identity](#request-identity). |
 
 \* Headers with an asterisk are REQUIRED.
 
@@ -782,6 +813,12 @@ For success responses, the following fields are defined:
 | description | string | A user-facing message that can be used to tell the user details about the status of the operation. If present, MUST be a non-empty string. |
 
 \* Fields with an asterisk are REQUIRED.
+
+#### Headers
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-Request-Identity | string | See [Request-Identity](#request-identity). |
 
 ```
 {
@@ -832,6 +869,12 @@ Note: Although the request query parameters `service_id` and `plan_id` are not
 mandatory, the Platform SHOULD include them on all `last_operation` requests it
 makes to Service Brokers.
 
+#### Headers
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-Request-Identity | string | See [Request-Identity](#request-identity). |
+
 #### cURL
 ```
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:binding_id/last_operation
@@ -860,6 +903,12 @@ For success responses, the following fields are defined:
 | description | string | A user-facing message that can be used to tell the user details about the status of the operation. If present, MUST be a non-empty string. |
 
 \* Fields with an asterisk are REQUIRED.
+
+#### Headers
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-Request-Identity | string | See [Request-Identity](#request-identity). |
 
 ```
 {
@@ -910,6 +959,7 @@ The following HTTP Headers are defined for this operation:
 | --- | --- | --- |
 | X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
 | X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
+| X-Broker-Request-Identity | string | See [Request-Identity](#request-identity). |
 
 \* Headers with an asterisk are REQUIRED.
 
@@ -977,6 +1027,14 @@ orphan mitigation needs to be applied. While a Platform might attempt
 to send a deprovision request, Service Brokers MAY automatically delete
 any resources associated with the failed provisioning request on their own.
 
+#### Headers
+
+The following HTTP Headers are defined for this operation:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-Request-Identity | string | See [Request-Identity](#request-identity). |
+
 #### Body
 
 For success responses, the following fields are defined:
@@ -1026,6 +1084,14 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id' -
 
 Responses with any other status code MUST be interpreted as a failure and the
 Platform MUST continue to remember the Service Instance.
+
+#### Headers
+
+The following HTTP Headers are defined for this operation:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-Request-Identity | string | See [Request-Identity](#request-identity). |
 
 ##### Body
 
@@ -1095,6 +1161,7 @@ The following HTTP Headers are defined for this operation:
 | --- | --- | --- |
 | X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
 | X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
+| X-Broker-Request-Identity | string | See [Request-Identity](#request-identity). |
 
 \* Headers with an asterisk are REQUIRED.
 
@@ -1191,6 +1258,12 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 Responses with any other status code MUST be interpreted as a failure.
 When the response includes a 4xx status code, the Service Broker MUST NOT
 apply any of the requested changes to the Service Instance.
+
+#### Headers
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-Request-Identity | string | See [Request-Identity](#request-identity). |
 
 #### Body
 
@@ -1293,6 +1366,7 @@ The following HTTP Headers are defined for this operation:
 | --- | --- | --- |
 | X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
 | X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
+| X-Broker-Request-Identity | string | See [Request-Identity](#request-identity). |
 
 \* Headers with an asterisk are REQUIRED.
 
@@ -1391,6 +1465,14 @@ created on the Service Broker. However, while the platform will attempt
 to send an unbind request, Service Brokers MAY automatically delete
 any resources associated with the failed bind request on their own.
 
+#### Headers
+
+The following HTTP Headers are defined for this operation:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-Request-Identity | string | See [Request-Identity](#request-identity). |
+
 #### Body
 
 For a `202 Accepted` response code, the following fields are defined:
@@ -1481,6 +1563,14 @@ endpoint returns `"state": "succeeded"` for a [Binding](#binding) operation.
 `:binding_id` MUST be the ID of a previously provisioned Service Binding for that
 instance.
 
+#### Headers
+
+The following HTTP Headers are defined for this operation:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-Request-Identity | string | See [Request-Identity](#request-identity). |
+
 ##### cURL
 ```
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:binding_id' -X GET -H "X-Broker-API-Version: 2.14"
@@ -1495,6 +1585,14 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/se
 
 Responses with any other status code MUST be interpreted as a failure and the
 Platform MUST continue to remember the Service Binding.
+
+#### Headers
+
+The following HTTP Headers are defined for this operation:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-Request-Identity | string | See [Request-Identity](#request-identity). |
 
 ##### Body
 
@@ -1566,6 +1664,7 @@ The following HTTP Headers are defined for this operation:
 | --- | --- | --- |
 | X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
 | X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
+| X-Broker-Request-Identity | string | See [Request-Identity](#request-identity). |
 
 \* Headers with an asterisk are REQUIRED.
 
@@ -1588,6 +1687,14 @@ $ curl 'http://username:password@service-broker-url/v2/service_instances/:instan
 
 Responses with any other status code MUST be interpreted as a failure and the
 Platform MUST continue to remember the Service Binding.
+
+#### Headers
+
+The following HTTP Headers are defined for this operation:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-Request-Identity | string | See [Request-Identity](#request-identity). |
 
 #### Body
 
@@ -1624,6 +1731,18 @@ Service Bindings associated with it.
 
 `:instance_id` MUST be the ID of a previously provisioned Service Instance.
 
+#### Headers
+
+The following HTTP Headers are defined for this operation:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
+| X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
+| X-Broker-Request-Identity | string | See [Request-Identity](#request-identity). |
+
+\* Headers with an asterisk are REQUIRED.
+
 #### Parameters
 
 The request provides these query string parameters as useful hints for Service
@@ -1637,17 +1756,6 @@ Brokers.
 | accepts_incomplete | boolean | A value of true indicates that both the Platform and the requesting client support asynchronous deprovisioning. If this parameter is not included in the request, and the Service Broker can only deprovision a Service Instance of the requested plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
 \* Query parameters with an asterisk are REQUIRED.
-
-#### Headers
-
-The following HTTP Headers are defined for this operation:
-
-| Header | Type | Description |
-| --- | --- | --- |
-| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
-| X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
-
-\* Headers with an asterisk are REQUIRED.
 
 #### cURL
 ```
@@ -1667,6 +1775,14 @@ $ curl 'http://username:password@service-broker-url/v2/service_instances/:instan
 
 Responses with any other status code MUST be interpreted as a failure and the
 Platform MUST remember the Service Instance.
+
+#### Headers
+
+The following HTTP Headers are defined for this operation:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-Request-Identity | string | See [Request-Identity](#request-identity). |
 
 #### Body
 
