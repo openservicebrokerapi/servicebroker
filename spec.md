@@ -965,7 +965,7 @@ The following HTTP Headers are defined for this operation:
 | organization_guid* | string | Deprecated in favor of `context`. The Platform GUID for the organization under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | space_guid* | string | Deprecated in favor of `context`. The identifier for the project space within the Platform organization. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | parameters | object | Configuration parameters for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
-| network_profiles | array of [NetworkProfiles](#network-profiles-object) objects | A non-empty list of supported and desired Network Profiles for this Service Instance. If this field is missing, only direct connections are supported. |
+| network_profiles | array of [NetworkProfiles](#network-profiles-object) objects | A non-empty list of supported and desired Network Profiles for this Service Instance. If a Network Profile appears multiple times in this list, it there MUST be different `data` field for each entry. If this field is missing, only direct connections are supported. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -974,10 +974,9 @@ The following HTTP Headers are defined for this operation:
 | Request Field | Type | Description |
 | --- | --- | --- |
 | id* | string | MUST be the ID of the Network Profile. |
+| data | object | Network Profile specific data. |
 
 \* Fields with an asterisk are REQUIRED.
-
-This object MAY contain additional Network Profile specific fields.
 
 
 ```
@@ -997,7 +996,9 @@ This object MAY contain additional Network Profile specific fields.
   "network_profiles": [
     {
       "id": "urn:something:vpn",
-      "proto": "tcp"
+      "data": {
+        "proto": "tcp"
+      }
     },
     {
       "id": "urn:openservicebrokerapi:network:direct"
@@ -1513,9 +1514,9 @@ can be mounted on all app instances simultaneously.
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| host* | string | The host name or IP. |
-| port* | string | The port. |
-| proto | string | The protocol. Valid values are `tcp` and `udp`. The default value is `tcp`. |
+| host* | string | A host name, a single IP address, an IP address range like 192.0.2.0-192.0.2.50, or a CIDR block. |
+| ports* | string | A single port, multiple comma-separated ports, or a single range of ports.  |
+| protocol | string | The protocol. Valid values are `tcp`, `udp`, or `all`. The default value is `tcp`. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -1532,7 +1533,7 @@ can be mounted on all app instances simultaneously.
   "endpoints": [
     {
       "host": "mysqlhost",
-      "port:" 3306
+      "ports:" "3306"
     }
   ],
   "network_data": {
@@ -1689,11 +1690,11 @@ The following HTTP Headers are defined for this operation:
     {
       "source": {
         "host": "mysqlhost",
-        "port": 3306
+        "ports": "3306"
       },
       "target": {
         "host": "appnethost",
-        "port": 9876
+        "ports": "9876"
       }
     }
   ]
