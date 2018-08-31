@@ -29,6 +29,7 @@
   - [Fetching a Service Binding](#fetching-a-service-binding)
   - [Unbinding](#unbinding)
   - [Deprovisioning](#deprovisioning)
+  - [Corrupt Service Instances](#corrupt-service-instances)
   - [Orphans](#orphans)
 
 ## API Overview
@@ -1698,6 +1699,18 @@ For success responses, the following fields are defined:
   "operation": "task_10"
 }
 ```
+
+## Corrupt Service Instances
+
+When an update or delete operation fails, the Service Instance MAY be corrupt.
+A corrupt instance MAY be misconfigured, in an invalid state, not reachable, or
+not working at all.
+Platforms SHOULD not try to create bindings for this instance anymore.
+Whether or not a corrupt instance can be repaired by, for example, updating it
+again, is undefined.
+Deprovisioning a corrupt instance SHOULD still be possible. A Platform MUST
+remember the Service Instance until it is successfully deprovisioned or it has
+been cleaned up as an orphan.
 
 ## Orphans
 
