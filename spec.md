@@ -695,9 +695,10 @@ operation.
 
 ## Blocking Operations
 
-Service Brokers do not have to support concurrent requests that mutate the same
-resource. If a Service Broker receives a request that it is not able to process
-due to other activity being done on that resource then the Service Broker MUST
+Service Brokers MAY choose the degree to which they support concurrent
+requests, ranging from not supporting them at all to only supporting them
+in selective situations. If a Service Broker receives a request that it is
+not able to process due a concurrency issue then the Service Broker MUST
 reject the request with a HTTP `422 Unprocessable Entity` and a response body
 containing error code `"ConcurrencyError"` (see
 [Service Broker Errors](#service-broker-errors)). The error response MAY include
@@ -707,11 +708,6 @@ for this Service Instance is in progress."`.
 Note that per the [Orphans](#orphans) section, this error response does not
 cause orphan mitigation to be initiated. Therefore, Platforms receiving this
 error response SHOULD resend the request at a later time.
-
-Service Broker MAY choose to only support concurrent requests for certain
-operations. For example, a specification compliant Service Broker can choose
-to reject concurrent requests in general but accept a deprovision request
-to halt the processing of a long running provision request.
 
 Brokers MAY choose to treat the creation of a Service Binding as a mutation of
 the corresponding Service Instance - it is an implementation choice. Doing so
@@ -1545,7 +1541,10 @@ Instance failing to authenticate.
 If a Service Broker accepts the request to delete a Service Binding during
 the process of it being created, then it MUST have the net effect of halting
 the current creation process and deleting any resources associated with
-the Service Binding.
+the Service Binding. If the request to create the Service Binding is
+asynchronous, then its `last_operation` response SHOULD return an HTTP
+status code of `200`, a `state` value of `failed` and a `description`
+that indicates the create failed due to a concurrent delete request.
 
 ### Request
 
@@ -1629,7 +1628,10 @@ Service Bindings associated with it.
 If a Service Broker accepts the request to delete a Service Instance during
 the process of it being created, then it MUST have the net effect of halting
 the current creation process and deleting any resources associated with
-the Service Instance.
+the Service Instance. If the request to create the Service Instance is
+asynchronous, then its `last_operation` response SHOULD return an HTTP
+status code of `200`, a `state` value of `failed` and a `description`
+that indicates the create failed due to a concurrent delete request.
 
 ### Request
 
