@@ -429,7 +429,7 @@ specific behaviour.
 
 | Broker API Field | Type | Description |
 | --- | --- | --- |
-| metadata.shareable | string | Allows Service Instances to be shared across orgs and spaces. |
+| metadata.shareable | boolean | Allows Service Instances to be shared across orgs and spaces. |
 
 ## Catalog Extensions
 
