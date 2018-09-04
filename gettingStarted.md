@@ -120,6 +120,10 @@ service brokers. The On Demand Broker is open source, and typically deployed via
 [Open Service Broker for Huawei Cloud](https://github.com/huaweicloud/huaweicloud-service-broker):
 This Service Broker implements support for Huawei cloud services.
 
+[Crunchy PostgreSQL Service Broker](https://github.com/crunchydata/pgo-osb):
+This Service Broker creates PostgresSQL clusters using the Crunchy
+PostgreSQL Operator.
+
 ## Java
 
 [MySQL Java Broker](https://github.com/cloudfoundry-community/cf-mysql-java-broker):
