@@ -29,7 +29,7 @@
   - [Fetching a Service Binding](#fetching-a-service-binding)
   - [Unbinding](#unbinding)
   - [Deprovisioning](#deprovisioning)
-  - [Orphans](#orphans)
+  - [Orphan Mitigation](#orphan-mitigation)
 
 ## API Overview
 
@@ -250,10 +250,11 @@ Where the `value`, when decoded, is:
 ```
 
 Note that not all messages sent to a Service Broker are initiated by an
-end-user of the Platform. For example, during orphan mitigation or during the
-querying of the Service Broker's catalog, the Platform might not have an
-end-user with which to associate the request, therefore in those cases the
-originating identity header would not be included in those messages.
+end-user of the Platform. For example, during
+[Orphan Mitigation](#orphan-mitigation) or during the querying of the Service
+Broker's catalog, the Platform might not have an end-user with which to
+associate the request, therefore in those cases the originating identity header
+would not be included in those messages.
 
 ## Vendor Extension Fields
 
@@ -704,9 +705,8 @@ containing error code `"ConcurrencyError"` (see
 a helpful error message in the `description` field such as `"Another operation
 for this Service Instance is in progress."`.
 
-Note that per the [Orphans](#orphans) section, this error response does not
-cause orphan mitigation to be initiated. Therefore, Platforms receiving this
-error response SHOULD resend the request at a later time.
+Upon receiving this error response, Platforms MUST NOT perform
+[Orphan Mitigation](#orphan-mitigation).
 
 Brokers MAY choose to treat the creation of a Service Binding as a mutation of
 the corresponding Service Instance - it is an implementation choice. Doing so
@@ -780,11 +780,9 @@ For success responses, the following fields are defined:
 }
 ```
 
-If the response contains `"state": "failed"` then the Platform MUST send a
-deprovision request to the Service Broker to prevent an orphan being created on
-the Service Broker. However, while the Platform will attempt
-to send a deprovision request, Service Brokers MAY automatically delete
-any resources associated with the failed provisioning request on their own.
+For asynchronous provision operations, if the response contains
+`"state": "failed"` then the Platform might need to perform
+[Orphan Mitigation](#orphan-mitigation).
 
 ## Polling Last Operation for Service Bindings
 
@@ -858,9 +856,8 @@ For success responses, the following fields are defined:
 }
 ```
 
-If the response contains `"state": "failed"` then the Platform MUST send an
-unbind request to the Service Broker to prevent an orphan being created on
-the Service Broker.
+If the response contains `"state": "failed"`, then the Platform might need to
+perform [Orphan Mitigation](#orphan-mitigation).
 
 ## Polling Interval and Duration
 
@@ -950,11 +947,8 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 409 Conflict | MUST be returned if a Service Instance with the same id already exists but with different attributes. |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous provisioning for the requested Service Plan and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. |
 
-Responses with any other status code MUST be interpreted as a failure. See
-the [Orphans](#orphans) section for more information related to whether
-orphan mitigation needs to be applied. While a Platform might attempt
-to send a deprovision request, Service Brokers MAY automatically delete
-any resources associated with the failed provisioning request on their own.
+Responses with any other status code MUST be interpreted as a failure and the
+Platform might need to perform [Orphan Mitigation](#orphan-mitigation).
 
 #### Body
 
@@ -1342,11 +1336,8 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 409 Conflict | MUST be returned if a Service Binding with the same id, for the same Service Instance, already exists but with different parameters. |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker requires that `app_guid` be included in the request body. The response body MUST contain error code `"RequiresApp"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service supports generation of credentials through binding an application only."`. Additionally, if the Service Broker rejects the request due to a concurrent request to create a Service Binding for the same Service Instance, then this error MUST be returned (see [Blocking Operations](#blocking-operations)). This MUST also be returned if the Service Broker only supports asynchronous bindings for the Service Instance and the request did not include `?accepts_incomplete=true`. In this case, the response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Instance requires client support for asynchronous binding operations."`. |
 
-Responses with any other status code MUST be interpreted as a failure and an
-unbind request MUST be sent to the Service Broker to prevent an orphan being
-created on the Service Broker. However, while the platform will attempt
-to send an unbind request, Service Brokers MAY automatically delete
-any resources associated with the failed bind request on their own.
+Responses with any other status code MUST be interpreted as a failure and the
+Platform might need to perform [Orphan Mitigation](#orphan-mitigation).
 
 #### Body
 
@@ -1633,40 +1624,61 @@ For success responses, the following fields are defined:
 }
 ```
 
-## Orphans
+## Orphan Mitigation
 
 The Platform is the source of truth for Service Instances and Service Bindings.
 Service Brokers are expected to have successfully provisioned all of the Service
 Instances and Service Bindings that the Platform knows about, and none that it
 doesn't.
 
-Orphans can result if the Service Broker does not return a response before a
-request from the Platform times out (typically 60 seconds). For example, if a
-Service Broker does not return a response to a provision request before the
-request times out, the Service Broker might eventually succeed in provisioning
-a Service Instance after the Platform considers the request a failure. This
-results in an orphan Service Instance on the Service Broker's side.
+Orphaned Service Instances and Service Bindings might have been created in one
+of the following scenarios:
+* The Service Broker does not return a response before a request from the
+Platform times out (typically 60 seconds). The Service Broker might eventually
+succeed in creating a resource, however the Platform might have already
+considered the request a failure.
+* A synchronous [Provisioning](#provisioning) request fails.
+* A call to the
+[Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances)
+endpoint returns `"state": "failed"` for an asynchronous provisioning or
+deprovisioning request.
+* A synchronous [Binding](#binding]) request fails.
+* A call to the
+[Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings)
+endpoint returns `"state": "failed"` for an asynchronous binding or unbinding
+request.
+* The Platform encounters an internal error when creating a Service Instance or
+Service Binding (for example, saving to the database fails).
 
-To mitigate orphan Service Instances and Service Bindings, the Platform SHOULD
+To mitigate orphaned Service Instances and Service Bindings, the Platform SHOULD
 attempt to delete resources it cannot be sure were successfully created, and
 SHOULD keep trying to delete them until the Service Broker responds with a
-success.
+success. Service Brokers MAY automatically delete any resources they believe to
+be orphaned on their own. Note that the Platform MAY allow end users to
+determine when orphan mitigation occurs, in order to allow them to investigate
+the cause of any failures.
 
-Platforms SHOULD initiate orphan mitigation in the following scenarios:
+The following table aims to describe when Orphan Mitigation is to be initiated
+by the Platform:
 
-| Status Code Of Service Broker Response | Platform Interpretation Of Response | Platform Initiates Orphan Mitigation? |
-| --- | --- | --- |
-| 200 | Success | No |
-| 200 with malformed response | Failure | No |
-| 201 | Success | No |
-| 201 with malformed response | Failure | Yes |
-| All other 2xx | Failure | Yes |
-| 408 | Client timeout failure (request not received at the server) | No |
-| All other 4xx | Request rejected | No |
-| 5xx | Service Broker error | Yes |
-| Timeout | Failure | Yes |
-
-If the Platform encounters an internal error provisioning a Service Instance or
-Service Binding (for example, saving to the database fails), then it MUST at
-least send a single delete or unbind request to the Service Broker to prevent
-the creation of an orphan.
+| Request | Service Broker Response Status Code | Platform Interpretation Of Response | Orphan Mitigation SHOULD be performed for Service Instances | Orphan Mitigation SHOULD be performed for Service Bindings |
+| --- | --- | --- | --- | --- |
+| _All_ | 200 | Success | No | No |
+| _All_ | 200 with malformed response | Failure | No | No |
+| [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) for [Provisioning](#provisioning)/[Deprovisioning](#deprovisioning) | 200 with `"state": "failed"` | Failure | Yes | No |
+| [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) for [Binding](#binding)/[Unbinding](#unbinding) | 200 with `"state": "failed"` | Failure | No | Yes |
+| _All_ | 201 | Success | No | No |
+| [Provisioning](#provisioning) | 201 with malformed response | Failure | Yes | No |
+| [Binding](#binding) | 201 with malformed response | Failure | No | Yes |
+| _All_ | 202 | Success | No | No |
+| [Provisioning](#provisioning)/[Deprovisioning](#deprovisioning) | All other 2xx | Failure | Yes | No |
+| [Binding](#binding)/[Unbinding](#unbinding) | All other 2xx | Failure | No | Yes |
+| [Updating a Service Instance](#updating-a-service-instance) | All other 2xx | Failure | No | No |
+| _All_ | 408 | Client timeout failure (request not received at the server) | No | No |
+| _All_ | All other 4xx | Request rejected | No | No |
+| [Provisioning](#provisioning)/[Deprovisioning](#deprovisioning) | 5xx | Service Broker error | Yes | No |
+| [Binding](#binding)/[Unbinding](#unbinding) | 5xx | Service Broker error | No | Yes |
+| [Updating a Service Instance](#updating-a-service-instance) | 5xx | Service Broker error | No | No |
+| [Provisioning](#provisioning) | Timeout | Failure | Yes | No |
+| [Binding](#binding) | Timeout | Failure | No | Yes |
+| _All_ (except [Provisioning](#provisioning) and [Binding](#binding)) | Timeout | Failure | No | No |
