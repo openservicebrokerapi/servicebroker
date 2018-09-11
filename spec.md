@@ -193,7 +193,7 @@ used instead.
 Senders of messages defined by this specification MAY include additional
 fields within the JSON objects. When adding new fields, unique prefixes
 SHOULD be used for the field names to reduce the chances of conflicts with
-with future specification defined fields or other extensions.
+future specification defined fields or other extensions.
 
 Receivers of messages defined by this specification that contain unknown
 extension fields MUST ignore those fields and MUST NOT halt processing
