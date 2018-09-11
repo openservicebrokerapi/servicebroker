@@ -863,7 +863,7 @@ This specification does not describe any of them. Instead, it provides
 extension points that allows the service side and the application side to
 negotiate the connection type and exchange the required configuration data.
 
-It is not excepted that the Service Broker deals with the network
+It is not expected that the Service Broker deals with the network
 configuration. A network management component on the Service Broker side SHOULD
 intercept the OSBAPI calls and SHOULD provide and act on these extensions,
 if the service does not expose public endpoints.
@@ -1380,7 +1380,7 @@ The following HTTP Headers are defined for this operation:
 | app_guid | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the Service Binding to be created. If present, MUST be a non-empty string. |
 | bind_resource | [BindResource](#bind-resource-object) | A JSON object that contains data for Platform resources associated with the Service Binding to be created. See [Bind Resource Object](#bind-resource-object) for more information. |
 | parameters | object | Configuration parameters for the Service Binding. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
-| network_data | object | Network configuration data depending on the Network Profile. This object MUST contain a field `network_profile_id`. The value of this field MUST be the ID of the Network Profile. |
+| network_data | array of [NetworkData](#network-data-object) objects | Network configuration data depending on the Network Profile. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -1406,6 +1406,15 @@ while in Kubernetes it might map to a "namespace". The scope of what a
 Platform maps the `app_guid` to is Platform specific and MAY vary across
 binding requests.
 
+##### Network Data Object 
+
+| Request Field | Type | Description |
+| --- | --- | --- |
+| id* | string | MUST be the ID of the Network Profile. |
+| data | object | Network configuration data. |
+
+\* Fields with an asterisk are REQUIRED.
+
 ```
 {
   "context": {
@@ -1422,7 +1431,7 @@ binding requests.
     "parameter2-name-here": "parameter2-value-here"
   },
   "network_data": {
-    "network_profile_id": "urn:something:vpn"
+    "id": "urn:something:vpn"
   }
 }
 ```
@@ -1445,7 +1454,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
     "parameter2-name-here": "parameter2-value-here"
   },
   "network_data": {
-    "network_profile_id": "urn:something:vpn"
+    "id": "urn:something:vpn"
   }
 }' -X PUT -H "X-Broker-API-Version: 2.13" -H "Content-Type: application/json"
 ```
@@ -1484,7 +1493,7 @@ For `200 OK` and `201 Created` response codes, the following fields are defined:
 | route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for remote storage devices to be mounted into an application container filesystem. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | endpoints | array of [Endpoint](#endpoint-object) objects | A list of network endpoints. The endpoints need not to be reachable and the host names need not to resolvable from outside the service network. |
-| network_data | object | Network configuration data depending on the Network Profile. This object MUST contain a field `network_profile_id`. The value of this field MUST be the ID of the Network Profile. |
+| network_data | array of [NetworkData](#network-data-object) objects | Network configuration data depending on the Network Profile. |
 
 ##### Volume Mount Object
 
@@ -1515,7 +1524,7 @@ can be mounted on all app instances simultaneously.
 | Response Field | Type | Description |
 | --- | --- | --- |
 | host* | string | A host name, a single IP address, an IP address range like 192.0.2.0-192.0.2.50, or a CIDR block. |
-| ports* | string | A single port, multiple comma-separated ports, or a single range of ports.  |
+| ports* | array of strings | A non-empty array. Each element is either a single port (for example "443") or a port range (for example "9000-9010"). |
 | protocol | string | The protocol. Valid values are `tcp`, `udp`, or `all`. The default value is `tcp`. |
 
 \* Fields with an asterisk are REQUIRED.
@@ -1533,12 +1542,14 @@ can be mounted on all app instances simultaneously.
   "endpoints": [
     {
       "host": "mysqlhost",
-      "ports:" "3306"
+      "ports:" ["3306"]
     }
   ],
   "network_data": {
-    "network_profile_id": "urn:something:vpn", 
-    "gateway": "example.org:12345"
+    "id": "urn:something:vpn", 
+    "data": { 
+      "gateway": "example.org:12345"
+    }
   }
 }
 ```
@@ -1552,7 +1563,7 @@ can be mounted on all app instances simultaneously.
     "device_type": "shared",
     "device": {
       "volume_id": "bc2c1eab-05b9-482d-b0cf-750ee07de311",
-      "mount_config": {
+      "mount_config": { 
         "key": "value"
       }
     }
@@ -1649,16 +1660,6 @@ endpoints to the new endpoints.
 `:binding_id` MUST be the ID of a previously provisioned Service Binding for that
 instance.
 
-#### Headers
-
-The following HTTP Headers are defined for this operation:
-
-| Header | Type | Description |
-| --- | --- | --- |
-| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
-
-\* Headers with an asterisk are REQUIRED.
-
 #### Body
 | Request Field | Type | Description |
 | --- | --- | --- |
@@ -1673,6 +1674,12 @@ The following HTTP Headers are defined for this operation:
 | --- | --- | --- |
 | source* | [Endpoint](#endpoint-object) object | The endpoint on the service side. |
 | target* | [Endpoint](#endpoint-object) object | The mapped endpoint on the application side. |
+
+The `ports` arrays in both endpoints MUST be of the same size and the order of
+the ports MUST match. That is, the ports at the same index in both arrays
+belong together. That also means, a single source port can only be mapped to
+single target port and a source port range can only be mapped to a target port
+range of the same size.
 
 \* Headers with an asterisk are REQUIRED.
 
@@ -1690,11 +1697,11 @@ The following HTTP Headers are defined for this operation:
     {
       "source": {
         "host": "mysqlhost",
-        "ports": "3306"
+        "ports": ["3306"]
       },
       "target": {
         "host": "appnethost",
-        "ports": "9876"
+        "ports": ["9876"]
       }
     }
   ]
