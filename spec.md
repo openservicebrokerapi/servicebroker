@@ -257,14 +257,13 @@ will need to provide this identification information to the Service Broker on
 each request. Platforms MAY support this feature, and if they do, they MUST
 adhere to the following:
 - For any OSBAPI request that is the result of an action taken by a Platform's
-  user, there MUST be an associated `X-Broker-API-Originating-Identity` header on that HTTP
-  request.
-- Any OSBAPI request that is not associated with an action from a Platform's
+  user, there MUST be an associated `X-Broker-API-Originating-Identity` header
+  on that HTTP request and its value MUST contain the identity of that user.
+- Any request that is not associated with an action from a Platform's
   user, such as the Platform refetching the catalog, MAY exclude the header from
-  that HTTP request.
-- If present on a request, the `X-Broker-API-Originating-Identity` header MUST contain the
-  identify information for the Platform's user that took the action to cause the
-  request to be sent.
+  that HTTP request. However, it is RECOMMENDED that even Platform initiated
+  requests be associated with some identity for authorization or tracking
+  purposes.
 
 The format of the header MUST be:
 
