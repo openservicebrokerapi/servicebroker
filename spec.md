@@ -6,10 +6,11 @@
   - [Changes](#changes)
     - [Change Policy](#change-policy-for-minor-versions)
     - [Changes Since v2.13](#changes-since-v213)
-  - [API Version Header](#api-version-header)
+  - [Headers](#headers)
+    - [API Version Header](#api-version-header)
+    - [Originating Identity](#originating-identity)
   - [Platform to Service Broker Authentication](#platform-to-service-broker-authentication)
   - [URL Properties](#url-properties)
-  - [Originating Identity](#originating-identity)
   - [Service Broker Errors](#service-broker-errors)
   - [Content Type](#content-type)
   - [Catalog Management](#catalog-management)
@@ -170,7 +171,17 @@ that do not understand them.
 
 For changes in older versions, see the [release notes](https://github.com/openservicebrokerapi/servicebroker/blob/master/release-notes.md).
 
-## API Version Header
+## Headers
+The following HTTP Headers are defined for the operations detailed in this spec:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
+| X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
+
+\* Headers with an asterisk are REQUIRED.
+
+### API Version Header
 
 Requests from the Platform to the Service Broker MUST contain a header that
 declares the version number of the Open Service Broker API that the Platform
@@ -187,6 +198,58 @@ version of the API that is supported by the Platform. In this scenario the
 Service Broker MAY reject the request with `412 Precondition Failed` and
 provide a message that informs the operator of the API version that is to be
 used instead.
+
+### Originating Identity
+
+Often a Service Broker will need to know the identity of the user that
+initiated the request from the Platform. For example, this might be needed for
+auditing or authorization purposes. In order to facilitate this, the Platform
+will need to provide this identification information to the Service Broker on
+each request. Platforms MAY support this feature, and if they do, they MUST
+adhere to the following:
+- For any OSBAPI request that is the result of an action taken by a Platform's
+  user, there MUST be an associated `X-Broker-API-Originating-Identity` header on that HTTP
+  request.
+- Any OSBAPI request that is not associated with an action from a Platform's
+  user, such as the Platform refetching the catalog, MAY exclude the header from
+  that HTTP request.
+- If present on a request, the `X-Broker-API-Originating-Identity` header MUST contain the
+  identify information for the Platform's user that took the action to cause the
+  request to be sent.
+
+The format of the header MUST be:
+
+```
+X-Broker-API-Originating-Identity: Platform value
+```
+
+`Platform` MUST be a non-empty string indicating the Platform from which
+the request is being sent. The specific value SHOULD match the values
+defined in the [profile](profile.md) document for the `context.platform`
+property. When `context` is sent as part of a message, this value MUST
+be the same as the `context.platform` value.
+
+`value` MUST be a Base64 encoded string. The string MUST be a serialized
+JSON object. The specific properties will be Platform specific - see
+the [profile](profile.md) document for more information.
+
+For example:
+```
+X-Broker-API-Originating-Identity: cloudfoundry eyANCiAgInVzZXJfaWQiOiAiNjgzZWE3NDgtMzA5Mi00ZmY0LWI2NTYtMzljYWNjNGQ1MzYwIg0KfQ==
+```
+
+Where the `value`, when decoded, is:
+```
+{
+  "user_id": "683ea748-3092-4ff4-b656-39cacc4d5360"
+}
+```
+
+Note that not all messages sent to a Service Broker are initiated by an
+end-user of the Platform. For example, during orphan mitigation or during the
+querying of the Service Broker's catalog, the Platform might not have an
+end-user with which to associate the request, therefore in those cases the
+originating identity header would not be included in those messages.
 
 ## Vendor Extension Fields
 
@@ -248,58 +311,6 @@ If a character outside of the "Unreserved Characters" set is used, then it
 SHOULD be percent-encoded prior to being used as part of the HTTP request, per
 [RFC3986](https://tools.ietf.org/html/rfc3986#section-2.1).
 
-## Originating Identity
-
-Often a Service Broker will need to know the identity of the user that
-initiated the request from the Platform. For example, this might be needed for
-auditing or authorization purposes. In order to facilitate this, the Platform
-will need to provide this identification information to the Service Broker on
-each request. Platforms MAY support this feature, and if they do, they MUST
-adhere to the following:
-- For any OSBAPI request that is the result of an action taken by a Platform's
-  user, there MUST be an associated `X-Broker-API-Originating-Identity` header on that HTTP
-  request.
-- Any OSBAPI request that is not associated with an action from a Platform's
-  user, such as the Platform refetching the catalog, MAY exclude the header from
-  that HTTP request.
-- If present on a request, the `X-Broker-API-Originating-Identity` header MUST contain the
-  identify information for the Platform's user that took the action to cause the
-  request to be sent.
-
-The format of the header MUST be:
-
-```
-X-Broker-API-Originating-Identity: Platform value
-```
-
-`Platform` MUST be a non-empty string indicating the Platform from which
-the request is being sent. The specific value SHOULD match the values
-defined in the [profile](profile.md) document for the `context.platform`
-property. When `context` is sent as part of a message, this value MUST
-be the same as the `context.platform` value.
-
-`value` MUST be a Base64 encoded string. The string MUST be a serialized
-JSON object. The specific properties will be Platform specific - see
-the [profile](profile.md) document for more information.
-
-For example:
-```
-X-Broker-API-Originating-Identity: cloudfoundry eyANCiAgInVzZXJfaWQiOiAiNjgzZWE3NDgtMzA5Mi00ZmY0LWI2NTYtMzljYWNjNGQ1MzYwIg0KfQ==
-```
-
-Where the `value`, when decoded, is:
-```
-{
-  "user_id": "683ea748-3092-4ff4-b656-39cacc4d5360"
-}
-```
-
-Note that not all messages sent to a Service Broker are initiated by an
-end-user of the Platform. For example, during orphan mitigation or during the
-querying of the Service Broker's catalog, the Platform might not have an
-end-user with which to associate the request, therefore in those cases the
-originating identity header would not be included in those messages.
-
 ## Service Broker Errors
 
 When a request to a Service Broker fails, the Service Broker MUST return an
@@ -334,7 +345,7 @@ case is a "SHOULD" instead of a "MUST" because it might not be possible for
 a Service Broker to guarantee that it can revert all possible effects of a
 failed attempt at the requested operation.
 
-### Content Type
+## Content Type
 
 All requests and responses defined in this specification with accompanying
 bodies SHOULD contain a `Content-Type` header set to `application/json`.
@@ -384,16 +395,6 @@ Broker API.
 
 #### Route
 `GET /v2/catalog`
-
-#### Headers
-
-The following HTTP Headers are defined for this operation:
-
-| Header | Type | Description |
-| --- | --- | --- |
-| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
-
-\* Headers with an asterisk are REQUIRED.
 
 #### cURL
 ```
@@ -744,16 +745,6 @@ Note: Although the request query parameters `service_id` and `plan_id` are not
 mandatory, the Platform SHOULD include them on all `last_operation` requests
 it makes to Service Brokers.
 
-#### Headers
-
-The following HTTP Headers are defined for this operation:
-
-| Header | Type | Description |
-| --- | --- | --- |
-| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
-
-\* Headers with an asterisk are REQUIRED.
-
 #### cURL
 ```
 $ curl http://username:password@service-broker-url/v2/service_instances/:instance_id/last_operation -H "X-Broker-API-Version: 2.14"
@@ -901,17 +892,6 @@ Service Broker will use it to correlate the resource it creates.
 | Parameter Name | Type | Description |
 | --- | --- | --- |
 | accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only provision a Service Instance of the requested plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
-
-#### Headers
-
-The following HTTP Headers are defined for this operation:
-
-| Header | Type | Description |
-| --- | --- | --- |
-| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
-| X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
-
-\* Headers with an asterisk are REQUIRED.
 
 #### Body
 | Request Field | Type | Description |
@@ -1086,17 +1066,6 @@ error message in response.
 | Parameter Name | Type | Description |
 | --- | --- | --- |
 | accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only update a Service Instance of the requested plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
-
-#### Headers
-
-The following HTTP Headers are defined for this operation:
-
-| Header | Type | Description |
-| --- | --- | --- |
-| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
-| X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
-
-\* Headers with an asterisk are REQUIRED.
 
 #### Body
 
@@ -1284,17 +1253,6 @@ one of these services MUST include `volume_mounts`.
 `:binding_id` MUST be a globally unique non-empty string.
 This ID will be used for future unbind requests, so the Service Broker will use
 it to correlate the resource it creates.
-
-#### Headers
-
-The following HTTP Headers are defined for this operation:
-
-| Header | Type | Description |
-| --- | --- | --- |
-| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
-| X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
-
-\* Headers with an asterisk are REQUIRED.
 
 #### Parameters
 | Parameter name | Type | Description |
@@ -1558,17 +1516,6 @@ Service Instance.
 
 \* Query parameters with an asterisk are REQUIRED.
 
-#### Headers
-
-The following HTTP Headers are defined for this operation:
-
-| Header | Type | Description |
-| --- | --- | --- |
-| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
-| X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
-
-\* Headers with an asterisk are REQUIRED.
-
 #### cURL
 
 ```
@@ -1637,17 +1584,6 @@ Brokers.
 | accepts_incomplete | boolean | A value of true indicates that both the Platform and the requesting client support asynchronous deprovisioning. If this parameter is not included in the request, and the Service Broker can only deprovision a Service Instance of the requested plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
 \* Query parameters with an asterisk are REQUIRED.
-
-#### Headers
-
-The following HTTP Headers are defined for this operation:
-
-| Header | Type | Description |
-| --- | --- | --- |
-| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
-| X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
-
-\* Headers with an asterisk are REQUIRED.
 
 #### cURL
 ```
