@@ -1705,7 +1705,7 @@ For success responses, the following fields are defined:
 When an update or delete operation fails, the Service Instance MAY be corrupt.
 A corrupt instance MAY be misconfigured, in an invalid state, not reachable, or
 not working at all.
-Platforms SHOULD not try to create bindings for this instance anymore.
+Platforms SHOULD NOT try to create bindings for this instance anymore.
 Whether or not a corrupt instance can be repaired by, for example, updating it
 again, is undefined.
 Deprovisioning a corrupt instance SHOULD still be possible. A Platform MUST
