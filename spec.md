@@ -478,7 +478,7 @@ schema being used.
     "requires": ["route_forwarding"],
     "bindable": true,
     "instances_retrievable": true,
-    "bindings_retrievable" true,
+    "bindings_retrievable": true,
     "metadata": {
       "provider": {
         "name": "The name"
