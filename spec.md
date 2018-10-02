@@ -443,7 +443,7 @@ It is therefore RECOMMENDED that implementations avoid such strings.
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| name* | string | A CLI-friendly name of the service. MUST be unique across all service objects returned in this response. MUST be a non-empty string. |
+| name* | string | The name of the service. MUST be unique across all service objects returned in this response. MUST be a non-empty string. Using a CLI-friendly name is RECOMMENDED. |
 | id* | string | An identifier used to correlate this service in future requests to the Service Broker. This MUST be globally unique such that Platforms (and their users) MUST be able to assume that seeing the same value (no matter what Service Broker uses it) will always refer to this service. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
 | description* | string | A short description of the service. MUST be a non-empty string. |
 | tags | array of strings | Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp. |
@@ -969,7 +969,7 @@ For success responses, the following fields are defined:
 | Response Field | Type | Description |
 | --- | --- | --- |
 | dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. If present, MUST be a string or null. |
-| operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint in a percent-encoded query parameter. If present, MUST be a string or null. |
+| operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint in a percent-encoded query parameter. If present, MAY be null. |
 
 ```
 {
@@ -1172,7 +1172,7 @@ For success responses, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| dashboard_url | string | The updated URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`0129d920a083838` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the update request, even if the Service Instance is being updated asynchronously. If present, MUST be a string or null. If not present, the Platform MUST retain the previous value of the `dashboard_url`. |
+| dashboard_url | string | The updated URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`0129d920a083838` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the update request, even if the Service Instance is being updated asynchronously. If not present or null, the Platform MUST retain the previous value of the `dashboard_url`. |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
 
 ```
