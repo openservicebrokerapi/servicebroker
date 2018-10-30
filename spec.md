@@ -477,6 +477,7 @@ how Platforms might expose these values to their users.
 | free | boolean | When false, Service Instances of this plan have a cost. The default is true. |
 | bindable | boolean | Specifies whether Service Instances of the Service Plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
 | plan_updateable | boolean | Whether the Plan supports upgrade/downgrade/sidegrade to another version. This field is OPTIONAL. If specificed, this takes precedence over the Service Offering's `plan_updateable` field. If not specified, the default is derived from the Service Offering. Please note that the attribute is intentionally misspelled as `plan_updateable` for legacy reasons. |
+| latest_instance_maintenance_information | object | An opaque object of the latest instance maintenance information for the plan. This field is OPTIONAL. It is expected that Platforms will treat this as a blob. Platforms MAY use changes in the latest maintenance information to derive if maintenance is possible on already provisioned Service Instances. Platforms MAY use the this to trigger maintenance on Service Instances using [Update Service Instance](#updating-a-service-instance). |
 | schemas | [Schemas](#schemas-object) | Schema definitions for Service Instances and Service Bindings for the plan. |
 
 \* Fields with an asterisk are REQUIRED.
@@ -900,6 +901,7 @@ Service Broker will use it to correlate the resource it creates.
 | organization_guid* | string | Deprecated in favor of `context`. The Platform GUID for the organization under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | space_guid* | string | Deprecated in favor of `context`. The identifier for the project space within the Platform organization. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | parameters | object | Configuration parameters for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
+| maintenance_information | object | Maintenance information for the Service Instance. Maintenance information is communicated to the platform through the catalog. Service Brokers SHOULD ensure that the client has provided the latest maintenance information specified by the broker. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -1073,6 +1075,7 @@ error message in response.
 | service_id* | string | MUST be the ID of a service from the catalog for this Service Broker. |
 | plan_id | string | If present, MUST be the ID of a plan from the service that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the plan of the Service Instance as a result of this request. |
 | parameters | object | Configuration parameters for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. See "Note" below. |
+| maintenance_information | object | Maintenance information for the Service Instance. If present, MUST be the latest maintenance information of a plan from the service that has been requested. Service Brokers SHOULD ensure that the client has provided the latest maintenance information specified by the broker. |
 | previous_values | [PreviousValues](#previous-values-object) | Information about the Service Instance prior to the update. |
 
 \* Fields with an asterisk are REQUIRED.
