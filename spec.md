@@ -890,6 +890,20 @@ dedicated database server running on its own VM or an empty schema on a shared
 database server. For non-data services, provisioning could just mean an
 account on an multi-tenant SaaS application.
 
+Platforms MAY choose to include a `name` field when
+[Provisioning](#provisioning) (or [Updating](#updating-a-service-instance)) a
+Service Instance. If present, this field is meant to be for informational
+purposes only (Service Brokers SHOULD NOT use it as any kind of _primary key_
+or _identifier_ for the Service Instance; the `instance_id` field is meant to
+be used for that purpose). The `name` field is made available in order to allow
+Service Brokers to provide an improved user experience, i.e. by showing the
+name of the Service Instance from the Platform (alongside a less user-friendly
+instance ID). Because this field is OPTIONAL, Service Brokers will need to be
+prepared for cases where this field is not provided. Additionally, Platforms
+SHOULD notify Service Brokers if the name of the Service Instance in the
+Platform is modified by sending an [Update](#updating-a-service-instance)
+request with the new `name` field.
+
 ### Request
 
 #### Route
@@ -924,6 +938,7 @@ The following HTTP Headers are defined for this operation:
 | organization_guid* | string | Deprecated in favor of `context`. The Platform GUID for the organization under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | space_guid* | string | Deprecated in favor of `context`. The identifier for the project space within the Platform organization. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | parameters | object | Configuration parameters for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
+| name | string | The name being used to represent the Service Instance in the Platform. This field is NOT REQUIRED to be unique across all of the Service Instances that have been provisioned through the Service Broker. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -940,7 +955,8 @@ The following HTTP Headers are defined for this operation:
   "parameters": {
     "parameter1": 1,
     "parameter2": "foo"
-  }
+  },
+  "name": "instance-1"
 }
 ```
 
@@ -958,7 +974,8 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
   "parameters": {
     "parameter1": 1,
     "parameter2": "foo"
-  }
+  },
+  "name": "instance-1"
 }' -X PUT -H "X-Broker-API-Version: 2.14" -H "Content-Type: application/json"
 ```
 
@@ -1109,6 +1126,7 @@ The following HTTP Headers are defined for this operation:
 | plan_id | string | If present, MUST be the ID of a plan from the service that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the plan of the Service Instance as a result of this request. |
 | parameters | object | Configuration parameters for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. See "Note" below. |
 | previous_values | [PreviousValues](#previous-values-object) | Information about the Service Instance prior to the update. |
+| name | string | The name being used to represent the Service Instance in the Platform. This field is NOT REQUIRED to be unique across all of the Service Instances that have been provisioned through the Service Broker. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -1150,6 +1168,7 @@ the user did not explicitly specify in their request for the update.
     "parameter1": 1,
     "parameter2": "foo"
   },
+  "name": "instance-1",
   "previous_values": {
     "plan_id": "old-plan-id-here",
     "service_id": "service-id-here",
@@ -1172,6 +1191,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
     "parameter1": 1,
     "parameter2": "foo"
   },
+  "name": "instance-1",
   "previous_values": {
     "plan_id": "old-plan-id-here",
     "service_id": "service-id-here",
