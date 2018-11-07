@@ -6,14 +6,14 @@
   - [Changes](#changes)
     - [Change Policy](#change-policy-for-minor-versions)
     - [Changes Since v2.13](#changes-since-v213)
-  - [API Version Header](#api-version-header)
+  - [Headers](#headers)
+    - [API Version Header](#api-version-header)
+    - [Originating Identity](#originating-identity)
   - [Platform to Service Broker Authentication](#platform-to-service-broker-authentication)
   - [URL Properties](#url-properties)
-  - [Originating Identity](#originating-identity)
   - [Service Broker Errors](#service-broker-errors)
   - [Content Type](#content-type)
   - [Catalog Management](#catalog-management)
-    - [Adding a Service Broker to the Platform](#adding-a-service-broker-to-the-platform)
   - [Synchronous and Asynchronous Operations](#synchronous-and-asynchronous-operations)
     - [Synchronous Operations](#synchronous-operations)
     - [Asynchronous Operations](#asynchronous-operations)
@@ -141,7 +141,7 @@ that do not understand them.
   ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/436))
 * Allow an updated `dashboard_url` to be provided when updating a Service
   Instance ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/437))
-* Added an [OpenAPI 2.0 implementation](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/openapi.yaml)
+* Added an [OpenAPI 2.0 implementation](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/swagger.yaml)
 * Allow for periods in name fields
   ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/452))
 * Removed the need for Platforms to perform orphan mitigation when receiving an
@@ -171,7 +171,17 @@ that do not understand them.
 
 For changes in older versions, see the [release notes](https://github.com/openservicebrokerapi/servicebroker/blob/master/release-notes.md).
 
-## API Version Header
+## Headers
+The following HTTP Headers are defined for the operations detailed in this spec:
+
+| Header | Type | Description |
+| --- | --- | --- |
+| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
+| X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
+
+\* Headers with an asterisk are REQUIRED.
+
+### API Version Header
 
 Requests from the Platform to the Service Broker MUST contain a header that
 declares the version number of the Open Service Broker API that the Platform
@@ -189,69 +199,7 @@ Service Broker MAY reject the request with `412 Precondition Failed` and
 provide a message that informs the operator of the API version that is to be
 used instead.
 
-## Vendor Extension Fields
-
-Senders of messages defined by this specification MAY include additional
-fields within the JSON objects. When adding new fields, unique prefixes
-SHOULD be used for the field names to reduce the chances of conflicts with
-with future specification defined fields or other extensions.
-
-Receivers of messages defined by this specification that contain unknown
-extension fields MUST ignore those fields and MUST NOT halt processing
-of those messages due to the presence of those fields. Receivers are under
-no obligation to understand or process unknown extension fields.
-
-## Platform to Service Broker Authentication
-
-While the communication between a Platform and Service Broker MAY be unsecure,
-it is RECOMMENDED that all communications between a Platform and a Service
-Broker are secured via TLS and authenticated.
-
-Unless there is some out of band communication and agreement between a
-Platform and a Service Broker, the Platform MUST authenticate with the
-Service Broker using HTTP basic authentication (the `Authorization:` header)
-on every request. This specification does not specify how Platform and Service
-Brokers agree on other methods of authentication.
-
-Platforms and Service Brokers MAY agree on an authentication mechanism other
-than basic authentication, but the specific agreements are not covered by this
-specification. Please see the
-[Platform Features authentication mechanisms wiki document](https://github.com/openservicebrokerapi/servicebroker/wiki/Platform-Features)
-for details on these mechanisms.
-
-If authentication is used, the Service Broker MUST authenticate the request
-using the predetermined authentication mechanism, and MUST return a `401 Unauthorized`
-response if the authentication fails.
-
-Additionally, the Service Broker MUST secure communications with TLS. The Platform
-and Service Broker SHOULD agree whether the Service Broker will use a root-signed
-certificate or a self-signed certificate.
-
-Note: Using an authentication mechanism that is agreed to via out of band
-communications could lead to interoperability issues with other Platforms.
-
-## URL Properties
-
-This specification defines the following properties that might appear within
-URLs:
-- `service_id`
-- `plan_id`
-- `instance_id`
-- `binding_id`
-- `operation`
-
-While this specification places no restriction on the set of characters used
-within these strings, it is RECOMMENDED that these properties only contain
-characters from the "Unreserved Characters" as defined by
-[RFC3986](https://tools.ietf.org/html/rfc3986#section-2.3). In other words:
-uppercase and lowercase letters, decimal digits, hyphen, period, underscore
-and tilde.
-
-If a character outside of the "Unreserved Characters" set is used, then it
-SHOULD be percent-encoded prior to being used as part of the HTTP request, per
-[RFC3986](https://tools.ietf.org/html/rfc3986#section-2.1).
-
-## Originating Identity
+### Originating Identity
 
 Often a Service Broker will need to know the identity of the user that
 initiated the request from the Platform. For example, this might be needed for
@@ -260,14 +208,19 @@ will need to provide this identification information to the Service Broker on
 each request. Platforms MAY support this feature, and if they do, they MUST
 adhere to the following:
 - For any OSBAPI request that is the result of an action taken by a Platform's
-  user, there MUST be an associated `X-Broker-API-Originating-Identity` header on that HTTP
-  request.
+  user, there MUST be an associated `X-Broker-API-Originating-Identity` header on
+  that HTTP request.
 - Any OSBAPI request that is not associated with an action from a Platform's
   user, such as the Platform refetching the catalog, MAY exclude the header from
   that HTTP request.
-- If present on a request, the `X-Broker-API-Originating-Identity` header MUST contain the
-  identify information for the Platform's user that took the action to cause the
-  request to be sent.
+- If present on a request, the `X-Broker-API-Originating-Identity` header
+  MUST contain the identify information for the Platform's user that took
+  the action to cause the request to be sent.
+
+If the Platform chooses to group multiple end-user operations into one request
+to the Broker, then the identity information associated with that one request
+MUST accurately reflect the desired indentity associated for each individual
+change.
 
 The format of the header MUST be:
 
@@ -303,6 +256,66 @@ querying of the Service Broker's catalog, the Platform might not have an
 end-user with which to associate the request, therefore in those cases the
 originating identity header would not be included in those messages.
 
+## Vendor Extension Fields
+
+Senders of messages defined by this specification MAY include additional
+fields within the JSON objects. When adding new fields, unique prefixes
+SHOULD be used for the field names to reduce the chances of conflicts with
+future specification defined fields or other extensions.
+
+Receivers of messages defined by this specification that contain unknown
+extension fields MUST ignore those fields and MUST NOT halt processing
+of those messages due to the presence of those fields. Receivers are under
+no obligation to understand or process unknown extension fields.
+
+## Platform to Service Broker Authentication
+
+While the communication between a Platform and Service Broker MAY be unsecure,
+it is RECOMMENDED that all communications between a Platform and a Service
+Broker are secured via TLS and authenticated. If communications are secured
+via TLS, the Platform and Service Broker SHOULD agree whether the Service
+Broker will use a root-signed certificate or a self-signed certificate.
+
+Unless there is some out of band communication and agreement between a
+Platform and a Service Broker, the Platform MUST authenticate with the
+Service Broker using HTTP basic authentication (the `Authorization:` header)
+on every request. This specification does not specify how Platform and Service
+Brokers agree on other methods of authentication.
+
+Platforms and Service Brokers MAY agree on an authentication mechanism other
+than basic authentication, but the specific agreements are not covered by this
+specification. Please see the
+[Platform Features authentication mechanisms wiki document](https://github.com/openservicebrokerapi/servicebroker/wiki/Platform-Features)
+for details on these mechanisms.
+
+If authentication is used, the Service Broker MUST authenticate the request
+using the predetermined authentication mechanism, and MUST return a `401 Unauthorized`
+response if the authentication fails.
+
+Note: Using an authentication mechanism that is agreed to via out of band
+communications could lead to interoperability issues with other Platforms.
+
+## URL Properties
+
+This specification defines the following properties that might appear within
+URLs:
+- `service_id`
+- `plan_id`
+- `instance_id`
+- `binding_id`
+- `operation`
+
+While this specification places no restriction on the set of characters used
+within these strings, it is RECOMMENDED that these properties only contain
+characters from the "Unreserved Characters" as defined by
+[RFC3986](https://tools.ietf.org/html/rfc3986#section-2.3). In other words:
+uppercase and lowercase letters, decimal digits, hyphen, period, underscore
+and tilde.
+
+If a character outside of the "Unreserved Characters" set is used, then it
+SHOULD be percent-encoded prior to being used as part of the HTTP request, per
+[RFC3986](https://tools.ietf.org/html/rfc3986#section-2.1).
+
 ## Service Broker Errors
 
 When a request to a Service Broker fails, the Service Broker MUST return an
@@ -337,7 +350,7 @@ case is a "SHOULD" instead of a "MUST" because it might not be possible for
 a Service Broker to guarantee that it can revert all possible effects of a
 failed attempt at the requested operation.
 
-### Content Type
+## Content Type
 
 All requests and responses defined in this specification with accompanying
 bodies SHOULD contain a `Content-Type` header set to `application/json`.
@@ -388,16 +401,6 @@ Broker API.
 #### Route
 `GET /v2/catalog`
 
-#### Headers
-
-The following HTTP Headers are defined for this operation:
-
-| Header | Type | Description |
-| --- | --- | --- |
-| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
-
-\* Headers with an asterisk are REQUIRED.
-
 #### cURL
 ```
 $ curl http://username:password@service-broker-url/v2/catalog -H "X-Broker-API-Version: 2.14"
@@ -440,7 +443,7 @@ It is therefore RECOMMENDED that implementations avoid such strings.
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| name* | string | A CLI-friendly name of the service. MUST only contain alphanumeric characters, periods, and hyphens (no spaces). MUST be unique across all service objects returned in this response. MUST be a non-empty string. |
+| name* | string | The name of the service. MUST be unique across all service objects returned in this response. MUST be a non-empty string. Using a CLI-friendly name is RECOMMENDED. |
 | id* | string | An identifier used to correlate this service in future requests to the Service Broker. This MUST be globally unique such that Platforms (and their users) MUST be able to assume that seeing the same value (no matter what Service Broker uses it) will always refer to this service. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
 | description* | string | A short description of the service. MUST be a non-empty string. |
 | tags | array of strings | Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp. |
@@ -450,7 +453,7 @@ It is therefore RECOMMENDED that implementations avoid such strings.
 | bindings_retrievable | boolean | Specifies whether the [Fetching a Service Binding](#fetching-a-service-binding) endpoint is supported for all plans. |
 | metadata | object | An opaque object of metadata for a Service Offering. It is expected that Platforms will treat this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and Platforms for fields that aid in the display of catalog data. |
 | dashboard_client | [DashboardClient](profile.md#dashboard-client-object) | A Cloud Foundry extension described in [Catalog Extensions](profile.md#catalog-extensions). Contains the data necessary to activate the Dashboard SSO feature for this service. |
-| plan_updateable | boolean | Whether the service supports upgrade/downgrade for some plans. Please note that the misspelling of the attribute `plan_updatable` as `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
+| plan_updateable | boolean | Whether the Service Offering supports upgrade/downgrade for Service Plans by default. Service Plans can override this field (see [Service Plan](#plan-object)). Please note that the misspelling of the attribute `plan_updatable` as `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
 | plans* | array of [Plan](#plan-object) objects | A list of plans for this service, schema is defined below. MUST contain at least one plan. |
 
 \* Fields with an asterisk are REQUIRED.
@@ -469,11 +472,12 @@ how Platforms might expose these values to their users.
 | Response Field | Type | Description |
 | --- | --- | --- |
 | id* | string | An identifier used to correlate this plan in future requests to the Service Broker. This MUST be globally unique such that Platforms (and their users) MUST be able to assume that seeing the same value (no matter what Service Broker uses it) will always refer to this plan and for the same service. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
-| name* | string | The CLI-friendly name of the plan. MUST only contain alphanumeric characters, periods, and hyphens (no spaces). MUST be unique within the service. MUST be a non-empty string. |
+| name* | string | The name of the plan. MUST be unique within the service. MUST be a non-empty string. Using a CLI-friendly name is RECOMMENDED. |
 | description* | string | A short description of the plan. MUST be a non-empty string. |
 | metadata | object | An opaque object of metadata for a Service Plan. It is expected that Platforms will treat this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and Platforms for fields that aid in the display of catalog data. |
 | free | boolean | When false, Service Instances of this plan have a cost. The default is true. |
 | bindable | boolean | Specifies whether Service Instances of the Service Plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
+| plan_updateable | boolean | Whether the Plan supports upgrade/downgrade/sidegrade to another version. This field is OPTIONAL. If specificed, this takes precedence over the Service Offering's `plan_updateable` field. If not specified, the default is derived from the Service Offering. Please note that the attribute is intentionally misspelled as `plan_updateable` for legacy reasons. |
 | schemas | [Schemas](#schemas-object) | Schema definitions for Service Instances and Service Bindings for the plan. |
 
 \* Fields with an asterisk are REQUIRED.
@@ -523,7 +527,7 @@ schema being used.
     "requires": ["route_forwarding"],
     "bindable": true,
     "instances_retrievable": true,
-    "bindings_retrievable" true,
+    "bindings_retrievable": true,
     "metadata": {
       "provider": {
         "name": "The name"
@@ -635,13 +639,6 @@ schema being used.
 }
 ```
 
-
-### Adding a Service Broker to the Platform
-
-After implementing the first endpoint `GET /v2/catalog` documented
-[above](#catalog-management), the Service Broker will need to be registered
-with your Platform to make your services and plans available to end users.
-
 ## Synchronous and Asynchronous Operations
 
 Platforms expect prompt responses to all API requests in order to provide
@@ -747,16 +744,6 @@ Note: Although the request query parameters `service_id` and `plan_id` are not
 mandatory, the Platform SHOULD include them on all `last_operation` requests
 it makes to Service Brokers.
 
-#### Headers
-
-The following HTTP Headers are defined for this operation:
-
-| Header | Type | Description |
-| --- | --- | --- |
-| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
-
-\* Headers with an asterisk are REQUIRED.
-
 #### cURL
 ```
 $ curl http://username:password@service-broker-url/v2/service_instances/:instance_id/last_operation -H "X-Broker-API-Version: 2.14"
@@ -782,7 +769,8 @@ For success responses, the following fields are defined:
 | Response Field | Type | Description |
 | --- | --- | --- |
 | state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the Platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the Platform to cease polling. |
-| description | string | A user-facing message that can be used to tell the user details about the status of the operation. If present, MUST be a non-empty string. |
+
+| description | string | A user-facing message that can be used to tell the user details about the status of the operation. |
 | status_code | number | The HTTP status code that would have been returned if the operation would have been executed synchronously. If the state is `failed` this field SHOULD be present and the value MUST be an integer in the range of 400 to 599. This field MUST NOT be present for any other state. |
 | error | string | An error code as described in the [Service Broker Errors](#service-broker-errors) section. If present, MUST be a non-empty string. If the state is `failed` and there is an error code this field SHOULD be present. This field MUST NOT be present for any other state. |
 
@@ -799,7 +787,7 @@ If the response contains `"state": "failed"` then the Platform MUST send a
 deprovision request to the Service Broker to prevent an orphan being created on
 the Service Broker. However, while the Platform will attempt
 to send a deprovision request, Service Brokers MAY automatically delete
-any resources associated with the failed bind request on their own.
+any resources associated with the failed provisioning request on their own.
 
 ## Polling Last Operation for Service Bindings
 
@@ -862,7 +850,7 @@ For success responses, the following fields are defined:
 | Response field | Type | Description |
 | --- | --- | --- |
 | state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the Platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the Platform to cease polling. |
-| description | string | A user-facing message that can be used to tell the user details about the status of the operation. If present, MUST be a non-empty string. |
+| description | string | A user-facing message that can be used to tell the user details about the status of the operation. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -906,17 +894,6 @@ Service Broker will use it to correlate the resource it creates.
 | Parameter Name | Type | Description |
 | --- | --- | --- |
 | accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only provision a Service Instance of the requested plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
-
-#### Headers
-
-The following HTTP Headers are defined for this operation:
-
-| Header | Type | Description |
-| --- | --- | --- |
-| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
-| X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
-
-\* Headers with an asterisk are REQUIRED.
 
 #### Body
 | Request Field | Type | Description |
@@ -976,9 +953,9 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 409 Conflict | MUST be returned if a Service Instance with the same id already exists but with different attributes. |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous provisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. |
 
-Responses with any other status code MUST be interpreted as a failure and a
-deprovision request MUST be sent to the Service Broker to prevent an orphan
-being created on the Service Broker. However, while the platform will attempt
+Responses with any other status code MUST be interpreted as a failure. See
+the [Orphans](#orphans) section for more information related to whether
+orphan mitigation needs to be applied. While a Platform might attempt
 to send a deprovision request, Service Brokers MAY automatically delete
 any resources associated with the failed provisioning request on their own.
 
@@ -988,8 +965,8 @@ For success responses, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. If present, MUST be a non-empty string. |
-| operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
+| dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. If present, MUST be a string or null. |
+| operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint in a percent-encoded query parameter. If present, MAY be null, and MUST NOT contain more than 10,000 characters. |
 
 ```
 {
@@ -1043,7 +1020,7 @@ For success responses, the following fields are defined:
 | dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. |
 | parameters | object | Configuration parameters for the Service Instance. |
 
-Service Brokers MAY choose to not return parameters when a Service Instance is fetched - for example,
+Service Brokers MAY choose to not return some or all parameters when a Service Instance is fetched - for example,
 if it contains sensitive information.
 
 ```
@@ -1064,8 +1041,8 @@ Service Instance to other plans. By modifying parameters, users can change
 configuration options that are specific to a service or plan.
 
 To enable support for the update of the plan, a Service Broker MUST declare
-support per service by including `"plan_updateable": true` in its [catalog
-endpoint](#catalog-management).
+support per service by including `"plan_updateable": true` in either the Service Offering
+or Service Plan in its [catalog endpoint](#catalog-management).
 
 If `"plan_updateable": true` is declared for a plan in the
 [Catalog](#catalog-management) endpoint, the Platform MAY request a plan change
@@ -1091,17 +1068,6 @@ error message in response.
 | Parameter Name | Type | Description |
 | --- | --- | --- |
 | accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only update a Service Instance of the requested plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
-
-#### Headers
-
-The following HTTP Headers are defined for this operation:
-
-| Header | Type | Description |
-| --- | --- | --- |
-| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
-| X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
-
-\* Headers with an asterisk are REQUIRED.
 
 #### Body
 
@@ -1207,7 +1173,7 @@ For success responses, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| dashboard_url | string | The updated URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`0129d920a083838` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the update request, even if the Service Instance is being updated asynchronously. If present, MUST be a non-empty string. If not present, the Platform MUST retain the previous value of the `dashboard_url`. |
+| dashboard_url | string | The updated URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`0129d920a083838` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the update request, even if the Service Instance is being updated asynchronously. If not present or null, the Platform MUST retain the previous value of the `dashboard_url`. |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
 
 ```
@@ -1293,17 +1259,6 @@ one of these services MUST include `volume_mounts`.
 `:binding_id` MUST be a globally unique non-empty string.
 This ID will be used for future unbind requests, so the Service Broker will use
 it to correlate the resource it creates.
-
-#### Headers
-
-The following HTTP Headers are defined for this operation:
-
-| Header | Type | Description |
-| --- | --- | --- |
-| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
-| X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
-
-\* Headers with an asterisk are REQUIRED.
 
 #### Parameters
 | Parameter name | Type | Description |
@@ -1406,7 +1361,7 @@ For a `202 Accepted` response code, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) endpoint in a URL encoded query parameter. If present, MUST be a non-empty string. |
+| operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) endpoint in a URL encoded query parameter. If present, MUST be a string containing no more than 10,000 characters. |
 
 For `200 OK` and `201 Created` response codes, the following fields are defined:
 
@@ -1517,7 +1472,7 @@ For success responses, the following fields are defined:
 | volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for mounting volumes. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | parameters | object | Configuration parameters for the Service Binding. |
 
-Service Brokers MAY choose to not return parameters when a Service Binding is fetched - for example,
+Service Brokers MAY choose to not return some or all parameters when a Service Binding is fetched - for example,
 if it contains sensitive information.
 
 ```
@@ -1533,11 +1488,6 @@ if it contains sensitive information.
   "parameters": {
     "billing-account": "abcde12345"
   }
-```
-
-```
-{
-  "operation": "task_10"
 }
 ```
 
@@ -1572,17 +1522,6 @@ Service Instance.
 
 \* Query parameters with an asterisk are REQUIRED.
 
-#### Headers
-
-The following HTTP Headers are defined for this operation:
-
-| Header | Type | Description |
-| --- | --- | --- |
-| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
-| X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
-
-\* Headers with an asterisk are REQUIRED.
-
 #### cURL
 
 ```
@@ -1609,7 +1548,7 @@ For success responses, the following fields are defined:
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
+| operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) endpoint in a percent-encoded query parameter. If present, MUST be a string containing no more than 10,000 characters. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -1652,17 +1591,6 @@ Brokers.
 
 \* Query parameters with an asterisk are REQUIRED.
 
-#### Headers
-
-The following HTTP Headers are defined for this operation:
-
-| Header | Type | Description |
-| --- | --- | --- |
-| X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
-| X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
-
-\* Headers with an asterisk are REQUIRED.
-
 #### cURL
 ```
 $ curl 'http://username:password@service-broker-url/v2/service_instances/:instance_id?accepts_incomplete=true
@@ -1693,7 +1621,7 @@ For success responses, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
+| operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint in a percent-encoded query parameter. If present, MUST NOT contain more than 10,000 characters. |
 
 ```
 {
