@@ -218,7 +218,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
     get:
-      summary: gets a service instance
+      summary: get a service instance
       tags:
         - ServiceInstances
       operationId: serviceInstance.get
@@ -247,7 +247,7 @@ paths:
 
   /v2/service_instances/{instance_id}/last_operation:
     get:
-      summary: last requested operation state for service instance
+      summary: get the last requested operation state for service instance
       tags:
         - ServiceInstances
       operationId: serviceInstance.lastOperation.get
@@ -296,7 +296,7 @@ paths:
 
   /v2/service_instances/{instance_id}/service_bindings/{binding_id}/last_operation:
     get:
-      summary: last requested operation state for service binding
+      summary: get the last requested operation state for service binding
       tags:
         - ServiceBindings
       operationId: serviceBinding.lastOperation.get
@@ -351,7 +351,7 @@ paths:
 
   /v2/service_instances/{instance_id}/service_bindings/{binding_id}:
     put:
-      summary: generation of a service binding
+      summary: generate a service binding
       tags:
         - ServiceBindings
       operationId: serviceBinding.binding
@@ -420,7 +420,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
     delete:
-      summary: deprovision of a service binding
+      summary: deprovision a service binding
       tags:
         - ServiceBindings
       operationId: serviceBinding.unbinding
@@ -482,7 +482,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
     get:
-      summary: gets a service binding
+      summary: get a service binding
       tags:
         - ServiceBindings
       operationId: serviceBinding.get
