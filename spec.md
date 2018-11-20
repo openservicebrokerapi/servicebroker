@@ -452,6 +452,7 @@ It is therefore RECOMMENDED that implementations avoid such strings.
 | bindings_retrievable | boolean | Specifies whether the [Fetching a Service Binding](#fetching-a-service-binding) endpoint is supported for all plans. |
 | metadata | object | An opaque object of metadata for a Service Offering. It is expected that Platforms will treat this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and Platforms for fields that aid in the display of catalog data. |
 | dashboard_client | [DashboardClient](profile.md#dashboard-client-object) | A Cloud Foundry extension described in [Catalog Extensions](profile.md#catalog-extensions). Contains the data necessary to activate the Dashboard SSO feature for this service. |
+| uses_platform_metadata | boolean | Specifies whether the service needs to be sent platform metadata about the service instance while [Provision](#provisioning) and [Update](#updating-a-service-instance). Brokers MAY use this information to display contextual information about the service in dashboard. |
 | plan_updateable | boolean | Whether the Service Offering supports upgrade/downgrade for Service Plans by default. Service Plans can override this field (see [Service Plan](#plan-object)). Please note that the misspelling of the attribute `plan_updatable` as `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
 | plans* | array of [Plan](#plan-object) objects | A list of plans for this service, schema is defined below. MUST contain at least one plan. |
 
@@ -901,6 +902,7 @@ Service Broker will use it to correlate the resource it creates.
 | organization_guid* | string | Deprecated in favor of `context`. The Platform GUID for the organization under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | space_guid* | string | Deprecated in favor of `context`. The identifier for the project space within the Platform organization. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | parameters | object | Configuration parameters for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
+| platform_metadata | object | Platform metadata associated with the Service Instance. Platforms SHOULD include `platform_metadata` if the service has specified it `uses_platform_metadata` in the catalog. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -1032,10 +1034,12 @@ if it contains sensitive information.
 ## Updating a Service Instance
 
 By implementing this endpoint, Service Broker authors can enable users to
-modify two attributes of an existing Service Instance: the Service Plan and
-parameters. By changing the Service Plan, users can upgrade or downgrade their
-Service Instance to other plans. By modifying parameters, users can change
-configuration options that are specific to a service or plan.
+modify three attributes of an existing Service Instance: the Service Plan,
+parameters and Platform metadata. By changing the Service Plan, users can
+upgrade or downgrade their Service Instance to other plans. By modifying
+parameters, users can change configuration options that are specific to a
+service or plan. By changing the Platform metadata, Platforms can update the
+Platform metadata for the service instance when it is out of date.
 
 To enable support for the update of the plan, a Service Broker MUST declare
 support per service by including `"plan_updateable": true` in either the Service Offering
@@ -1053,6 +1057,10 @@ large" but not to plan "dedicated". It is up to the Service Broker to validate
 whether a particular permutation of plan change is supported. If a particular
 plan change is not supported, the Service Broker SHOULD return a meaningful
 error message in response.
+
+If `"uses_platform_metadata": true` is declared for a service in the
+[Catalog](#catalog-management) endpoint, the Platform SHOULD update
+`platform_metadata` for the Service Instance if it changes on the Platform.
 
 ### Request
 
@@ -1074,6 +1082,7 @@ error message in response.
 | service_id* | string | MUST be the ID of a service from the catalog for this Service Broker. |
 | plan_id | string | If present, MUST be the ID of a plan from the service that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the plan of the Service Instance as a result of this request. |
 | parameters | object | Configuration parameters for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. See "Note" below. |
+| platform_metadata | object | Platform metadata associated with the Service Instance. Platforms SHOULD include `platform_metadata` if the service has specified it `uses_platform_metadata` in the catalog. |
 | previous_values | [PreviousValues](#previous-values-object) | Information about the Service Instance prior to the update. |
 
 \* Fields with an asterisk are REQUIRED.
