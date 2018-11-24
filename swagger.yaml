@@ -656,6 +656,8 @@ definitions:
           - failed
       description:
         type: string
+      poll_delay:
+        type: integer
   ServiceBindingResource:
     type: object
     properties:
