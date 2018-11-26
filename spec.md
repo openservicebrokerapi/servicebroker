@@ -91,7 +91,7 @@ This specification defines the following terms:
   supports.
 
 - *Service Plan*: The representation of the costs and benefits for a given
-  variant of the Service, potentially as a tier.
+  variant of the Service Offering, potentially as a tier.
 
 - *Service Instance*: An instantiation of a Service Offering and Service Plan.
 
@@ -367,11 +367,11 @@ all Service Brokers in order to present an aggregated user-facing catalog.
 
 Periodically, a Platform MAY re-query the service catalog endpoint for a
 Service Broker to see if there are any changes to the list of services.
-Service Brokers MAY add, remove or modify (metadata, plans, etc.) the list of
+Service Brokers MAY add, remove or modify (metadata, Service Plans, etc.) the list of
 services from previous queries.
 
 When determining what, if anything, has changed on a Service Broker, the
-Platform MUST use the `id` of the resources (services or plans) as the only
+Platform MUST use the `id` of the resources (Service Offerings or Service Plans) as the only
 immutable property and MUST use that to locate the same resource as was
 returned from a previous query. Likewise, a Service Broker MUST NOT change the
 `id` of a resource across queries, otherwise a Platform will treat it as a
@@ -381,14 +381,14 @@ When a Platform receives different `id` values for the same type of resource,
 even if all of the other metadata in those resources are the exact same, it
 MUST treat them as separate instances of that resource.
 
-Service Broker authors are expected to be cautious when removing services and
-plans from their catalogs, as Platforms might have provisioned Service
-Instances of these plans. For example, Platforms might restrict the actions
-that users can perform on existing Service Instances if the associated service
-or plan is deleted. Consider your deprecation strategy.
+Service Broker authors are expected to be cautious when removing Service Offerings and
+Service Plans from their catalogs, as Platforms might have provisioned Service
+Instances of these Service Plans. For example, Platforms might restrict the actions
+that users can perform on existing Service Instances if the associated Service Offering
+or Service Plan is deleted. Consider your deprecation strategy.
 
 Platforms MAY have limits on the length of strings that they can handle or
-display to end users, such as the description of a Service or Service Plan. It
+display to end users, such as the description of a Service Offering or Service Plan. It
 is RECOMMENDED that strings do not exceed 255 characters to increase the
 likelihood of having compatibility with any Platform.
 
@@ -413,15 +413,15 @@ $ curl http://username:password@service-broker-url/v2/catalog -H "X-Broker-API-V
 
 #### Body
 
-CLI clients will typically have restrictions on how names, such as service
-and plan names, will be provided by users. Therefore, this specification
+CLI clients will typically have restrictions on how names, such as Service Offering
+and Service Plan names, will be provided by users. Therefore, this specification
 defines a "CLI-friendly" string as a short string that MUST only use
 alphanumeric characters, periods, and hyphens, with no spaces. This will make it
 easier for users when they have to type it as an argument on the command line.
-For comparison purposes, service and plan names MUST be treated as
+For comparison purposes, Service Offering and Service Plan names MUST be treated as
 case-sensitive strings.
 
-Note: In previous versions of the specification service and plan names
+Note: In previous versions of the specification Service Offering and Service Plan names
 were not allowed to use uppercase characters. However, this requirement was
 not enforced and therefore to ensure backwards compatibility with existing
 Service Brokers that might use uppercase characters the specification
@@ -434,50 +434,50 @@ It is therefore RECOMMENDED that implementations avoid such strings.
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| services* | array of [Service](#service-object) objects | Schema of service objects defined below. MAY be empty. |
+| services* | array of [Service Offering](#service-offering-object) objects | Schema of service objects defined below. MAY be empty. |
 
 \* Fields with an asterisk are REQUIRED.
 
-##### Service Object
+##### Service Offering Object
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| name* | string | The name of the service. MUST be unique across all service objects returned in this response. MUST be a non-empty string. Using a CLI-friendly name is RECOMMENDED. |
-| id* | string | An identifier used to correlate this service in future requests to the Service Broker. This MUST be globally unique such that Platforms (and their users) MUST be able to assume that seeing the same value (no matter what Service Broker uses it) will always refer to this service. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
+| name* | string | The name of the Service Offering. MUST be unique across all Service Offering objects returned in this response. MUST be a non-empty string. Using a CLI-friendly name is RECOMMENDED. |
+| id* | string | An identifier used to correlate this Service Offering in future requests to the Service Broker. This MUST be globally unique such that Platforms (and their users) MUST be able to assume that seeing the same value (no matter what Service Broker uses it) will always refer to this Service Offering. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
 | description* | string | A short description of the service. MUST be a non-empty string. |
 | tags | array of strings | Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp. |
 | requires | array of strings | A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are `syslog_drain`, `route_forwarding` and `volume_mount`. |
-| bindable* | boolean | Specifies whether Service Instances of the service can be bound to applications. This specifies the default for all plans of this service. Plans can override this field (see [Plan Object](#plan-object)). |
-| instances_retrievable | boolean | Specifies whether the [Fetching a Service Instance](#fetching-a-service-instance) endpoint is supported for all plans. |
-| bindings_retrievable | boolean | Specifies whether the [Fetching a Service Binding](#fetching-a-service-binding) endpoint is supported for all plans. |
+| bindable* | boolean | Specifies whether Service Instances of the service can be bound to applications. This specifies the default for all Service Plans of this Service Offering. Service Plans can override this field (see [Service Plan Object](#service-plan-object)). |
+| instances_retrievable | boolean | Specifies whether the [Fetching a Service Instance](#fetching-a-service-instance) endpoint is supported for all Service Plans. |
+| bindings_retrievable | boolean | Specifies whether the [Fetching a Service Binding](#fetching-a-service-binding) endpoint is supported for all Service Plans. |
 | metadata | object | An opaque object of metadata for a Service Offering. It is expected that Platforms will treat this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and Platforms for fields that aid in the display of catalog data. |
 | dashboard_client | [DashboardClient](profile.md#dashboard-client-object) | A Cloud Foundry extension described in [Catalog Extensions](profile.md#catalog-extensions). Contains the data necessary to activate the Dashboard SSO feature for this service. |
-| plan_updateable | boolean | Whether the Service Offering supports upgrade/downgrade for Service Plans by default. Service Plans can override this field (see [Service Plan](#plan-object)). Please note that the misspelling of the attribute `plan_updatable` as `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
-| plans* | array of [Plan](#plan-object) objects | A list of plans for this service, schema is defined below. MUST contain at least one plan. |
+| plan_updateable | boolean | Whether the Service Offering supports upgrade/downgrade for Service Plans by default. Service Plans can override this field (see [Service Plan](#service-plan-object)). Please note that the misspelling of the attribute `plan_updatable` as `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
+| plans* | array of [Service Plan](#service-plan-object) objects | A list of Service Plans for this Service Offering, schema is defined below. MUST contain at least one Service Plan. |
 
 \* Fields with an asterisk are REQUIRED.
 
-Note: Platforms will typically use the service name as an input parameter
-from their users to indicate which service they want to instantiate. Therefore,
-it is important that these values be unique for all services that have been
+Note: Platforms will typically use the Service Offering name as an input parameter
+from their users to indicate which Service Offering they want to instantiate. Therefore,
+it is important that these values be unique for all Service Offerings that have been
 registered with a Platform. To achieve this goal service providers often will
-prefix their service names with some unique value (such as the name of their
-company). Additionally, some Platforms might modify the service names before
+prefix their Service Offering names with some unique value (such as the name of their
+company). Additionally, some Platforms might modify the Service Offering names before
 presenting them to their users. This specification places no requirements on
 how Platforms might expose these values to their users.
 
-##### Plan Object
+##### Service Plan Object
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| id* | string | An identifier used to correlate this plan in future requests to the Service Broker. This MUST be globally unique such that Platforms (and their users) MUST be able to assume that seeing the same value (no matter what Service Broker uses it) will always refer to this plan and for the same service. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
-| name* | string | The name of the plan. MUST be unique within the service. MUST be a non-empty string. Using a CLI-friendly name is RECOMMENDED. |
-| description* | string | A short description of the plan. MUST be a non-empty string. |
+| id* | string | An identifier used to correlate this Service Plan in future requests to the Service Broker. This MUST be globally unique such that Platforms (and their users) MUST be able to assume that seeing the same value (no matter what Service Broker uses it) will always refer to this Service Plan and for the same Service Offering. MUST be a non-empty string. Using a GUID is RECOMMENDED. |
+| name* | string | The name of the Service Plan. MUST be unique within the Service Offering. MUST be a non-empty string. Using a CLI-friendly name is RECOMMENDED. |
+| description* | string | A short description of the Service Plan. MUST be a non-empty string. |
 | metadata | object | An opaque object of metadata for a Service Plan. It is expected that Platforms will treat this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and Platforms for fields that aid in the display of catalog data. |
-| free | boolean | When false, Service Instances of this plan have a cost. The default is true. |
-| bindable | boolean | Specifies whether Service Instances of the Service Plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the service. If not specified, the default is derived from the service. |
-| plan_updateable | boolean | Whether the Plan supports upgrade/downgrade/sidegrade to another version. This field is OPTIONAL. If specified, this takes precedence over the Service Offering's `plan_updateable` field. If not specified, the default is derived from the Service Offering. Please note that the attribute is intentionally misspelled as `plan_updateable` for legacy reasons. |
-| schemas | [Schemas](#schemas-object) | Schema definitions for Service Instances and Service Bindings for the plan. |
+| free | boolean | When false, Service Instances of this Service Plan have a cost. The default is true. |
+| bindable | boolean | Specifies whether Service Instances of the Service Plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the Service Offering. If not specified, the default is derived from the Service Offering. |
+| plan_updateable | boolean | Whether the Plan supports upgrade/downgrade/sidegrade to another version. This field is OPTIONAL. If specificed, this takes precedence over the Service Offering's `plan_updateable` field. If not specified, the default is derived from the Service Offering. Please note that the attribute is intentionally misspelled as `plan_updateable` for legacy reasons. |
+| schemas | [Schemas](#schemas-object) | Schema definitions for Service Instances and Service Bindings for the Service Plan. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -736,8 +736,8 @@ to cease polling.
 
 | Query-String Field | Type | Description |
 | --- | --- | --- |
-| service_id | string | If present, it MUST be the ID of the service being used. |
-| plan_id | string | If present, it MUST be the ID of the plan for the Service Instance. If this endpoint is being polled as a result of changing the plan through a [Service Instance Update](#updating-a-service-instance), the ID of the plan prior to the update MUST be used. |
+| service_id | string | If present, it MUST be the ID of the Service Offering being used. |
+| plan_id | string | If present, it MUST be the ID of the Service Plan for the Service Instance. If this endpoint is being polled as a result of changing the Service Plan through a [Service Instance Update](#updating-a-service-instance), the ID of the Service Plan prior to the update MUST be used. |
 | operation | string | A Service Broker-provided identifier for the operation. When a value for `operation` is included with asynchronous responses for [Provision](#provisioning), [Update](#updating-a-service-instance), and [Deprovision](#deprovisioning) requests, the Platform MUST provide the same value using this query parameter as a percent-encoded string. If present, MUST be a non-empty string. |
 
 Note: Although the request query parameters `service_id` and `plan_id` are not
@@ -814,8 +814,8 @@ The request provides these query string parameters as useful hints for brokers.
 
 | Query-String Field | Type | Description |
 | --- | --- | --- |
-| service_id | string | ID of the service from the catalog. If present, MUST be a non-empty string. |
-| plan_id | string | ID of the plan from the catalog. If present, MUST be a non-empty string. |
+| service_id | string | ID of the Service Offering from the catalog. If present, MUST be a non-empty string. |
+| plan_id | string | ID of the Service Plan from the catalog. If present, MUST be a non-empty string. |
 | operation | string | A broker-provided identifier for the operation. When a value for `operation` is included with asynchronous responses for [Binding](#binding) and [Unbinding](#unbinding) requests, the Platform MUST provide the same value using this query parameter as a URL-encoded string. If brokers do not return this `operation` field, only one asynchronous operation MAY be supported at a time. If present, MUST be a non-empty string. |
 
 Note: Although the request query parameters `service_id` and `plan_id` are not
@@ -872,7 +872,7 @@ MUST cease polling and the operation state MUST be considered `failed`.
 
 When the Service Broker receives a provision request from the Platform, it
 MUST take whatever action is necessary to create a new resource. What
-provisioning represents varies by service and plan, although there are several
+provisioning represents varies by Service Offering and Service Plan, although there are several
 common use cases. For a MySQL service, provisioning could result in an empty
 dedicated database server running on its own VM or an empty schema on a shared
 database server. For non-data services, provisioning could just mean an
@@ -890,13 +890,13 @@ Service Broker will use it to correlate the resource it creates.
 #### Parameters
 | Parameter Name | Type | Description |
 | --- | --- | --- |
-| accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only provision a Service Instance of the requested plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
+| accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only provision a Service Instance of the requested Service Plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
 #### Body
 | Request Field | Type | Description |
 | --- | --- | --- |
-| service_id* | string | MUST be the ID of a service from the catalog for this Service Broker. |
-| plan_id* | string | MUST be the ID of a plan from the service that has been requested. |
+| service_id* | string | MUST be the ID of a Service Offering from the catalog for this Service Broker. |
+| plan_id* | string | MUST be the ID of a Service Plan from the Service Offering that has been requested. |
 | context | object | Platform specific contextual information under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it could be helpful in determining data placement or applying custom business rules. `context` will replace `organization_guid` and `space_guid` in future versions of the specification - in the interim both SHOULD be used to ensure interoperability with old and new implementations. |
 | organization_guid* | string | Deprecated in favor of `context`. The Platform GUID for the organization under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | space_guid* | string | Deprecated in favor of `context`. The identifier for the project space within the Platform organization. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
@@ -906,8 +906,8 @@ Service Broker will use it to correlate the resource it creates.
 
 ```
 {
-  "service_id": "service-id-here",
-  "plan_id": "plan-id-here",
+  "service_id": "service-offering-id-here",
+  "plan_id": "service-plan-id-here",
   "context": {
     "platform": "cloudfoundry",
     "some_field": "some-contextual-data"
@@ -924,8 +924,8 @@ Service Broker will use it to correlate the resource it creates.
 #### cURL
 ```
 $ curl http://username:password@service-broker-url/v2/service_instances/:instance_id?accepts_incomplete=true -d '{
-  "service_id": "service-id-here",
-  "plan_id": "plan-id-here",
+  "service_id": "service-offering-id-here",
+  "plan_id": "service-plan-id-here",
   "context": {
     "platform": "cloudfoundry",
     "some_field": "some-contextual-data"
@@ -948,7 +948,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 202 Accepted | MUST be returned if the Service Instance provisioning is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint for operation status. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the Service Instance is not yet fully provisioned. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
 | 409 Conflict | MUST be returned if a Service Instance with the same id already exists but with different attributes. |
-| 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous provisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. |
+| 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous provisioning for the requested Service Plan and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. |
 
 Responses with any other status code MUST be interpreted as a failure. See
 the [Orphans](#orphans) section for more information related to whether
@@ -974,9 +974,9 @@ For success responses, the following fields are defined:
 
 ## Fetching a Service Instance
 
-If `"instances_retrievable" :true` is declared for a service in the
+If `"instances_retrievable" :true` is declared for a Service Offering in the
 [Catalog](#catalog-management) endpoint, Service Brokers MUST support this
-endpoint for all plans of the service and this endpoint MUST be available
+endpoint for all Service Plans of the Service Offering and this endpoint MUST be available
 immediately after the
 [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances)
 endpoint returns `"state": "succeeded"` for a [Provisioning](#provisioning)
@@ -1012,8 +1012,8 @@ For success responses, the following fields are defined:
 
 | Response field | Type | Description |
 | --- | --- | --- |
-| service_id | string | The ID of the service from the catalog that is associated with the Service Instance. |
-| plan_id | string | The ID of the plan from the catalog that is associated with the Service Instance. |
+| service_id | string | The ID of the Service Offering from the catalog that is associated with the Service Instance. |
+| plan_id | string | The ID of the Service Plan from the catalog that is associated with the Service Instance. |
 | dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. |
 | parameters | object | Configuration parameters for the Service Instance. |
 
@@ -1034,24 +1034,24 @@ if it contains sensitive information.
 By implementing this endpoint, Service Broker authors can enable users to
 modify two attributes of an existing Service Instance: the Service Plan and
 parameters. By changing the Service Plan, users can upgrade or downgrade their
-Service Instance to other plans. By modifying parameters, users can change
-configuration options that are specific to a service or plan.
+Service Instance to other Service Plans. By modifying parameters, users can change
+configuration options that are specific to a Service Offering or Service Plan.
 
-To enable support for the update of the plan, a Service Broker MUST declare
-support per service by including `"plan_updateable": true` in either the Service Offering
-or Service Plan in its [catalog endpoint](#catalog-management).
+To enable support for the update of the Service Plan, a Service Broker MUST declare
+support per Service Offering by including `"plan_updateable": true` in either the
+Service Offering or Service Plan in its [catalog endpoint](#catalog-management).
 
-If `"plan_updateable": true` is declared for a plan in the
-[Catalog](#catalog-management) endpoint, the Platform MAY request a plan change
-on a Service Instance using the given plan. Otherwise, Platforms MUST NOT make
-any plan change requests to the Service Broker for any Service Instance using
-the given plan, but MAY request an update to the Service Instance parameters.
+If `"plan_updateable": true` is declared for a Service Plan in the
+[Catalog](#catalog-management) endpoint, the Platform MAY request a Service Plan change
+on a Service Instance using the given Service Plan. Otherwise, Platforms MUST NOT make
+any Service Plan change requests to the Service Broker for any Service Instance using
+the given Service Plan, but MAY request an update to the Service Instance parameters.
 
-Not all permutations of plan changes are expected to be supported. For
-example, a service might support upgrading from plan "shared small" to "shared
-large" but not to plan "dedicated". It is up to the Service Broker to validate
-whether a particular permutation of plan change is supported. If a particular
-plan change is not supported, the Service Broker SHOULD return a meaningful
+Not all permutations of Service Plan changes are expected to be supported. For
+example, a service might support upgrading from Service Plan "shared small" to "shared
+large" but not to Service Plan "dedicated". It is up to the Service Broker to validate
+whether a particular permutation of Service Plan change is supported. If a particular
+Service Plan change is not supported, the Service Broker SHOULD return a meaningful
 error message in response.
 
 ### Request
@@ -1064,15 +1064,15 @@ error message in response.
 #### Parameters
 | Parameter Name | Type | Description |
 | --- | --- | --- |
-| accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only update a Service Instance of the requested plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
+| accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only update a Service Instance of the requested Service Plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
 #### Body
 
 | Request Field | Type | Description |
 | --- | --- | --- |
 | context | object | Contextual data under which the Service Instance is created. |
-| service_id* | string | MUST be the ID of a service from the catalog for this Service Broker. |
-| plan_id | string | If present, MUST be the ID of a plan from the service that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the plan of the Service Instance as a result of this request. |
+| service_id* | string | MUST be the ID of a Service Offering from the catalog for this Service Broker. |
+| plan_id | string | If present, MUST be the ID of a Service Plan from the Service Offering that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the Service Plan of the Service Instance as a result of this request. |
 | parameters | object | Configuration parameters for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. See "Note" below. |
 | previous_values | [PreviousValues](#previous-values-object) | Information about the Service Instance prior to the update. |
 
@@ -1082,8 +1082,8 @@ error message in response.
 
 | Request Field | Type | Description |
 | --- | --- | --- |
-| service_id | string | Deprecated; determined to be unnecessary as the value is immutable. If present, it MUST be the ID of the service for the Service Instance. |
-| plan_id | string | If present, it MUST be the ID of the plan prior to the update. |
+| service_id | string | Deprecated; determined to be unnecessary as the value is immutable. If present, it MUST be the ID of the Service Offering for the Service Instance. |
+| plan_id | string | If present, it MUST be the ID of the Service Plan prior to the update. |
 | organization_id | string | Deprecated as it was redundant information. Organization for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the organization specified for the Service Instance. |
 | space_id | string | Deprecated as it was redundant information. Space for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the space specified for the Service Instance. |
 
@@ -1110,15 +1110,15 @@ the user did not explicitly specify in their request for the update.
     "platform": "cloudfoundry",
     "some_field": "some-contextual-data"
   },
-  "service_id": "service-id-here",
-  "plan_id": "plan-id-here",
+  "service_id": "service-offering-id-here",
+  "plan_id": "service-plan-id-here",
   "parameters": {
     "parameter1": 1,
     "parameter2": "foo"
   },
   "previous_values": {
-    "plan_id": "old-plan-id-here",
-    "service_id": "service-id-here",
+    "plan_id": "old-service-plan-id-here",
+    "service_id": "service-offering-id-here",
     "organization_id": "org-guid-here",
     "space_id": "space-guid-here"
   }
@@ -1132,15 +1132,15 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
     "platform": "cloudfoundry",
     "some_field": "some-contextual-data"
   },
-  "service_id": "service-id-here",
-  "plan_id": "plan-id-here",
+  "service_id": "service-offering-id-here",
+  "plan_id": "service-plan-id-here",
   "parameters": {
     "parameter1": 1,
     "parameter2": "foo"
   },
   "previous_values": {
-    "plan_id": "old-plan-id-here",
-    "service_id": "service-id-here",
+    "plan_id": "old-service-plan-id-here",
+    "service_id": "service-offering-id-here",
     "organization_id": "org-guid-here",
     "space_id": "space-guid-here"
   }
@@ -1154,7 +1154,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 200 OK | MUST be returned if the request's changes have been applied or MAY be returned if the request's changes have had no effect. The expected response body is `{}`. |
 | 202 Accepted | MUST be returned if the Service Instance update is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint for operation status. Note that a re-sent `PATCH` request MUST return a `202 Accepted`, not a `200 OK`, if the requested update has not yet completed. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
-| 422 Unprocessable entity | MUST be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the Service Instance (e.g. Service Instance utilization is over the quota of the requested plan). Additionally, a `422 Unprocessable Entity` MUST be returned if the Service Broker only supports asynchronous update for the requested plan and the request did not include `?accepts_incomplete=true`; in this case the response body MUST contain a error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. |
+| 422 Unprocessable entity | MUST be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the Service Instance (e.g. Service Instance utilization is over the quota of the requested Service Plan). Additionally, a `422 Unprocessable Entity` MUST be returned if the Service Broker only supports asynchronous update for the requested Service Plan and the request did not include `?accepts_incomplete=true`; in this case the response body MUST contain a error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. |
 
 Responses with any other status code MUST be interpreted as a failure.
 When the response includes a 4xx status code, the Service Broker MUST NOT
@@ -1179,10 +1179,10 @@ For success responses, the following fields are defined:
 
 ## Binding
 
-If `"bindable": true` is declared for a service or plan in the
+If `"bindable": true` is declared for a Service Offering or Service Plan in the
 [Catalog](#catalog-management) endpoint, the Platform MAY request generation
 of a Service Binding. Otherwise, Platforms MUST NOT make a binding request to
-the Service Broker for any Service Instance using the given service or plan.
+the Service Broker for any Service Instance using the given Service Offering or Service Plan.
 
 Note: Not all services need to be bindable --- some deliver value just from
 being provisioned. Service Brokers that offer services that are bindable MUST
@@ -1238,7 +1238,7 @@ response.
 
 #### Volume Services
 
-There are a class of services that provide network storage to applications
+There are a class of Service Offerings that provide network storage to applications
 via volume mounts in the application container. A create Service Binding response from
 one of these services MUST include `volume_mounts`.
 
@@ -1263,8 +1263,8 @@ it to correlate the resource it creates.
 | Request Field | Type | Description |
 | --- | --- | --- |
 | context | object | Contextual data under which the Service Binding is created. |
-| service_id* | string | MUST be the ID of the service that is being used. |
-| plan_id* | string | MUST be the ID of the plan from the service that is being used. |
+| service_id* | string | MUST be the ID of the Service Offering that is being used. |
+| plan_id* | string | MUST be the ID of the Servie Plan from the service that is being used. |
 | app_guid | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the Service Binding to be created. If present, MUST be a non-empty string. |
 | bind_resource | [BindResource](#bind-resource-object) | A JSON object that contains data for Platform resources associated with the Service Binding to be created. See [Bind Resource Object](#bind-resource-object) for more information. |
 | parameters | object | Configuration parameters for the Service Binding. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
@@ -1299,8 +1299,8 @@ binding requests.
     "platform": "cloudfoundry",
     "some_field": "some-contextual-data"
   },
-  "service_id": "service-id-here",
-  "plan_id": "plan-id-here",
+  "service_id": "service-offering-id-here",
+  "plan_id": "service-plan-id-here",
   "bind_resource": {
     "app_guid": "app-guid-here"
   },
@@ -1319,8 +1319,8 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
     "platform": "cloudfoundry",
     "some_field": "some-contextual-data"
   },
-  "service_id": "service-id-here",
-  "plan_id": "plan-id-here",
+  "service_id": "service-offering-id-here",
+  "plan_id": "service-plan-id-here",
   "bind_resource": {
     "app_guid": "app-guid-here"
   },
@@ -1421,9 +1421,9 @@ can be mounted on all app instances simultaneously.
 
 ## Fetching a Service Binding
 
-If `"bindings_retrievable" :true` is declared for a service in the
+If `"bindings_retrievable" :true` is declared for a Service Offering in the
 [Catalog](#catalog-management) endpoint, Service Brokers MUST support this
-endpoint for all services and plans that support bindings (`"bindable": true`)
+endpoint for all Service Offerings and Service Plans that support bindings (`"bindable": true`)
 and this endpoint MUST be available immediately after the
 [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings)
 endpoint returns `"state": "succeeded"` for a [Binding](#binding) operation.
@@ -1486,7 +1486,7 @@ if it contains sensitive information.
 
 ## Unbinding
 
-Note: Service Brokers that do not provide any bindable services or plans do
+Note: Service Brokers that do not provide any bindable Service Offerings or Service Plans do
 not need to implement this endpoint.
 
 When a Service Broker receives an unbind request from a Platform, it MUST
@@ -1517,8 +1517,8 @@ Service Instance.
 
 | Query-String Field | Type | Description |
 | --- | --- | --- |
-| service_id* | string | MUST be the ID of the service associated with the Service Binding being deleted. |
-| plan_id* | string | MUST be the ID of the plan associated with the Service Binding being deleted. |
+| service_id* | string | MUST be the ID of the Service Offering associated with the Service Binding being deleted. |
+| plan_id* | string | MUST be the ID of the Service Plan associated with the Service Binding being deleted. |
 | accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous Service Broker operations. If this parameter is not included in the request, and the Service Broker can only perform an unbinding operation asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
 \* Query parameters with an asterisk are REQUIRED.
@@ -1527,7 +1527,7 @@ Service Instance.
 
 ```
 $ curl 'http://username:password@service-broker-url/v2/service_instances/:instance_id/
-  service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here&accepts_incomplete=true' -X DELETE -H "X-Broker-API-Version: 2.14"
+  service_bindings/:binding_id?service_id=service-offering-id-here&plan_id=service-plan-id-here&accepts_incomplete=true' -X DELETE -H "X-Broker-API-Version: 2.14"
 ```
 
 ### Response
@@ -1565,8 +1565,8 @@ When a Service Broker receives a deprovision request from a Platform, it MUST
 delete any resources it created during the provision. Usually this means that
 all resources are immediately reclaimed for future provisions.
 
-Platforms MUST delete all Service Bindings for a service prior to attempting to
-deprovision the service. This specification does not specify what a Service
+Platforms MUST delete all Service Bindings for a Service Instance prior to attempting to
+deprovision the Service Instance. This specification does not specify what a Service
 Broker is to do if it receives a deprovision request while there are still
 Service Bindings associated with it.
 
@@ -1594,16 +1594,16 @@ Brokers.
 
 | Query-String Field | Type | Description |
 | --- | --- | --- |
-| service_id* | string | MUST be the ID of the service associated with the Service Instance being deleted. |
-| plan_id* | string | MUST be the ID of the plan associated with the Service Instance being deleted. |
-| accepts_incomplete | boolean | A value of true indicates that both the Platform and the requesting client support asynchronous deprovisioning. If this parameter is not included in the request, and the Service Broker can only deprovision a Service Instance of the requested plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
+| service_id* | string | MUST be the ID of the Service Offering associated with the Service Instance being deleted. |
+| plan_id* | string | MUST be the ID of the Service Plan associated with the Service Instance being deleted. |
+| accepts_incomplete | boolean | A value of true indicates that both the Platform and the requesting client support asynchronous deprovisioning. If this parameter is not included in the request, and the Service Broker can only deprovision a Service Instance of the requested Service Plan asynchronously, the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
 \* Query parameters with an asterisk are REQUIRED.
 
 #### cURL
 ```
 $ curl 'http://username:password@service-broker-url/v2/service_instances/:instance_id?accepts_incomplete=true
-  &service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.14"
+  &service_id=service-offering-id-here&plan_id=service-plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.14"
 ```
 
 ### Response
@@ -1614,7 +1614,7 @@ $ curl 'http://username:password@service-broker-url/v2/service_instances/:instan
 | 202 Accepted | MUST be returned if the Service Instance deletion is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint for operation status. Note that a re-sent `DELETE` request MUST return a `202 Accepted`, not a `200 OK`, if the delete request has not completed yet. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
 | 410 Gone | MUST be returned if the Service Instance does not exist. |
-| 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous deprovisioning for the requested plan and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. Additionally, this MUST be returned if the Service Instance is being processed by some other operation and therefore cannot be deleted at this time. The response body MUST contain error code `"ConcurrencyError"` (see [Service Broker Errors](#service-broker-errors)). |
+| 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous deprovisioning for the requested Service Plan and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. Additionally, this MUST be returned if the Service Instance is being processed by some other operation and therefore cannot be deleted at this time. The response body MUST contain error code `"ConcurrencyError"` (see [Service Broker Errors](#service-broker-errors)). |
 
 Responses with any other status code MUST be interpreted as a failure and the
 Platform MUST remember the Service Instance.
