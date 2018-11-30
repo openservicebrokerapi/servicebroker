@@ -446,9 +446,11 @@ Service Brokers MAY also expose the following fields to enable Platform specific
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| id | string | The id of the OAuth client that the dashboard will use. If present, MUST be a non-empty string. |
-| secret | string | A secret for the dashboard client. If present, MUST be a non-empty string. |
+| id* | string | The id of the OAuth client that the dashboard will use. If present, MUST be a non-empty string. |
+| secret* | string | A secret for the dashboard client. If present, MUST be a non-empty string. |
 | redirect_uri | string | A URI for the service dashboard. Validated by the OAuth token server when the dashboard requests a token. |
+
+\* Fields with an asterisk are REQUIRED.
 
 #### Example Catalog
 
