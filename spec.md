@@ -454,7 +454,7 @@ It is therefore RECOMMENDED that implementations avoid such strings.
 | dashboard_client | [DashboardClient](profile.md#dashboard-client-object) | A Cloud Foundry extension described in [Catalog Extensions](profile.md#catalog-extensions). Contains the data necessary to activate the Dashboard SSO feature for this service. |
 | plan_updateable | boolean | Whether the Service Offering supports upgrade/downgrade for Service Plans by default. Service Plans can override this field (see [Service Plan](#service-plan-object)). Please note that the misspelling of the attribute `plan_updatable` as `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
 | plans* | array of [Service Plan](#service-plan-object) objects | A list of Service Plans for this Service Offering, schema is defined below. MUST contain at least one Service Plan. |
-| maximum_polling_duration | integer | A duration, in minutes, that the platform SHOULD use as the service's [maximum polling duration](#polling-interval-and-duration). |
+| maximum_polling_duration | integer | A duration, in minutes, that the Platform SHOULD use as the Service's [maximum polling duration](#polling-interval-and-duration). |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -865,13 +865,10 @@ the Service Broker.
 
 ## Polling Interval and Duration
 
-The frequency and maximum duration of polling MAY vary by Platform client. If
-a Platform has a max polling duration and this limit is reached, the Platform
-MUST cease polling and the operation state MUST be considered `failed`.
-
-If a Service Offering declares a `maximum_polling_duration`
-in the [Catalog](#catalog-management)
-endpoint, that value SHOULD be used by the platform as its max polling duration.
+The frequency and maximum duration of polling MAY vary by Platform. Additionally, Service Brokers
+can specify the maximum time a Platform SHOULD poll via the `maximum_polling_duration` field returned
+by the [Catalog](#catalog-management) endpoint. If either the Platform or Service Broker's maximum polling
+duration is reached, the Platform SHOULD cease polling and the operation state MUST be considered `failed`.
 
 ## Provisioning
 
