@@ -13,7 +13,6 @@ groups:
     required: 4
     users:
       - duglin
-      - vaikas-google
       - kibbles-n-bytes
       - pmorie
       - fmui
