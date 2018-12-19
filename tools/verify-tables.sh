@@ -107,7 +107,7 @@ function checkForPunc() {
       continue
     fi
 
-    if [[ "$col" == *". " || "$col" == *"? " ]]; then
+    if [[ "$col" == *". " || "$col" == *"? " || "$col" == *"\` " ]]; then
       continue
     fi
 
