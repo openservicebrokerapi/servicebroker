@@ -770,7 +770,12 @@ For success responses, the following fields are defined:
 | --- | --- | --- |
 | state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the Platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the Platform to cease polling. |
 | description | string | A user-facing message that can be used to tell the user details about the status of the operation. |
-| poll_delay | integer | The time, in seconds, that a Platform SHOULD wait before sending another last_operation request. |
+
+The response MAY also include the `Retry-After` HTTP header. This header will
+indicate how long the Platform SHOULD wait before polling again and is
+intended to prevent unnecessary, and premature, calls to the `last_operation`
+endpoint. It is RECOMMENDED that the header include a duration rather than a
+timestamp.
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -786,11 +791,6 @@ deprovision request to the Service Broker to prevent an orphan being created on
 the Service Broker. However, while the Platform will attempt
 to send a deprovision request, Service Brokers MAY automatically delete
 any resources associated with the failed provisioning request on their own.
-
-If the Service Broker is able to estimate how long it will be before the
-Service Instance will be fully provisioned, it MAY include a `poll_delay`
-field in the response message to prevent unnecessary, and premature, calls
-to the `last_operation` endpoint.
 
 ## Polling Last Operation for Service Bindings
 
@@ -854,7 +854,12 @@ For success responses, the following fields are defined:
 | --- | --- | --- |
 | state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the Platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the Platform to cease polling. |
 | description | string | A user-facing message that can be used to tell the user details about the status of the operation. |
-| poll_delay | integer | The time, in seconds, that a Platform SHOULD wait before sending another last_operation request. |
+
+The response MAY also include the `Retry-After` HTTP header. This header will
+indicate how long the Platform SHOULD wait before polling again and is
+intended to prevent unnecessary, and premature, calls to the `last_operation`
+endpoint. It is RECOMMENDED that the header include a duration rather than a
+timestamp.
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -868,11 +873,6 @@ For success responses, the following fields are defined:
 If the response contains `"state": "failed"` then the Platform MUST send an
 unbind request to the Service Broker to prevent an orphan being created on
 the Service Broker.
-
-If the Service Broker is able to estimate how long it will be before the
-Service Binding will be ready, it MAY include a `poll_delay`
-field in the response message to prevent unnecessary, and premature, calls
-to the `last_operation` endpoint.
 
 ## Polling Interval and Duration
 
