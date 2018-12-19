@@ -865,10 +865,12 @@ the Service Broker.
 
 ## Polling Interval and Duration
 
-The frequency and maximum duration of polling MAY vary by Platform. Additionally, Service Brokers
-can specify the maximum time a Platform SHOULD poll via the `maximum_polling_duration` field returned
-by the [Catalog](#catalog-management) endpoint. If either the Platform or Service Broker's maximum polling
-duration is reached, the Platform SHOULD cease polling and the operation state MUST be considered `failed`.
+The frequency and maximum duration of polling MAY vary by Platform.
+Additionally, Service Brokers can specify the maximum time a Platform SHOULD
+poll via the `maximum_polling_duration` field returned by the
+[Catalog](#catalog-management) endpoint. If either the Platform or Service
+Broker's maximum polling duration is reached, the Platform SHOULD cease polling
+and the operation state MUST be considered `failed`.
 
 ## Provisioning
 
