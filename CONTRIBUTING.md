@@ -141,7 +141,7 @@ example, **"Release Proposal: v$major.$minor"**.
 3. Open a new pull request titled **Release Proposal: v$major.$minor** from the
   branch of the fork to the master branch of the repository, with the following
   description:
-   ```
+  ```
   Announcing a new release candidate as described in the
   [Release Process](https://github.com/openservicebrokerapi/servicebroker/blob/master/CONTRIBUTING.md#release-process).
 
