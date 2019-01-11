@@ -1182,7 +1182,8 @@ For success responses, the following fields are defined:
 If `"bindable": true` is declared for a Service Offering or Service Plan in the
 [Catalog](#catalog-management) endpoint, the Platform MAY request generation
 of a Service Binding. Otherwise, Platforms MUST NOT make a binding request to
-the Service Broker for any Service Instance using the given Service Offering or Service Plan.
+the Service Broker for any Service Instance using the given Service Offering
+or Service Plan.
 
 Note: Not all services need to be bindable --- some deliver value just from
 being provisioned. Service Brokers that offer services that are bindable MUST
@@ -1205,6 +1206,10 @@ Credentials are a set of information used by an Application or a user to
 utilize the Service Instance. Credentials SHOULD be unique whenever possible, so
 access can be revoked for each Service Binding without affecting consumers of other
 Service Bindings for the Service Instance.
+
+Service Brokers SHOULD also provide all network hosts and ports that the
+Application uses to connect to the Service Instance via this Service Binding.
+This data allows the Platform to adjust network configurations, if necessary. 
 
 #### Log Drain
 
@@ -1364,6 +1369,7 @@ For `200 OK` and `201 Created` response codes, the following fields are defined:
 | syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for remote storage devices to be mounted into an application container filesystem. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
+| endpoints | array of [Endpoint](#endpoint-object) objects | The network endpoints that the Application uses to connect to the Service Instance. The endpoints need not to be reachable and the host names need not to resolvable from outside the service network. |
 
 ##### Volume Mount Object
 
@@ -1382,10 +1388,20 @@ For `200 OK` and `201 Created` response codes, the following fields are defined:
 Currently only shared devices are supported; a distributed file system which
 can be mounted on all app instances simultaneously.
 
-| Field | Type | Description |
+| Response Field | Type | Description |
 | --- | --- | --- |
 | volume_id* | string | ID of the shared volume to mount on every app instance. |
 | mount_config | object | Configuration object to be passed to the driver when the volume is mounted. |
+
+\* Fields with an asterisk are REQUIRED.
+
+##### Endpoint Object
+
+| Response Field | Type | Description |
+| --- | --- | --- |
+| host* | string | A host name or a single IP address. |
+| ports* | array of strings | A non-empty array. Each element is either a single port (for example "443") or a port range (for example "9000-9010"). |
+| protocol | string | The protocol. Valid values are `tcp`, `udp`, or `all`. The default value is `tcp`. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -1398,7 +1414,13 @@ can be mounted on all app instances simultaneously.
     "host": "mysqlhost",
     "port": 3306,
     "database": "dbname"
-  }
+  },
+  "endpoints": [
+    {
+      "host": "mysqlhost",
+      "ports:" ["3306"]
+    }
+  ]
 }
 ```
 
@@ -1464,6 +1486,7 @@ For success responses, the following fields are defined:
 | route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for mounting volumes. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | parameters | object | Configuration parameters for the Service Binding. |
+| endpoints | array of [Endpoint](#endpoint-object) objects | The network endpoints that the Application uses to connect to the Service Instance. The endpoints need not to be reachable and the host names need not to resolvable from outside the service network. |
 
 Service Brokers MAY choose to not return some or all parameters when a Service Binding is fetched - for example,
 if it contains sensitive information.
@@ -1478,6 +1501,12 @@ if it contains sensitive information.
     "port": 3306,
     "database": "dbname"
   },
+  "endpoints": [
+    {
+      "host": "mysqlhost",
+      "ports:" ["3306"]
+    }
+  ],
   "parameters": {
     "billing-account": "abcde12345"
   }
