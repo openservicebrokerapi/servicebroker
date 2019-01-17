@@ -1369,7 +1369,7 @@ For `200 OK` and `201 Created` response codes, the following fields are defined:
 | syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for remote storage devices to be mounted into an application container filesystem. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
-| endpoints | array of [Endpoint](#endpoint-object) objects | The network endpoints that the Application uses to connect to the Service Instance. All Service Instance endpoints that relevant for the Application MUST be in this list, even if endpoints are not reachable or host names are not resolvable for outside the service network. |
+| endpoints | array of [Endpoint](#endpoint-object) objects | The network endpoints that the Application uses to connect to the Service Instance. All Service Instance endpoints that are relevant for the Application MUST be in this list, even if endpoints are not reachable or host names are not resolvable from outside the service network. |
 
 ##### Volume Mount Object
 
@@ -1486,7 +1486,7 @@ For success responses, the following fields are defined:
 | route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | volume_mounts | array of [VolumeMount](#volume-mount-object) objects | An array of configuration for mounting volumes. `"requires":["volume_mount"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | parameters | object | Configuration parameters for the Service Binding. |
-| endpoints | array of [Endpoint](#endpoint-object) objects | The network endpoints that the Application uses to connect to the Service Instance. All Service Instance endpoints that relevant for the Application MUST be in this list, even if endpoints are not reachable or host names are not resolvable for outside the service network. |
+| endpoints | array of [Endpoint](#endpoint-object) objects | The network endpoints that the Application uses to connect to the Service Instance. All Service Instance endpoints that are relevant for the Application MUST be in this list, even if endpoints are not reachable or host names are not resolvable from outside the service network. |
 
 Service Brokers MAY choose to not return some or all parameters when a Service Binding is fetched - for example,
 if it contains sensitive information.
