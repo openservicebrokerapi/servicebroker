@@ -771,6 +771,12 @@ For success responses, the following fields are defined:
 | state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the Platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the Platform to cease polling. |
 | description | string | A user-facing message that can be used to tell the user details about the status of the operation. |
 
+The response MAY also include the `Retry-After` HTTP header. This header will
+indicate how long the Platform SHOULD wait before polling again and is
+intended to prevent unnecessary, and premature, calls to the `last_operation`
+endpoint. It is RECOMMENDED that the header include a duration rather than a
+timestamp.
+
 \* Fields with an asterisk are REQUIRED.
 
 ```
@@ -848,6 +854,12 @@ For success responses, the following fields are defined:
 | --- | --- | --- |
 | state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the Platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the Platform to cease polling. |
 | description | string | A user-facing message that can be used to tell the user details about the status of the operation. |
+
+The response MAY also include the `Retry-After` HTTP header. This header will
+indicate how long the Platform SHOULD wait before polling again and is
+intended to prevent unnecessary, and premature, calls to the `last_operation`
+endpoint. It is RECOMMENDED that the header include a duration rather than a
+timestamp.
 
 \* Fields with an asterisk are REQUIRED.
 

@@ -281,6 +281,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LastOperationResource'
+          headers:
+            - $ref: '#/components/parameters/RetryAfter'
         '400':
           description: Bad Request
           content:
@@ -336,6 +338,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LastOperationResource'
+          headers:
+            - $ref: '#/components/parameters/RetryAfter'
         '400':
           description: Bad Request
           content:
@@ -530,6 +534,14 @@ components:
       name: X-Broker-API-Originating-Identity
       in: header
       description: identity of the user that initiated the request from the Platform
+      schema:
+        type: string
+
+    RetryAfter:
+      name: Retry-After
+      in: header
+      description: Indicates when to retry the request
+      require: false
       schema:
         type: string
 

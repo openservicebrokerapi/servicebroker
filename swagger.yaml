@@ -194,6 +194,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/LastOperationResource'
+          headers:
+            - $ref: '#/parameters/RetryAfter'
         '400':
           description: Bad Request
           schema:
@@ -232,6 +234,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/LastOperationResource'
+          headers:
+            - $ref: '#/parameters/RetryAfter'
         '400':
           description: Bad Request
           schema:
@@ -343,6 +347,12 @@ parameters:
     name: X-Broker-API-Originating-Identity
     in: header
     description: identity of the user that initiated the request from the Platform
+    type: string
+  RetryAfter:
+    name: Retry-After
+    in: header
+    description: Indicates when to retry the request
+    required: false
     type: string
   instance_id:
     name: instance_id
