@@ -479,6 +479,7 @@ how Platforms might expose these values to their users.
 | bindable | boolean | Specifies whether Service Instances of the Service Plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the Service Offering. If not specified, the default is derived from the Service Offering. |
 | plan_updateable | boolean | Whether the Plan supports upgrade/downgrade/sidegrade to another version. This field is OPTIONAL. If specificed, this takes precedence over the Service Offering's `plan_updateable` field. If not specified, the default is derived from the Service Offering. Please note that the attribute is intentionally misspelled as `plan_updateable` for legacy reasons. |
 | schemas | [Schemas](#schemas-object) | Schema definitions for Service Instances and Service Bindings for the Service Plan. |
+| maximum_polling_duration | integer | A duration, in seconds, that the Platform SHOULD use as the Service's [maximum polling duration](#polling-interval-and-duration). |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -878,9 +879,12 @@ the Service Broker.
 
 ## Polling Interval and Duration
 
-The frequency and maximum duration of polling MAY vary by Platform client. If
-a Platform has a max polling duration and this limit is reached, the Platform
-MUST cease polling and the operation state MUST be considered `failed`.
+The frequency and maximum duration of polling MAY vary by Platform.
+Additionally, Service Brokers can specify the maximum time a Platform SHOULD
+poll via the `maximum_polling_duration` field returned by the
+[Service Plan Object](#service-plan-object). If either the Platform or Service
+Plan's maximum polling duration is reached, the Platform SHOULD cease polling
+and the operation state MUST be considered `failed`.
 
 ## Provisioning
 
