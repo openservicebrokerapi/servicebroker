@@ -450,6 +450,7 @@ It is therefore RECOMMENDED that implementations avoid such strings.
 | bindable* | boolean | Specifies whether Service Instances of the service can be bound to applications. This specifies the default for all Service Plans of this Service Offering. Service Plans can override this field (see [Service Plan Object](#service-plan-object)). |
 | instances_retrievable | boolean | Specifies whether the [Fetching a Service Instance](#fetching-a-service-instance) endpoint is supported for all Service Plans. |
 | bindings_retrievable | boolean | Specifies whether the [Fetching a Service Binding](#fetching-a-service-binding) endpoint is supported for all Service Plans. |
+| allow_context_updates | boolean | Specifies whether a Service Instance supports [Update](#updating-a-service-instance) requests when contextual data for the Service Instance in the Platform changes. |
 | metadata | object | An opaque object of metadata for a Service Offering. It is expected that Platforms will treat this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and Platforms for fields that aid in the display of catalog data. |
 | dashboard_client | [DashboardClient](profile.md#dashboard-client-object) | A Cloud Foundry extension described in [Catalog Extensions](profile.md#catalog-extensions). Contains the data necessary to activate the Dashboard SSO feature for this service. |
 | plan_updateable | boolean | Whether the Service Offering supports upgrade/downgrade for Service Plans by default. Service Plans can override this field (see [Service Plan](#service-plan-object)). Please note that the misspelling of the attribute `plan_updatable` as `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
@@ -527,6 +528,7 @@ schema being used.
     "bindable": true,
     "instances_retrievable": true,
     "bindings_retrievable": true,
+    "allow_context_updates": true,
     "metadata": {
       "provider": {
         "name": "The name"
@@ -909,7 +911,7 @@ Service Broker will use it to correlate the resource it creates.
 | --- | --- | --- |
 | service_id* | string | MUST be the ID of a Service Offering from the catalog for this Service Broker. |
 | plan_id* | string | MUST be the ID of a Service Plan from the Service Offering that has been requested. |
-| context | object | Platform specific contextual information under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it could be helpful in determining data placement or applying custom business rules. `context` will replace `organization_guid` and `space_guid` in future versions of the specification - in the interim both SHOULD be used to ensure interoperability with old and new implementations. |
+| context | object | Contextual data for the Service Instance. `context` will replace `organization_guid` and `space_guid` in future versions of the specification - in the interim both SHOULD be used to ensure interoperability with old and new implementations. |
 | organization_guid* | string | Deprecated in favor of `context`. The Platform GUID for the organization under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | space_guid* | string | Deprecated in favor of `context`. The identifier for the project space within the Platform organization. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | parameters | object | Configuration parameters for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
@@ -1043,11 +1045,18 @@ if it contains sensitive information.
 
 ## Updating a Service Instance
 
-By implementing this endpoint, Service Broker authors can enable users to
-modify two attributes of an existing Service Instance: the Service Plan and
-parameters. By changing the Service Plan, users can upgrade or downgrade their
-Service Instance to other Service Plans. By modifying parameters, users can change
-configuration options that are specific to a Service Offering or Service Plan.
+By implementing this endpoint, Service Broker authors can:
+* Enable users to modify the Service Plan of a Service Instance. By changing the
+  Service Plan, users can upgrade or downgrade their Service Instance to other
+  plans.
+* Enable users to modify the parameters of a Service Instance. By modifying
+  parameters, users can change configuration options that are specific to a
+  Service or Service Plan.
+* Enable Platforms to update contextual data of a Service Instance. To enable
+  support for Platforms to send updated contextual data for Service Instances, a
+  Service Broker MUST declare support by including
+  `"allow_context_updates": true` in its
+  [catalog endpoint](#catalog-management).
 
 To enable support for the update of the Service Plan, a Service Broker MUST declare
 support per Service Offering by including `"plan_updateable": true` in either the
@@ -1082,7 +1091,7 @@ error message in response.
 
 | Request Field | Type | Description |
 | --- | --- | --- |
-| context | object | Contextual data under which the Service Instance is created. |
+| context | object | Contextual data for the Service Instance. |
 | service_id* | string | MUST be the ID of a Service Offering from the catalog for this Service Broker. |
 | plan_id | string | If present, MUST be the ID of a Service Plan from the Service Offering that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the Service Plan of the Service Instance as a result of this request. |
 | parameters | object | Configuration parameters for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. See "Note" below. |
@@ -1096,8 +1105,8 @@ error message in response.
 | --- | --- | --- |
 | service_id | string | Deprecated; determined to be unnecessary as the value is immutable. If present, it MUST be the ID of the Service Offering for the Service Instance. |
 | plan_id | string | If present, it MUST be the ID of the Service Plan prior to the update. |
-| organization_id | string | Deprecated as it was redundant information. Organization for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the organization specified for the Service Instance. |
-| space_id | string | Deprecated as it was redundant information. Space for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the space specified for the Service Instance. |
+| organization_id | string | Deprecated as it was redundant information. The organization ID for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the organization specified for the Service Instance. |
+| space_id | string | Deprecated as it was redundant information. The space ID for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the space specified for the Service Instance. |
 
 Note: The `parameters` specified are expected to be the values specified
 by an end-user. Whether the user chooses to include the complete set of
@@ -1274,7 +1283,7 @@ it to correlate the resource it creates.
 
 | Request Field | Type | Description |
 | --- | --- | --- |
-| context | object | Contextual data under which the Service Binding is created. |
+| context | object | Contextual data for the Service Binding. |
 | service_id* | string | MUST be the ID of the Service Offering that is being used. |
 | plan_id* | string | MUST be the ID of the Servie Plan from the service that is being used. |
 | app_guid | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the Service Binding to be created. If present, MUST be a non-empty string. |
