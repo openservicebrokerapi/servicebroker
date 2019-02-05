@@ -516,6 +516,8 @@ The following rules apply if `parameters` is included anywhere in the catalog:
 * Platforms SHOULD be prepared to support later versions of JSON schema.
 * The `$schema` key MUST be present in the schema declaring the version of JSON
 schema being used.
+* The `type` key MUST be present in the schema declaring the type as `object`.
+* The `parameters` key MUST be present in the schema, but MAY be empty if the action accepts no parameters.
 * Schemas MUST NOT contain any external references.
 * Schemas MUST NOT be larger than 64kB.
 
