@@ -100,7 +100,7 @@ described below:
   It is then expected that the dedicated committers will discuss the concerns
   and determine the next step for proposal - either close/reject the proposal
   or address the concerns raised such that the "NOT LGTM" can be rescinded.
-- A proposal requires at least 4 "LGTM" comments from at least 4 different
+- A proposal requires at least 3 "LGTM" comments from at least 3 different
   organizations to be approved.
 - Once a "design change" issue is approved, it will be tagged with an
   "proposal finalized" label. This indicates that it is ready to be
@@ -169,8 +169,8 @@ example, **"Release Proposal: v$major.$minor"**.
   steps for release proposal. The submitter should either close/reject the
   proposal or address the concerns raised such that the "NOT LGTM" can be
   rescinded.
-- A release proposal requires at least 4 "LGTM" comments from at least
-  4 different organizations to be approved.
+- A release proposal requires at least 3 "LGTM" comments from at least
+  3 different organizations to be approved.
 
 ### Once Approved
 
