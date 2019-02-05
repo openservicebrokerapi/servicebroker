@@ -1209,7 +1209,7 @@ Service Bindings for the Service Instance.
 
 Service Brokers SHOULD also provide all network hosts and ports that the
 Application uses to connect to the Service Instance via this Service Binding.
-This data allows the Platform to adjust network configurations, if necessary. 
+This data allows the Platform to adjust network configurations, if necessary.
 
 #### Log Drain
 
