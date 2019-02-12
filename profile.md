@@ -154,6 +154,11 @@ Note that when both the originating identity HTTP Header and the Context
 object appear in the same message the `platform` value MUST be the same
 for both.
 
+To enable support for Platforms to send updated contextual data for Service
+Instances, a Service Broker MUST declare support by including
+`"allow_context_updates": true` in its
+[catalog endpoint](spec.md#catalog-management).
+
 ### Cloud Foundry Context Object
 
 *`platform` Property Value*: `cloudfoundry`
@@ -175,6 +180,21 @@ deployment:
   "organization_guid": "1113aa0-124e-4af2-1526-6bfacf61b111"
   ```
 
+- `organization_name`
+
+  Version: 2.15
+
+  The name of the organization that a Service Instance is associated with.
+  Note that the name of an organization in Cloud Foundry MAY be changed.
+  This property MUST be a non-empty string serialized as follows:
+  ```
+  "organization_name": "organization-name-here"
+  ```
+  For example:
+  ```
+  "organization_name": "system"
+  ```
+
 - `space_guid`
 
   Version: 2.11
@@ -189,14 +209,44 @@ deployment:
   "space_guid": "aaaa1234-da91-4f12-8ffa-b51d0336aaaa"
   ```
 
+- `space_name`
+
+  Version: 2.15
+
+  The name of the space that a Service Instance is associated with.
+  Note that the name of a space in Cloud Foundry MAY be changed.
+  This property MUST be a non-empty string serialized as follows:
+  ```
+  "space_name": "space-name-here"
+  ```
+  For example:
+  ```
+  "space_name": "development"
+  ```
+
+- `instance_name`
+
+  Version: 2.15
+
+  The name of the Service Instance.
+  Note that the name of a Service Instance in Cloud Foundry MAY be changed.
+  This property MUST be a non-empty string serialized as follows:
+  ```
+  "instance_name": "instance-name-here"
+  ```
+  For example:
+  ```
+  "instance_name": "my-db"
+  ```
+
 The following table specifies which properties will appear in each API.
 All properties specified are REQUIRED unless otherwise noted.
 
 | Request API | Properties |
 | --- | --- |
-| `PUT /v2/service_instances/:instance_id` | `organization_guid`, `space_guid` |
-| `PATCH /v2/service_instances/:instance_id` | `organization_guid`, `space_guid` |
-| `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id` | `organization_guid`, `space_guid` |
+| `PUT /v2/service_instances/:instance_id` | `organization_guid`, `organization_name`, `space_guid`, `space_name`, `instance_name` |
+| `PATCH /v2/service_instances/:instance_id` | `organization_guid`, `organization_name`, `space_guid`, `space_name`, `instance_name` |
+| `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id` | `organization_guid`, `organization_guid`, `space_guid`, `space_name` |
 
 The following example shows a `context` object that might appear as part of a
 Cloud Foundry API call:
@@ -204,7 +254,10 @@ Cloud Foundry API call:
   "context": {
     "platform": "cloudfoundry",
     "organization_guid": "1113aa0-124e-4af2-1526-6bfacf61b111",
-    "space_guid": "aaaa1234-da91-4f12-8ffa-b51d0336aaaa"
+    "organization_name": "system",
+    "space_guid": "aaaa1234-da91-4f12-8ffa-b51d0336aaaa",
+    "space_name": "development",
+    "instance_name": "my-db"
   }
   ```
 

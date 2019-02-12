@@ -29,7 +29,7 @@
   - [Fetching a Service Binding](#fetching-a-service-binding)
   - [Unbinding](#unbinding)
   - [Deprovisioning](#deprovisioning)
-  - [Orphans](#orphans)
+  - [Orphan Mitigation](#orphan-mitigation)
 
 ## API Overview
 
@@ -250,10 +250,11 @@ Where the `value`, when decoded, is:
 ```
 
 Note that not all messages sent to a Service Broker are initiated by an
-end-user of the Platform. For example, during orphan mitigation or during the
-querying of the Service Broker's catalog, the Platform might not have an
-end-user with which to associate the request, therefore in those cases the
-originating identity header would not be included in those messages.
+end-user of the Platform. For example, during
+[Orphan Mitigation](#orphan-mitigation) or during the querying of the Service
+Broker's catalog, the Platform might not have an end-user with which to
+associate the request, therefore in those cases the originating identity header
+would not be included in those messages.
 
 ## Vendor Extension Fields
 
@@ -451,6 +452,7 @@ It is therefore RECOMMENDED that implementations avoid such strings.
 | bindable* | boolean | Specifies whether Service Instances of the service can be bound to applications. This specifies the default for all Service Plans of this Service Offering. Service Plans can override this field (see [Service Plan Object](#service-plan-object)). |
 | instances_retrievable | boolean | Specifies whether the [Fetching a Service Instance](#fetching-a-service-instance) endpoint is supported for all Service Plans. |
 | bindings_retrievable | boolean | Specifies whether the [Fetching a Service Binding](#fetching-a-service-binding) endpoint is supported for all Service Plans. |
+| allow_context_updates | boolean | Specifies whether a Service Instance supports [Update](#updating-a-service-instance) requests when contextual data for the Service Instance in the Platform changes. |
 | metadata | object | An opaque object of metadata for a Service Offering. It is expected that Platforms will treat this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and Platforms for fields that aid in the display of catalog data. |
 | dashboard_client | [DashboardClient](profile.md#dashboard-client-object) | A Cloud Foundry extension described in [Catalog Extensions](profile.md#catalog-extensions). Contains the data necessary to activate the Dashboard SSO feature for this service. |
 | plan_updateable | boolean | Whether the Service Offering supports upgrade/downgrade for Service Plans by default. Service Plans can override this field (see [Service Plan](#service-plan-object)). Please note that the misspelling of the attribute `plan_updatable` as `plan_updateable` was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility. Defaults to false. |
@@ -479,6 +481,7 @@ how Platforms might expose these values to their users.
 | bindable | boolean | Specifies whether Service Instances of the Service Plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the Service Offering. If not specified, the default is derived from the Service Offering. |
 | plan_updateable | boolean | Whether the Plan supports upgrade/downgrade/sidegrade to another version. This field is OPTIONAL. If specificed, this takes precedence over the Service Offering's `plan_updateable` field. If not specified, the default is derived from the Service Offering. Please note that the attribute is intentionally misspelled as `plan_updateable` for legacy reasons. |
 | schemas | [Schemas](#schemas-object) | Schema definitions for Service Instances and Service Bindings for the Service Plan. |
+| maximum_polling_duration | integer | A duration, in seconds, that the Platform SHOULD use as the Service's [maximum polling duration](#polling-interval-and-duration). |
 | maintenance_info | object | An opaque object describing maintenance information for a Service Instance which is provisioned using the Service Plan. This object MAY be used to expose information such as the version of an operating system the Service will run on. If provided, Platforms MAY use this information when [Provisioning](#provisioning) or [Updating](#updating-a-service-instance) a Service Instance. |
 
 \* Fields with an asterisk are REQUIRED.
@@ -529,6 +532,7 @@ schema being used.
     "bindable": true,
     "instances_retrievable": true,
     "bindings_retrievable": true,
+    "allow_context_updates": true,
     "metadata": {
       "provider": {
         "name": "The name"
@@ -710,9 +714,8 @@ containing error code `"ConcurrencyError"` (see
 a helpful error message in the `description` field such as `"Another operation
 for this Service Instance is in progress."`.
 
-Note that per the [Orphans](#orphans) section, this error response does not
-cause orphan mitigation to be initiated. Therefore, Platforms receiving this
-error response SHOULD resend the request at a later time.
+Upon receiving this error response, Platforms MUST NOT perform
+[Orphan Mitigation](#orphan-mitigation).
 
 Brokers MAY choose to treat the creation of a Service Binding as a mutation of
 the corresponding Service Instance - it is an implementation choice. Doing so
@@ -777,6 +780,12 @@ For success responses, the following fields are defined:
 | state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the Platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the Platform to cease polling. |
 | description | string | A user-facing message that can be used to tell the user details about the status of the operation. |
 
+The response MAY also include the `Retry-After` HTTP header. This header will
+indicate how long the Platform SHOULD wait before polling again and is
+intended to prevent unnecessary, and premature, calls to the `last_operation`
+endpoint. It is RECOMMENDED that the header include a duration rather than a
+timestamp.
+
 \* Fields with an asterisk are REQUIRED.
 
 ```
@@ -786,11 +795,9 @@ For success responses, the following fields are defined:
 }
 ```
 
-If the response contains `"state": "failed"` then the Platform MUST send a
-deprovision request to the Service Broker to prevent an orphan being created on
-the Service Broker. However, while the Platform will attempt
-to send a deprovision request, Service Brokers MAY automatically delete
-any resources associated with the failed provisioning request on their own.
+For asynchronous provision operations, if the response contains
+`"state": "failed"` then the Platform might need to perform
+[Orphan Mitigation](#orphan-mitigation).
 
 ## Polling Last Operation for Service Bindings
 
@@ -855,6 +862,12 @@ For success responses, the following fields are defined:
 | state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the Platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the Platform to cease polling. |
 | description | string | A user-facing message that can be used to tell the user details about the status of the operation. |
 
+The response MAY also include the `Retry-After` HTTP header. This header will
+indicate how long the Platform SHOULD wait before polling again and is
+intended to prevent unnecessary, and premature, calls to the `last_operation`
+endpoint. It is RECOMMENDED that the header include a duration rather than a
+timestamp.
+
 \* Fields with an asterisk are REQUIRED.
 
 ```
@@ -864,15 +877,17 @@ For success responses, the following fields are defined:
 }
 ```
 
-If the response contains `"state": "failed"` then the Platform MUST send an
-unbind request to the Service Broker to prevent an orphan being created on
-the Service Broker.
+If the response contains `"state": "failed"`, then the Platform might need to
+perform [Orphan Mitigation](#orphan-mitigation).
 
 ## Polling Interval and Duration
 
-The frequency and maximum duration of polling MAY vary by Platform client. If
-a Platform has a max polling duration and this limit is reached, the Platform
-MUST cease polling and the operation state MUST be considered `failed`.
+The frequency and maximum duration of polling MAY vary by Platform.
+Additionally, Service Brokers can specify the maximum time a Platform SHOULD
+poll via the `maximum_polling_duration` field returned by the
+[Service Plan Object](#service-plan-object). If either the Platform or Service
+Plan's maximum polling duration is reached, the Platform SHOULD cease polling
+and the operation state MUST be considered `failed`.
 
 ## Provisioning
 
@@ -903,7 +918,7 @@ Service Broker will use it to correlate the resource it creates.
 | --- | --- | --- |
 | service_id* | string | MUST be the ID of a Service Offering from the catalog for this Service Broker. |
 | plan_id* | string | MUST be the ID of a Service Plan from the Service Offering that has been requested. |
-| context | object | Platform specific contextual information under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it could be helpful in determining data placement or applying custom business rules. `context` will replace `organization_guid` and `space_guid` in future versions of the specification - in the interim both SHOULD be used to ensure interoperability with old and new implementations. |
+| context | object | Contextual data for the Service Instance. `context` will replace `organization_guid` and `space_guid` in future versions of the specification - in the interim both SHOULD be used to ensure interoperability with old and new implementations. |
 | organization_guid* | string | Deprecated in favor of `context`. The Platform GUID for the organization under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | space_guid* | string | Deprecated in favor of `context`. The identifier for the project space within the Platform organization. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | parameters | object | Configuration parameters for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
@@ -961,11 +976,8 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 409 Conflict | MUST be returned if a Service Instance with the same id already exists but with different attributes. |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous provisioning for the requested Service Plan and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. This MUST also be returned if the `maintenance_info` provided in the request does not match the `maintenance_info` described for the Service Plan in the Service Broker's [catalog](#catalog-management). In this case, the response body MUST contain error code `"MaintenanceInfoConflict"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"The maintenance information for the requested Service Plan has changed."`. |
 
-Responses with any other status code MUST be interpreted as a failure. See
-the [Orphans](#orphans) section for more information related to whether
-orphan mitigation needs to be applied. While a Platform might attempt
-to send a deprovision request, Service Brokers MAY automatically delete
-any resources associated with the failed provisioning request on their own.
+Responses with any other status code MUST be interpreted as a failure and the
+Platform might need to perform [Orphan Mitigation](#orphan-mitigation).
 
 #### Body
 
@@ -1042,15 +1054,22 @@ if it contains sensitive information.
 
 ## Updating a Service Instance
 
-By implementing this endpoint, Service Broker authors can enable users to
-modify the following attributes of an existing Service Instance:
-* The Service Plan (allowing users to upgrade or downgrade their Service
-  Instance to other Service Plans).
-* Configuration parameters (allowing users to change configuration options that
-  are specific to a Service Offering or Service Plan).
-* Maintenance information (allowing users to perform maintenance on their
-  Service Instance, such as upgrading the underlying operating system the
-  Service Instance is running on).
+
+By implementing this endpoint, Service Broker authors can:
+* Enable users to modify the Service Plan of a Service Instance. By changing the
+  Service Plan, users can upgrade or downgrade their Service Instance to other
+  plans.
+* Enable users to modify the parameters of a Service Instance. By modifying
+  parameters, users can change configuration options that are specific to a
+  Service or Service Plan.
+* Enable Platforms to update contextual data of a Service Instance. To enable
+  support for Platforms to send updated contextual data for Service Instances, a
+  Service Broker MUST declare support by including
+  `"allow_context_updates": true` in its
+  [catalog endpoint](#catalog-management).
+* Enable Platforms to update Maintenance information (allowing users to perform 
+  maintenance on their Service Instance, such as upgrading the underlying operating
+  system the Service Instance is running on).
 
 To enable support for the update of the Service Plan, a Service Broker MUST declare
 support per Service Offering by including `"plan_updateable": true` in either the
@@ -1086,7 +1105,7 @@ Broker SHOULD return a meaningful error message in response.
 
 | Request Field | Type | Description |
 | --- | --- | --- |
-| context | object | Contextual data under which the Service Instance is created. |
+| context | object | Contextual data for the Service Instance. |
 | service_id* | string | MUST be the ID of a Service Offering from the catalog for this Service Broker. |
 | plan_id | string | If present, MUST be the ID of a Service Plan from the Service Offering that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the Service Plan of the Service Instance as a result of this request. |
 | parameters | object | Configuration parameters for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. See "Note" below. |
@@ -1101,8 +1120,8 @@ Broker SHOULD return a meaningful error message in response.
 | --- | --- | --- |
 | service_id | string | Deprecated; determined to be unnecessary as the value is immutable. If present, it MUST be the ID of the Service Offering for the Service Instance. |
 | plan_id | string | If present, it MUST be the ID of the Service Plan prior to the update. |
-| organization_id | string | Deprecated as it was redundant information. Organization for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the organization specified for the Service Instance. |
-| space_id | string | Deprecated as it was redundant information. Space for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the space specified for the Service Instance. |
+| organization_id | string | Deprecated as it was redundant information. The organization ID for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the organization specified for the Service Instance. |
+| space_id | string | Deprecated as it was redundant information. The space ID for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the space specified for the Service Instance. |
 | maintenance_info | object | The maintenance information that was used when the Service Instance was [provisioned](#provisioning) or when it was last [updated](#updating-a-service-instance). |
 
 Note: The `parameters` specified are expected to be the values specified
@@ -1288,7 +1307,7 @@ it to correlate the resource it creates.
 
 | Request Field | Type | Description |
 | --- | --- | --- |
-| context | object | Contextual data under which the Service Binding is created. |
+| context | object | Contextual data for the Service Binding. |
 | service_id* | string | MUST be the ID of the Service Offering that is being used. |
 | plan_id* | string | MUST be the ID of the Servie Plan from the service that is being used. |
 | app_guid | string | Deprecated in favor of `bind_resource.app_guid`. GUID of an application associated with the Service Binding to be created. If present, MUST be a non-empty string. |
@@ -1368,11 +1387,8 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 409 Conflict | MUST be returned if a Service Binding with the same id, for the same Service Instance, already exists but with different parameters. |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker requires that `app_guid` be included in the request body. The response body MUST contain error code `"RequiresApp"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service supports generation of credentials through binding an application only."`. Additionally, if the Service Broker rejects the request due to a concurrent request to create a Service Binding for the same Service Instance, then this error MUST be returned (see [Blocking Operations](#blocking-operations)). This MUST also be returned if the Service Broker only supports asynchronous bindings for the Service Instance and the request did not include `?accepts_incomplete=true`. In this case, the response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Instance requires client support for asynchronous binding operations."`. |
 
-Responses with any other status code MUST be interpreted as a failure and an
-unbind request MUST be sent to the Service Broker to prevent an orphan being
-created on the Service Broker. However, while the platform will attempt
-to send an unbind request, Service Brokers MAY automatically delete
-any resources associated with the failed bind request on their own.
+Responses with any other status code MUST be interpreted as a failure and the
+Platform might need to perform [Orphan Mitigation](#orphan-mitigation).
 
 #### Body
 
@@ -1659,40 +1675,63 @@ For success responses, the following fields are defined:
 }
 ```
 
-## Orphans
+## Orphan Mitigation
 
 The Platform is the source of truth for Service Instances and Service Bindings.
 Service Brokers are expected to have successfully provisioned all of the Service
 Instances and Service Bindings that the Platform knows about, and none that it
 doesn't.
 
-Orphans can result if the Service Broker does not return a response before a
-request from the Platform times out (typically 60 seconds). For example, if a
-Service Broker does not return a response to a provision request before the
-request times out, the Service Broker might eventually succeed in provisioning
-a Service Instance after the Platform considers the request a failure. This
-results in an orphan Service Instance on the Service Broker's side.
+Orphaned Service Instances and Service Bindings might have been created in one
+of the following scenarios:
+* The Service Broker does not return a response before a request from the
+Platform times out (typically 60 seconds). The Service Broker might eventually
+succeed in creating a resource, however the Platform might have already
+considered the request a failure.
+* A synchronous [Provisioning](#provisioning) request fails.
+* A call to the
+[Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances)
+endpoint returns `"state": "failed"` for an asynchronous provisioning or
+deprovisioning request.
+* A synchronous [Binding](#binding]) request fails.
+* A call to the
+[Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings)
+endpoint returns `"state": "failed"` for an asynchronous binding or unbinding
+request.
+* The Platform encounters an internal error when creating a Service Instance or
+Service Binding (for example, saving to the database fails).
 
-To mitigate orphan Service Instances and Service Bindings, the Platform SHOULD
-attempt to delete resources it cannot be sure were successfully created, and
+To mitigate orphaned Service Instances and Service Bindings, the Platform SHOULD
+attempt to delete resources it cannot be sure wer
+
+e successfully created, and
 SHOULD keep trying to delete them until the Service Broker responds with a
-success.
+success. Service Brokers MAY automatically delete any resources they believe to
+be orphaned on their own. Note that the Platform MAY allow end users to
+determine when orphan mitigation occurs, in order to allow them to investigate
+the cause of any failures.
 
-Platforms SHOULD initiate orphan mitigation in the following scenarios:
+The following table aims to describe when Orphan Mitigation is to be initiated
+by the Platform:
 
-| Status Code Of Service Broker Response | Platform Interpretation Of Response | Platform Initiates Orphan Mitigation? |
-| --- | --- | --- |
-| 200 | Success | No |
-| 200 with malformed response | Failure | No |
-| 201 | Success | No |
-| 201 with malformed response | Failure | Yes |
-| All other 2xx | Failure | Yes |
-| 408 | Client timeout failure (request not received at the server) | No |
-| All other 4xx | Request rejected | No |
-| 5xx | Service Broker error | Yes |
-| Timeout | Failure | Yes |
-
-If the Platform encounters an internal error provisioning a Service Instance or
-Service Binding (for example, saving to the database fails), then it MUST at
-least send a single delete or unbind request to the Service Broker to prevent
-the creation of an orphan.
+| Request | Service Broker Response Status Code | Platform Interpretation Of Response | Orphan Mitigation SHOULD be performed for Service Instances | Orphan Mitigation SHOULD be performed for Service Bindings |
+| --- | --- | --- | --- | --- |
+| _All_ | 200 | Success | No | No |
+| _All_ | 200 with malformed response | Failure | No | No |
+| [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) for [Provisioning](#provisioning)/[Deprovisioning](#deprovisioning) | 200 with `"state": "failed"` | Failure | Yes | No |
+| [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) for [Binding](#binding)/[Unbinding](#unbinding) | 200 with `"state": "failed"` | Failure | No | Yes |
+| _All_ | 201 | Success | No | No |
+| [Provisioning](#provisioning) | 201 with malformed response | Failure | Yes | No |
+| [Binding](#binding) | 201 with malformed response | Failure | No | Yes |
+| _All_ | 202 | Success | No | No |
+| [Provisioning](#provisioning)/[Deprovisioning](#deprovisioning) | All other 2xx | Failure | Yes | No |
+| [Binding](#binding)/[Unbinding](#unbinding) | All other 2xx | Failure | No | Yes |
+| [Updating a Service Instance](#updating-a-service-instance) | All other 2xx | Failure | No | No |
+| _All_ | 408 | Client timeout failure (request not received at the server) | No | No |
+| _All_ | All other 4xx | Request rejected | No | No |
+| [Provisioning](#provisioning)/[Deprovisioning](#deprovisioning) | 5xx | Service Broker error | Yes | No |
+| [Binding](#binding)/[Unbinding](#unbinding) | 5xx | Service Broker error | No | Yes |
+| [Updating a Service Instance](#updating-a-service-instance) | 5xx | Service Broker error | No | No |
+| [Provisioning](#provisioning) | Timeout | Failure | Yes | No |
+| [Binding](#binding) | Timeout | Failure | No | Yes |
+| _All_ (except [Provisioning](#provisioning) and [Binding](#binding)) | Timeout | Failure | No | No |
