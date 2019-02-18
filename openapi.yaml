@@ -218,7 +218,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
     get:
-      summary: gets a service instance
+      summary: get a service instance
       tags:
         - ServiceInstances
       operationId: serviceInstance.get
@@ -247,7 +247,7 @@ paths:
 
   /v2/service_instances/{instance_id}/last_operation:
     get:
-      summary: last requested operation state for service instance
+      summary: get the last requested operation state for service instance
       tags:
         - ServiceInstances
       operationId: serviceInstance.lastOperation.get
@@ -281,6 +281,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LastOperationResource'
+          headers:
+            - $ref: '#/components/parameters/RetryAfter'
         '400':
           description: Bad Request
           content:
@@ -296,7 +298,7 @@ paths:
 
   /v2/service_instances/{instance_id}/service_bindings/{binding_id}/last_operation:
     get:
-      summary: last requested operation state for service binding
+      summary: get the last requested operation state for service binding
       tags:
         - ServiceBindings
       operationId: serviceBinding.lastOperation.get
@@ -336,6 +338,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LastOperationResource'
+          headers:
+            - $ref: '#/components/parameters/RetryAfter'
         '400':
           description: Bad Request
           content:
@@ -351,7 +355,7 @@ paths:
 
   /v2/service_instances/{instance_id}/service_bindings/{binding_id}:
     put:
-      summary: generation of a service binding
+      summary: generate a service binding
       tags:
         - ServiceBindings
       operationId: serviceBinding.binding
@@ -420,7 +424,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
     delete:
-      summary: deprovision of a service binding
+      summary: deprovision a service binding
       tags:
         - ServiceBindings
       operationId: serviceBinding.unbinding
@@ -482,7 +486,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
     get:
-      summary: gets a service binding
+      summary: get a service binding
       tags:
         - ServiceBindings
       operationId: serviceBinding.get
@@ -524,12 +528,20 @@ components:
       required: true
       schema:
         type: string
-      default: '2.13'
+        default: '2.13'
 
     OriginatingIdentity:
       name: X-Broker-API-Originating-Identity
       in: header
       description: identity of the user that initiated the request from the Platform
+      schema:
+        type: string
+
+    RetryAfter:
+      name: Retry-After
+      in: header
+      description: Indicates when to retry the request
+      require: false
       schema:
         type: string
 

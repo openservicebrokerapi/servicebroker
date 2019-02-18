@@ -71,6 +71,9 @@ A go library that provides the REST API implementation for the OSB API. Users
 implement an interface that uses the types from the
 [`go-open-service-broker-client`](https://github.com/pmorie/go-open-service-broker-client).
 
+[`Open Service Broker API for .NET`](https://github.com/AXOOM/OpenServiceBroker):
+.NET libraries for client and server implementations of the Open Service Broker API. The client library allows you to call Service Brokers that implement the API using idiomatic C# interfaces and type-safe DTOs. The server library implements the API for you using ASP.NET Core. You simply need to provide implementations for a few interfaces, shielded from the HTTP-related details.
+
 
 # Other Libraries
 
@@ -116,6 +119,9 @@ and
 [Pivotal Cloud Cache](https://pivotal.io/platform/services-marketplace/data-management/pivotal-cloud-cache) 
 service brokers. The On Demand Broker is open source, and typically deployed via
 [its BOSH release](https://github.com/pivotal-cf/on-demand-service-broker-release).
+
+[Open Service Broker for Huawei Cloud](https://github.com/huaweicloud/huaweicloud-service-broker):
+This Service Broker implements support for Huawei cloud services.
 
 ## Java
 

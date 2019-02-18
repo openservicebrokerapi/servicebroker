@@ -100,7 +100,7 @@ described below:
   It is then expected that the dedicated committers will discuss the concerns
   and determine the next step for proposal - either close/reject the proposal
   or address the concerns raised such that the "NOT LGTM" can be rescinded.
-- A proposal requires at least 4 "LGTM" comments from at least 4 different
+- A proposal requires at least 3 "LGTM" comments from at least 3 different
   organizations to be approved.
 - Once a "design change" issue is approved, it will be tagged with an
   "proposal finalized" label. This indicates that it is ready to be
@@ -113,15 +113,15 @@ described below:
 
 ## Release Process
 
-Any member of the PMC can request a specific SHA on master (the **Release SHA**)
-is ready to be released into a new version of the spec. They will do this by
-creating a new PR with the title of the proposed release. For example,
-**"Release Proposal: v$major.$minor"**.
+Any member of the PMC can request a specific SHA on master (the
+**Release RC SHA**) is ready to be released into a new version of the spec. They
+will do this by creating a new PR with the title of the proposed release. For
+example, **"Release Proposal: v$major.$minor"**.
 
 ### Prepare a PR
 
 1. In a fork, create a new branch called "v$major.$minor-rc" from the
-  **Release SHA**.
+  **Release RC SHA**.
 2. Create a new commit titled `prepare release` with the following changes:
   * Update [release-notes.md](release-notes.md) detailing the changes that are
   to be released in this version. Include a versioned link to the new branch's
@@ -139,7 +139,20 @@ creating a new PR with the title of the proposed release. For example,
   header and link to the correct version of the Google Drawing from the
   [OSBAPI Google Drive Folder](https://drive.google.com/drive/u/0/folders/0B427Up4C9IE0VmM0ZlhHTG1Rc0E).
 3. Open a new pull request titled **Release Proposal: v$major.$minor** from the
-  branch of the fork to the master branch of the repository.
+  branch of the fork to the master branch of the repository, with the following
+  description:
+  ```
+  Announcing a new release candidate as described in the
+  [Release Process](https://github.com/openservicebrokerapi/servicebroker/blob/master/CONTRIBUTING.md#release-process).
+
+  **Release version**: <v$major.$minor>
+  **Release RC SHA**: <Release RC SHA>
+  **Target release date**: <YYYY-MM-DD> (one week after the next weekly call)
+
+  The one-week
+  [Review Process](https://github.com/openservicebrokerapi/servicebroker/blob/master/CONTRIBUTING.md#review-process)
+  will be triggered on the next weekly call.
+  ```
 4. Announce the release proposal on the next weekly call and notify the mailing
   list of the proposal, triggering the start of the
   [Review Process](#review-process) as outlined below.
@@ -156,8 +169,8 @@ creating a new PR with the title of the proposed release. For example,
   steps for release proposal. The submitter should either close/reject the
   proposal or address the concerns raised such that the "NOT LGTM" can be
   rescinded.
-- A release proposal requires at least 4 "LGTM" comments from at least
-  4 different organizations to be approved.
+- A release proposal requires at least 3 "LGTM" comments from at least
+  3 different organizations to be approved.
 
 ### Once Approved
 
@@ -167,13 +180,17 @@ any PMC member:
 1. Merge the release proposal PR into the master branch of the repository. There
    should not be any conflicts as the text in the files that have changed should
    only be changed during this release process.
-1. Create a new branch called **"v$major.$minor"** from the **Release SHA**.
-1. Cherry pick the commit in which the release proposal PR was merged, to pick
-   up the file changes.
-1. Create a new commit updating [spec.md](spec.md), [profile](profile.md),
+1. Checkout the **Release RC SHA** (either to a local branch or in 'detached HEAD'
+   state). This is done in order to ensure that changes that were merged into
+   master after the release candidate was created are not included in the
+   release.
+1. Cherry pick the `prepare release` commit.
+1. Update [spec.md](spec.md), [profile](profile.md),
    [openapi.yaml](openapi.yaml) and [swagger.yaml](swagger.yaml) to include the
    version of the release `v$major.$minor`.
-1. Push the branch to the repository (`v$major.$minor`).
+1. Create a new commit with these changes called `finalise release`.
+1. Tag the commit with the name `v$major.$minor`.
+1. Push the tag to the repository with `git push origin v$major.$minor`.
 1. Notify the mailing list of the new release.
 1. Update the [Roadmap & Release Planning](https://github.com/openservicebrokerapi/servicebroker/projects/1)
    project.

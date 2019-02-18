@@ -18,4 +18,5 @@
 | [*v2.13*](release-notes.md#v213) | Sep 27, 2017 | ✔️ | ✔️ |
 | GET endpoint for Service Instances | v2.14 | ✔️ | - |
 | GET endpoint for Service Bindings | v2.14 | ✔️ | ✔️ |
-| Async Bindings | v2.14 | - | ✔️ |
+| Async Bindings | v2.14 | ✔️ | ✔️ |
+| [*v2.14*](release-notes.md#v214) | July 24, 2018 | ✔️ | ✔️ |
