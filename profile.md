@@ -246,7 +246,7 @@ All properties specified are REQUIRED unless otherwise noted.
 | --- | --- |
 | `PUT /v2/service_instances/:instance_id` | `organization_guid`, `organization_name`, `space_guid`, `space_name`, `instance_name` |
 | `PATCH /v2/service_instances/:instance_id` | `organization_guid`, `organization_name`, `space_guid`, `space_name`, `instance_name` |
-| `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id` | `organization_guid`, `organization_guid`, `space_guid`, `space_name` |
+| `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id` | `organization_guid`, `organization_name`, `space_guid`, `space_name` |
 
 The following example shows a `context` object that might appear as part of a
 Cloud Foundry API call:
