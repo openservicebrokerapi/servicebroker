@@ -340,6 +340,7 @@ use these error codes for the specified failure scenarios.
 | AsyncRequired | This request requires client support for asynchronous service operations. | The query parameter `accepts_incomplete=true` MUST be included the request. |
 | ConcurrencyError | The Service Broker does not support concurrent requests that mutate the same resource. | Clients MUST wait until pending requests have completed for the specified resources. |
 | RequiresApp | The request body is missing the `app_guid` field. | The `app_guid` MUST be included in the request body. |
+| MaintenanceInfoConflict | The `maintenance_info` field provided in the request does not match the `maintenance_info` field provided in the Service Broker's [Catalog](#catalog-management). | The Platform SHOULD fetch the latest version of the Service Broker's [Catalog](#catalog-management). |
 
 Unless otherwise specified, an HTTP status code in the 4xx range MUST result in
 the Service Broker's resources being semantically unchanged as a result of
@@ -481,6 +482,7 @@ how Platforms might expose these values to their users.
 | plan_updateable | boolean | Whether the Plan supports upgrade/downgrade/sidegrade to another version. This field is OPTIONAL. If specificed, this takes precedence over the Service Offering's `plan_updateable` field. If not specified, the default is derived from the Service Offering. Please note that the attribute is intentionally misspelled as `plan_updateable` for legacy reasons. |
 | schemas | [Schemas](#schemas-object) | Schema definitions for Service Instances and Service Bindings for the Service Plan. |
 | maximum_polling_duration | integer | A duration, in seconds, that the Platform SHOULD use as the Service's [maximum polling duration](#polling-interval-and-duration). |
+| maintenance_info | [Maintenance Info](#maintenance-info) | Maintenance information for a Service Instance which is provisioned using the Service Plan. If provided, a version string MUST be provided and platforms MAY use this when [Provisioning](#provisioning) or [Updating](#updating-a-service-instance) a Service Instance. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -611,6 +613,9 @@ schema being used.
             }
           }
         }
+      },
+      "maintenance_info": {
+        "version": "2.1.1+abcdef",
       }
     }, {
       "name": "fake-plan-2",
@@ -641,6 +646,12 @@ schema being used.
   }]
 }
 ```
+
+##### Maintenance Info
+
+| Response Field | Type | Description |
+| --- | --- | --- |
+| version | string | This MUST be a string conforming to a semantic version. The Platform MAY use this field to determine whether an update is available for a Service Instance. |
 
 ## Synchronous and Asynchronous Operations
 
@@ -916,6 +927,7 @@ Service Broker will use it to correlate the resource it creates.
 | organization_guid* | string | Deprecated in favor of `context`. The Platform GUID for the organization under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | space_guid* | string | Deprecated in favor of `context`. The identifier for the project space within the Platform organization. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | parameters | object | Configuration parameters for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
+| maintenance_info | [Maintenance Info](#maintenance-info) | If a Service Broker provides maintenance information for a Service Plan in its [Catalog](#catalog-management), a Platform MAY provide the same maintenance information when provisioning a Service Instance. This field can be used to ensure that the end-user of a Platform is provisioning what they are expecting since maintenance information can be used to describe important information (such as the version of the operating system the Service Instance will run on). If a Service Broker's catalog has changed and new maintenance information is available for the Service Plan being provisioned, then the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -932,6 +944,9 @@ Service Broker will use it to correlate the resource it creates.
   "parameters": {
     "parameter1": 1,
     "parameter2": "foo"
+  },
+  "maintenance_info": {
+    "version": "2.1.1+abcdef",
   }
 }
 ```
@@ -963,7 +978,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 202 Accepted | MUST be returned if the Service Instance provisioning is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint for operation status. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the Service Instance is not yet fully provisioned. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
 | 409 Conflict | MUST be returned if a Service Instance with the same id already exists or is being provisioned but with different attributes. |
-| 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous provisioning for the requested Service Plan and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. |
+| 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous provisioning for the requested Service Plan and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. This MUST also be returned if the `maintenance_info` provided in the request does not match the `maintenance_info` described for the Service Plan in the Service Broker's [catalog](#catalog-management). In this case, the response body MUST contain error code `"MaintenanceInfoConflict"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"The maintenance information for the requested Service Plan has changed."`. |
 
 Responses with any other status code MUST be interpreted as a failure and the
 Platform might need to perform [Orphan Mitigation](#orphan-mitigation).
@@ -1055,23 +1070,27 @@ By implementing this endpoint, Service Broker authors can:
   Service Broker MUST declare support by including
   `"allow_context_updates": true` in its
   [catalog endpoint](#catalog-management).
+* Enable Platforms to update maintenance information (allowing users to perform
+  maintenance on their Service Instance, such as upgrading the underlying operating
+  system the Service Instance is running on).
 
 To enable support for the update of the Service Plan, a Service Broker MUST declare
 support per Service Offering by including `"plan_updateable": true` in either the
 Service Offering or Service Plan in its [catalog endpoint](#catalog-management).
 
 If `"plan_updateable": true` is declared for a Service Plan in the
-[Catalog](#catalog-management) endpoint, the Platform MAY request a Service Plan change
-on a Service Instance using the given Service Plan. Otherwise, Platforms MUST NOT make
-any Service Plan change requests to the Service Broker for any Service Instance using
-the given Service Plan, but MAY request an update to the Service Instance parameters.
+[Catalog](#catalog-management) endpoint, the Platform MAY request a Service Plan
+change on a Service Instance using the given Service Plan. Otherwise, Platforms
+MUST NOT make any Service Plan change requests to the Service Broker for any
+Service Instance using the given Service Plan, but MAY request an update to the
+Service Instance parameters or perform maintenance on the Service Instance.
 
 Not all permutations of Service Plan changes are expected to be supported. For
-example, a service might support upgrading from Service Plan "shared small" to "shared
-large" but not to Service Plan "dedicated". It is up to the Service Broker to validate
-whether a particular permutation of Service Plan change is supported. If a particular
-Service Plan change is not supported, the Service Broker SHOULD return a meaningful
-error message in response.
+example, a service might support upgrading from Service Plan "shared small" to
+"shared large" but not to Service Plan "dedicated". It is up to the Service
+Broker to validate whether a particular permutation of Service Plan change is
+supported. If a particular Service Plan change is not supported, the Service
+Broker SHOULD return a meaningful error message in response.
 
 ### Request
 
@@ -1094,6 +1113,7 @@ error message in response.
 | plan_id | string | If present, MUST be the ID of a Service Plan from the Service Offering that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the Service Plan of the Service Instance as a result of this request. |
 | parameters | object | Configuration parameters for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. See "Note" below. |
 | previous_values | [PreviousValues](#previous-values-object) | Information about the Service Instance prior to the update. |
+| maintenance_info | [Maintenance Info](#maintenance-info) | If a Service Broker provides maintenance information for a Service Plan in its [Catalog](#catalog-management), a Platform MAY provide the same maintenance information when updating a Service Instance. This field can be used to perform maintenance on a Service Instance (for example, to upgrade the underlying operating system the Service Instance is running on). If a Service Broker's catalog has changed and new maintenance information is available for the Service Plan that the Service Instance being updated is using, then the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -1105,6 +1125,7 @@ error message in response.
 | plan_id | string | If present, it MUST be the ID of the Service Plan prior to the update. |
 | organization_id | string | Deprecated as it was redundant information. The organization ID for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the organization specified for the Service Instance. |
 | space_id | string | Deprecated as it was redundant information. The space ID for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the space specified for the Service Instance. |
+| maintenance_info | [Maintenance Info](#maintenance-info) | The maintenance information that was used when the Service Instance was [provisioned](#provisioning) or when it was last [updated](#updating-a-service-instance). |
 
 Note: The `parameters` specified are expected to be the values specified
 by an end-user. Whether the user chooses to include the complete set of
@@ -1139,7 +1160,13 @@ the user did not explicitly specify in their request for the update.
     "plan_id": "old-service-plan-id-here",
     "service_id": "service-offering-id-here",
     "organization_id": "org-guid-here",
-    "space_id": "space-guid-here"
+    "space_id": "space-guid-here",
+    "maintenance_info": {
+      "version": "2.1.1+abcdef",
+    }
+  },
+  "maintenance_info": {
+    "version": "2.1.1+abcdef",
   }
 }
 ```
@@ -1173,7 +1200,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 200 OK | MUST be returned if the request's changes have been applied or MAY be returned if the request's changes have had no effect. The expected response body is `{}`. |
 | 202 Accepted | MUST be returned if the Service Instance update is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint for operation status. Note that a re-sent `PATCH` request MUST return a `202 Accepted`, not a `200 OK`, if the requested update has not yet completed. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
-| 422 Unprocessable entity | MUST be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the Service Instance (e.g. Service Instance utilization is over the quota of the requested Service Plan). Additionally, a `422 Unprocessable Entity` MUST be returned if the Service Broker only supports asynchronous update for the requested Service Plan and the request did not include `?accepts_incomplete=true`; in this case the response body MUST contain a error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. |
+| 422 Unprocessable entity | MUST be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the Service Instance (e.g. Service Instance utilization is over the quota of the requested Service Plan). Additionally, this MUST be returned if the Service Broker only supports asynchronous update for the requested Service Plan and the request did not include `?accepts_incomplete=true`; in this case the response body MUST contain a error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. Additionally, this MUST be returned if the `maintenance_info` provided in the request does not match the `maintenance_info` described for the Service Plan in the Service Broker's [catalog](#catalog-management). In this case, the response body MUST contain error code `"MaintenanceInfoConflict"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"The maintenance information for the requested Service Plan has changed."`. |
 
 Responses with any other status code MUST be interpreted as a failure.
 When the response includes a 4xx status code, the Service Broker MUST NOT
