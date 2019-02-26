@@ -154,9 +154,9 @@ Note that when both the originating identity HTTP Header and the Context
 object appear in the same message the `platform` value MUST be the same
 for both.
 
-To enable support for Platforms to send updated contextual data for Service
-Instances, a Service Broker MUST declare support by including
-`"allow_context_updates": true` in its
+To enable support for Platforms to send an update request for a Service Instance
+containing only contextual data, a Service Broker MUST declare support by
+including `"allow_context_updates": true` in its
 [catalog endpoint](spec.md#catalog-management).
 
 ### Cloud Foundry Context Object
