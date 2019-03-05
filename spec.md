@@ -9,6 +9,7 @@
   - [Headers](#headers)
     - [API Version Header](#api-version-header)
     - [Originating Identity](#originating-identity)
+    - [Request Identity](#request-identity)
   - [Platform to Service Broker Authentication](#platform-to-service-broker-authentication)
   - [URL Properties](#url-properties)
   - [Service Broker Errors](#service-broker-errors)
@@ -177,6 +178,7 @@ The following HTTP Headers are defined for the operations detailed in this spec:
 | --- | --- | --- |
 | X-Broker-API-Version* | string | See [API Version Header](#api-version-header). |
 | X-Broker-API-Originating-Identity | string | See [Originating Identity](#originating-identity). |
+| X-Broker-API-Request-Identity | string | See [Request Identity](#request-identity). |
 
 \* Headers with an asterisk are REQUIRED.
 
@@ -255,6 +257,26 @@ end-user of the Platform. For example, during
 Broker's catalog, the Platform might not have an end-user with which to
 associate the request, therefore in those cases the originating identity header
 would not be included in those messages.
+
+### Request Identity
+
+A Platform might wish to uniquely identify a specific request as it flows throughout the system.
+For example, this might be used for logging for request tracing purposes. In order to facilitate
+this, Platforms will need to provide identification information to the Service Broker for each
+request. Platforms MAY support this feature, and if they do, they MUST adhere to the following:
+- For any OSBAPI request, there MUST be an associated `X-Broker-Request-Identity` header on
+  the HTTP request.
+- The Service Broker MAY include this value in log messages generated as a result of the request.
+- The Service Broker SHOULD include this header in the response to the request.
+The format of the header MUST be:
+
+```
+X-Broker-API-Request-Identity: value
+```
+
+`value` MUST be a non-empty string indicating the identity of the
+request being sent. The specific value MAY be unique for each request
+sent to the broker. Using a GUID is RECOMMENDED.
 
 ## Vendor Extension Fields
 

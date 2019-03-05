@@ -38,6 +38,7 @@ paths:
     parameters:
       - $ref: '#/parameters/APIVersion'
       - $ref: '#/parameters/OriginatingIdentity'
+      - $ref: '#/parameters/RequestIdentity'
       - $ref: '#/parameters/instance_id'
     put:
       summary: provision a service instance
@@ -155,6 +156,7 @@ paths:
       parameters:
         - $ref: '#/parameters/APIVersion'
         - $ref: '#/parameters/OriginatingIdentity'
+        - $ref: '#/parameters/RequestIdentity'
         - $ref: '#/parameters/instance_id'
       responses:
         '200':
@@ -248,6 +250,7 @@ paths:
     parameters:
       - $ref: '#/parameters/APIVersion'
       - $ref: '#/parameters/OriginatingIdentity'
+      - $ref: '#/parameters/RequestIdentity'
       - $ref: '#/parameters/instance_id'
       - $ref: '#/parameters/binding_id'
     put:
@@ -324,6 +327,7 @@ paths:
       parameters:
         - $ref: '#/parameters/APIVersion'
         - $ref: '#/parameters/OriginatingIdentity'
+        - $ref: '#/parameters/RequestIdentity'
         - $ref: '#/parameters/instance_id'
         - $ref: '#/parameters/binding_id'
       responses:
@@ -347,6 +351,11 @@ parameters:
     name: X-Broker-API-Originating-Identity
     in: header
     description: identity of the user that initiated the request from the Platform
+    type: string
+  RequestIdentity:
+    name: X-Broker-API-Request-Identity
+    in: header
+    description: idenity of the request from the Platform
     type: string
   RetryAfter:
     name: Retry-After
