@@ -1512,11 +1512,15 @@ Instance failing to authenticate.
 
 If a Service Broker accepts the request to delete a Service Binding during
 the process of it being created, then it MUST have the net effect of halting
-the current creation process and deleting any resources associated with
-the Service Binding. If the request to create the Service Binding is
-asynchronous, then its `last_operation` response SHOULD return an HTTP
-status code of `200`, a `state` value of `failed` and a `description`
-that indicates the create failed due to a concurrent delete request.
+the current creation process and beginning the deletion of any resources
+associated with the Service Binding. If the request to delete the Service Binding
+is being performed asynchronously, then the
+[Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings)
+endpoint SHOULD indicate the state of the delete request (unless a different
+`operation` identifier was provided by the Service Broker). If the request to
+delete the Service Binding is being performed synchronously, then the
+[Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings)
+endpoint SHOULD indicate that the create request has a `state` value of `failed`.
 
 ### Request
 
@@ -1587,12 +1591,17 @@ Broker is to do if it receives a deprovision request while there are still
 Service Bindings associated with it.
 
 If a Service Broker accepts the request to delete a Service Instance during
-the process of it being created, then it MUST have the net effect of halting
-the current creation process and deleting any resources associated with
-the Service Instance. If the request to create the Service Instance is
-asynchronous, then its `last_operation` response SHOULD return an HTTP
-status code of `200`, a `state` value of `failed` and a `description`
-that indicates the create failed due to a concurrent delete request.
+the process of it being provisioned, then it MUST have the net effect of halting
+the current creation process and beginning the deletion of any resources
+associated with the Service Instance. If the request to deprovision the Service
+Instance is being performed asynchronously, then the
+[Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances)
+endpoint SHOULD indicate the state of the deprovision request (unless a
+different `operation` identifier was provided by the Service Broker). If the
+request to deprovision the Service Instance is being performed synchronously, then the
+[Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances)
+endpoint SHOULD indicate that the provision request has a `state` value of
+`failed`.
 
 ### Request
 
