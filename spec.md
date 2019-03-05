@@ -329,7 +329,7 @@ For error responses, the following fields are defined:
 | error | string | A single word in camel case that uniquely identifies the error condition. If present, MUST be a non-empty string. |
 | description | string | A user-facing error message explaining why the request failed. If present, MUST be a non-empty string. |
 | instance_usable | boolean | If an update or deprovisioning operation failed, this flag indicates whether or not the Service Instance is still usable. If `true`, the Service Instance can still be used, `false` otherwise. This field MUST NOT be present for errors of other operations. Defaults to true. |
-| update_repeatable | boolean | If an update operation failed, this flag indicates whether this update can be repeated or not. If `true`, the same update operation can be repeated and may succeed; if `false`, repeating the same update operation will fail again. This field MUST NOT be present for errors of other operations. Defaults to true. |
+| update_repeatable | boolean | If an update operation failed, this flag indicates whether this update can be repeated or not. If `true`, the same update operation MAY be repeated and MAY succeed; if `false`, repeating the same update operation will fail again. This field MUST NOT be present for errors of other operations. Defaults to true. |
 | retry_delay | integer | This field suggests how long (in seconds) the Platform SHOULD wait until it repeats the operation. If this a negative number, the Platform SHOULD NOT automatically repeat the operation. Defaults to 0 seconds. |
 
 ### Error Codes
@@ -777,7 +777,7 @@ For success responses, the following fields are defined:
 | state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the Platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the Platform to cease polling. |
 | description | string | A user-facing message that can be used to tell the user details about the status of the operation. If present, MUST be a non-empty string. |
 | instance_usable | boolean | If an update or deprovisioning operation failed, this flag indicates whether or not the Service Instance is still usable. If `true`, the Service Instance can still be used, `false` otherwise. This field MUST NOT be present for errors of other operations. Defaults to true. |
-| update_repeatable | boolean | If an update operation failed, this flag indicates whether this update can be repeated or not. If `true`, the same update operation can be repeated and may succeed; if `false`, repeating the same update operation will fail again. This field MUST NOT be present for errors of other operations. Defaults to true. |
+| update_repeatable | boolean | If an update operation failed, this flag indicates whether this update can be repeated or not. If `true`, the same update operation MAY be repeated and MAY succeed; if `false`, repeating the same update operation will fail again. This field MUST NOT be present for errors of other operations. Defaults to true. |
 | retry_delay | integer | If an operation failed, this field suggests how long (in seconds) the Platform SHOULD wait until it repeats the operation. If this a negative number, the Platform SHOULD NOT automatically repeat the operation. Defaults to 0 seconds. |
 | description | string | A user-facing message that can be used to tell the user details about the status of the operation. |
 
@@ -1188,8 +1188,8 @@ Responses with any other status code MUST be interpreted as a failure.
 When the response includes a 4xx status code, the Service Broker MUST NOT
 apply any of the requested changes to the Service Instance.
 
-When an update fails, the Service Instance may be still usable or unusable
-or its state may be unknown to the Platform. If a Service Instance became
+When an update fails, the Service Instance can still be usable or unusable
+or its state could be unknown to the Platform. If a Service Instance became
 unusable, another update MAY repair the Service Instance.
 The Platform SHOULD NOT allow the creation of new bindings of an unusable
 Service Instance until the instance has been deleted or repaired by a
@@ -1200,14 +1200,14 @@ If the broker does not indicate in the
 whether the Service Instance is usable or not, the Platform SHOULD assume
 it is still usable.
 
-A failed update be may or may not be repeatable. If the Service Broker
+A failed update might be repeatable. If the Service Broker
 indicates in the [Error response](#service-broker-errors) or
 [Last Operation response](#polling-last-operation-for-service-instances)
 that retrying this update does not make sense, the Platform SHOULD NOT
 repeat this update.
 For example, if a certain plan change is not supported by the
 Service Broker, all subsequent attempts will always fail, and the
-Platform should not retry this.
+Platform SHOULD NOT retry this.
 Other updates MAY be possible.
 
 If an update is repeatable, the Service Broker MAY indicate whether
@@ -1674,8 +1674,8 @@ $ curl 'http://username:password@service-broker-url/v2/service_instances/:instan
 Responses with any other status code MUST be interpreted as a failure and the
 Platform MUST remember the Service Instance.
 
-When a deprovisioning fails, the Service Instance may be still usable or
-unusable or its state may be unknown. If a Service Instance became unusable,
+When a deprovisioning fails, the Service Instance can still be usable or
+unusable or its state could be unknown. If a Service Instance became unusable,
 the Platform SHOULD NOT allow the creation of new bindings.
 If the broker does not indicate in the [Error response](#service-broker-errors)
 or [Last Operation response](#polling-last-operation-for-service-instances)
