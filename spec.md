@@ -330,7 +330,7 @@ For error responses, the following fields are defined:
 | description | string | A user-facing error message explaining why the request failed. If present, MUST be a non-empty string. |
 | instance_usable | boolean | If an update or deprovisioning operation failed, this flag indicates whether or not the Service Instance is still usable. If `true`, the Service Instance can still be used, `false` otherwise. This field MUST NOT be present for errors of other operations. Defaults to true. |
 | update_repeatable | boolean | If an update operation failed, this flag indicates whether this update can be repeated or not. If `true`, the same update operation MAY be repeated and MAY succeed; if `false`, repeating the same update operation will fail again. This field MUST NOT be present for errors of other operations. Defaults to true. |
-| retry_delay | integer | This field suggests how long (in seconds) the Platform SHOULD wait until it repeats the operation. If this a negative number, the Platform SHOULD NOT automatically repeat the operation. Defaults to 0 seconds. |
+| retry_after | integer | This field suggests how long (in seconds) the Platform SHOULD wait until it repeats the operation. If this a negative number, the Platform SHOULD NOT automatically repeat the operation. Defaults to 0 seconds. |
 
 ### Error Codes
 
@@ -778,7 +778,7 @@ For success responses, the following fields are defined:
 | description | string | A user-facing message that can be used to tell the user details about the status of the operation. If present, MUST be a non-empty string. |
 | instance_usable | boolean | If an update or deprovisioning operation failed, this flag indicates whether or not the Service Instance is still usable. If `true`, the Service Instance can still be used, `false` otherwise. This field MUST NOT be present for errors of other operations. Defaults to true. |
 | update_repeatable | boolean | If an update operation failed, this flag indicates whether this update can be repeated or not. If `true`, the same update operation MAY be repeated and MAY succeed; if `false`, repeating the same update operation will fail again. This field MUST NOT be present for errors of other operations. Defaults to true. |
-| retry_delay | integer | If an operation failed, this field suggests how long (in seconds) the Platform SHOULD wait until it repeats the operation. If this a negative number, the Platform SHOULD NOT automatically repeat the operation. Defaults to 0 seconds. |
+| retry_after | integer | If an operation failed, this field suggests how long (in seconds) the Platform SHOULD wait until it repeats the operation. If this a negative number, the Platform SHOULD NOT automatically repeat the operation. Defaults to 0 seconds. |
 | description | string | A user-facing message that can be used to tell the user details about the status of the operation. |
 
 \* Fields with an asterisk are REQUIRED.
