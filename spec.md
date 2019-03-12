@@ -1065,10 +1065,14 @@ By implementing this endpoint, Service Broker authors can:
 * Enable users to modify the parameters of a Service Instance. By modifying
   parameters, users can change configuration options that are specific to a
   Service or Service Plan.
-* Enable Platforms to update contextual data of a Service Instance. To enable
-  support for Platforms to send updated contextual data for Service Instances, a
-  Service Broker MUST declare support by including
-  `"allow_context_updates": true` in its
+* Enable Platforms to send an update request for a Service Instance containing
+  only contextual data (no changes to the Service Plan or parameters). This MAY
+  be used by Platforms to let Service Brokers know when contextual information
+  for a Service Instance has changed (i.e. `instance_name` in the
+  [Cloud Foundry Context Object](profile.md#cloud-foundry-context-object). To
+  enable support for Platforms to send an update request for a Service Instance
+  containing only contextual data, a Service Broker MUST declare support by
+  including `"allow_context_updates": true` in its
   [catalog endpoint](#catalog-management).
 * Enable Platforms to update maintenance information (allowing users to perform
   maintenance on their Service Instance, such as upgrading the underlying operating
