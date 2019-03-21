@@ -197,7 +197,9 @@ paths:
           schema:
             $ref: '#/definitions/LastOperationResource'
           headers:
-            - $ref: '#/parameters/RetryAfter'
+            RetryAfter:
+              description: Indicates when to retry the request
+              type: string
         '400':
           description: Bad Request
           schema:
@@ -237,7 +239,9 @@ paths:
           schema:
             $ref: '#/definitions/LastOperationResource'
           headers:
-            - $ref: '#/parameters/RetryAfter'
+            RetryAfter:
+              description: Indicates when to retry the request
+              type: string
         '400':
           description: Bad Request
           schema:
@@ -356,12 +360,6 @@ parameters:
     name: X-Broker-API-Request-Identity
     in: header
     description: idenity of the request from the Platform
-    type: string
-  RetryAfter:
-    name: Retry-After
-    in: header
-    description: Indicates when to retry the request
-    required: false
     type: string
   instance_id:
     name: instance_id
