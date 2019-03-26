@@ -56,7 +56,7 @@ stop=""
 err=tmpCC-$RANDOM
 trap clean EXIT
 function clean {
-  rm -f ${err}*
+  rm -f ${err}* /tmp/tmpout
 }
 
 while [[ "$#" != "0" && "$1" == "-"* ]]; do
@@ -98,77 +98,86 @@ Files=$(find -L $* $arg \( -name "*.md" -o -name "*.htm*" \) | sort)
 
 function checkFile {
   # Determine the max # of words we need to look for
+  upperCasePhrases=( "" )
+  upperBannedPhrases=( "" )
   maxWords=1
+  i=0
   for phrase in "${casePhrases[@]}"; do
     words=( ${phrase[@]} )
     if (( ${#words[@]} > $maxWords )); then
       maxWords=${#words[@]}
     fi
+	upper=$(echo $phrase | tr '[:lower:]' '[:upper:]')
+    upperCasePhrases[i]=$upper
+	((++i))
+  done
+
+  i=0
+  for phrase in "${bannedPhrases[@]}"; do
+	upper=$(echo $phrase | tr '[:lower:]' '[:upper:]')
+    upperBannedPhrases[i]=$upper
+	((++i))
   done
 
   lines=( "" )
   words=( "" )
 
   # Prepend each line of the file with its line number
+  # echo $(date) start parsing
   cat -n $1 | while read num line ; do
     # Put each word on its own line with its line number before it.
     echo "$line" | \
-    # Split on whitespace
-    sed "s/[[:space:]]/\n&\n/g" | \
-    # Put a \n before any http... word so they're easy to find
-    sed "s/http.*[^[[:space:]]]*/\n&\n/g" | \
-    ( while read line ; do
-        # Lines that start with http are special, just echo them
-        if [[ "$line" == "http"* ]]; then
-          echo $line
-          continue
-        fi
-        # Now split on words
-        echo "$line" | sed "s/[a-zA-Z_\-]+/\n&\n/g"
-      done
-    ) | \
-	while read word ; do
-      # Now put the line number before each word
-      echo $num $word
-    done
-  done | while read line word ; do
-    if [[ "$word" == "" ]]; then
-      continue
-    fi
+    sed "s/(http[^[[:space:]]]*)|([a-zA-Z_\-]+)/ & /g" | \
+	tr -s ' ' '\n' | \
+	sed "s/^/$num /"
+  done > /tmp/tmpout
 
-    # echo $line $word
-  
-    # Shift our arrays of lineNums and words
-    if (( ${#words[@]} >= $maxWords )); then
-      lines=( "${lines[@]:1}" "$line" )
-      words=( "${words[@]:1}" "$word" )
-    else
-      lines=( "${lines[@]}" "$line" )
-      words=( "${words[@]}" "$word" )
-    fi
-  
-    # echo Lines: "${lines[@]}"
-    # echo Words: "${words[@]}"
-  
-    # For each of our "casePhrases" check to see if its in "words" with
-    # the wrong case
-    for phrase in "${casePhrases[@]}"; do
-      if [[ "${words[@]^^} " == "${phrase^^} "* && \
-            "${words[@]} " != "${phrase} "* ]]; then
-      ll=${words[*]}
-      echo line ${lines[0]}: \'${ll:0:${#phrase}}\' should be \'${phrase}\'
-    fi
-    done
+  pairs=( "" )
+  upperPairs=( "" )
 
-    # For each of our "bannedPhrases" check to see if its in "words". Note
-    # that the case of the phrase does not matter.
-    for phrase in "${bannedPhrases[@]}"; do
-      if [[ "${words[@]^^} " == "${phrase^^} "* ]]; then
-      ll=${words[*]}
-      echo line ${lines[0]}: \'${ll:0:${#phrase}}\' is banned
-    fi
-    done
+  # echo $(date) start arraying
+  i=0
+  while read line word ; do
+    [[ "${word}" == "" ]] && continue
+    lines[i]=$line
+	upperWord=$(echo -n "${word}" | tr '[:lower:]' '[:upper:]')
 
+	pairs[i]=${word}
+	upperPairs[i]=${upperWord}
+
+	for (( j=0 ; j < maxWords-1 ; j++ )); do
+	  if (( i > j )); then
+	    pairs[i-1-j]="${pairs[i-1-j]} ${word}"
+	    upperPairs[i-1-j]="${upperPairs[i-1-j]} ${upperWord}"
+	  fi
+	done
+
+    ((++i))
+  done < /tmp/tmpout
+
+  # echo $(date) start scanning
+  for (( i=0 ; i < ${#lines[@]} ; i++ )); do
+    # echo $i ${pairs[i]}
+
+	for (( j=0 ; j < ${#casePhrases[@]} ; j++ )); do
+	  phrase=${casePhrases[j]}
+
+	  if [[ "${upperPairs[i]} " == "${upperCasePhrases[j]} "* && \
+	        "${pairs[i]} " != "${phrase} "* ]]; then
+        ll=${pairs[i]}
+        echo line ${lines[i]}: \'${ll:0:${#phrase}}\' should be \'${phrase}\'
+      fi
+	done
+
+	for (( j=0 ; j < ${#upperBannedPhrases[@]} ; j++ )); do
+	  phrase=${upperBannedPhrases[j]}
+	  
+	  # echo "${upperPairs[i]} "
+	  if [[ "${upperPairs[i]} " == "${phrase} "* ]]; then
+        ll=${pairs[i]}
+        echo line ${lines[i]}: \'${ll:0:${#phrase}}\' is banned
+      fi
+	done
   done
 }
 
