@@ -1202,9 +1202,9 @@ In some cases, the creation of a Service Binding has to be accompanied by
 additional network configuration. This could be the configuration of a firewall
 or a load balancer or it could be the setup of a network tunnel or a VPN
 connection.
-To enable the Platform or another central component to do this in a service
-agnostic way, the Service Broker SHOULD provide the endpoints that the
-Application uses to connect to the service alongside the binding credentials.
+To enable the Platform to do this in a service agnostic way, the Service Broker
+SHOULD provide the endpoints that the Application uses to connect to the service
+alongside the binding credentials.
 
 ### Types of Binding
 
