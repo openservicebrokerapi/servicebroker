@@ -17,23 +17,39 @@ info:
     name: Open Service Broker API
     url: 'https://www.openservicebrokerapi.org/'
     email: open-service-broker-api@googlegroups.com
-  version: v2.13
+  version: master - might contain changes that are not yet released
+
+host: localhost:3000
+schemes:
+  - http
+  - https
+
 paths:
   /v2/catalog:
+    parameters:
+      - $ref: '#/parameters/APIVersion'
+      - $ref: '#/parameters/OriginatingIdentity'
+      - $ref: '#/parameters/RequestIdentity'
     get:
       summary: get the catalog of services that the service broker offers
       tags:
         - Catalog
       operationId: catalog.get
-      parameters:
-        - $ref: '#/parameters/APIVersion'
       produces:
         - application/json
       responses:
         '200':
           description: catalog response
           schema:
-                $ref: '#/definitions/Catalog'
+            $ref: '#/definitions/Catalog'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '412':
+          description: Precondition Failed
+          schema:
+            $ref: '#/definitions/Error'
   '/v2/service_instances/{instance_id}':
     parameters:
       - $ref: '#/parameters/APIVersion'
@@ -74,8 +90,16 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
         '409':
           description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '412':
+          description: Precondition Failed
           schema:
             $ref: '#/definitions/Error'
         '422':
@@ -112,8 +136,16 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '412':
+          description: Precondition Failed
+          schema:
+            $ref: '#/definitions/Error'
         '422':
-          description: Unprocessable entity
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
     delete:
@@ -140,8 +172,16 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
         '410':
           description: Gone
+          schema:
+            $ref: '#/definitions/Error'
+        '412':
+          description: Precondition Failed
           schema:
             $ref: '#/definitions/Error'
         '422':
@@ -153,23 +193,28 @@ paths:
       tags:
         - ServiceInstances
       operationId: serviceInstance.get
-      parameters:
-        - $ref: '#/parameters/APIVersion'
-        - $ref: '#/parameters/OriginatingIdentity'
-        - $ref: '#/parameters/RequestIdentity'
-        - $ref: '#/parameters/instance_id'
       responses:
         '200':
           description: OK
           schema:
             $ref: '#/definitions/ServiceInstanceResource'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
         '404':
           description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '412':
+          description: Precondition Failed
           schema:
             $ref: '#/definitions/Error'
   '/v2/service_instances/{instance_id}/last_operation':
     parameters:
       - $ref: '#/parameters/APIVersion'
+      - $ref: '#/parameters/OriginatingIdentity'
+      - $ref: '#/parameters/RequestIdentity'
       - $ref: '#/parameters/instance_id'
     get:
       summary: last requested operation state for service instance
@@ -204,13 +249,23 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
         '410':
           description: Gone
+          schema:
+            $ref: '#/definitions/Error'
+        '412':
+          description: Precondition Failed
           schema:
             $ref: '#/definitions/Error'
   '/v2/service_instances/{instance_id}/service_bindings/{binding_id}/last_operation':
     parameters:
       - $ref: '#/parameters/APIVersion'
+      - $ref: '#/parameters/OriginatingIdentity'
+      - $ref: '#/parameters/RequestIdentity'
       - $ref: '#/parameters/instance_id'
       - $ref: '#/parameters/binding_id'
     get:
@@ -246,8 +301,16 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
         '410':
           description: Gone
+          schema:
+            $ref: '#/definitions/Error'
+        '412':
+          description: Precondition Failed
           schema:
             $ref: '#/definitions/Error'
   '/v2/service_instances/{instance_id}/service_bindings/{binding_id}':
@@ -289,8 +352,16 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
         '409':
           description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '412':
+          description: Precondition Failed
           schema:
             $ref: '#/definitions/Error'
         '422':
@@ -319,8 +390,20 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
         '410':
           description: Gone
+          schema:
+            $ref: '#/definitions/Error'
+        '412':
+          description: Precondition Failed
+          schema:
+            $ref: '#/definitions/Error'
+        '422':
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
     get:
@@ -328,19 +411,21 @@ paths:
       tags:
         - ServiceBindings
       operationId: serviceBinding.get
-      parameters:
-        - $ref: '#/parameters/APIVersion'
-        - $ref: '#/parameters/OriginatingIdentity'
-        - $ref: '#/parameters/RequestIdentity'
-        - $ref: '#/parameters/instance_id'
-        - $ref: '#/parameters/binding_id'
       responses:
         '200':
           description: OK
           schema:
             $ref: '#/definitions/ServiceBindingResource'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
         '404':
           description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '412':
+          description: Precondition Failed
           schema:
             $ref: '#/definitions/Error'
 
@@ -360,6 +445,7 @@ parameters:
     name: X-Broker-API-Request-Identity
     in: header
     description: idenity of the request from the Platform
+    required: true
     type: string
   instance_id:
     name: instance_id
@@ -427,6 +513,12 @@ definitions:
             - volume_mount
       bindable:
         type: boolean
+      instances_retrievable:
+        type: boolean
+      bindings_retrievable:
+        type: boolean
+      allow_context_updates:
+        type: boolean
       metadata:
         $ref: '#/definitions/Metadata'
       dashboard_client:
@@ -439,6 +531,9 @@ definitions:
           $ref: '#/definitions/Plan'
   DashboardClient:
     type: object
+    required:
+      - id
+      - secret
     properties:
       id:
         type: string
@@ -466,8 +561,14 @@ definitions:
         default: true
       bindable:
         type: boolean
+      plan_updateable:
+        type: boolean
       schemas:
         $ref: '#/definitions/SchemasObject'
+      maximum_polling_duration:
+        type: integer
+      maintenance_info:
+        $ref: '#/definitions/MaintenanceInfo'
   SchemasObject:
     type: object
     properties:
@@ -527,6 +628,8 @@ definitions:
         x-deprecated: true
       parameters:
         $ref: '#/definitions/Object'
+      maintenance_info:
+        $ref: '#/definitions/MaintenanceInfo'
   ServiceInstanceProvision:
     type: object
     properties:
@@ -554,6 +657,8 @@ definitions:
         $ref: '#/definitions/Object'
       previous_values:
         $ref: '#/definitions/ServiceInstancePreviousValues'
+      maintenance_info:
+        $ref: '#/definitions/MaintenanceInfo'
   ServiceInstancePreviousValues:
     type: object
     properties:
@@ -568,6 +673,8 @@ definitions:
       space_id:
         type: string
         x-deprecated: true
+      maintenance_info:
+        $ref: '#/definitions/MaintenanceInfo'
   AsyncOperation:
     type: object
     properties:
@@ -673,6 +780,11 @@ definitions:
         type: string
       mount_config:
         $ref: '#/definitions/Object'
+  MaintenanceInfo:
+    type: object
+    properties:
+      version:
+        type: string
   Context:
     description: >-
       See [Context
