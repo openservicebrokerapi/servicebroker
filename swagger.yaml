@@ -445,7 +445,6 @@ parameters:
     name: X-Broker-API-Request-Identity
     in: header
     description: idenity of the request from the Platform
-    required: true
     type: string
   instance_id:
     name: instance_id
