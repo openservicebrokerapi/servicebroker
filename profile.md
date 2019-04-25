@@ -300,15 +300,15 @@ Cloud Foundry API call:
   Version: 2.15
 
   The [annotations](http://v3-apidocs.cloudfoundry.org/version/3.69.0/index.html#metadata) attached to the Service Instance.
-  Note that the annotations of a service instance in Cloud Foundry MAY be changed.
+  Note that the annotations of a Service Instance in Cloud Foundry MAY be changed.
   This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
   
   ```
-  "space_annotations": { "key-here":"value-here" }
+  "instance_annotations": { "key-here":"value-here" }
   ```
   For example:
   ```
-  "space_annotations": { "send-alerts-to-email":"me@mycompany.com" }
+  "instance_annotations": { "send-alerts-to-email":"me@mycompany.com" }
   ```
 
 
@@ -339,7 +339,7 @@ The following properties are defined for usage within a Kubernetes deployment:
   Version: 2.15
 
   The [annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) attached to the namespace in which the Service Instance will be visible.
-  Note that the annotations of an namespace in Kubernetes MAY be changed.
+  Note that the annotations of a namespace in Kubernetes MAY be changed.
   This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
   
   ```
@@ -355,7 +355,7 @@ The following properties are defined for usage within a Kubernetes deployment:
   Version: 2.15
 
   The [annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) attached to the Service Instance.
-  Note that the annotations of a service instance in Kubernetes MAY be changed.
+  Note that the annotations of a Service Instance in Kubernetes MAY be changed.
   This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
   
   ```
