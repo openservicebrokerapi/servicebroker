@@ -350,7 +350,7 @@ The following properties are defined for usage within a Kubernetes deployment:
   "namespace_annotations": { "myprovider.com/send-alerts-to-email":"me@mycompany.com" }
   ```
 
-- `serviceinstance_annotations`
+- `instance_annotations`
 
   Version: 2.15
 
@@ -359,11 +359,11 @@ The following properties are defined for usage within a Kubernetes deployment:
   This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with one or more properties as follows:
   
   ```
-  "serviceinstance_annotations": { "prefix-here.org/name-here":"value-here" }
+  "instance_annotations": { "prefix-here.org/name-here":"value-here" }
   ```
   For example:
   ```
-  "serviceinstance_annotations": { "myprovider.com/send-alerts-to-email":"me@mycompany.com" }
+  "instance_annotations": { "myprovider.com/send-alerts-to-email":"me@mycompany.com" }
   ```
 
 
