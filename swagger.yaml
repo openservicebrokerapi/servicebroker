@@ -24,6 +24,11 @@ schemes:
   - http
   - https
 
+consumes:
+  - application/json
+produces:
+  - application/json
+
 paths:
   /v2/catalog:
     parameters:
@@ -35,21 +40,17 @@ paths:
       tags:
         - Catalog
       operationId: catalog.get
-      produces:
-        - application/json
       responses:
         '200':
           description: catalog response
           schema:
             $ref: '#/definitions/Catalog'
         '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorUnauthorized'
         '412':
-          description: Precondition Failed
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorPreconditionFailed'
+        default:
+          $ref: '#/responses/ErrorUnexpected'
   '/v2/service_instances/{instance_id}':
     parameters:
       - $ref: '#/parameters/APIVersion'
@@ -61,10 +62,6 @@ paths:
       tags:
         - ServiceInstances
       operationId: serviceInstance.provision
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
         - name: body
           in: body
@@ -87,34 +84,22 @@ paths:
           schema:
             $ref: '#/definitions/ServiceInstanceAsyncOperation'
         '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorBadRequest'
         '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorUnauthorized'
         '409':
-          description: Conflict
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorConflict'
         '412':
-          description: Precondition Failed
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorPreconditionFailed'
         '422':
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorUnprocessableEntity'
+        default:
+          $ref: '#/responses/ErrorUnexpected'
     patch:
       summary: update a service instance
       tags:
         - ServiceInstances
       operationId: serviceInstance.update
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
         - name: body
           in: body
@@ -133,28 +118,20 @@ paths:
           schema:
             $ref: '#/definitions/ServiceInstanceAsyncOperation'
         '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorBadRequest'
         '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorUnauthorized'
         '412':
-          description: Precondition Failed
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorPreconditionFailed'
         '422':
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorUnprocessableEntity'
+        default:
+          $ref: '#/responses/ErrorUnexpected'
     delete:
       summary: deprovision a service instance
       tags:
         - ServiceInstances
       operationId: serviceInstance.deprovision
-      produces:
-        - application/json
       parameters:
         - $ref: '#/parameters/accepts_incomplete'
         - $ref: '#/parameters/service_id'
@@ -169,25 +146,17 @@ paths:
           schema:
             $ref: '#/definitions/AsyncOperation'
         '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorBadRequest'
         '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorUnauthorized'
         '410':
-          description: Gone
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorGone'
         '412':
-          description: Precondition Failed
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorPreconditionFailed'
         '422':
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorUnprocessableEntity'
+        default:
+          $ref: '#/responses/ErrorUnexpected'
     get:
       summary: gets a service instance
       tags:
@@ -199,17 +168,13 @@ paths:
           schema:
             $ref: '#/definitions/ServiceInstanceResource'
         '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorUnauthorized'
         '404':
-          description: Not Found
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorNotFound'
         '412':
-          description: Precondition Failed
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorPreconditionFailed'
+        default:
+          $ref: '#/responses/ErrorUnexpected'
   '/v2/service_instances/{instance_id}/last_operation':
     parameters:
       - $ref: '#/parameters/APIVersion'
@@ -221,8 +186,6 @@ paths:
       tags:
         - ServiceInstances
       operationId: serviceInstance.lastOperation.get
-      produces:
-        - application/json
       parameters:
         - name: service_id
           in: query
@@ -246,21 +209,15 @@ paths:
               description: Indicates when to retry the request
               type: string
         '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorBadRequest'
         '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorUnauthorized'
         '410':
-          description: Gone
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorGone'
         '412':
-          description: Precondition Failed
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorPreconditionFailed'
+        default:
+          $ref: '#/responses/ErrorUnexpected'
   '/v2/service_instances/{instance_id}/service_bindings/{binding_id}/last_operation':
     parameters:
       - $ref: '#/parameters/APIVersion'
@@ -273,8 +230,6 @@ paths:
       tags:
         - ServiceBindings
       operationId: serviceBinding.lastOperation.get
-      produces:
-        - application/json
       parameters:
         - name: service_id
           in: query
@@ -298,21 +253,15 @@ paths:
               description: Indicates when to retry the request
               type: string
         '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorBadRequest'
         '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorUnauthorized'
         '410':
-          description: Gone
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorGone'
         '412':
-          description: Precondition Failed
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorPreconditionFailed'
+        default:
+          $ref: '#/responses/ErrorUnexpected'
   '/v2/service_instances/{instance_id}/service_bindings/{binding_id}':
     parameters:
       - $ref: '#/parameters/APIVersion'
@@ -325,8 +274,6 @@ paths:
       tags:
         - ServiceBindings
       operationId: serviceBinding.binding
-      produces:
-        - application/json
       parameters:
         - name: body
           in: body
@@ -349,25 +296,19 @@ paths:
           schema:
             $ref: '#/definitions/AsyncOperation'
         '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorBadRequest'
         '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorUnauthorized'
         '409':
-          description: Conflict
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorConflict'
+        '410':
+          $ref: '#/responses/ErrorGone'
         '412':
-          description: Precondition Failed
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorPreconditionFailed'
         '422':
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorUnprocessableEntity'
+        default:
+          $ref: '#/responses/ErrorUnexpected'
     delete:
       summary: deprovision of a service binding
       tags:
@@ -387,25 +328,17 @@ paths:
           schema:
             $ref: '#/definitions/AsyncOperation'
         '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorBadRequest'
         '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorUnauthorized'
         '410':
-          description: Gone
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorGone'
         '412':
-          description: Precondition Failed
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorPreconditionFailed'
         '422':
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorUnprocessableEntity'
+        default:
+          $ref: '#/responses/ErrorUnexpected'
     get:
       summary: gets a service binding
       tags:
@@ -417,17 +350,13 @@ paths:
           schema:
             $ref: '#/definitions/ServiceBindingResource'
         '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorUnauthorized'
         '404':
-          description: Not Found
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorNotFound'
         '412':
-          description: Precondition Failed
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/ErrorPreconditionFailed'
+        default:
+          $ref: '#/responses/ErrorUnexpected'
 
 parameters:
   APIVersion:
@@ -475,6 +404,41 @@ parameters:
     description: binding id of binding to create
     required: true
     type: string
+
+responses:
+  ErrorBadRequest:
+    description: Bad Request
+    schema:
+      $ref: '#/definitions/Error'
+  ErrorUnauthorized:
+    description: Unauthorized
+    schema:
+      $ref: '#/definitions/Error'
+  ErrorNotFound:
+    description: Not Found
+    schema:
+      $ref: '#/definitions/Error'
+  ErrorConflict:
+    description: Conflict
+    schema:
+      $ref: '#/definitions/Error'
+  ErrorGone:
+    description: Gone
+    schema:
+      $ref: '#/definitions/Error'
+  ErrorPreconditionFailed:
+    description: Precondition Failed
+    schema:
+      $ref: '#/definitions/Error'
+  ErrorUnprocessableEntity:
+    description: Unprocessable Entity
+    schema:
+      $ref: '#/definitions/Error'
+  ErrorUnexpected:
+    description: Unexpected
+    schema:
+      $ref: '#/definitions/Error'
+
 definitions:
   Catalog:
     type: object
@@ -805,11 +769,13 @@ definitions:
         type: string
       description:
         type: string
+
 securityDefinitions:
   basicAuth:
     type: basic
 security:
   - basicAuth: []
+
 externalDocs:
   description: The offical Open Service Broker API specification
   url: 'https://github.com/openservicebrokerapi/servicebroker/'
