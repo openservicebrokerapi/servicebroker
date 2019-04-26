@@ -443,11 +443,11 @@ deployment:
   This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
   
   ```
-  "space_annotations": { "prefix-here.org/name-here":"value-here" }
+  "app_annotations": { "prefix-here.org/name-here":"value-here" }
   ```
   For example:
   ```
-  "space_annotations": { "myprovider.com/send-alerts-to-email":"me@mycompany.com" }
+  "app_annotations": { "myprovider.com/send-alerts-to-email":"me@mycompany.com" }
   ```
 
 
