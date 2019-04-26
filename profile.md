@@ -201,7 +201,7 @@ deployment:
 
   The [annotations](http://v3-apidocs.cloudfoundry.org/version/3.69.0/index.html#metadata) attached to the organization that a Service Instance is associated with.
   Note that the annotations of an organization in Cloud Foundry MAY be changed.
-  This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
+  This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with one or more properties as follows:
   
   ```
   "organization_annotations": { "prefix-here.org/name-here":"value-here" }
@@ -247,7 +247,7 @@ deployment:
 
   The [annotations](http://v3-apidocs.cloudfoundry.org/version/3.69.0/index.html#metadata) attached to the space that a Service Instance is associated with.
   Note that the annotations of a space in Cloud Foundry MAY be changed.
-  This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
+  This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with one or more properties as follows:
   
   ```
   "space_annotations": { "prefix-here.org/name-here":"value-here" }
@@ -301,7 +301,7 @@ Cloud Foundry API call:
 
   The [annotations](http://v3-apidocs.cloudfoundry.org/version/3.69.0/index.html#metadata) attached to the Service Instance.
   Note that the annotations of a Service Instance in Cloud Foundry MAY be changed.
-  This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
+  This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with one or more properties as follows:
   
   ```
   "instance_annotations": { "prefix-here.org/name-here":"value-here" }
@@ -340,7 +340,7 @@ The following properties are defined for usage within a Kubernetes deployment:
 
   The [annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) attached to the namespace in which the Service Instance will be visible.
   Note that the annotations of a namespace in Kubernetes MAY be changed.
-  This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
+  This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with one or more properties as follows:
   
   ```
   "namespace_annotations": { "prefix-here.org/name-here":"value-here" }
@@ -356,7 +356,7 @@ The following properties are defined for usage within a Kubernetes deployment:
 
   The [annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) attached to the Service Instance.
   Note that the annotations of a Service Instance in Kubernetes MAY be changed.
-  This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
+  This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with one or more properties as follows:
   
   ```
   "serviceinstance_annotations": { "prefix-here.org/name-here":"value-here" }
@@ -440,7 +440,7 @@ deployment:
 
   The [annotations](http://v3-apidocs.cloudfoundry.org/version/3.69.0/index.html#metadata) attached to the application that a Service Binding is associated with.
   Note that the annotations of an application in Cloud Foundry MAY be changed.
-  This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
+  This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with one or more properties as follows:
   
   ```
   "app_annotations": { "prefix-here.org/name-here":"value-here" }
