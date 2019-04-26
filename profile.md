@@ -204,11 +204,11 @@ deployment:
   This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
   
   ```
-  "organization_annotations": { "key-here":"value-here" }
+  "organization_annotations": { "prefix-here.org/name-here":"value-here" }
   ```
   For example:
   ```
-  "organization_annotations": { "send-alerts-to-email":"me@mycompany.com" }
+  "organization_annotations": { "myprovider.com/send-alerts-to-email":"me@mycompany.com" }
   ```
 
 
@@ -250,11 +250,11 @@ deployment:
   This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
   
   ```
-  "space_annotations": { "key-here":"value-here" }
+  "space_annotations": { "prefix-here.org/name-here":"value-here" }
   ```
   For example:
   ```
-  "space_annotations": { "send-alerts-to-email":"me@mycompany.com" }
+  "space_annotations": { "myprovider.com/send-alerts-to-email":"me@mycompany.com" }
   ```
 
 
@@ -304,11 +304,11 @@ Cloud Foundry API call:
   This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
   
   ```
-  "instance_annotations": { "key-here":"value-here" }
+  "instance_annotations": { "prefix-here.org/name-here":"value-here" }
   ```
   For example:
   ```
-  "instance_annotations": { "send-alerts-to-email":"me@mycompany.com" }
+  "instance_annotations": { "myprovider.com/send-alerts-to-email":"me@mycompany.com" }
   ```
 
 
@@ -343,11 +343,11 @@ The following properties are defined for usage within a Kubernetes deployment:
   This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
   
   ```
-  "namespace_annotations": { "key-here":"value-here" }
+  "namespace_annotations": { "prefix-here.org/name-here":"value-here" }
   ```
   For example:
   ```
-  "namespace_annotations": { "send-alerts-to-email":"me@mycompany.com" }
+  "namespace_annotations": { "myprovider.com/send-alerts-to-email":"me@mycompany.com" }
   ```
 
 - `serviceinstance_annotations`
@@ -359,11 +359,11 @@ The following properties are defined for usage within a Kubernetes deployment:
   This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
   
   ```
-  "serviceinstance_annotations": { "key-here":"value-here" }
+  "serviceinstance_annotations": { "prefix-here.org/name-here":"value-here" }
   ```
   For example:
   ```
-  "serviceinstance_annotations": { "send-alerts-to-email":"me@mycompany.com" }
+  "serviceinstance_annotations": { "myprovider.com/send-alerts-to-email":"me@mycompany.com" }
   ```
 
 
@@ -443,11 +443,11 @@ deployment:
   This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
   
   ```
-  "space_annotations": { "key-here":"value-here" }
+  "space_annotations": { "prefix-here.org/name-here":"value-here" }
   ```
   For example:
   ```
-  "space_annotations": { "send-alerts-to-email":"me@mycompany.com" }
+  "space_annotations": { "myprovider.com/send-alerts-to-email":"me@mycompany.com" }
   ```
 
 
