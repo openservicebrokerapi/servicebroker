@@ -771,6 +771,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ServiceBindingVolumeMount'
+        endpoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceBindingEndpoint'
         parameters:
           $ref: '#/components/schemas/Object'
 
@@ -815,6 +819,30 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ServiceBindingVolumeMount'
+        endpoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceBindingEndpoint'
+
+    ServiceBindingEndpoint:
+      type: object
+      required:
+      - host
+      - ports
+      properties:
+        host:
+          type: string
+        ports:
+          type: array
+          items:
+            type: string
+        protocol:
+          type: string
+          enum:
+          - 'tcp'
+          - 'udp'
+          - 'all'
+          default: 'tcp'
 
     ServiceBindingVolumeMount:
       type: object
