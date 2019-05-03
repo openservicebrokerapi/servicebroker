@@ -25,6 +25,7 @@
   - [Provisioning](#provisioning)
   - [Fetching a Service Instance](#fetching-a-service-instance)
   - [Updating a Service Instance](#updating-a-service-instance)
+  - [Service Instance Extensions](#service-instance-extensions)
   - [Binding](#binding)
     - [Types of Binding](#types-of-binding)
   - [Fetching a Service Binding](#fetching-a-service-binding)
@@ -492,6 +493,7 @@ how Platforms might expose these values to their users.
 | schemas | [Schemas](#schemas-object) | Schema definitions for Service Instances and Service Bindings for the Service Plan. |
 | maximum_polling_duration | integer | A duration, in seconds, that the Platform SHOULD use as the Service's [maximum polling duration](#polling-interval-and-duration). |
 | maintenance_info | [Maintenance Info](#maintenance-info-object) | Maintenance information for a Service Instance which is provisioned using the Service Plan. If provided, a version string MUST be provided and platforms MAY use this when [Provisioning](#provisioning) or [Updating](#updating-a-service-instance) a Service Instance. |
+| extensions | array of [Extension](#extensions-object) objects | An array of extensions that the Service Broker MAY return. If specified, the extensions are available on created Service Instances of this Service Plan. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -536,6 +538,17 @@ schema being used.
 | --- | --- | --- |
 | version* | string | This MUST be a string conforming to a [semantic version 2.0](https://semver.org/spec/v2.0.0.html). The Platform MAY use this field to determine whether a maintenance update is available for a Service Instance. |
 | description | string | This SHOULD be a string describing the impact of the maintenance update, for example, important version changes, configuration changes, default value changes, etc. The Platform MAY present this information to the user before they trigger the maintenance update. |
+
+\* Fields with an asterisk are REQUIRED.
+
+##### Extensions Object
+
+| Response Field | Type | Description |
+| --- | --- | --- |
+| id* | string | A Uniform Resource Name ([URN](https://tools.ietf.org/html/rfc2141)) that uniquely identifies the extension. It MUST include the namespace identifier(NID) `osbext` and a specific string(NSS) for the extension. For example `urn:osbext:/v1/backup`. |
+| path* | string | A relative path on the Service Broker to trigger the extension's endpoint(s). This path will be relative to `/v2/service_instances/:instance_id/extensions`. This MUST be a relative URI. The Service Broker author can use this path to namespace an extension to avoid [Path Objects](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#pathsObject) colliding with other extensions. |
+| description | string | A short description of the Service Instance extension. If present, MUST be a non-empty string. |
+| openapi_url* | string | A URI pointing to a valid [OpenAPI 3.0+](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md) document describing the API extension(s) available on each Service Instance of the Service Plan. If this is an absolute URI then it MUST have no authentication and be publicly available. If this is a relative URI then it is assumed to be hosted on the Service Broker and behind the [Service Broker Authentication](#platform-to-service-broker-authentication). All [Path Objects](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#pathsObject) described in the document MUST be hosted by the Service Broker and MUST be relative to the URL `/v2/service_instances/:instance_id/extensions/:path`. The Service Broker MUST use the same authentication method used for other Open Service Broker API endpoints. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -635,7 +648,21 @@ schema being used.
       "maintenance_info": {
         "version": "2.1.1+abcdef",
         "description": "OS image update.\nExpect downtime."
-      }
+      },
+      "extensions": [
+        {
+          "id": "urn:osbext:backup-and-restore:v1",
+          "path": "/instance-backup",
+          "description": "backup and restore Service Instance data.",
+          "openapi_url": "http://example.com/extensions/backup_restore.yaml"
+        },
+        {
+          "id": "urn:osbext:ping:v1",
+          "path": "/instance-ping",
+          "description": "check the health of a Service Instance.",
+          "openapi_url": "/extensions/ping.yaml"
+        }
+      ]
     }, {
       "name": "fake-plan-2",
       "id": "0f4008b5-XXXX-XXXX-XXXX-dace631cd648",
@@ -1280,6 +1307,63 @@ For success responses, the following fields are defined:
   "dashboard_url": "http://example-dashboard.example.com/0129d920a083838",
   "operation": "task_10"
 }
+```
+
+## Service Instance Extensions
+
+Service Instance Extensions allow Service Broker authors to define new endpoints
+that act on a Service Instance. This allows Service Broker authors to
+extend the specification for Service specific operations. For example,
+Backup, Restore, Start, Stop and Ping.
+
+If the Service Broker has declared Service Instance extension(s) in the [Catalog](#catalog-management), 
+then the Service Broker MUST host a route that is used as the basepath to trigger
+the extension(s). The Service Broker MUST host the path(s) relative to this route 
+that are defined in the [Extensions object](#extensions-object). The routes MUST 
+be a combination of the Service Broker author defined `path` field and the 
+[Path Objects](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#pathsObject) 
+defined in the extension's OpenAPI 3.0 document.
+
+#### Route
+`/v2/service_instances/:instance_id/extensions/:extension_path`
+
+`:instance_id` MUST be the ID of a previously provisioned Service Instance.
+
+`:extension_path` MUST be the `path` field defined in the [Extensions object](#extensions-object).
+
+For example if a Service Broker wanted to allow `POST` requests to trigger a 
+backup on the following path:
+
+`/v2/service_instances/:instance_id/extensions/broker-extension-path/backup`.
+
+They would define the following Service Instance Extension in the [Catalog](#catalog-management):
+
+```json
+{
+  "id": "urn:osbext:custom-extension:v1",
+  "path": "/broker-extension-path",
+  "description": "Allows backing up of Service Instance data.",
+  "openapi_url": "/extensions/custom-extension.yaml"
+}
+```
+
+Where the `openapi_uri` field refers to the following OpenAPI document:
+
+```yaml
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: My Service Extension
+paths:
+  /backup:
+    post:
+      summary: Backup of a Service Instance
+      operationId: backup
+      tags:
+        - backup
+      responses:
+        '202':
+          description: Backup accepted
 ```
 
 
