@@ -675,6 +675,109 @@ schema being used.
 | --- | --- | --- |
 | version | string | This MUST be a string conforming to a semantic version. The Platform MAY use this field to determine whether an update is available for a Service Instance. |
 
+## Fetching Service Plan Maintenance Info Versions 
+
+The Service Broker SHOULD expose maintenance info versions and underlying details using this endpoint (/v2/service_plans/:plan_id/maintenance_info_versions) so that the Platform MAY show the user the difference between the current maintenance info version of the Service Instance and the one they could update to.
+
+### Request
+
+#### Route
+`GET /v2/service_plans/:plan_id/maintenance_info_versions`
+
+`:plan_id` MUST be the ID of a Service Plan from the Catalog.
+
+#### cURL
+```
+$ curl http://username:password@service-broker-url/v2/service_plans/:plan_id/maintenance_info_versions -H "X-Broker-API-Version: 2.14"
+```
+
+### Response
+
+| Status | Code | Description |
+| --- | --- | --- |
+| 200 | OK | The expected response body is below. |
+| 404 | Not Found | MUST be returned if the Service Plan does not exist. |
+
+#### Body
+
+For success responses, the following fields are defined:
+
+| Response Field | Type | Description |
+| --- | --- | --- |
+| versions* | array of [Maintenance Info Version Object](#maintenance-info-version-object) objects | Schema of component objects defined below. MAY be empty. |
+
+##### Maintenance Info Version Object
+
+| Response Field | Type | Description |
+| --- | --- | --- |
+| version* | string | This MUST be a string conforming to a semantic version. |
+| description* | string | Description about what is contained in this version. |
+| components* | array of [Component](#component-object) objects | Schema of component objects defined below. MAY be empty. |
+
+##### Component Object
+
+A component is the infrastructure part of the Service Instance that MAY be updated as part of the new maintenance_info version. For example, for a service that is provided on K8S, there could be multiple components, such as the version of the service itself, K8S version, or Docker version.
+
+Service Broker SHOULD provide only the components that are useful to the user and don’t cause any security issues.
+
+| Response Field | Type | Description |
+| --- | --- | --- |
+| name* | string | This MUST be a string containing the name of this component. |
+| version* | string | This MUST be a string containing a version of this component. The Platform MAY use this field to determine whether this component would be updated as part of this version of maintenance info. |
+
+* Fields with an asterisk are REQUIRED.
+
+##### Response Body Example
+
+```json
+{
+  "versions": [
+    {
+      "version": "2.1.1+abcdef",
+      "description": "Upgrading K8S and Docker engine. Will have downtime.",
+      "components": [
+        {
+          "name": "k8s",
+          "version": "1.14"
+        },
+        {
+          "name": "docker",
+          "version": "18.03"
+        }
+      ]
+    },
+    {
+      "version": "2.0.3+edcba",
+      "description": "Upgrading the version of the service. There won't be any downtime.",
+      "components": [
+        {
+          "name": "k8s",
+          "version": "1.13"
+        },
+        {
+          "name": "docker",
+          "version": "17.03"
+        }
+      ]
+    },
+    {
+      "version": "1.0.0",
+      "description": "Initial offering.",
+      "components": [
+        {
+          "name": "k8s",
+          "version": "1.2"
+        },
+        {
+          "name": "docker",
+          "version": "1.1"
+        }
+      ]
+    }
+  ]
+}
+```
+
 ## Synchronous and Asynchronous Operations
 
 Platforms expect prompt responses to all API requests in order to provide
