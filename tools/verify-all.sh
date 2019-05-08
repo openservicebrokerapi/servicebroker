@@ -31,18 +31,18 @@ REPODIR=$(dirname "${BASH_SOURCE}")/..
 rc=0
 
 echo Verifying hrefs
-"${REPODIR}/tools/verify-links.sh" -v "${REPODIR}" || rc=1
+"${REPODIR}/tools/verify-links.sh" -v "${REPODIR}"/spec.md "${REPODIR}"/profile.md "${REPODIR}"/compatibility.md || rc=1
 
 echo Verify tables
-"${REPODIR}/tools/verify-tables.sh" -v "${REPODIR}"/spec.md "${REPODIR}"/profile.md || rc=1
+"${REPODIR}/tools/verify-tables.sh" -v "${REPODIR}"/spec.md "${REPODIR}"/profile.md "${REPODIR}"/compatibility.md || rc=1
 
 echo Verify terminology and RFC keywords
 "${REPODIR}/tools/verify-phrases.sh" -v "${REPODIR}"/spec.md "${REPODIR}"/profile.md "${REPODIR}"/compatibility.md || rc=1
 
 echo Verify description json fields
-"${REPODIR}/tools/verify-descriptions.sh" -v "${REPODIR}"/spec.md "${REPODIR}"/profile.md || rc=1
+"${REPODIR}/tools/verify-descriptions.sh" -v "${REPODIR}"/spec.md "${REPODIR}"/profile.md "${REPODIR}"/compatibility.md || rc=1
 
 echo Verify spaces after periods
-"${REPODIR}/tools/verify-spaces.sh" -v "${REPODIR}" || rc=1
+"${REPODIR}/tools/verify-spaces.sh" -v "${REPODIR}"/spec.md "${REPODIR}"/profile.md "${REPODIR}"/compatibility.md || rc=1
 
 exit $rc
