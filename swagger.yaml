@@ -569,6 +569,10 @@ definitions:
           - failed
       description:
         type: string
+      instance_usable:
+        type: boolean
+      update_repeatable:
+        type: boolean 
   ServiceBindingResource:
     type: object
     properties:
@@ -677,6 +681,10 @@ definitions:
         type: string
       description:
         type: string
+      instance_usable:
+        type: boolean
+      update_repeatable:
+        type: boolean 
 securityDefinitions:
   basicAuth:
     type: basic
