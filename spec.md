@@ -547,7 +547,8 @@ schema being used.
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| version | string | This MUST be a string conforming to a semantic version. The Platform MAY use this field to determine whether an update is available for a Service Instance. |
+| version | string | This MUST be a string conforming to a semantic version. The Platform MAY use this field to determine whether a maintenance update is available for a Service Instance. |
+| description | string | This SHOULD be a string describing the impact of the maintenance update, for example, important version changes, configuration changes, default value changes, etc. The Platform MAY present this information to the user before they trigger the maintenance update. |
 
 ```
 {
@@ -644,6 +645,7 @@ schema being used.
       },
       "maintenance_info": {
         "version": "2.1.1+abcdef",
+        "description": "OS image update.\nExpect downtime."
       }
     }, {
       "name": "fake-plan-2",
