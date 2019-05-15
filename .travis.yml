@@ -4,8 +4,9 @@
 language: bash
 
 services:
+  - docker
 
 before_install:
-  
+
 script:
   tools/verify-all.sh
