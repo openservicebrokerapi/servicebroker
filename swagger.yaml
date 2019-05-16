@@ -56,7 +56,11 @@ paths:
       - $ref: '#/parameters/APIVersion'
       - $ref: '#/parameters/OriginatingIdentity'
       - $ref: '#/parameters/RequestIdentity'
-      - $ref: '#/parameters/instance_id'
+      - name: instance_id
+        in: path
+        description: instance id of instance to provision
+        required: true
+        type: string
     put:
       summary: provision a service instance
       tags:
@@ -180,7 +184,11 @@ paths:
       - $ref: '#/parameters/APIVersion'
       - $ref: '#/parameters/OriginatingIdentity'
       - $ref: '#/parameters/RequestIdentity'
-      - $ref: '#/parameters/instance_id'
+      - name: instance_id
+        in: path
+        description: instance id of instance to provision
+        required: true
+        type: string
     get:
       summary: last requested operation state for service instance
       tags:
@@ -223,8 +231,16 @@ paths:
       - $ref: '#/parameters/APIVersion'
       - $ref: '#/parameters/OriginatingIdentity'
       - $ref: '#/parameters/RequestIdentity'
-      - $ref: '#/parameters/instance_id'
-      - $ref: '#/parameters/binding_id'
+      - name: instance_id
+        in: path
+        description: instance id of instance to provision
+        required: true
+        type: string
+      - name: binding_id
+        in: path
+        description: binding id of binding to create
+        required: true
+        type: string
     get:
       summary: last requested operation state for service binding
       tags:
@@ -267,8 +283,16 @@ paths:
       - $ref: '#/parameters/APIVersion'
       - $ref: '#/parameters/OriginatingIdentity'
       - $ref: '#/parameters/RequestIdentity'
-      - $ref: '#/parameters/instance_id'
-      - $ref: '#/parameters/binding_id'
+      - name: instance_id
+        in: path
+        description: instance id of instance to provision
+        required: true
+        type: string
+      - name: binding_id
+        in: path
+        description: binding id of binding to create
+        required: true
+        type: string
     put:
       summary: generation of a service binding
       tags:
@@ -375,12 +399,6 @@ parameters:
     in: header
     description: idenity of the request from the Platform
     type: string
-  instance_id:
-    name: instance_id
-    in: path
-    description: instance id of instance to provision
-    required: true
-    type: string
   accepts_incomplete:
     name: accepts_incomplete
     in: query
@@ -396,12 +414,6 @@ parameters:
     name: plan_id
     in: query
     description: id of the plan associated with the instance being deleted
-    required: true
-    type: string
-  binding_id:
-    name: binding_id
-    in: path
-    description: binding id of binding to create
     required: true
     type: string
 
