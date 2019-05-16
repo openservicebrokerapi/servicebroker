@@ -547,7 +547,9 @@ schema being used.
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| version | string | This MUST be a string conforming to a semantic version. The Platform MAY use this field to determine whether an update is available for a Service Instance. |
+| version* | string | This MUST be a string conforming to a semantic version. The Platform MAY use this field to determine whether an update is available for a Service Instance. |
+
+\* Fields with an asterisk are REQUIRED.
 
 ```
 {
