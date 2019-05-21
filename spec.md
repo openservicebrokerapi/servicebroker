@@ -643,7 +643,7 @@ schema being used.
         }
       },
       "maintenance_info": {
-        "version": "2.1.1+abcdef",
+        "version": "2.1.1+abcdef"
       }
     }, {
       "name": "fake-plan-2",
