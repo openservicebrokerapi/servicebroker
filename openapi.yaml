@@ -619,6 +619,8 @@ components:
           type: string
         metadata:
           $ref: '#/components/schemas/Metadata'
+        maintenance_info:
+          $ref: '#/components/schemas/MaintenanceInfo'
         free:
           type: boolean
           default: true
@@ -886,6 +888,16 @@ components:
     Metadata:
       description: "See [Service Metadata Conventions](https://github.com/openservicebrokerapi/servicebroker/blob/master/profile.md#service-metadata) for more details."
       type: object
+
+    MaintenanceInfo:
+      type: object
+      required:
+        - version
+      properties:
+        version:
+          type: string
+        description:
+          type: string
 
     Object:
       type: object
