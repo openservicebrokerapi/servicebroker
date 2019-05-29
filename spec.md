@@ -1761,8 +1761,8 @@ Responses with any other status code MUST be interpreted as a failure and the
 Platform MUST remember the Service Instance.
 
 When a deprovisioning fails, the Service Instance can still be usable or
-unusable or its state could be unknown. If a Service Instance became unusable,
-the Platform SHOULD NOT allow the creation of new bindings.
+unusable or its state could be unknown. If a Service Instance becomes unusable,
+the Platform SHOULD NOT request new Service Bindings for that Service Instance.
 If the broker does not indicate in the [Error response](#service-broker-errors)
 or [Last Operation response](#polling-last-operation-for-service-instances)
 whether the Service Instance is usable or not, the Platform SHOULD assume it is
