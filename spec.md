@@ -504,7 +504,7 @@ how Platforms might expose these values to their users.
 | plan_updateable | boolean | Whether the Plan supports upgrade/downgrade/sidegrade to another version. This field is OPTIONAL. If specificed, this takes precedence over the Service Offering's `plan_updateable` field. If not specified, the default is derived from the Service Offering. Please note that the attribute is intentionally misspelled as `plan_updateable` for legacy reasons. |
 | schemas | [Schemas](#schemas-object) | Schema definitions for Service Instances and Service Bindings for the Service Plan. |
 | maximum_polling_duration | integer | A duration, in seconds, that the Platform SHOULD use as the Service's [maximum polling duration](#polling-interval-and-duration). |
-| maintenance_info | [Maintenance Info](#maintenance-info) | Maintenance information for a Service Instance which is provisioned using the Service Plan. If provided, a version string MUST be provided and platforms MAY use this when [Provisioning](#provisioning) or [Updating](#updating-a-service-instance) a Service Instance. |
+| maintenance_info | [Maintenance Info](#maintenance-info-object) | Maintenance information for a Service Instance which is provisioned using the Service Plan. If provided, a version string MUST be provided and platforms MAY use this when [Provisioning](#provisioning) or [Updating](#updating-a-service-instance) a Service Instance. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -542,6 +542,13 @@ The following rules apply if `parameters` is included anywhere in the catalog:
 schema being used.
 * Schemas MUST NOT contain any external references.
 * Schemas MUST NOT be larger than 64kB.
+
+##### Maintenance Info Object
+
+| Response Field | Type | Description |
+| --- | --- | --- |
+| version | string | This MUST be a string conforming to a semantic version. The Platform MAY use this field to determine whether a maintenance update is available for a Service Instance. |
+| description | string | This SHOULD be a string describing the impact of the maintenance update, for example, important version changes, configuration changes, default value changes, etc. The Platform MAY present this information to the user before they trigger the maintenance update. |
 
 ```
 {
@@ -638,6 +645,7 @@ schema being used.
       },
       "maintenance_info": {
         "version": "2.1.1+abcdef",
+        "description": "OS image update.\nExpect downtime."
       }
     }, {
       "name": "fake-plan-2",
@@ -668,12 +676,6 @@ schema being used.
   }]
 }
 ```
-
-##### Maintenance Info
-
-| Response Field | Type | Description |
-| --- | --- | --- |
-| version | string | This MUST be a string conforming to a semantic version. The Platform MAY use this field to determine whether an update is available for a Service Instance. |
 
 ## Synchronous and Asynchronous Operations
 
@@ -961,7 +963,7 @@ Service Broker will use it to correlate the resource it creates.
 | organization_guid* | string | Deprecated in favor of `context`. The Platform GUID for the organization under which the Service Instance is to be provisioned. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | space_guid* | string | Deprecated in favor of `context`. The identifier for the project space within the Platform organization. Although most Service Brokers will not use this field, it might be helpful for executing operations on a user's behalf. MUST be a non-empty string. |
 | parameters | object | Configuration parameters for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. |
-| maintenance_info | [Maintenance Info](#maintenance-info) | If a Service Broker provides maintenance information for a Service Plan in its [Catalog](#catalog-management), a Platform MAY provide the same maintenance information when provisioning a Service Instance. This field can be used to ensure that the end-user of a Platform is provisioning what they are expecting since maintenance information can be used to describe important information (such as the version of the operating system the Service Instance will run on). If a Service Broker's catalog has changed and new maintenance information is available for the Service Plan being provisioned, then the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
+| maintenance_info | [Maintenance Info](#maintenance-info-object) | If a Service Broker provides maintenance information for a Service Plan in its [Catalog](#catalog-management), a Platform MAY provide the same maintenance information when provisioning a Service Instance. This field can be used to ensure that the end-user of a Platform is provisioning what they are expecting since maintenance information can be used to describe important information (such as the version of the operating system the Service Instance will run on). If a Service Broker's catalog has changed and new maintenance information is available for the Service Plan being provisioned, then the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -1151,7 +1153,7 @@ Broker SHOULD return a meaningful error message in response.
 | plan_id | string | If present, MUST be the ID of a Service Plan from the Service Offering that has been requested. If this field is not present in the request message, then the Service Broker MUST NOT change the Service Plan of the Service Instance as a result of this request. |
 | parameters | object | Configuration parameters for the Service Instance. Service Brokers SHOULD ensure that the client has provided valid configuration parameters and values for the operation. See "Note" below. |
 | previous_values | [PreviousValues](#previous-values-object) | Information about the Service Instance prior to the update. |
-| maintenance_info | [Maintenance Info](#maintenance-info) | If a Service Broker provides maintenance information for a Service Plan in its [Catalog](#catalog-management), a Platform MAY provide the same maintenance information when updating a Service Instance. This field can be used to perform maintenance on a Service Instance (for example, to upgrade the underlying operating system the Service Instance is running on). If a Service Broker's catalog has changed and new maintenance information is available for the Service Plan that the Service Instance being updated is using, then the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
+| maintenance_info | [Maintenance Info](#maintenance-info-object) | If a Service Broker provides maintenance information for a Service Plan in its [Catalog](#catalog-management), a Platform MAY provide the same maintenance information when updating a Service Instance. This field can be used to perform maintenance on a Service Instance (for example, to upgrade the underlying operating system the Service Instance is running on). If a Service Broker's catalog has changed and new maintenance information is available for the Service Plan that the Service Instance being updated is using, then the Service Broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -1163,7 +1165,7 @@ Broker SHOULD return a meaningful error message in response.
 | plan_id | string | If present, it MUST be the ID of the Service Plan prior to the update. |
 | organization_id | string | Deprecated as it was redundant information. The organization ID for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the organization specified for the Service Instance. |
 | space_id | string | Deprecated as it was redundant information. The space ID for the Service Instance MUST be provided by Platforms in the top-level field `context`. If present, it MUST be the ID of the space specified for the Service Instance. |
-| maintenance_info | [Maintenance Info](#maintenance-info) | The maintenance information that was used when the Service Instance was [provisioned](#provisioning) or when it was last [updated](#updating-a-service-instance). |
+| maintenance_info | [Maintenance Info](#maintenance-info-object) | The maintenance information that was used when the Service Instance was [provisioned](#provisioning) or when it was last [updated](#updating-a-service-instance). |
 
 Note: The `parameters` specified are expected to be the values specified
 by an end-user. Whether the user chooses to include the complete set of

@@ -666,6 +666,13 @@ definitions:
         type: string
       mount_config:
         $ref: '#/definitions/Object'
+  MaintenanceInfo:
+    type: object
+    properties:
+      version:
+        type: string
+      description:
+        type: string
   Context:
     description: >-
       See [Context
