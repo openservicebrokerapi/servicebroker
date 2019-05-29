@@ -306,13 +306,30 @@ The following properties are defined for usage within a Kubernetes deployment:
   "clusterid": "644e1dd7-2a7f-18fb-b8ed-ed78c3f92c2b"
   ```
 
+
+- `instance_name`
+
+  Version: 2.15
+
+  The name of the Service Instance.
+  Note that the name of a Service Instance in Kubernetes MAY be changed.
+  This property MUST be a non-empty string serialized as follows:
+  ```
+  "instance_name": "instance-name-here"
+  ```
+  For example:
+  ```
+  "instance_name": "my-db"
+  ```
+
+
 The following table specifies which properties will appear in each API.
 All properties specified are REQUIRED unless otherwise noted.
 
 | Request API | Properties |
 | --- | --- |
-| `PUT /v2/service_instances/:instance_id` | `namespace`, `clusterid` |
-| `PATCH /v2/service_instances/:instance_id` | `namespace`, `clusterid` |
+| `PUT /v2/service_instances/:instance_id` | `namespace`, `clusterid`, `instance_name` |
+| `PATCH /v2/service_instances/:instance_id` | `namespace`, `clusterid`, `instance_name` |
 | `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id` | `namespace`, `clusterid` |
 
 Example:
