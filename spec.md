@@ -547,7 +547,7 @@ schema being used.
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| version* | string | This MUST be a string conforming to a semantic version. The Platform MAY use this field to determine whether a maintenance update is available for a Service Instance. |
+| version* | string | This MUST be a string conforming to a [semantic version 2.0](https://semver.org/spec/v2.0.0.html). The Platform MAY use this field to determine whether a maintenance update is available for a Service Instance. |
 | description | string | This SHOULD be a string describing the impact of the maintenance update, for example, important version changes, configuration changes, default value changes, etc. The Platform MAY present this information to the user before they trigger the maintenance update. |
 
 \* Fields with an asterisk are REQUIRED.
