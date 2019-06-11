@@ -1,5 +1,37 @@
 # Service Broker API Release Notes
 
+## [v2.15](https://github.com/openservicebrokerapi/servicebroker/blob/v2.15/spec.md)
+2019-06-11
+
+* Added a delay to polling response for [Service Instance](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#polling-last-operation-for-service-instances)
+  and [Service Binding](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#polling-last-operation-for-service-bindings)
+  last operations.
+* Added a Service Offering specific [async polling timeout](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#polling-interval-and-duration).
+* Allow a Service Instance context to be updated and add [org name, space name, and instance names](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#updating-a-service-instance).
+* Added list of endpoints to [create Service Binding response body](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-9).
+* Added mechanism for [orphan mitigation](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#orphan-mitigation).
+* Allow brokers to return 200 for no-op [update Service Instance requests](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#response-5).
+* Allow brokers to not return parameters when returning a [Service Instance](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-5)
+  or [Service Binding](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-5).
+* Add plan_updateable field to the [Service Plan object](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#service-plan-object). 
+* [Clarify](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#blocking-operations) what happens when deleting during a provision/bind request.
+* Restrict Operation strings to 10,000 chartacters in the response body for [provisioning](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-4)
+  or [deprovisioning](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-12)
+  a Service Instance, and [binding](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-9)
+  or [unbinding](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-11)
+  a Service Binding.
+* Remove character restrictions on names of [Service Offerings](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#service-offering-object),
+  and [Service Plans](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#service-plan-object).
+* Allow empty descriptions in the response body for getting the last operations of [Service Instances](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-1),
+  and [Service Bindings](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-2).
+* Clarify broker behavior expected when [deprovisioning while a provision request is in progress](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#deprovisioning)
+  and [unbinding while an unbind request is in progress](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#unbinding).
+* Clarify broker behavior when a provision request is received [during a provision request for the same instance](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#response-3)
+  or when a binding request is received [during a binding request for the same binding](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#response-6).
+* Added [maintenance info](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#service-plan-object) support to Service Plans.
+* Added [request identity header](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#request-identity).
+
+
 ## [v2.14](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md)
 2018-07-24
 
