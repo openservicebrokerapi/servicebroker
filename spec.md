@@ -5,7 +5,7 @@
   - [Notations and Terminology](#notations-and-terminology)
   - [Changes](#changes)
     - [Change Policy](#change-policy-for-minor-versions)
-    - [Changes Since v2.13](#changes-since-v213)
+    - [Changes Since v2.14](#changes-since-v214)
   - [Headers](#headers)
     - [API Version Header](#api-version-header)
     - [Originating Identity](#originating-identity)
@@ -114,60 +114,35 @@ added to enable support for new features.
 These fields MUST be OPTIONAL and SHOULD be ignored by clients and servers
 that do not understand them.
 
-### Changes Since v2.13
+### Changes Since v2.14
 
-* Added GET endpoints for fetching a
-  [Service Instance](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#fetching-a-service-instance)
-  and
-  [Service Binding](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#fetching-a-service-binding)
-* Added support for asynchronous Service Bindings
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/334))
-  and a new
-  [last operation endpoint for Service Bindings](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#polling-last-operation-for-service-bindings)
-  endpoint
-* Added clarity around concurrent updates
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/300))
-* Added clarity on how Platform's can clean up after a failed provision or bind
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/353))
-* Added Opaque Bearer Tokens to the
-  [Platform to Service Broker Authentication](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#platform-to-service-broker-authentication)
-  section
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/398))
-* Provided guidance for CLI-friendly names
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/425))
-* Allow for uppercase characters in Service and Service Plan names
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/433))
-* Clarify that extra fields in requests and responses are allowed
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/436))
-* Allow an updated `dashboard_url` to be provided when updating a Service
-  Instance ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/437))
-* Added an [OpenAPI 2.0 implementation](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/swagger.yaml)
-* Allow for periods in name fields
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/452))
-* Removed the need for Platforms to perform orphan mitigation when receiving an
-  `HTTP 408` response code
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/456))
-* Moved the `dashboard_client` field to
-  [Cloud Foundry Catalog Extensions](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/profile.md#cloud-foundry-catalog-extensions)
-* Added a [compatibility matrix](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/compatibility.md)
-  describing which OPTIONAL features in the specification are supported by
-  different Platforms
-* Added clarity for returning Service Binding information via the GET endpoints
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/517))
-* Added guidance for supported string lengths
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/518))
-* Clarified that the `plan_updateable` field affects modifying the Service Plan,
-  not parameters ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/519))
-* Clarified which Service Plan ID to use for polling the last operation endpoint
-  after an update ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/522))
-* Clarified Platform behaviour when a dashboard URL is not returned
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/527))
-* Fixed an incompatible change introduced in v2.12
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/540))
-* Added clarity around the state of resources after a failure
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/541))
-* Added [Content Type](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#content-type)
-  guidelines
+* Added a delay to polling response for [Service Instance](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#polling-last-operation-for-service-instances)
+  and [Service Binding](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#polling-last-operation-for-service-bindings)
+  last operations.
+* Added a Service Offering specific [async polling timeout](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#polling-interval-and-duration).
+* Allow a Service Instance context to be updated and add [org name, space name, and instance names](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#updating-a-service-instance).
+* Added list of endpoints to [create Service Binding response body](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-9).
+* Added mechanism for [orphan mitigation](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#orphan-mitigation).
+* Allow brokers to return 200 for no-op [update Service Instance requests](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#response-5).
+* Allow brokers to not return parameters when returning a [Service Instance](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-5)
+  or [Service Binding](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-5).
+* Add plan_updateable field to the [Service Plan object](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#service-plan-object).
+* [Clarify](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#blocking-operations) what happens when deleting during a provision/bind request.
+* Restrict Operation strings to 10,000 chartacters in the response body for [provisioning](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-4)
+  or [deprovisioning](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-12)
+  a Service Instance, and [binding](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-9)
+  or [unbinding](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-11)
+  a Service Binding.
+* Remove character restrictions on names of [Service Offerings](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#service-offering-object),
+  and [Service Plans](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#service-plan-object).
+* Allow empty descriptions in the response body for getting the last operations of [Service Instances](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-1),
+  and [Service Bindings](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-2).
+* Clarify broker behavior expected when [deprovisioning while a provision request is in progress](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#deprovisioning)
+  and [unbinding while an unbind request is in progress](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#unbinding).
+* Clarify broker behavior when a provision request is received [during a provision request for the same instance](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#response-3)
+  or when a binding request is received [during a binding request for the same binding](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#response-6).
+* Added [maintenance info](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#service-plan-object) support to Service Plans.
+* Added [request identity header](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#request-identity).
 
 For changes in older versions, see the [release notes](https://github.com/openservicebrokerapi/servicebroker/blob/master/release-notes.md).
 
