@@ -200,6 +200,10 @@ Service Broker MAY reject the request with `412 Precondition Failed` and
 provide a message that informs the operator of the API version that is to be
 used instead.
 
+If the request from the Platform to the Service Broker doesn't contain this
+header, then the Service Broker MAY reject the request with `400 Bad Request`
+and provide a message that the header is required.
+
 ### Originating Identity
 
 Often a Service Broker will need to know the identity of the user that
