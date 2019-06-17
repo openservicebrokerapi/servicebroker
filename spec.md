@@ -239,7 +239,7 @@ A Platform might wish to uniquely identify a specific request as it flows throug
 For example, this might be used for logging for request tracing purposes. In order to facilitate
 this, Platforms will need to provide identification information to the Service Broker for each
 request. Platforms MAY support this feature, and if they do, they MUST adhere to the following:
-- For any OSBAPI request, there MUST be an associated `X-Broker-Request-Identity` header on
+- For any OSBAPI request, there MUST be an associated `X-Broker-API-Request-Identity` header on
   the HTTP request.
 - The Service Broker MAY include this value in log messages generated as a result of the request.
 - The Service Broker SHOULD include this header in the response to the request.
