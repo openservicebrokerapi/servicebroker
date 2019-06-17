@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2017 The authors
+# Copyright 2017 - 2019 The authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,19 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This script will scan all md (markdown) files for bad references.
-# It will look for strings of the form [...](...) and make sure that
-# the (...) points to either a valid file in the source tree or, in the
-# case of it being an http url, it'll make sure we don't get a 404.
+# This script runs all the verification checks, both for CI and development
 #
-# Usage: verify-links.sh [ dir | file ... ]
-# default arg is root of our source tree
+# Usage: verify-all.sh
 
 set -o errexit
 set -o nounset
 set -o pipefail
 
-REPODIR=$(dirname "${BASH_SOURCE}")/..
+REPODIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"/..; pwd -P)"
 
 rc=0
 
@@ -44,5 +40,11 @@ echo Verify description json fields
 
 echo Verify spaces after periods
 "${REPODIR}/tools/verify-spaces.sh" -v "${REPODIR}"/spec.md "${REPODIR}"/profile.md "${REPODIR}"/compatibility.md || rc=1
+
+echo Verify OpenAPI
+docker run --rm -v "${REPODIR}":/local openapitools/openapi-generator-cli validate -i /local/openapi.yaml || rc=1
+
+echo Verify Swagger
+docker run --rm -v "${REPODIR}":/local openapitools/openapi-generator-cli validate -i /local/swagger.yaml || rc=1
 
 exit $rc
