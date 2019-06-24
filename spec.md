@@ -809,6 +809,10 @@ For asynchronous provision operations, if the response contains
 `"state": "failed"` then the Platform might need to perform
 [Orphan Mitigation](#orphan-mitigation).
 
+Service Brokers SHOULD NOT forget the state of an operation immediately after
+returning a `"succeeded"` or `"failed"` state in case the Platform needs to ask
+again.
+
 ## Polling Last Operation for Service Bindings
 
 When a broker returns status code `202 Accepted` for [Binding](#binding) or
@@ -889,6 +893,10 @@ timestamp.
 
 If the response contains `"state": "failed"`, then the Platform might need to
 perform [Orphan Mitigation](#orphan-mitigation).
+
+Service Brokers SHOULD NOT forget the state of an operation immediately after
+returning a `"succeeded"` or `"failed"` state in case the Platform needs to ask
+again.
 
 ## Polling Interval and Duration
 
