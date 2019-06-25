@@ -78,11 +78,11 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/ServiceInstanceProvision'
+            $ref: '#/definitions/ServiceInstanceProvisionResponse'
         '201':
           description: Created
           schema:
-            $ref: '#/definitions/ServiceInstanceProvision'
+            $ref: '#/definitions/ServiceInstanceProvisionResponse'
         '202':
           description: Accepted
           schema:
@@ -310,11 +310,11 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/ServiceBinding'
+            $ref: '#/definitions/ServiceBindingResponse'
         '201':
           description: Created
           schema:
-            $ref: '#/definitions/ServiceBinding'
+            $ref: '#/definitions/ServiceBindingResponse'
         '202':
           description: Accepted
           schema:
@@ -605,7 +605,7 @@ definitions:
         $ref: '#/definitions/Object'
       maintenance_info:
         $ref: '#/definitions/MaintenanceInfo'
-  ServiceInstanceProvision:
+  ServiceInstanceProvisionResponse:
     type: object
     properties:
       dashboard_url:
@@ -709,7 +709,7 @@ definitions:
         type: string
       route:
         type: string
-  ServiceBinding:
+  ServiceBindingResponse:
     type: object
     properties:
       credentials:

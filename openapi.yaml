@@ -73,13 +73,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServiceInstanceProvision'
+                $ref: '#/components/schemas/ServiceInstanceProvisionResponse'
         '201':
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServiceInstanceProvision'
+                $ref: '#/components/schemas/ServiceInstanceProvisionResponse'
         '202':
           description: Accepted
           content:
@@ -400,13 +400,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServiceBinding'
+                $ref: '#/components/schemas/ServiceBindingResponse'
         '201':
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServiceBinding'
+                $ref: '#/components/schemas/ServiceBindingResponse'
         '202':
           description: Accepted
           content:
@@ -695,7 +695,7 @@ components:
         parameters:
           $ref: '#/components/schemas/Object'
 
-    ServiceInstanceProvision:
+    ServiceInstanceProvisionResponse:
       type: object
       properties:
         dashboard_url:
@@ -808,7 +808,7 @@ components:
         route:
           type: string
 
-    ServiceBinding:
+    ServiceBindingResponse:
       type: object
       properties:
         credentials:
