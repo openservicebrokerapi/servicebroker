@@ -199,7 +199,7 @@ adhere to the following:
 
 If the Platform chooses to group multiple end-user operations into one request
 to the Broker, then the identity information associated with that one request
-MUST accurately reflect the desired indentity associated for each individual
+MUST accurately reflect the desired identity associated for each individual
 change.
 
 The format of the header MUST be:
@@ -1487,7 +1487,7 @@ For `200 OK` and `201 Created` response codes, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| expires_at | string | The date and time when the Service Binding becomes invalid and SHOULD NOT or CANNOT be used anymore. Applications or Platforms MAY use this field to initiate a Service Binding/credential rotation. If present, the string MUST follow ISO 8601 and this pattern: `yyyy-mm-ddThh:mm:ss.sZ` |
+| expires_at | string | The date and time when the Service Binding becomes invalid and SHOULD NOT or CANNOT be used anymore. Applications or Platforms MAY use this field to initiate a Service Binding/credential rotation. If present, the string MUST follow ISO 8601 and this pattern: `yyyy-mm-ddThh:mm:ss.ssZ` |
 
 ##### Volume Mount Object
 
