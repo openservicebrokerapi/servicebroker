@@ -1229,8 +1229,8 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 422 Unprocessable entity | MUST be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the Service Instance (e.g. Service Instance utilization is over the quota of the requested Service Plan). Additionally, this MUST be returned if the Service Broker only supports asynchronous update for the requested Service Plan and the request did not include `?accepts_incomplete=true`; in this case the response body MUST contain a error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. Additionally, this MUST be returned if the `maintenance_info.version` provided in the request does not match the `maintenance_info.version` described for the Service Plan in the Service Broker's [catalog](#catalog-management). In this case, the response body MUST contain error code `"MaintenanceInfoConflict"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"The maintenance information for the requested Service Plan has changed."`. |
 
 Responses with any other status code MUST be interpreted as a failure.
-When the response includes a 4xx status code, the Service Broker MUST NOT
-apply any of the requested changes to the Service Instance.
+When the response includes a 4xx or 5xx status code, the Service Broker MUST
+NOT apply any of the requested changes to the Service Instance.
 
 #### Body
 
