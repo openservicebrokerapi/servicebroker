@@ -1022,6 +1022,15 @@ any circumstances.
 
 `:instance_id` MUST be the ID of a previously provisioned Service Instance.
 
+#### Parameters
+
+The request provides these query string parameters as useful hints for brokers.
+
+| Query-String Field | Type | Description |
+| --- | --- | --- |
+| service_id | string | ID of the Service Offering from the catalog. If present, MUST be a non-empty string. |
+| plan_id | string | ID of the Service Plan from the catalog. If present, MUST be a non-empty string. |
+
 ##### cURL
 ```
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id' -X GET -H "X-Broker-API-Version: 2.14"
@@ -1519,6 +1528,15 @@ endpoint returns `"state": "succeeded"` for a [Binding](#binding) operation.
 
 `:binding_id` MUST be the ID of a previously provisioned Service Binding for that
 instance.
+
+#### Parameters
+
+The request provides these query string parameters as useful hints for brokers.
+
+| Query-String Field | Type | Description |
+| --- | --- | --- |
+| service_id | string | ID of the Service Offering from the catalog. If present, MUST be a non-empty string. |
+| plan_id | string | ID of the Service Plan from the catalog. If present, MUST be a non-empty string. |
 
 ##### cURL
 ```
