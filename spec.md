@@ -395,6 +395,12 @@ display to end users, such as the description of a Service Offering or Service P
 is RECOMMENDED that strings do not exceed 255 characters to increase the
 likelihood of having compatibility with any Platform.
 
+Service Brokers and Platforms MAY support the
+[`ETag`](https://tools.ietf.org/html/rfc7232#section-2.3) and
+[`If-Modified-Since'](https://tools.ietf.org/html/rfc7232#section-3.3) 
+HTTP headers to enable caching of the catalog.
+(See [RFC 7232](https://tools.ietf.org/html/rfc7232) for details.) 
+
 The following sections describe catalog requests and responses in the Service
 Broker API.
 
