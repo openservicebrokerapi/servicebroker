@@ -779,6 +779,10 @@ components:
             - failed
         description:
           type: string
+        instance_usable:
+          type: boolean
+        update_repeatable:
+          type: boolean
 
     ServiceBindingResource:
       type: object
@@ -930,6 +934,10 @@ components:
           type: string
         description:
           type: string
+        instance_usable:
+          type: boolean
+        update_repeatable:
+          type: boolean 
 
   securitySchemes:
     basicAuth:
