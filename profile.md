@@ -195,6 +195,23 @@ deployment:
   "organization_name": "system"
   ```
 
+- `organization_annotations`
+
+  Version: 2.16
+
+  The [annotations](http://v3-apidocs.cloudfoundry.org/version/3.69.0/index.html#metadata) attached to the organization that a Service Instance is associated with.
+  Note that the annotations of an organization in Cloud Foundry MAY be changed.
+  This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
+  
+  ```
+  "organization_annotations": { "prefix-here.org/name-here":"value-here" }
+  ```
+  For example:
+  ```
+  "organization_annotations": { "myprovider.com/send-alerts-to-email":"me@mycompany.com" }
+  ```
+
+
 - `space_guid`
 
   Version: 2.11
@@ -223,6 +240,23 @@ deployment:
   ```
   "space_name": "development"
   ```
+
+- `space_annotations`
+
+  Version: 2.16
+
+  The [annotations](http://v3-apidocs.cloudfoundry.org/version/3.69.0/index.html#metadata) attached to the space that a Service Instance is associated with.
+  Note that the annotations of a space in Cloud Foundry MAY be changed.
+  This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
+  
+  ```
+  "space_annotations": { "prefix-here.org/name-here":"value-here" }
+  ```
+  For example:
+  ```
+  "space_annotations": { "myprovider.com/send-alerts-to-email":"me@mycompany.com" }
+  ```
+
 
 - `instance_name`
 
@@ -261,6 +295,23 @@ Cloud Foundry API call:
   }
   ```
 
+- `instance_annotations`
+
+  Version: 2.16
+
+  The [annotations](http://v3-apidocs.cloudfoundry.org/version/3.69.0/index.html#metadata) attached to the Service Instance.
+  Note that the annotations of a Service Instance in Cloud Foundry MAY be changed.
+  This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
+  
+  ```
+  "instance_annotations": { "prefix-here.org/name-here":"value-here" }
+  ```
+  For example:
+  ```
+  "instance_annotations": { "myprovider.com/send-alerts-to-email":"me@mycompany.com" }
+  ```
+
+
 ### Kubernetes Context Object
 
 *`platform` Property Value*: `kubernetes`
@@ -282,6 +333,39 @@ The following properties are defined for usage within a Kubernetes deployment:
   ```
   "namespace": "testing"
   ```
+
+- `namespace_annotations`
+
+  Version: 2.16
+
+  The [annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) attached to the namespace in which the Service Instance will be visible.
+  Note that the annotations of a namespace in Kubernetes MAY be changed.
+  This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
+  
+  ```
+  "namespace_annotations": { "prefix-here.org/name-here":"value-here" }
+  ```
+  For example:
+  ```
+  "namespace_annotations": { "myprovider.com/send-alerts-to-email":"me@mycompany.com" }
+  ```
+
+- `instance_annotations`
+
+  Version: 2.16
+
+  The [annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) attached to the Service Instance.
+  Note that the annotations of a Service Instance in Kubernetes MAY be changed.
+  This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
+  
+  ```
+  "instance_annotations": { "prefix-here.org/name-here":"value-here" }
+  ```
+  For example:
+  ```
+  "instance_annotations": { "myprovider.com/send-alerts-to-email":"me@mycompany.com" }
+  ```
+
 
 
 - `clusterid`
@@ -366,6 +450,25 @@ deployment:
   ```
   "space_guid": "15823972-c216-4ba5-9f3f-e75b0b891297"
   ```
+
+- `app_annotations`
+
+  Version: 2.16
+
+  The [annotations](http://v3-apidocs.cloudfoundry.org/version/3.69.0/index.html#metadata) attached to the application that a Service Binding is associated with.
+  Note that the annotations of an application in Cloud Foundry MAY be changed.
+  This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
+  
+  ```
+  "app_annotations": { "prefix-here.org/name-here":"value-here" }
+  ```
+  For example:
+  ```
+  "app_annotations": { "myprovider.com/send-alerts-to-email":"me@mycompany.com" }
+  ```
+
+
+
 
 The following example shows a `bind_resource` object that might appear as part
 of a Cloud Foundry API call:
