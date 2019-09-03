@@ -936,6 +936,8 @@ account on an multi-tenant SaaS application.
 This ID will be used for future requests (bind and deprovision), so the
 Service Broker will use it to correlate the resource it creates.
 
+Platforms SHOULD NOT reuse IDs, since Service Brokers MAY NOT support this.
+
 #### Parameters
 | Parameter Name | Type | Description |
 | --- | --- | --- |
