@@ -60,7 +60,7 @@ link to it alongside the relevant information.
 
 * [openservicebrokerapi/osb-checker](https://github.com/openservicebrokerapi/osb-checker) \
   Latest supported version: v2.13 \
-  Language: Golang \
+  Language: JavaScript \
   Maintainers:
   [@leonwanghui](https://github.com/leonwanghui),
   [@hannibalhuang](https://github.com/hannibalhuang),
