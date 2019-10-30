@@ -59,7 +59,7 @@ test suite which is not listed below, we would welcome a pull request to add a
 link to it alongside the relevant information.
 
 * [openservicebrokerapi/osb-checker](https://github.com/openservicebrokerapi/osb-checker) \
-  Latest supported version: v2.13 \
+  Latest supported version: v2.14 \
   Language: Golang \
   Maintainers:
   [@leonwanghui](https://github.com/leonwanghui),
@@ -78,4 +78,3 @@ link to it alongside the relevant information.
   [@MarcoDima](https://github.com/MarcoDima),
   [@mberger](https://github.com/mberger),
   [@jhiemer](https://github.com/jhiemer)
-
