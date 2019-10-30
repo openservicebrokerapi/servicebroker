@@ -116,7 +116,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            type: object
         '202':
           description: Accepted
           schema:
@@ -144,7 +144,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            type: object
         '202':
           description: Accepted
           schema:
@@ -355,7 +355,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            type: object
         '202':
           description: Accepted
           schema:
@@ -598,7 +598,7 @@ definitions:
       dashboard_url:
         type: string
       parameters:
-        $ref: '#/definitions/Object'
+        type: object
   ServiceInstanceProvisionRequest:
     type: object
     required:
@@ -620,7 +620,7 @@ definitions:
         type: string
         x-deprecated: true
       parameters:
-        $ref: '#/definitions/Object'
+        type: object
       maintenance_info:
         $ref: '#/definitions/MaintenanceInfo'
   ServiceInstanceProvisionResponse:
@@ -647,7 +647,7 @@ definitions:
       plan_id:
         type: string
       parameters:
-        $ref: '#/definitions/Object'
+        type: object
       previous_values:
         $ref: '#/definitions/ServiceInstancePreviousValues'
       maintenance_info:
@@ -694,7 +694,7 @@ definitions:
     type: object
     properties:
       credentials:
-        $ref: '#/definitions/Object'
+        type: object
       syslog_drain_url:
         type: string
       route_service_url:
@@ -704,7 +704,7 @@ definitions:
         items:
           $ref: '#/definitions/ServiceBindingVolumeMount'
       parameters:
-        $ref: '#/definitions/Object'
+        type: object
   ServiceBindingRequest:
     type: object
     required:
@@ -723,7 +723,7 @@ definitions:
       bind_resource:
         $ref: '#/definitions/ServiceBindingResourceObject'
       parameters:
-        $ref: '#/definitions/Object'
+        type: object
   ServiceBindingResourceObject:
     type: object
     properties:
@@ -735,7 +735,7 @@ definitions:
     type: object
     properties:
       credentials:
-        $ref: '#/definitions/Object'
+        type: object
       syslog_drain_url:
         type: string
       route_service_url:
@@ -776,7 +776,7 @@ definitions:
       volume_id:
         type: string
       mount_config:
-        $ref: '#/definitions/Object'
+        type: object
   MaintenanceInfo:
     type: object
     properties:
