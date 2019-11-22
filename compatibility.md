@@ -20,3 +20,9 @@
 | GET endpoint for Service Bindings | v2.14 | ✔️ | ✔️ |
 | Async Bindings | v2.14 | ✔️ | ✔️ |
 | [*v2.14*](release-notes.md#v214) | July 24, 2018 | ✔️ | ✔️ |
+| `request identity header` to uniquely identify a specific request | v2.15 | - | - |
+| `maintenance_info` used for Service Instance upgrades | v2.15 | ✔️ | - |
+| `plan_upgradeable` field in Service Plan object is used to determine if a plan change can be performed | v2.15 | ✔️ | - |
+| `maximum_polling_duration` field in Service Plan object is adhered to | v2.15 | ✔️ | - |
+| `Retry-After` response header from calls to last operation is adhered to | v2.15 | ✔️ | - |
+| [*v2.15*](release-notes.md#v215) | June 25, 2019 | ✔️ | ✔️ |

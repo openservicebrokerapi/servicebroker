@@ -73,13 +73,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServiceInstanceProvision'
+                $ref: '#/components/schemas/ServiceInstanceProvisionResponse'
         '201':
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServiceInstanceProvision'
+                $ref: '#/components/schemas/ServiceInstanceProvisionResponse'
         '202':
           description: Accepted
           content:
@@ -229,6 +229,16 @@ paths:
           in: path
           description: instance id of instance to fetch
           required: true
+          schema:
+            type: string
+        - name: service_id
+          in: query
+          description: id of the service associated with the instance
+          schema:
+            type: string
+        - name: plan_id
+          in: query
+          description: id of the plan associated with the instance
           schema:
             type: string
       responses:
@@ -400,13 +410,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServiceBinding'
+                $ref: '#/components/schemas/ServiceBindingResponse'
         '201':
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServiceBinding'
+                $ref: '#/components/schemas/ServiceBindingResponse'
         '202':
           description: Accepted
           content:
@@ -511,6 +521,16 @@ paths:
           in: path
           description: binding id of binding to fetch
           required: true
+          schema:
+            type: string
+        - name: service_id
+          in: query
+          description: id of the service associated with the instance
+          schema:
+            type: string
+        - name: plan_id
+          in: query
+          description: id of the plan associated with the instance
           schema:
             type: string
       responses:
@@ -695,7 +715,7 @@ components:
         parameters:
           $ref: '#/components/schemas/Object'
 
-    ServiceInstanceProvision:
+    ServiceInstanceProvisionResponse:
       type: object
       properties:
         dashboard_url:
@@ -759,6 +779,10 @@ components:
             - failed
         description:
           type: string
+        instance_usable:
+          type: boolean
+        update_repeatable:
+          type: boolean
 
     ServiceBindingResource:
       type: object
@@ -808,7 +832,7 @@ components:
         route:
           type: string
 
-    ServiceBinding:
+    ServiceBindingResponse:
       type: object
       properties:
         credentials:
@@ -910,6 +934,10 @@ components:
           type: string
         description:
           type: string
+        instance_usable:
+          type: boolean
+        update_repeatable:
+          type: boolean 
 
   securitySchemes:
     basicAuth:

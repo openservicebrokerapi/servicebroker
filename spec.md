@@ -5,7 +5,7 @@
   - [Notations and Terminology](#notations-and-terminology)
   - [Changes](#changes)
     - [Change Policy](#change-policy-for-minor-versions)
-    - [Changes Since v2.13](#changes-since-v213)
+    - [Changes Since v2.14](#changes-since-v214)
   - [Headers](#headers)
     - [API Version Header](#api-version-header)
     - [Originating Identity](#originating-identity)
@@ -114,60 +114,35 @@ added to enable support for new features.
 These fields MUST be OPTIONAL and SHOULD be ignored by clients and servers
 that do not understand them.
 
-### Changes Since v2.13
+### Changes Since v2.14
 
-* Added GET endpoints for fetching a
-  [Service Instance](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#fetching-a-service-instance)
-  and
-  [Service Binding](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#fetching-a-service-binding)
-* Added support for asynchronous Service Bindings
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/334))
-  and a new
-  [last operation endpoint for Service Bindings](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#polling-last-operation-for-service-bindings)
-  endpoint
-* Added clarity around concurrent updates
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/300))
-* Added clarity on how Platform's can clean up after a failed provision or bind
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/353))
-* Added Opaque Bearer Tokens to the
-  [Platform to Service Broker Authentication](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#platform-to-service-broker-authentication)
-  section
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/398))
-* Provided guidance for CLI-friendly names
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/425))
-* Allow for uppercase characters in Service and Service Plan names
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/433))
-* Clarify that extra fields in requests and responses are allowed
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/436))
-* Allow an updated `dashboard_url` to be provided when updating a Service
-  Instance ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/437))
-* Added an [OpenAPI 2.0 implementation](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/swagger.yaml)
-* Allow for periods in name fields
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/452))
-* Removed the need for Platforms to perform orphan mitigation when receiving an
-  `HTTP 408` response code
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/456))
-* Moved the `dashboard_client` field to
-  [Cloud Foundry Catalog Extensions](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/profile.md#cloud-foundry-catalog-extensions)
-* Added a [compatibility matrix](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/compatibility.md)
-  describing which OPTIONAL features in the specification are supported by
-  different Platforms
-* Added clarity for returning Service Binding information via the GET endpoints
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/517))
-* Added guidance for supported string lengths
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/518))
-* Clarified that the `plan_updateable` field affects modifying the Service Plan,
-  not parameters ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/519))
-* Clarified which Service Plan ID to use for polling the last operation endpoint
-  after an update ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/522))
-* Clarified Platform behaviour when a dashboard URL is not returned
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/527))
-* Fixed an incompatible change introduced in v2.12
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/540))
-* Added clarity around the state of resources after a failure
-  ([PR](https://github.com/openservicebrokerapi/servicebroker/pull/541))
-* Added [Content Type](https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#content-type)
-  guidelines
+* Added a delay to polling response for [Service Instance](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#polling-last-operation-for-service-instances)
+  and [Service Binding](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#polling-last-operation-for-service-bindings)
+  last operations.
+* Added a Service Offering specific [async polling timeout](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#polling-interval-and-duration).
+* Allow a Service Instance context to be updated and add [org name, space name, and instance names](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#updating-a-service-instance).
+* Added list of endpoints to [create Service Binding response body](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-9).
+* Added mechanism for [orphan mitigation](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#orphan-mitigation).
+* Allow brokers to return 200 for no-op [update Service Instance requests](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#response-5).
+* Allow brokers to not return parameters when returning a [Service Instance](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-5)
+  or [Service Binding](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-5).
+* Add plan_updateable field to the [Service Plan object](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#service-plan-object).
+* [Clarify](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#blocking-operations) what happens when deleting during a provision/bind request.
+* Restrict Operation strings to 10,000 chartacters in the response body for [provisioning](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-4)
+  or [deprovisioning](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-12)
+  a Service Instance, and [binding](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-9)
+  or [unbinding](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-11)
+  a Service Binding.
+* Remove character restrictions on names of [Service Offerings](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#service-offering-object),
+  and [Service Plans](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#service-plan-object).
+* Allow empty descriptions in the response body for getting the last operations of [Service Instances](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-1),
+  and [Service Bindings](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-2).
+* Clarify broker behavior expected when [deprovisioning while a provision request is in progress](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#deprovisioning)
+  and [unbinding while an unbind request is in progress](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#unbinding).
+* Clarify broker behavior when a provision request is received [during a provision request for the same instance](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#response-3)
+  or when a binding request is received [during a binding request for the same binding](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#response-6).
+* Added [maintenance info](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#service-plan-object) support to Service Plans.
+* Added [request identity header](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#request-identity).
 
 For changes in older versions, see the [release notes](https://github.com/openservicebrokerapi/servicebroker/blob/master/release-notes.md).
 
@@ -199,6 +174,10 @@ version of the API that is supported by the Platform. In this scenario the
 Service Broker MAY reject the request with `412 Precondition Failed` and
 provide a message that informs the operator of the API version that is to be
 used instead.
+
+If the request from the Platform to the Service Broker doesn't contain this
+header, then the Service Broker MAY reject the request with `400 Bad Request`
+and provide a message that the header is required.
 
 ### Originating Identity
 
@@ -264,7 +243,7 @@ A Platform might wish to uniquely identify a specific request as it flows throug
 For example, this might be used for logging for request tracing purposes. In order to facilitate
 this, Platforms will need to provide identification information to the Service Broker for each
 request. Platforms MAY support this feature, and if they do, they MUST adhere to the following:
-- For any OSBAPI request, there MUST be an associated `X-Broker-Request-Identity` header on
+- For any OSBAPI request, there MUST be an associated `X-Broker-API-Request-Identity` header on
   the HTTP request.
 - The Service Broker MAY include this value in log messages generated as a result of the request.
 - The Service Broker SHOULD include this header in the response to the request.
@@ -350,6 +329,8 @@ For error responses, the following fields are defined:
 | --- | --- | --- |
 | error | string | A single word in camel case that uniquely identifies the error condition. If present, MUST be a non-empty string. |
 | description | string | A user-facing error message explaining why the request failed. If present, MUST be a non-empty string. |
+| instance_usable | boolean | If an update or deprovisioning operation failed, this flag indicates whether or not the Service Instance is still usable. If `true`, the Service Instance can still be used, `false` otherwise. This field MUST NOT be present for errors of other operations. Defaults to `true`. |
+| update_repeatable | boolean | If an update operation failed, this flag indicates whether this update can be repeated or not. If `true`, the same update operation MAY be repeated and MAY succeed; if `false`, repeating the same update operation will fail again. This field MUST NOT be present for errors of other operations. Defaults to `true`. |
 
 ### Error Codes
 
@@ -415,6 +396,12 @@ Platforms MAY have limits on the length of strings that they can handle or
 display to end users, such as the description of a Service Offering or Service Plan. It
 is RECOMMENDED that strings do not exceed 255 characters to increase the
 likelihood of having compatibility with any Platform.
+
+Service Brokers and Platforms MAY support the
+[`ETag`](https://tools.ietf.org/html/rfc7232#section-2.3) and
+[`If-Modified-Since`](https://tools.ietf.org/html/rfc7232#section-3.3) 
+HTTP headers to enable caching of the catalog.
+(See [RFC 7232](https://tools.ietf.org/html/rfc7232) for details.) 
 
 The following sections describe catalog requests and responses in the Service
 Broker API.
@@ -794,7 +781,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | Status Code | Description |
 | --- | --- |
 | 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
-| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
+| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. MAY be returned if the request contains invalid data, in which case the error response MAY include a helpful error message in the `description` field (see [Service Broker Errors](#service-broker-errors)). |
 | 410 Gone | Appropriate only for asynchronous delete operations. The Platform MUST consider this response a success and forget about the resource. Returning this while the Platform is polling for create or update operations SHOULD be interpreted as an invalid response and the Platform SHOULD continue polling. |
 
 Responses with any other status code SHOULD be interpreted as an error or
@@ -809,13 +796,9 @@ For success responses, the following fields are defined:
 | Response Field | Type | Description |
 | --- | --- | --- |
 | state* | string | Valid values are `in progress`, `succeeded`, and `failed`. While `"state": "in progress"`, the Platform SHOULD continue polling. A response with `"state": "succeeded"` or `"state": "failed"` MUST cause the Platform to cease polling. |
-| description | string | A user-facing message that can be used to tell the user details about the status of the operation. |
-
-The response MAY also include the `Retry-After` HTTP header. This header will
-indicate how long the Platform SHOULD wait before polling again and is
-intended to prevent unnecessary, and premature, calls to the `last_operation`
-endpoint. It is RECOMMENDED that the header include a duration rather than a
-timestamp.
+| description | string | A user-facing message that can be used to tell the user details about the status of the operation. If present, MUST be a non-empty string. |
+| instance_usable | boolean | If an update or deprovisioning operation failed, this flag indicates whether or not the Service Instance is still usable. If `true`, the Service Instance can still be used, `false` otherwise. This field MUST NOT be present for errors of other operations. Defaults to `true`. |
+| update_repeatable | boolean | If an update operation failed, this flag indicates whether this update can be repeated or not. If `true`, the same update operation MAY be repeated and MAY succeed; if `false`, repeating the same update operation will fail again. This field MUST NOT be present for errors of other operations. Defaults to `true`. |
 
 The response MAY also include the `Retry-After` HTTP header. This header will
 indicate how long the Platform SHOULD wait before polling again and is
@@ -835,6 +818,10 @@ timestamp.
 For asynchronous provision operations, if the response contains
 `"state": "failed"` then the Platform might need to perform
 [Orphan Mitigation](#orphan-mitigation).
+
+Service Brokers SHOULD NOT forget the state of an operation immediately after
+returning a `"succeeded"` or `"failed"` state in case the Platform needs to ask
+again.
 
 ## Polling Last Operation for Service Bindings
 
@@ -882,7 +869,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id/ser
 | Status Code | Description |
 | --- | --- |
 | 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
-| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
+| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. MAY be returned if the request contains invalid data, in which case the error response MAY include a helpful error message in the `description` field (see [Service Broker Errors](#service-broker-errors)). |
 | 410 Gone | Appropriate only for asynchronous delete operations. The Platform MUST consider this response a success and remove the resource from its database. Returning this while the Platform is polling for create operations SHOULD be interpreted as an invalid response and the Platform SHOULD continue polling. |
 
 Responses with any other status code SHOULD be interpreted as an error or
@@ -905,12 +892,6 @@ intended to prevent unnecessary, and premature, calls to the `last_operation`
 endpoint. It is RECOMMENDED that the header include a duration rather than a
 timestamp.
 
-The response MAY also include the `Retry-After` HTTP header. This header will
-indicate how long the Platform SHOULD wait before polling again and is
-intended to prevent unnecessary, and premature, calls to the `last_operation`
-endpoint. It is RECOMMENDED that the header include a duration rather than a
-timestamp.
-
 \* Fields with an asterisk are REQUIRED.
 
 ```
@@ -922,6 +903,10 @@ timestamp.
 
 If the response contains `"state": "failed"`, then the Platform might need to
 perform [Orphan Mitigation](#orphan-mitigation).
+
+Service Brokers SHOULD NOT forget the state of an operation immediately after
+returning a `"succeeded"` or `"failed"` state in case the Platform needs to ask
+again.
 
 ## Polling Interval and Duration
 
@@ -950,6 +935,8 @@ account on an multi-tenant SaaS application.
 `:instance_id` MUST be a globally unique non-empty string.
 This ID will be used for future requests (bind and deprovision), so the
 Service Broker will use it to correlate the resource it creates.
+
+Platforms SHOULD NOT reuse IDs, since Service Brokers MAY NOT support this.
 
 #### Parameters
 | Parameter Name | Type | Description |
@@ -1014,7 +1001,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 200 OK | SHOULD be returned if the Service Instance already exists, is fully provisioned, and the requested parameters are identical to the existing Service Instance. The expected response body is below. |
 | 201 Created | MUST be returned if the Service Instance was provisioned as a result of this request. The expected response body is below. |
 | 202 Accepted | MUST be returned if the Service Instance provisioning is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint for operation status. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the Service Instance is not yet fully provisioned. |
-| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
+| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. MAY be returned if the request contains invalid data, in which case the error response MAY include a helpful error message in the `description` field (see [Service Broker Errors](#service-broker-errors)). |
 | 409 Conflict | MUST be returned if a Service Instance with the same id already exists or is being provisioned but with different attributes. |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous provisioning for the requested Service Plan and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. This MUST also be returned if the `maintenance_info.version` provided in the request does not match the `maintenance_info.version` described for the Service Plan in the Service Broker's [catalog](#catalog-management). In this case, the response body MUST contain error code `"MaintenanceInfoConflict"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"The maintenance information for the requested Service Plan has changed."`. |
 
@@ -1054,6 +1041,15 @@ any circumstances.
 `GET /v2/service_instances/:instance_id`
 
 `:instance_id` MUST be the ID of a previously provisioned Service Instance.
+
+#### Parameters
+
+The request provides these query string parameters as useful hints for brokers.
+
+| Query-String Field | Type | Description |
+| --- | --- | --- |
+| service_id | string | ID of the Service Offering from the catalog. If present, MUST be a non-empty string. |
+| plan_id | string | ID of the Service Plan from the catalog. If present, MUST be a non-empty string. |
 
 ##### cURL
 ```
@@ -1241,12 +1237,34 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | --- | --- |
 | 200 OK | MUST be returned if the request's changes have been applied or MAY be returned if the request's changes have had no effect. The expected response body is `{}`. |
 | 202 Accepted | MUST be returned if the Service Instance update is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint for operation status. Note that a re-sent `PATCH` request MUST return a `202 Accepted`, not a `200 OK`, if the requested update has not yet completed. |
-| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
+| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. MAY be returned if the request contains invalid data, in which case the error response MAY include a helpful error message in the `description` field (see [Service Broker Errors](#service-broker-errors)). |
 | 422 Unprocessable entity | MUST be returned if the requested change is not supported or if the request cannot currently be fulfilled due to the state of the Service Instance (e.g. Service Instance utilization is over the quota of the requested Service Plan). Additionally, this MUST be returned if the Service Broker only supports asynchronous update for the requested Service Plan and the request did not include `?accepts_incomplete=true`; in this case the response body MUST contain a error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. Additionally, this MUST be returned if the `maintenance_info.version` provided in the request does not match the `maintenance_info.version` described for the Service Plan in the Service Broker's [catalog](#catalog-management). In this case, the response body MUST contain error code `"MaintenanceInfoConflict"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"The maintenance information for the requested Service Plan has changed."`. |
 
 Responses with any other status code MUST be interpreted as a failure.
-When the response includes a 4xx status code, the Service Broker MUST NOT
-apply any of the requested changes to the Service Instance.
+When the response includes a 4xx or 5xx status code, the Service Broker MUST
+NOT apply any of the requested changes to the Service Instance.
+
+When an update fails, the Service Instance can still be usable or unusable
+or its state could be unknown to the Platform. If a Service Instance became
+unusable, another update MAY repair the Service Instance.
+The Platform SHOULD NOT allow the creation of new bindings of an unusable
+Service Instance until the instance has been deleted or repaired by a
+subsequent update.
+If the broker does not indicate in the
+[Error response](#service-broker-errors) or
+[Last Operation response](#polling-last-operation-for-service-instances)
+whether the Service Instance is usable or not, the Platform SHOULD assume
+it is still usable.
+
+A failed update might be repeatable. If the Service Broker
+indicates in the [Error response](#service-broker-errors) or
+[Last Operation response](#polling-last-operation-for-service-instances)
+that retrying this update does not make sense, the Platform SHOULD NOT
+repeat this update.
+For example, if a certain plan change is not supported by the
+Service Broker, all subsequent attempts will always fail, and the
+Platform SHOULD NOT retry this.
+Other updates MAY be possible.
 
 #### Body
 
@@ -1439,7 +1457,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | 200 OK | SHOULD be returned if the Service Binding already exists and the requested parameters are identical to the existing Service Binding. The expected response body is below. |
 | 201 Created | MUST be returned if the Service Binding was created as a result of this request. The expected response body is below. |
 | 202 Accepted | MUST be returned if the binding is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) endpoint for operation status. Information regarding the Service Binding (i.e. credentials) MUST NOT be returned in this response. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the Service Binding is not yet fully created. |
-| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
+| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. MAY be returned if the request contains invalid data, in which case the error response MAY include a helpful error message in the `description` field (see [Service Broker Errors](#service-broker-errors)). |
 | 409 Conflict | MUST be returned if a Service Binding with the same id, for the same Service Instance, already exists or is being created but with different parameters. |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker requires that `app_guid` be included in the request body. The response body MUST contain error code `"RequiresApp"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service supports generation of credentials through binding an application only."`. Additionally, if the Service Broker rejects the request due to a concurrent request to create a Service Binding for the same Service Instance, then this error MUST be returned (see [Blocking Operations](#blocking-operations)). This MUST also be returned if the Service Broker only supports asynchronous bindings for the Service Instance and the request did not include `?accepts_incomplete=true`. In this case, the response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Instance requires client support for asynchronous binding operations."`. |
 
@@ -1553,6 +1571,15 @@ endpoint returns `"state": "succeeded"` for a [Binding](#binding) operation.
 `:binding_id` MUST be the ID of a previously provisioned Service Binding for that
 instance.
 
+#### Parameters
+
+The request provides these query string parameters as useful hints for brokers.
+
+| Query-String Field | Type | Description |
+| --- | --- | --- |
+| service_id | string | ID of the Service Offering from the catalog. If present, MUST be a non-empty string. |
+| plan_id | string | ID of the Service Plan from the catalog. If present, MUST be a non-empty string. |
+
 ##### cURL
 ```
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:binding_id' -X GET -H "X-Broker-API-Version: 2.14"
@@ -1662,7 +1689,7 @@ $ curl 'http://username:password@service-broker-url/v2/service_instances/:instan
 | --- | --- |
 | 200 OK | MUST be returned if the Service Binding was deleted as a result of this request. The expected response body is `{}`. |
 | 202 Accepted | MUST be returned if the unbinding is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) endpoint for operation status. Note that a re-sent `DELETE` request MUST return a `202 Accepted`, not a `200 OK`, if the unbinding request has not completed yet. |
-| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
+| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. MAY be returned if the request contains invalid data, in which case the error response MAY include a helpful error message in the `description` field (see [Service Broker Errors](#service-broker-errors)). |
 | 410 Gone | MUST be returned if the Service Binding does not exist. |
 | 422 Unprocessable Entity | MUST also be returned if the Service Broker only supports asynchronous unbinding for the Service Instance and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Instance requires client support for asynchronous binding operations."`. Additionally, this MUST be returned if the Service Binding is being processed by some other operation and therefore cannot be deleted at this time. The response body MUST contain error code `"ConcurrencyError"` (see [Service Broker Errors](#service-broker-errors)). |
 
@@ -1743,12 +1770,20 @@ $ curl 'http://username:password@service-broker-url/v2/service_instances/:instan
 | --- | --- |
 | 200 OK | MUST be returned if the Service Instance was deleted as a result of this request. The expected response body is `{}`. |
 | 202 Accepted | MUST be returned if the Service Instance deletion is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint for operation status. Note that a re-sent `DELETE` request MUST return a `202 Accepted`, not a `200 OK`, if the delete request has not completed yet. |
-| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. |
+| 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. MAY be returned if the request contains invalid data, in which case the error response MAY include a helpful error message in the `description` field (see [Service Broker Errors](#service-broker-errors)). |
 | 410 Gone | MUST be returned if the Service Instance does not exist. |
 | 422 Unprocessable Entity | MUST be returned if the Service Broker only supports asynchronous deprovisioning for the requested Service Plan and the request did not include `?accepts_incomplete=true`. The response body MUST contain error code `"AsyncRequired"` (see [Service Broker Errors](#service-broker-errors)). The error response MAY include a helpful error message in the `description` field such as `"This Service Plan requires client support for asynchronous service operations."`. Additionally, this MUST be returned if the Service Instance is being processed by some other operation and therefore cannot be deleted at this time. The response body MUST contain error code `"ConcurrencyError"` (see [Service Broker Errors](#service-broker-errors)). |
 
 Responses with any other status code MUST be interpreted as a failure and the
 Platform MUST remember the Service Instance.
+
+When a deprovisioning fails, the Service Instance can still be usable or
+unusable or its state could be unknown. If a Service Instance becomes unusable,
+the Platform SHOULD NOT request new Service Bindings for that Service Instance.
+If the broker does not indicate in the [Error response](#service-broker-errors)
+or [Last Operation response](#polling-last-operation-for-service-instances)
+whether the Service Instance is usable or not, the Platform SHOULD assume it is
+still usable.
 
 #### Body
 

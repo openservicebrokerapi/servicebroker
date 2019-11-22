@@ -78,11 +78,11 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/ServiceInstanceProvision'
+            $ref: '#/definitions/ServiceInstanceProvisionResponse'
         '201':
           description: Created
           schema:
-            $ref: '#/definitions/ServiceInstanceProvision'
+            $ref: '#/definitions/ServiceInstanceProvisionResponse'
         '202':
           description: Accepted
           schema:
@@ -166,6 +166,15 @@ paths:
       tags:
         - ServiceInstances
       operationId: serviceInstance.get
+      parameters:
+        - name: service_id
+          in: query
+          description: id of the service associated with the instance
+          type: string
+        - name: plan_id
+          in: query
+          description: id of the plan associated with the instance
+          type: string
       responses:
         '200':
           description: OK
@@ -310,11 +319,11 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/ServiceBinding'
+            $ref: '#/definitions/ServiceBindingResponse'
         '201':
           description: Created
           schema:
-            $ref: '#/definitions/ServiceBinding'
+            $ref: '#/definitions/ServiceBindingResponse'
         '202':
           description: Accepted
           schema:
@@ -368,6 +377,15 @@ paths:
       tags:
         - ServiceBindings
       operationId: serviceBinding.get
+      parameters:
+        - name: service_id
+          in: query
+          description: id of the service associated with the instance
+          type: string
+        - name: plan_id
+          in: query
+          description: id of the plan associated with the instance
+          type: string
       responses:
         '200':
           description: OK
@@ -605,7 +623,7 @@ definitions:
         $ref: '#/definitions/Object'
       maintenance_info:
         $ref: '#/definitions/MaintenanceInfo'
-  ServiceInstanceProvision:
+  ServiceInstanceProvisionResponse:
     type: object
     properties:
       dashboard_url:
@@ -668,6 +686,10 @@ definitions:
           - failed
       description:
         type: string
+      instance_usable:
+        type: boolean
+      update_repeatable:
+        type: boolean 
   ServiceBindingResource:
     type: object
     properties:
@@ -709,7 +731,7 @@ definitions:
         type: string
       route:
         type: string
-  ServiceBinding:
+  ServiceBindingResponse:
     type: object
     properties:
       credentials:
@@ -783,7 +805,10 @@ definitions:
         type: string
       description:
         type: string
-
+      instance_usable:
+        type: boolean
+      update_repeatable:
+        type: boolean
 securityDefinitions:
   basicAuth:
     type: basic

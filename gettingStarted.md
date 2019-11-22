@@ -59,12 +59,10 @@ projects.
 [`brokerapi`](https://github.com/pivotal-cf/brokerapi):
 A Go package for building Open Service Broker API Service Brokers.
 
-[Spring Cloud - Cloud Foundry Service Broker](https://github.com/spring-cloud/spring-cloud-cloudfoundry-service-broker):
-This implements the REST contract for service brokers and the artifacts are
-published to the Spring Maven repository. This greatly simplifies development:
-include a single dependency in Gradle, implement interfaces, and configure. A
-sample implementation has been provided for
-[MongoDB](https://github.com/spring-cloud-samples/cloudfoundry-service-broker).
+[Spring Cloud Open Service Broker](https://spring.io/projects/spring-cloud-open-service-broker):
+Spring Cloud Open Service Broker provides a framework based on Spring Boot that
+enables you to quickly create a service broker for your own managed service on
+platform that support the Open Service Broker API.
 
 [`osb-broker-lib`](https://github.com/pmorie/osb-broker-lib):
 A go library that provides the REST API implementation for the OSB API. Users
