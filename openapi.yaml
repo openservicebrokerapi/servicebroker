@@ -787,6 +787,8 @@ components:
     ServiceBindingResource:
       type: object
       properties:
+        metadata:
+          $ref: '#/components/schemas/ServiceBindingMetadata'
         credentials:
           $ref: '#/components/schemas/Object'
         syslog_drain_url:
@@ -824,6 +826,12 @@ components:
         parameters:
           $ref: '#/components/schemas/Object'
 
+    ServiceBindingMetadata:
+      type: object
+      properties:
+        expires_at:
+          type: string
+
     ServiceBindingResouceObject:
       type: object
       properties:
@@ -835,6 +843,8 @@ components:
     ServiceBindingResponse:
       type: object
       properties:
+        metadata:
+          $ref: '#/components/schemas/ServiceBindingMetadata'
         credentials:
           $ref: '#/components/schemas/Object'
         syslog_drain_url:

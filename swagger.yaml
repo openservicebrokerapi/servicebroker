@@ -734,6 +734,8 @@ definitions:
   ServiceBindingResponse:
     type: object
     properties:
+      metadata:
+        $ref: '#/definitions/ServiceBindingMetadata'
       credentials:
         $ref: '#/definitions/Object'
       syslog_drain_url:
@@ -744,6 +746,10 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/ServiceBindingVolumeMount'
+  ServiceBindingMetadata:
+      properties:
+        expires_at:
+          type: string
   ServiceBindingVolumeMount:
     type: object
     required:
