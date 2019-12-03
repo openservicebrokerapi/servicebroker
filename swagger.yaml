@@ -693,6 +693,8 @@ definitions:
   ServiceBindingResource:
     type: object
     properties:
+      metadata:
+        $ref: '#/definitions/ServiceBindingMetadata'
       credentials:
         $ref: '#/definitions/Object'
       syslog_drain_url:

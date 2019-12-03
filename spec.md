@@ -1476,7 +1476,7 @@ For `200 OK` and `201 Created` response codes, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| metadata | [BindingMetadata](#binding-metadata-object) object | An optional object containing metadata about this binding. This metadata is mainly used to manage the binding itself and SHOULD NOT contain any data that is required to connect to the service. |
+| metadata | [BindingMetadata](#binding-metadata-object) object | An OPTIONAL object containing metadata about this Service Binding. This metadata is mainly used to manage the Service Binding itself and SHOULD NOT contain any data that is needed to connect to the Service Instance. |
 | credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. MUST be returned if the Service Broker supports generation of credentials. |
 | syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
@@ -1487,7 +1487,7 @@ For `200 OK` and `201 Created` response codes, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| expires_at | string | The time and date when the binding becomes invalid and should not or cannot be used anymore. Applications or platforms MAY use this field to initiate a binding/credential rotation. If present, the string MUST follow ISO 8601 and this pattern: `yyyy-mm-ddThh:mm:ss.s[Z|(+|-)hh:mm]`|
+| expires_at | string | The date and time when the Service Binding becomes invalid and SHOULD NOT or CANNOT be used anymore. Applications or Platforms MAY use this field to initiate a Service Binding/credential rotation. If present, the string MUST follow ISO 8601 and this pattern: `yyyy-mm-ddThh:mm:ss.sZ` |
 
 ##### Volume Mount Object
 
@@ -1608,6 +1608,7 @@ For success responses, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
+| metadata | [BindingMetadata](#binding-metadata-object) object | An OPTIONAL object containing metadata about this Service Binding. This metadata is mainly used to manage the Service Binding itself and SHOULD NOT contain any data that is needed to connect to the Service Instance. |
 | credentials | object | A free-form hash of credentials that can be used by applications or users to access the service. MUST be returned if the Service Broker supports generation of credentials and the Service Binding was provisioned asynchronously. |
 | syslog_drain_url | string | A URL to which logs MUST be streamed. `"requires":["syslog_drain"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
 | route_service_url | string | A URL to which the Platform MUST proxy requests for the address sent with `bind_resource.route` in the request body. `"requires":["route_forwarding"]` MUST be declared in the [Catalog](#catalog-management) endpoint or the Platform can consider the response invalid. |
@@ -1620,6 +1621,9 @@ if it contains sensitive information.
 
 ```
 {
+  "metadata": {
+    "expires_at": "2019-12-31T23:59:59.0Z"
+  },
   "credentials": {
     "uri": "mysql://mysqluser:pass@mysqlhost:3306/dbname",
     "username": "mysqluser",
