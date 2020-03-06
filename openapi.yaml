@@ -515,6 +515,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     get:
       summary: get a service binding
       tags:
