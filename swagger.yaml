@@ -689,7 +689,7 @@ definitions:
       instance_usable:
         type: boolean
       update_repeatable:
-        type: boolean 
+        type: boolean
   ServiceBindingResource:
     type: object
     properties:

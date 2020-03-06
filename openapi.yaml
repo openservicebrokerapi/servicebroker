@@ -947,7 +947,7 @@ components:
         instance_usable:
           type: boolean
         update_repeatable:
-          type: boolean 
+          type: boolean
 
   securitySchemes:
     basicAuth:
