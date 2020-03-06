@@ -227,6 +227,8 @@ paths:
               type: string
         '400':
           $ref: '#/responses/ErrorBadRequest'
+        '404':
+          $ref: '#/responses/ErrorNotFound'
         '401':
           $ref: '#/responses/ErrorUnauthorized'
         '410':
@@ -279,6 +281,8 @@ paths:
               type: string
         '400':
           $ref: '#/responses/ErrorBadRequest'
+        '404':
+          $ref: '#/responses/ErrorNotFound'
         '401':
           $ref: '#/responses/ErrorUnauthorized'
         '410':
