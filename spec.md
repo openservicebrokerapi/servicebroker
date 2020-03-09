@@ -782,6 +782,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | --- | --- |
 | 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. MAY be returned if the request contains invalid data, in which case the error response MAY include a helpful error message in the `description` field (see [Service Broker Errors](#service-broker-errors)). |
+| 404 Not Found | MUST be returned if the Service Instance being polled does not exist. |
 | 410 Gone | Appropriate only for asynchronous delete operations. The Platform MUST consider this response a success and forget about the resource. Returning this while the Platform is polling for create or update operations SHOULD be interpreted as an invalid response and the Platform SHOULD continue polling. |
 
 Responses with any other status code SHOULD be interpreted as an error or
@@ -870,6 +871,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id/ser
 | --- | --- |
 | 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. MAY be returned if the request contains invalid data, in which case the error response MAY include a helpful error message in the `description` field (see [Service Broker Errors](#service-broker-errors)). |
+| 404 Not Found | MUST be returned if the Service Binding being polled does not exist. |
 | 410 Gone | Appropriate only for asynchronous delete operations. The Platform MUST consider this response a success and remove the resource from its database. Returning this while the Platform is polling for create operations SHOULD be interpreted as an invalid response and the Platform SHOULD continue polling. |
 
 Responses with any other status code SHOULD be interpreted as an error or
