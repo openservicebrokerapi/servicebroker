@@ -467,9 +467,21 @@ deployment:
   "app_annotations": { "myprovider.com/send-alerts-to-email":"me@mycompany.com" }
   ```
 
+- `credential_client_id`
 
-
-
+  Version: 2.16
+  
+  The Cloud Cloundry credhub client id that service brokers may use to securely store service binding credentials, and returns [credhub references](https://github.com/cloudfoundry-incubator/credhub/blob/master/docs/secure-service-credentials.md#service-brokers) service binding responses instead of plain credentials values. 
+  This OPTIONAL property holds a string with the client id to use. If present, this property MUST be a non empty string as follows:
+  
+  ```
+    "credential_client_id": "client_id-value-here"
+  ```
+  For example:
+  ```
+    "credential_client_id": "cc_service_key_client"
+  ```
+  
 The following example shows a `bind_resource` object that might appear as part
 of a Cloud Foundry API call:
   ```
