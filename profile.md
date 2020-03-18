@@ -471,7 +471,7 @@ deployment:
 
   Version: 2.16
   
-  The Cloud Cloundry credhub client id that Service Brokers may use to securely store service binding credentials, and returns [credhub references](https://github.com/cloudfoundry-incubator/credhub/blob/master/docs/secure-service-credentials.md#service-brokers) Service Binding responses instead of plain credentials values.
+  The Cloud Cloundry credhub client id that Service Brokers can use to securely store Service Binding credentials, and returns [credhub references](https://github.com/cloudfoundry-incubator/credhub/blob/master/docs/secure-service-credentials.md#service-brokers) Service Binding responses instead of plain credentials values.
   This OPTIONAL property holds a string with the client id to use. If present, this property MUST be a non empty string as follows:
   
   ```
