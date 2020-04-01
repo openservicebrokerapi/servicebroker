@@ -436,7 +436,7 @@ object in which Platforms MAY choose to add additional fields.
 
 ### Cloud Foundry Bind Resource Object
 
-The Cloud Foundry Bind Resource Object supports the Cloud Foundry [Service Binding](https://docs.cloudfoundry.org/devguide/services/application-binding.html) and the [Service Key](https://docs.cloudfoundry.org/devguide/services/service-keys.html) developer requests. The credentials returned by the Service Binding endpoints MAY be references to credentials stored in [CredHub](https://docs.cloudfoundry.org/credhub/index.html), the component designed for centralized credential management in Cloud Foundry. Service Brokers are then responsible for writing credentials into CredHub and granting read permissions to a bound application or a specified client. See more details into [Credhub documentation](https://github.com/cloudfoundry-incubator/credhub/blob/master/docs/secure-service-credentials.md#service-brokers). The provisioning of CredHub access for service brokers is performed out of band and is out of scope of this specification. 
+The Cloud Foundry Bind Resource Object supports the Cloud Foundry [Service Binding](https://docs.cloudfoundry.org/devguide/services/application-binding.html) and the [Service Key](https://docs.cloudfoundry.org/devguide/services/service-keys.html) developer requests. The credentials returned by the Service Binding endpoints MAY be references to credentials stored in [CredHub](https://docs.cloudfoundry.org/credhub/index.html), the component designed for centralized credential management in Cloud Foundry. Service Brokers are then responsible for writing credentials into CredHub and granting read permissions to a bound application or a specified client. See more details into [Credhub documentation](https://github.com/cloudfoundry-incubator/credhub/blob/master/docs/secure-service-credentials.md#service-brokers). The provisioning of CredHub access for Service Brokers is performed out of band and is out of scope of this specification.
 
 The following properties are defined for usage within a Cloud Foundry
 deployment:
@@ -473,8 +473,8 @@ deployment:
 
   Version: 2.16
   
-  When the Bind Resource Object is the result of a Cloud Foundry [service key](https://docs.cloudfoundry.org/devguide/services/service-keys.html) developer request, then the Cloud Cloundry CredHub client id is provided. This supports Service Brokers that MAY choose use to securely store Service Binding credentials, and return [credhub references](https://github.com/cloudfoundry-incubator/credhub/blob/master/docs/secure-service-credentials.md#service-brokers) Service Binding responses instead of plain credentials values. In this case, the provided client MUST be granted permission by the Service Broker to read the returned credentials reference.  
-  This OPTIONAL property holds a string with the client id that should be granted read permissions. If present, this property MUST be a non empty string as follows:
+  When the Bind Resource Object is the result of a Cloud Foundry [service key](https://docs.cloudfoundry.org/devguide/services/service-keys.html) developer request, then the Cloud Cloundry CredHub client id is provided. This supports Service Brokers that MAY choose use to securely store Service Binding credentials, and return [credhub references](https://github.com/cloudfoundry-incubator/credhub/blob/master/docs/secure-service-credentials.md#service-brokers) Service Binding responses instead of plain credentials values. In this case, the provided client MUST be granted permission by the Service Broker to read the returned credentials reference.
+  This OPTIONAL property holds a string with the client id that MUST be granted read permissions. If present, this property MUST be a non empty string as follows:
   
   ```
     "credential_client_id": "client_id-value-here"
