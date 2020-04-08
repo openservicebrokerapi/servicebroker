@@ -1016,13 +1016,27 @@ For success responses, the following fields are defined:
 | --- | --- | --- |
 | dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. If present, MUST be a string or null. |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint in a percent-encoded query parameter. If present, MAY be null, and MUST NOT contain more than 10,000 characters. |
-
+| metadata | [ServiceInstanceMetadata](#service-instance-metadata) object | An OPTIONAL object containing metadata about this Service Instance. |
 ```
 {
   "dashboard_url": "http://example-dashboard.example.com/9189kdfsk0vfnku",
-  "operation": "task_10"
+  "operation": "task_10",
+  "metadata": {
+    "labels": {
+      "key1" : "value1",
+      "key2" : "value2"
+    }
+  }
 }
 ```
+
+##### ServiceInstanceMetadata
+
+| Response Field | Type | Description |
+| --- | --- | --- |
+| labels | object | Labels are broker specified key value pairs that are attached to Service Instances. Labels are intended to be used to specify attributes of Service Instances that are meaningful and relevant to users, but do not directly imply behaviour changes by the Platform. Platforms that support labels MAY chose to update their view of the metadata to match this one. |
+
+Note: Platforms that support metadata labels should make sure the characters used in the key should adhere to what's supported by the Platform.
 
 ## Fetching a Service Instance
 
