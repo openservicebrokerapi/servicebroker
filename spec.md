@@ -1016,7 +1016,7 @@ For success responses, the following fields are defined:
 | --- | --- | --- |
 | dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. If present, MUST be a string or null. |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint in a percent-encoded query parameter. If present, MAY be null, and MUST NOT contain more than 10,000 characters. |
-| metadata | [ServiceInstanceMetadata](#service-instance-metadata) object | An OPTIONAL object containing metadata about this Service Instance. |
+| metadata | [ServiceInstanceMetadata](#service-instance-metadata) object | An OPTIONAL object containing metadata for the Service Instance. |
 ```
 {
   "dashboard_url": "http://example-dashboard.example.com/9189kdfsk0vfnku",
@@ -1288,14 +1288,19 @@ For success responses, the following fields are defined:
 | --- | --- | --- |
 | dashboard_url | string | The updated URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`0129d920a083838` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the update request, even if the Service Instance is being updated asynchronously. If not present or null, the Platform MUST retain the previous value of the `dashboard_url`. |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
-
+| metadata | [ServiceInstanceMetadata](#service-instance-metadata) object | An OPTIONAL object containing metadata for the Service Instance. |
 ```
 {
-  "dashboard_url": "http://example-dashboard.example.com/0129d920a083838",
-  "operation": "task_10"
+  "dashboard_url": "http://example-dashboard.example.com/9189kdfsk0vfnku",
+  "operation": "task_10",
+  "metadata": {
+    "labels": {
+      "key1" : "value1",
+      "key2" : "value2"
+    }
+  }
 }
 ```
-
 
 ## Binding
 
