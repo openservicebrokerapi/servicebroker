@@ -1030,7 +1030,7 @@ For success responses, the following fields are defined:
 }
 ```
 
-##### ServiceInstanceMetadata
+##### Service Instance Metadata
 
 | Response Field | Type | Description |
 | --- | --- | --- |
