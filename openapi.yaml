@@ -720,6 +720,8 @@ components:
       properties:
         dashboard_url:
           type: string
+        metadata:
+          type: object
 
     ServiceInstanceAsyncOperation:
       type: object
@@ -728,6 +730,8 @@ components:
           type: string
         operation:
           type: string # could be a link object to last operation
+        metadata:
+          type: object
 
     ServiceInstanceUpdateRequest:
       type: object
