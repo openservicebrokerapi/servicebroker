@@ -1089,7 +1089,6 @@ For success responses, the following fields are defined:
 | plan_id | string | The ID of the Service Plan from the catalog that is associated with the Service Instance. |
 | dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. |
 | parameters | object | Configuration parameters for the Service Instance. |
-| metadata | [ServiceInstanceMetadata](#service-instance-metadata) object | An OPTIONAL object containing metadata about this Service Instance. |
 
 Service Brokers MAY choose to not return some or all parameters when a Service Instance is fetched - for example,
 if it contains sensitive information.
@@ -1099,12 +1098,6 @@ if it contains sensitive information.
   "dashboard_url": "http://example-dashboard.example.com/9189kdfsk0vfnku",
   "parameters": {
     "billing-account": "abcde12345"
-  },
-  "metadata": {
-    "labels": {
-      "key1" : "value1",
-      "key2" : "value2"
-    }
   }
 }
 ```

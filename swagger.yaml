@@ -628,6 +628,8 @@ definitions:
     properties:
       dashboard_url:
         type: string
+      metadata:
+        $ref: '#/definitions/ServiceInstanceMetadata'
   ServiceInstanceAsyncOperation:
     type: object
     properties:
@@ -635,6 +637,8 @@ definitions:
         type: string
       operation:
         type: string
+      metadata:
+        $ref: '#/definitions/ServiceInstanceMetadata'
   ServiceInstanceUpdateRequest:
     type: object
     required:
@@ -689,7 +693,7 @@ definitions:
       instance_usable:
         type: boolean
       update_repeatable:
-        type: boolean 
+        type: boolean
   ServiceBindingResource:
     type: object
     properties:
@@ -749,9 +753,9 @@ definitions:
         items:
           $ref: '#/definitions/ServiceBindingVolumeMount'
   ServiceBindingMetadata:
-      properties:
-        expires_at:
-          type: string
+    properties:
+      expires_at:
+        type: string
   ServiceBindingVolumeMount:
     type: object
     required:
@@ -784,6 +788,11 @@ definitions:
       volume_id:
         type: string
       mount_config:
+        type: object
+  ServiceInstanceMetadata:
+    type: object
+    properties:
+      labels:
         type: object
   MaintenanceInfo:
     type: object
