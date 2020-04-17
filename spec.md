@@ -1034,7 +1034,7 @@ For success responses, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| labels | object | Labels are broker specified key-value pairs specifying attributes of Service Instances that are meaningful and relevant to Platform users, but do not directly imply behaviour changes by the Platform. Platforms that support metadata labels MAY chose to update the those, and if they do, they SHOULD replace all existing metadata labels with the labels received during provision or update. The Platform SHOULD ignore labels that do not adhere to the Platforms syntax. |
+| labels | object | Labels are broker specified key-value pairs specifying attributes of Service Instances that are meaningful and relevant to Platform users, but do not directly imply behaviour changes by the Platform. Platforms that support metadata labels MAY chose to update those, and if they do, they SHOULD replace all existing metadata labels with the labels received during provision or update. The Platform SHOULD ignore labels that do not adhere to the Platforms syntax. |
 
 ## Fetching a Service Instance
 
