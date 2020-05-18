@@ -782,6 +782,8 @@ components:
       properties:
         dashboard_url:
           type: string
+        metadata:
+          $ref: '#/components/schemas/ServiceInstanceMetadata'
 
     ServiceInstanceAsyncOperation:
       type: object
@@ -790,6 +792,14 @@ components:
           type: string
         operation:
           type: string # could be a link object to last operation
+        metadata:
+          $ref: '#/components/schemas/ServiceInstanceMetadata'
+
+    ServiceInstanceMetadata:
+      type: object
+      properties:
+        labels:
+          type: object
 
     ServiceInstanceUpdateRequest:
       type: object
