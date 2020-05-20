@@ -1000,7 +1000,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 
 | Status Code | Description |
 | --- | --- |
-| 200 OK | SHOULD be returned if the Service Instance already exists, is fully provisioned, and the requested parameters are identical to the existing Service Instance. The expected response body is below. |
+| 409 CONFLICT | SHOULD be returned if the Service Instance already exists, is fully provisioned, and the requested parameters are identical to the existing Service Instance. The expected response body is below. |
 | 201 Created | MUST be returned if the Service Instance was provisioned as a result of this request. The expected response body is below. |
 | 202 Accepted | MUST be returned if the Service Instance provisioning is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint for operation status. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the Service Instance is not yet fully provisioned. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. MAY be returned if the request contains invalid data, in which case the error response MAY include a helpful error message in the `description` field (see [Service Broker Errors](#service-broker-errors)). |
