@@ -1539,14 +1539,8 @@ For `200 OK` and `201 Created` response codes, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-<<<<<<< .merge_file_2peOwu
 | expires_at | string | The date and time when the Service Binding becomes invalid and SHOULD NOT or CANNOT be used anymore. If present, the string MUST follow ISO 8601 and this pattern: `yyyy-mm-ddThh:mm:ss.sZ` |
 | renew_before | string | The date and time before the Service Binding SHOULD be renewed. Applications or Platforms MAY use this field to initiate a [Service Binding rotation](#binding-rotation) or create a new Service Binding on time. It is RECOMMENDED to trigger the creation of a new Service Binding shortly before this timestamp. If the `expires_at` field is also present, the `renew_before` timestamp MUST be before or equal to the `expires_at` timestamp. Service Brokers SHOULD leave enough time between both timestamps to create a new Service Binding including a buffer to enable continuity. If present, the string MUST follow ISO 8601 and this pattern: `yyyy-mm-ddThh:mm:ss.sZ` |
-=======
-| expires_at | string | The date and time when the Service Binding becomes invalid and SHOULD NOT or CANNOT be used anymore. If present, the string MUST follow ISO 8601 and this pattern: `yyyy-mm-ddThh:mm:ss.mmmZ` |
-| renew_before | string | The date and time before the Service Binding SHOULD be renewed. Applications or Platforms MAY use this field to initiate a [Service Binding rotation](#binding-rotation) or create a new Service Binding on time. If the `expires_at` field is also present, the `renew_before` timestamp MUST be before or equal to the `expires_at` timestamp. If present, the string MUST follow ISO 8601 and this pattern: `yyyy-mm-ddThh:mm:ss.mmmZ` |
-
->>>>>>> .merge_file_7VVUcP
 
 ##### Volume Mount Object
 
