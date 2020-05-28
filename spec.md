@@ -200,7 +200,7 @@ adhere to the following:
 
 If the Platform chooses to group multiple end-user operations into one request
 to the Broker, then the identity information associated with that one request
-MUST accurately reflect the desired indentity associated for each individual
+MUST accurately reflect the desired identity associated for each individual
 change.
 
 The format of the header MUST be:
@@ -400,9 +400,9 @@ likelihood of having compatibility with any Platform.
 
 Service Brokers and Platforms MAY support the
 [`ETag`](https://tools.ietf.org/html/rfc7232#section-2.3) and
-[`If-Modified-Since`](https://tools.ietf.org/html/rfc7232#section-3.3) 
+[`If-Modified-Since`](https://tools.ietf.org/html/rfc7232#section-3.3)
 HTTP headers to enable caching of the catalog.
-(See [RFC 7232](https://tools.ietf.org/html/rfc7232) for details.) 
+(See [RFC 7232](https://tools.ietf.org/html/rfc7232) for details.)
 
 The following sections describe catalog requests and responses in the Service
 Broker API.
@@ -784,6 +784,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 | --- | --- |
 | 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. MAY be returned if the request contains invalid data, in which case the error response MAY include a helpful error message in the `description` field (see [Service Broker Errors](#service-broker-errors)). |
+| 404 Not Found | MUST be returned if the Service Instance being polled does not exist. |
 | 410 Gone | Appropriate only for asynchronous delete operations. The Platform MUST consider this response a success and forget about the resource. Returning this while the Platform is polling for create or update operations SHOULD be interpreted as an invalid response and the Platform SHOULD continue polling. |
 
 Responses with any other status code SHOULD be interpreted as an error or
@@ -872,6 +873,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id/ser
 | --- | --- |
 | 200 OK | MUST be returned upon successful processing of this request. The expected response body is below. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. MAY be returned if the request contains invalid data, in which case the error response MAY include a helpful error message in the `description` field (see [Service Broker Errors](#service-broker-errors)). |
+| 404 Not Found | MUST be returned if the Service Binding being polled does not exist. |
 | 410 Gone | Appropriate only for asynchronous delete operations. The Platform MUST consider this response a success and remove the resource from its database. Returning this while the Platform is polling for create operations SHOULD be interpreted as an invalid response and the Platform SHOULD continue polling. |
 
 Responses with any other status code SHOULD be interpreted as an error or
@@ -1018,13 +1020,25 @@ For success responses, the following fields are defined:
 | --- | --- | --- |
 | dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. If present, MUST be a string or null. |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint in a percent-encoded query parameter. If present, MAY be null, and MUST NOT contain more than 10,000 characters. |
-
+| metadata | [ServiceInstanceMetadata](#service-instance-metadata) object | An OPTIONAL object containing metadata for the Service Instance. |
 ```
 {
   "dashboard_url": "http://example-dashboard.example.com/9189kdfsk0vfnku",
-  "operation": "task_10"
+  "operation": "task_10",
+  "metadata": {
+    "labels": {
+      "key1" : "value1",
+      "key2" : "value2"
+    }
+  }
 }
 ```
+
+##### Service Instance Metadata
+
+| Response Field | Type | Description |
+| --- | --- | --- |
+| labels | object | Labels are broker specified key-value pairs specifying attributes of Service Instances that are meaningful and relevant to Platform users, but do not directly imply behaviour changes by the Platform. Platforms that support metadata labels MAY chose to update those, and if they do, they SHOULD replace all existing metadata labels with the labels received during provision or update. The Platform SHOULD ignore labels that do not adhere to the Platforms syntax. |
 
 ## Fetching a Service Instance
 
@@ -1276,14 +1290,19 @@ For success responses, the following fields are defined:
 | --- | --- | --- |
 | dashboard_url | string | The updated URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`0129d920a083838` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the update request, even if the Service Instance is being updated asynchronously. If not present or null, the Platform MUST retain the previous value of the `dashboard_url`. |
 | operation | string | For asynchronous responses, Service Brokers MAY return an identifier representing the operation. The value of this field MUST be provided by the Platform with requests to the [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint in a percent-encoded query parameter. If present, MUST be a non-empty string. |
-
+| metadata | [ServiceInstanceMetadata](#service-instance-metadata) object | An OPTIONAL object containing metadata for the Service Instance. |
 ```
 {
-  "dashboard_url": "http://example-dashboard.example.com/0129d920a083838",
-  "operation": "task_10"
+  "dashboard_url": "http://example-dashboard.example.com/9189kdfsk0vfnku",
+  "operation": "task_10",
+  "metadata": {
+    "labels": {
+      "key1" : "value1",
+      "key2" : "value2"
+    }
+  }
 }
 ```
-
 
 ## Binding
 
@@ -1520,8 +1539,14 @@ For `200 OK` and `201 Created` response codes, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
+<<<<<<< .merge_file_2peOwu
 | expires_at | string | The date and time when the Service Binding becomes invalid and SHOULD NOT or CANNOT be used anymore. If present, the string MUST follow ISO 8601 and this pattern: `yyyy-mm-ddThh:mm:ss.sZ` |
 | renew_before | string | The date and time before the Service Binding SHOULD be renewed. Applications or Platforms MAY use this field to initiate a [Service Binding rotation](#binding-rotation) or create a new Service Binding on time. It is RECOMMENDED to trigger the creation of a new Service Binding shortly before this timestamp. If the `expires_at` field is also present, the `renew_before` timestamp MUST be before or equal to the `expires_at` timestamp. Service Brokers SHOULD leave enough time between both timestamps to create a new Service Binding including a buffer to enable continuity. If present, the string MUST follow ISO 8601 and this pattern: `yyyy-mm-ddThh:mm:ss.sZ` |
+=======
+| expires_at | string | The date and time when the Service Binding becomes invalid and SHOULD NOT or CANNOT be used anymore. If present, the string MUST follow ISO 8601 and this pattern: `yyyy-mm-ddThh:mm:ss.mmmZ` |
+| renew_before | string | The date and time before the Service Binding SHOULD be renewed. Applications or Platforms MAY use this field to initiate a [Service Binding rotation](#binding-rotation) or create a new Service Binding on time. If the `expires_at` field is also present, the `renew_before` timestamp MUST be before or equal to the `expires_at` timestamp. If present, the string MUST follow ISO 8601 and this pattern: `yyyy-mm-ddThh:mm:ss.mmmZ` |
+
+>>>>>>> .merge_file_7VVUcP
 
 ##### Volume Mount Object
 
