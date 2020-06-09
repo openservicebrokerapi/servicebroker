@@ -68,12 +68,6 @@ paths:
             schema:
               $ref: '#/components/schemas/ServiceInstanceProvisionRequest'
       responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServiceInstanceProvisionResponse'
         '201':
           description: Created
           content:
@@ -447,12 +441,6 @@ paths:
             schema:
               $ref: '#/components/schemas/ServiceBindingRequest'
       responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServiceBindingResponse'
         '201':
           description: Created
           content:
