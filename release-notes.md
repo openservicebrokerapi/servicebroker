@@ -1,5 +1,18 @@
 # Service Broker API Release Notes
 
+## [v2.16](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md)
+
+* Add guidance of how long the state of an operation SHOULD be remembered
+* Add guidance to handle 500 errors from Service Instance update
+* Add guidance to handle requests with invalid data
+* Allow Service Brokers to indicate if a Service Instance is still usable after a failed update or deprovisioning and if an update can be repeated
+* Specify that Platforms SHOULD NOT reuse IDs
+* Allow Service Brokers to return additional information on GET requests 
+* Add CF and K8s annotations to the profile document
+* Add support for ETag and If-Modified-Since headers
+* Clarify the response code when Platform does not provide the required API version header
+* Service Instances can be labelled with information defined by the Service Broker
+
 ## [v2.15](https://github.com/openservicebrokerapi/servicebroker/blob/v2.15/spec.md)
 2019-06-11
 
