@@ -989,6 +989,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 
 | Status Code | Description |
 | --- | --- |
+| 200 OK | SHOULD be returned if the Service Instance already exists, is fully provisioned, and the requested parameters are identical to the existing Service Instance. The expected response body is below. |
 | 201 Created | MUST be returned if the Service Instance was provisioned as a result of this request. The expected response body is below. |
 | 202 Accepted | MUST be returned if the Service Instance provisioning is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Last Operation for Service Instances](#polling-last-operation-for-service-instances) endpoint for operation status. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the Service Instance is not yet fully provisioned. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. MAY be returned if the request contains invalid data, in which case the error response MAY include a helpful error message in the `description` field (see [Service Broker Errors](#service-broker-errors)). |
@@ -1492,6 +1493,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
 
 | Status Code | Description |
 | --- | --- |
+| 200 OK | SHOULD be returned if the Service Binding already exists and the requested parameters are identical to the existing Service Binding. The expected response body is below. |
 | 201 Created | MUST be returned if the Service Binding was created as a result of this request. The expected response body is below. |
 | 202 Accepted | MUST be returned if the binding is in progress. The `operation` string MUST match that returned for the original request. This triggers the Platform to poll the [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) endpoint for operation status. Information regarding the Service Binding (i.e. credentials) MUST NOT be returned in this response. Note that a re-sent `PUT` request MUST return a `202 Accepted`, not a `200 OK`, if the Service Binding is not yet fully created. |
 | 400 Bad Request | MUST be returned if the request is malformed or missing mandatory data. MAY be returned if the request contains invalid data, in which case the error response MAY include a helpful error message in the `description` field (see [Service Broker Errors](#service-broker-errors)). |
@@ -1916,6 +1918,8 @@ by the Platform:
 
 | Request | Service Broker Response Status Code | Platform Interpretation Of Response | Orphan Mitigation SHOULD be performed for Service Instances | Orphan Mitigation SHOULD be performed for Service Bindings |
 | --- | --- | --- | --- | --- |
+| _All_ | 200 | Success | No | No |
+| _All_ | 200 with malformed response | Failure | No | No |
 | [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) for [Provisioning](#provisioning)/[Deprovisioning](#deprovisioning) | 200 with `"state": "failed"` | Failure | Yes | No |
 | [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) for [Binding](#binding)/[Unbinding](#unbinding) | 200 with `"state": "failed"` | Failure | No | Yes |
 | _All_ | 201 | Success | No | No |

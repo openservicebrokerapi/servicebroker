@@ -75,6 +75,10 @@ paths:
             $ref: '#/definitions/ServiceInstanceProvisionRequest'
         - $ref: '#/parameters/accepts_incomplete'
       responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ServiceInstanceProvisionResponse'
         '201':
           description: Created
           schema:
@@ -316,6 +320,10 @@ paths:
             $ref: '#/definitions/ServiceBindingRequest'
         - $ref: '#/parameters/accepts_incomplete'
       responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ServiceBindingResponse'
         '201':
           description: Created
           schema:
