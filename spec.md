@@ -678,7 +678,7 @@ usual status codes: `201 Created` for provision and bind, and `200 OK` for
 update, unbind, and deprovision.
 
 Platforms that rely on eventual consistency MAY consider `409 Conflict` a
-a no-op and SHOULD use the `last_operation` endpoint to verify the status of
+no-op and SHOULD use the `last_operation` endpoint to verify the status of
 the provisioning request.
 
 Service Brokers that support synchronous responses for provision, update, and
