@@ -520,6 +520,8 @@ definitions:
         $ref: '#/definitions/Metadata'
       dashboard_client:
         $ref: '#/definitions/DashboardClient'
+      binding_rotatable:
+        type: boolean
       plan_updateable:
         type: boolean
       plans:
@@ -734,6 +736,8 @@ definitions:
         $ref: '#/definitions/ServiceBindingResourceObject'
       parameters:
         type: object
+      predecessor_binding_id:
+        type: string
   ServiceBindingResourceObject:
     type: object
     properties:
@@ -757,8 +761,11 @@ definitions:
         items:
           $ref: '#/definitions/ServiceBindingVolumeMount'
   ServiceBindingMetadata:
+    type: object
     properties:
       expires_at:
+        type: string
+      renew_before:
         type: string
   ServiceBindingVolumeMount:
     type: object

@@ -26,6 +26,7 @@
   - [Fetching a Service Instance](#fetching-a-service-instance)
   - [Updating a Service Instance](#updating-a-service-instance)
   - [Binding](#binding)
+    - [Binding Rotation](#binding-rotation)
     - [Types of Binding](#types-of-binding)
   - [Fetching a Service Binding](#fetching-a-service-binding)
   - [Unbinding](#unbinding)
@@ -471,6 +472,7 @@ how Platforms might expose these values to their users.
 | metadata | object | An opaque object of metadata for a Service Plan. It is expected that Platforms will treat this as a blob. Note that there are [conventions](profile.md#service-metadata) in existing Service Brokers and Platforms for fields that aid in the display of catalog data. |
 | free | boolean | When false, Service Instances of this Service Plan have a cost. The default is true. |
 | bindable | boolean | Specifies whether Service Instances of the Service Plan can be bound to applications. This field is OPTIONAL. If specified, this takes precedence over the `bindable` attribute of the Service Offering. If not specified, the default is derived from the Service Offering. |
+| binding_rotatable | boolean | Whether a Service Binding of that Plan supports [Service Binding rotation](#binding-rotation). The default is false. |
 | plan_updateable | boolean | Whether the Plan supports upgrade/downgrade/sidegrade to another version. This field is OPTIONAL. If specificed, this takes precedence over the Service Offering's `plan_updateable` field. If not specified, the default is derived from the Service Offering. Please note that the attribute is intentionally misspelled as `plan_updateable` for legacy reasons. |
 | schemas | [Schemas](#schemas-object) | Schema definitions for Service Instances and Service Bindings for the Service Plan. |
 | maximum_polling_duration | integer | A duration, in seconds, that the Platform SHOULD use as the Service's [maximum polling duration](#polling-interval-and-duration). |
@@ -1314,6 +1316,37 @@ To enable the Platform to do this in a service agnostic way, the Service Broker
 SHOULD provide the endpoints that the Application uses to connect to the service
 alongside the binding credentials.
 
+### Binding Rotation
+
+Some Service Bindings are not valid forever. Especially credentials expire and
+have to be replaced at some point in time. The simplest form of exchanging a
+binding is to create a new Service Binding, make it available to the
+Application and remove and unbind the old one. In many cases, this requires a
+restart of the Application.
+
+But this approach has a few downsides. First of all, from the Service Broker
+point of view, there is no continuity. The Service Broker doesn't know that
+the new binding is the successor of the old one. If state is attached to the
+old binding, the Service Broker is not able to transfer this state to the new
+binding.
+The second challenge is, that Platforms have to provide the binding parameters
+again to the successor binding. But Platforms do not necessarily store these
+parameter values. Without the values, a user has to provide them again and
+that prevents an automated rotation of Service Bindings.
+
+Therefore, this specification defines means to rotate Service Bindings.
+A Service Broker can declare in the catalog per plan if it supports the
+creation of a successor binding by setting the `binding_rotatable` field to
+`true`. If the field is set to `false` or not present, the Platform MUST NOT
+attempt to rotate a Service Binding of this plan.
+
+To create a successor binding, the Platform MUST provide a
+`predecessor_binding_id` field in the binding provisioning request. The value
+of this field MUST be the Service Binding ID of a non-expired Service Binding
+of the same Service Instance. The request creates a new Service Binding with a
+new binding ID. Both Service Bindings, the new and the old one, MUST both be
+valid in parallel until they expired or are deleted.
+
 ### Types of Binding
 
 #### Credentials
@@ -1363,7 +1396,7 @@ There are a class of Service Offerings that provide network storage to applicati
 via volume mounts in the application container. A create Service Binding response from
 one of these services MUST include `volume_mounts`.
 
-### Request
+### Request (Creating a Service Binding)
 
 #### Route
 `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id`
@@ -1489,7 +1522,8 @@ For `200 OK` and `201 Created` response codes, the following fields are defined:
 
 | Response Field | Type | Description |
 | --- | --- | --- |
-| expires_at | string | The date and time when the Service Binding becomes invalid and SHOULD NOT or CANNOT be used anymore. Applications or Platforms MAY use this field to initiate a Service Binding/credential rotation. If present, the string MUST follow ISO 8601 and this pattern: `yyyy-mm-ddThh:mm:ss.ssZ` |
+| expires_at | string | The date and time when the Service Binding becomes invalid and SHOULD NOT or CANNOT be used anymore. If present, the string MUST follow ISO 8601 and this pattern: `yyyy-mm-ddThh:mm:ss.sZ` |
+| renew_before | string | The date and time before the Service Binding SHOULD be renewed. Applications or Platforms MAY use this field to initiate a [Service Binding rotation](#binding-rotation) or create a new Service Binding on time. It is RECOMMENDED to trigger the creation of a new Service Binding shortly before this timestamp. If the `expires_at` field is also present, the `renew_before` timestamp MUST be before or equal to the `expires_at` timestamp. Service Brokers SHOULD leave enough time between both timestamps to create a new Service Binding including a buffer to enable continuity. If present, the string MUST follow ISO 8601 and this pattern: `yyyy-mm-ddThh:mm:ss.sZ` |
 
 ##### Volume Mount Object
 
@@ -1560,6 +1594,35 @@ can be mounted on all app instances simultaneously.
   }]
 }
 ```
+
+### Request (Rotating a Service Binding)
+
+#### Route
+`PUT /v2/service_instances/:instance_id/service_bindings/:binding_id`
+
+`:instance_id` MUST be the ID of a previously provisioned Service Instance.
+
+`:binding_id` MUST be a globally unique non-empty string.
+This ID will be used for future unbind requests, so the Service Broker will use
+it to correlate the resource it creates.
+
+#### Parameters
+| Parameter name | Type | Description |
+| --- | --- | --- |
+| accepts_incomplete | boolean | A value of true indicates that the Platform and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only perform a binding operation asynchronously, the broker MUST reject the request with a `422 Unprocessable Entity` as described below. |
+
+#### Body
+
+| Request Field | Type | Description |
+| --- | --- | --- |
+| predecessor_binding_id* | string | MUST be the ID of non-expired Service Binding of the same Service Instance. |
+
+\* Fields with an asterisk are REQUIRED.
+
+### Response
+
+The same response as in the response section above is expected.
+
 
 ## Fetching a Service Binding
 

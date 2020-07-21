@@ -667,6 +667,8 @@ components:
           $ref: '#/components/schemas/Metadata'
         dashboard_client:
           $ref: '#/components/schemas/DashboardClient'
+        binding_rotatable:
+          type: boolean
         plan_updateable:
           type: boolean
         plans:
@@ -895,11 +897,15 @@ components:
           $ref: '#/components/schemas/ServiceBindingResouceObject'
         parameters:
           $ref: '#/components/schemas/Object'
+        predecessor_binding_id:
+          type: string
 
     ServiceBindingMetadata:
       type: object
       properties:
         expires_at:
+          type: string
+        renew_before:
           type: string
 
     ServiceBindingResouceObject:
