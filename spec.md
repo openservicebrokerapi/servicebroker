@@ -1089,6 +1089,10 @@ if it contains sensitive information.
   "parameters": {
     "billing-account": "abcde12345"
   }
+  "context": {
+    "broker-generated-context": "value",
+    "account_id": "abc12345",
+  }
 }
 ```
 
