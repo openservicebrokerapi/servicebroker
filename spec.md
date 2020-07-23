@@ -675,11 +675,12 @@ Offering, even by Service Plan.
 
 To execute a request synchronously, the Service Broker need only return the
 usual status codes: `201 Created` for provision and bind, and `200 OK` for
-update, unbind, and deprovision.
+update, unbind, and deprovision. `200 OK` MAY be returned synchronously by
+Service Brokers that accept provisioning requests with unchanged parameters.
 
-Platforms that rely on eventual consistency MAY consider `409 Conflict` a
-no-op and SHOULD use the `last_operation` endpoint to verify the status of
-the provisioning request.
+Platforms that rely on eventual consistency are RECOMMENDED to use `409 Conflict`
+as a no-op response and SHOULD use the `last_operation` endpoint to verify the status of
+the provisioning request instead.
 
 Service Brokers that support synchronous responses for provision, update, and
 delete can ignore the `accepts_incomplete=true` query parameter if it is
@@ -1918,7 +1919,7 @@ by the Platform:
 
 | Request | Service Broker Response Status Code | Platform Interpretation Of Response | Orphan Mitigation SHOULD be performed for Service Instances | Orphan Mitigation SHOULD be performed for Service Bindings |
 | --- | --- | --- | --- | --- |
-| _All_ | 200 | Success *deprecated*| No | No |
+| _All_ | 200 | Success *Deprecated in favor of using `last_operation` endpoint* | No | No |
 | _All_ | 200 with malformed response | Failure | No | No |
 | [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances) for [Provisioning](#provisioning)/[Deprovisioning](#deprovisioning) | 200 with `"state": "failed"` | Failure | Yes | No |
 | [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings) for [Binding](#binding)/[Unbinding](#unbinding) | 200 with `"state": "failed"` | Failure | No | Yes |
