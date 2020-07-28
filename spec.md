@@ -1034,6 +1034,8 @@ endpoint returns `"state": "succeeded"` for a [Provisioning](#provisioning)
 operation. Otherwise, Platforms SHOULD NOT attempt to call this endpoint under
 any circumstances.
 
+By polling this endpoint, Platforms MAY refresh their view of a successfully provisioned Service Instance, and discover out-of-bands changes that were applied on a Service Instance (such as parameters, dashboard url or maintenance info).
+
 ### Request
 
 ##### Route
@@ -1076,6 +1078,7 @@ For success responses, the following fields are defined:
 | plan_id | string | The ID of the Service Plan from the catalog that is associated with the Service Instance. |
 | dashboard_url | string | The URL of a web-based management user interface for the Service Instance; we refer to this as a service dashboard. The URL MUST contain enough information for the dashboard to identify the resource being accessed (`9189kdfsk0vfnku` in the example below). Note: a Service Broker that wishes to return `dashboard_url` for a Service Instance MUST return it with the initial response to the provision request, even if the service is provisioned asynchronously. |
 | parameters | object | Configuration parameters for the Service Instance. |
+| maintenance_info | [Maintenance Info](#maintenance-info-object) | If a Service Broker provides maintenance information for a Service Plan in its [Catalog](#catalog-management), a Broker MAY return the maintenance information currently associated with the Service Instance. Any field except for `maintenance_info.version` should be ignored by the Platform. This field can be used by the Platform to inform the end-user of unattended maintenances that were triggered out-of-band and applied to the Service Instance. |
 
 Service Brokers MAY choose to not return some or all parameters when a Service Instance is fetched - for example,
 if it contains sensitive information.
