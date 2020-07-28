@@ -1893,7 +1893,7 @@ considered the request a failure.
 [Polling Last Operation for Service Instances](#polling-last-operation-for-service-instances)
 endpoint returns `"state": "failed"` for an asynchronous provisioning or
 deprovisioning request.
-* A synchronous [Binding](#binding]) request fails.
+* A synchronous [Binding](#binding) request fails.
 * A call to the
 [Polling Last Operation for Service Bindings](#polling-last-operation-for-service-bindings)
 endpoint returns `"state": "failed"` for an asynchronous binding or unbinding
