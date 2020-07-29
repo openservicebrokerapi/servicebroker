@@ -31,7 +31,7 @@ version of the specification, however are still subject to change.
 
 - [Slack Channel](http://slack.openservicebrokerapi.org)
 - [Mailing List/Google Group](https://groups.google.com/forum/#!forum/open-service-broker-api)
-- [Weekly Call](https://github.com/openservicebrokerapi/servicebroker/wiki/Weekly-Call)
+- [Bi Weekly Call](https://github.com/openservicebrokerapi/servicebroker/wiki/Regular-Call)
 
 ## Contributing
 
