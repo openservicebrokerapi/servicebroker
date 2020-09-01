@@ -784,6 +784,8 @@ components:
       properties:
         dashboard_url:
           type: string
+        attributes:
+          type: object
         metadata:
           $ref: '#/components/schemas/ServiceInstanceMetadata'
 
