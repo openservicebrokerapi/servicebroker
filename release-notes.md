@@ -2,16 +2,17 @@
 
 ## [v2.16](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md)
 
-* Add guidance of how long the state of an operation SHOULD be remembered
-* Add guidance to handle 500 errors from Service Instance update
+* Add guidance for remembering the state of [service instance](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md#body-1) and [service binding](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md#body-2) operations
+* Add guidance to handle 500 errors from Service Instance [update](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md#response-5)
 * Add guidance to handle requests with invalid data
-* Allow Service Brokers to indicate if a Service Instance is still usable after a failed update or deprovisioning and if an update can be repeated
+* Allow Service Brokers to indicate if a Service Instance is still usable after a [failed](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md#body-1) update or deprovisioning and if an update can be repeated
 * Specify that Platforms SHOULD NOT reuse IDs
-* Allow Service Brokers to return additional information on GET requests 
-* Add CF and K8s annotations to the profile document
-* Add support for ETag and If-Modified-Since headers
-* Clarify the response code when Platform does not provide the required API version header
-* Service Instances can be labelled with information defined by the Service Broker
+* Allow the platform to supply Service ID and Plan ID as hints when retrieving a [service binding](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md#fetching-a-service-binding) or a [service instance](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md#fetching-a-service-instance) 
+* Add [CF](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/profile.md#cloud-foundry-context-object) and [K8s](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/profile.md#kubernetes-context-object) annotations to the profile document
+* Add support for ETag and If-Modified-Since [headers](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md#catalog-management)
+* Clarify the response code when Platform does not provide the required [API version header](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md#api-version-header)
+* Service Instances can be labelled with [information](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md#service-instance-metadata) defined by the Service Broker
+* Add [expiration](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md#binding-metadata-object) date and time for bindings
 
 ## [v2.15](https://github.com/openservicebrokerapi/servicebroker/blob/v2.15/spec.md)
 2019-06-11
