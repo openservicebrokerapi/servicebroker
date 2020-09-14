@@ -1094,9 +1094,6 @@ if it contains sensitive information.
   "parameters": {
     "billing-account": "abcde12345"
   }
-  "context": {
-    "account_id": "abc12345",
-  }
   "attributes": {
     "platfom.generated.attribute": "attribute-value",
   }
