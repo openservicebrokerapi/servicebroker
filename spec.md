@@ -1010,8 +1010,8 @@ For success responses, the following fields are defined:
   "dashboard_url": "http://example-dashboard.example.com/9189kdfsk0vfnku",
   "operation": "task_10",
   "attributes": {
-    "platform.generated.attribute1": "value1",
-    "platform.generated.attribute2": "value2"
+    "broker.generated.attribute1": "value1",
+    "broker.generated.attribute2": "value2"
   }
   "metadata": {
     "labels": {
