@@ -755,6 +755,8 @@ components:
           $ref: '#/components/schemas/Object'
         maintenance_info:
           $ref: '#/components/schemas/MaintenanceInfo'
+        metadata:
+          $ref: '#/components/schemas/ServiceInstanceMetadata'
 
     ServiceInstanceProvisionRequest:
       type: object
@@ -784,8 +786,6 @@ components:
       properties:
         dashboard_url:
           type: string
-        attributes:
-          type: object
         metadata:
           $ref: '#/components/schemas/ServiceInstanceMetadata'
 
@@ -803,6 +803,8 @@ components:
       type: object
       properties:
         labels:
+          type: object
+        attributes:
           type: object
 
     ServiceInstanceUpdateRequest:
