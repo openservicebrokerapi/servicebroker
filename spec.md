@@ -119,7 +119,7 @@ that do not understand them.
 
 * Add guidance of how long the state of an operation SHOULD be remembered
 * Add guidance to handle 500 errors from Service Instance update
-* Add guidance to handle equests with invalid data
+* Add guidance to handle requests with invalid data
 * Allow Service Brokers to indicate if a Service Instance is still usable after a failed update or deprovisioning and if an update can be repeated
 * Specify that Platforms SHOULD NOT reuse IDs
 * Allow Service Brokers to return additional information on GET requests
