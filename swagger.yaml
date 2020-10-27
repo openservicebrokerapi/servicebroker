@@ -605,6 +605,8 @@ definitions:
         type: string
       parameters:
         type: object
+      maintenance_info:
+        $ref: '#/definitions/MaintenanceInfo'
   ServiceInstanceProvisionRequest:
     type: object
     required:

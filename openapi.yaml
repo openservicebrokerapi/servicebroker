@@ -753,6 +753,8 @@ components:
           type: string
         parameters:
           $ref: '#/components/schemas/Object'
+        maintenance_info:
+          $ref: '#/components/schemas/MaintenanceInfo'
 
     ServiceInstanceProvisionRequest:
       type: object
