@@ -607,6 +607,8 @@ definitions:
         type: object
       maintenance_info:
         $ref: '#/definitions/MaintenanceInfo'
+      metadata:
+        $ref: '#/definitions/ServiceInstanceMetadata'
   ServiceInstanceProvisionRequest:
     type: object
     required:
@@ -806,6 +808,8 @@ definitions:
     type: object
     properties:
       labels:
+        type: object
+      attributes:
         type: object
   MaintenanceInfo:
     type: object

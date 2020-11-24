@@ -202,7 +202,7 @@ deployment:
   The [annotations](http://v3-apidocs.cloudfoundry.org/version/3.69.0/index.html#metadata) attached to the organization that a Service Instance is associated with.
   Note that the annotations of an organization in Cloud Foundry MAY be changed.
   This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
-  
+
   ```
   "organization_annotations": { "prefix-here.org/name-here":"value-here" }
   ```
@@ -248,7 +248,7 @@ deployment:
   The [annotations](http://v3-apidocs.cloudfoundry.org/version/3.69.0/index.html#metadata) attached to the space that a Service Instance is associated with.
   Note that the annotations of a space in Cloud Foundry MAY be changed.
   This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
-  
+
   ```
   "space_annotations": { "prefix-here.org/name-here":"value-here" }
   ```
@@ -302,7 +302,7 @@ Cloud Foundry API call:
   The [annotations](http://v3-apidocs.cloudfoundry.org/version/3.69.0/index.html#metadata) attached to the Service Instance.
   Note that the annotations of a Service Instance in Cloud Foundry MAY be changed.
   This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
-  
+
   ```
   "instance_annotations": { "prefix-here.org/name-here":"value-here" }
   ```
@@ -341,7 +341,7 @@ The following properties are defined for usage within a Kubernetes deployment:
   The [annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) attached to the namespace in which the Service Instance will be visible.
   Note that the annotations of a namespace in Kubernetes MAY be changed.
   This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
-  
+
   ```
   "namespace_annotations": { "prefix-here.org/name-here":"value-here" }
   ```
@@ -357,7 +357,7 @@ The following properties are defined for usage within a Kubernetes deployment:
   The [annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) attached to the Service Instance.
   Note that the annotations of a Service Instance in Kubernetes MAY be changed.
   This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
-  
+
   ```
   "instance_annotations": { "prefix-here.org/name-here":"value-here" }
   ```
@@ -460,7 +460,7 @@ deployment:
   The [annotations](http://v3-apidocs.cloudfoundry.org/version/3.69.0/index.html#metadata) attached to the application that a Service Binding is associated with.
   Note that the annotations of an application in Cloud Foundry MAY be changed.
   This OPTIONAL property holds an object with the annotations key/value pairs. If present, this property MUST be an object, with zero or more properties as follows:
-  
+
   ```
   "app_annotations": { "prefix-here.org/name-here":"value-here" }
   ```
@@ -472,10 +472,10 @@ deployment:
 - `credential_client_id`
 
   Version: 2.16
-  
+
   When the Bind Resource Object is the result of a Cloud Foundry [service key](https://docs.cloudfoundry.org/devguide/services/service-keys.html) developer request, then the Cloud Cloundry CredHub client id is provided. This supports Service Brokers that MAY choose use to securely store Service Binding credentials, and return [credhub references](https://github.com/cloudfoundry-incubator/credhub/blob/master/docs/secure-service-credentials.md#service-brokers) Service Binding responses instead of plain credentials values. In this case, the provided client MUST be granted permission by the Service Broker to read the returned credentials reference.
   This OPTIONAL property holds a string with the client id that MUST be granted read permissions. If present, this property MUST be a non empty string as follows:
-  
+
   ```
     "credential_client_id": "client_id-value-here"
   ```
@@ -483,7 +483,7 @@ deployment:
   ```
     "credential_client_id": "cc_service_key_client"
   ```
-  
+
 The following example shows a `bind_resource` object that might appear as part
 of a Cloud Foundry API call resulting from a Service Binding developer request:
   ```
@@ -525,6 +525,11 @@ and consistency.
 | metadata.bullets | array-of-strings | Features of this plan, to be displayed in a bulleted-list. |
 | metadata.costs | array-of-objects | An array-of-objects that describes the costs of a service, in what currency, and the unit of measure. If there are multiple costs, all of them could be billed to the user (such as a monthly + usage costs at once). |
 | metadata.displayName | string | Name of the plan to be displayed to clients. |
+
+### Attributes Metadata
+
+In addition to labels fields related to service and plans, as well as platform-specific metadata, Service Brokers MAY also expose broker-specific information in the
+`attributes` object field that is read-only and can be updated by the broker when necessary.
 
 #### Cost Object
 This object describes the costs of a service, in what currency, and the unit
@@ -619,6 +624,7 @@ many plans.
 In addition to the metadata described in [Service Metadata](#service-metadata),
 Service Brokers MAY also expose the following fields to enable Cloud Foundry
 specific behaviour.
+
 
 #### Service Metadata Fields
 
