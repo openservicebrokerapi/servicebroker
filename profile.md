@@ -508,6 +508,12 @@ in the `metadata` objects, it is RECOMMENDED that the following names
 be used when possible in an attempt to provide some degree of interoperability
 and consistency.
 
+Please note that in addition service metadata returned from [catalog endpoint](spec.md#catalog-management), 
+Service Brokers MAY also expose service-instance-specific metadata through the
+[ServiceInstanceMetadata](spec.md#service-instance-metadata) structure returned by Service Brokers 
+in the [Provisioning](spec.md#provisioning) endpoint with updates potentially published 
+in the [Fetching a Service Instance](spec.md#fetching-a-service-instance) endpoint.
+
 #### Service Metadata Fields
 
 | Service Broker API Field | Type | Description |
@@ -525,11 +531,6 @@ and consistency.
 | metadata.bullets | array-of-strings | Features of this plan, to be displayed in a bulleted-list. |
 | metadata.costs | array-of-objects | An array-of-objects that describes the costs of a service, in what currency, and the unit of measure. If there are multiple costs, all of them could be billed to the user (such as a monthly + usage costs at once). |
 | metadata.displayName | string | Name of the plan to be displayed to clients. |
-
-### Attributes Metadata
-
-In addition to labels fields related to service and plans, as well as platform-specific metadata, Service Brokers MAY also expose broker-specific information in the
-`attributes` object field that is read-only and can be updated by the broker when necessary.
 
 #### Cost Object
 This object describes the costs of a service, in what currency, and the unit
