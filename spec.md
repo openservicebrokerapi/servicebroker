@@ -1952,6 +1952,8 @@ by the Platform:
 | [Provisioning](#provisioning) | 201 with malformed response | Failure | Yes | No |
 | [Binding](#binding) | 201 with malformed response | Failure | No | Yes |
 | _All_ | 202 | Success | No | No |
+| [Provisioning](#provisioning) | 202 with malformed response | Failure | Yes | No |
+| [Binding](#binding) | 202 with malformed response | Failure | No | Yes |
 | [Provisioning](#provisioning)/[Deprovisioning](#deprovisioning) | All other 2xx | Failure | Yes | No |
 | [Binding](#binding)/[Unbinding](#unbinding) | All other 2xx | Failure | No | Yes |
 | [Updating a Service Instance](#updating-a-service-instance) | All other 2xx | Failure | No | No |
