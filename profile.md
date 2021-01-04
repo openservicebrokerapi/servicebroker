@@ -512,7 +512,7 @@ Please note that in addition service metadata returned from [catalog endpoint](s
 Service Brokers MAY also expose service-instance-specific metadata through the
 [ServiceInstanceMetadata](spec.md#service-instance-metadata) structure returned by Service Brokers 
 in the [Provisioning](spec.md#provisioning) endpoint with updates potentially published 
-in the [Fetching a Service Instance](spec.md#fetching-a-service-instance) endpoint.
+in the [Updating](spec.md#updating-a-service-instance) and [Fetching a Service Instance](spec.md#fetching-a-service-instance) endpoints.
 
 #### Service Metadata Fields
 
