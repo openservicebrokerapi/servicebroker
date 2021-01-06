@@ -508,7 +508,7 @@ in the `metadata` objects, it is RECOMMENDED that the following names
 be used when possible in an attempt to provide some degree of interoperability
 and consistency.
 
-Please note that in addition service metadata returned from [catalog endpoint](spec.md#catalog-management), 
+Please note that in addition to service metadata returned from [catalog endpoint](spec.md#catalog-management), 
 Service Brokers MAY also expose service-instance-specific metadata through the
 [ServiceInstanceMetadata](spec.md#service-instance-metadata) structure returned by Service Brokers 
 in the [Provisioning](spec.md#provisioning) endpoint with updates potentially published 
