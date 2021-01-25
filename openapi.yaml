@@ -854,9 +854,9 @@ components:
         state:
           type: string
           enum:
-            - in_progress
-            - succeeded
-            - failed
+            - "in progress"
+            - "succeeded"
+            - "failed"
         description:
           type: string
         instance_usable:
