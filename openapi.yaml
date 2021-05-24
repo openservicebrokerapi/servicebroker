@@ -4,6 +4,8 @@
 # the authority.
 
 openapi: "3.0.0"
+tags:
+- name: Open Service Broker API Specification
 
 info:
   title: Open Service Broker API
@@ -66,7 +68,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ServiceInstanceProvisionRequest'
+              $ref: '#/components/schemas/ServiceInstanceProvisionRequestBody'
       responses:
         '200':
           description: OK
@@ -135,7 +137,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ServiceInstanceUpdateRequest'
+              $ref: '#/components/schemas/ServiceInstanceUpdateRequestBody'
       responses:
         '200':
           description: OK
@@ -723,24 +725,24 @@ components:
       type: object
       properties:
         create:
-          $ref: '#/components/schemas/SchemaParameters'
+          type: object
+          properties:
+            parameters:
+              type: object
         update:
-          $ref: '#/components/schemas/SchemaParameters'
+          type: object
+          properties:
+            parameters:
+              type: object
 
     ServiceBindingSchema:
       type: object
       properties:
         create:
-          $ref: '#/components/schemas/SchemaParameters'
-
-    SchemaParameters:
-      type: object
-      properties:
-        parameters:
-          $ref: '#/components/schemas/JSONSchema'
-
-    JSONSchema:
-      $ref: 'http://json-schema.org/draft-04/schema'
+          type: object
+          properties:
+            parameters:
+              type: object
 
     ServiceInstanceResource:
       type: object
@@ -758,7 +760,7 @@ components:
         metadata:
           $ref: '#/components/schemas/ServiceInstanceMetadata'
 
-    ServiceInstanceProvisionRequest:
+    ServiceInstanceProvisionRequestBody:
       type: object
       required:
         - service_id
@@ -807,7 +809,7 @@ components:
         attributes:
           type: object
 
-    ServiceInstanceUpdateRequest:
+    ServiceInstanceUpdateRequestBody:
       type: object
       required:
         - service_id
@@ -852,9 +854,9 @@ components:
         state:
           type: string
           enum:
-            - in progress
-            - succeeded
-            - failed
+            - "in progress"
+            - "succeeded"
+            - "failed"
         description:
           type: string
         instance_usable:
