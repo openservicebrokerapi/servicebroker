@@ -716,6 +716,9 @@ components:
           type: integer
         plan_updateable:
           type: boolean
+        binding_rotatable:
+          type: boolean
+          default: false
 
     Schemas:
       type: object
