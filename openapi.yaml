@@ -712,6 +712,10 @@ components:
           type: boolean
         schemas:
           $ref: '#/components/schemas/Schemas'
+        maximum_polling_duration:
+          type: integer
+        plan_updateable:
+          type: boolean
 
     Schemas:
       type: object
