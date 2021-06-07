@@ -768,6 +768,10 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/ServiceBindingVolumeMount'
+      endpoints:
+        type: array
+        items:
+          $ref: '#/definitions/ServiceBindingEndpoint'
   ServiceBindingMetadata:
     type: object
     properties:
