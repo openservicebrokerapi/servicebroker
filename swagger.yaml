@@ -722,6 +722,10 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/ServiceBindingVolumeMount'
+      endpoints:
+        type: array
+        items:
+          $ref: '#/definitions/ServiceBindingEndpoint'
       parameters:
         type: object
   ServiceBindingRequest:
@@ -767,6 +771,10 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/ServiceBindingVolumeMount'
+      endpoints:
+        type: array
+        items:
+          $ref: '#/definitions/ServiceBindingEndpoint'
   ServiceBindingMetadata:
     type: object
     properties:
@@ -774,6 +782,25 @@ definitions:
         type: string
       renew_before:
         type: string
+  ServiceBindingEndpoint:
+    type: object
+    required:
+      - host
+      - ports
+    properties:
+      host:
+        type: string
+      ports:
+        type: array
+        items:
+          type: string
+      protocol:
+        type: string
+        enum:
+          - tcp
+          - udp
+          - all
+        default: tcp
   ServiceBindingVolumeMount:
     type: object
     required:
