@@ -568,6 +568,9 @@ definitions:
         type: integer
       maintenance_info:
         $ref: '#/definitions/MaintenanceInfo'
+      binding_rotatable:
+        type: boolean
+        default: false
   SchemasObject:
     type: object
     properties:
