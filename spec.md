@@ -5,7 +5,7 @@
   - [Notations and Terminology](#notations-and-terminology)
   - [Changes](#changes)
     - [Change Policy](#change-policy-for-minor-versions)
-    - [Changes Since v2.15](#changes-since-v215)
+    - [Changes Since v2.16](#changes-since-v216)
   - [Headers](#headers)
     - [API Version Header](#api-version-header)
     - [Originating Identity](#originating-identity)
@@ -115,18 +115,15 @@ added to enable support for new features.
 These fields MUST be OPTIONAL and SHOULD be ignored by clients and servers
 that do not understand them.
 
-### Changes Since v2.15
+### Changes Since v2.16
 
-* Add guidance of how long the state of an operation SHOULD be remembered
-* Add guidance to handle 500 errors from Service Instance update
-* Add guidance to handle requests with invalid data
-* Allow Service Brokers to indicate if a Service Instance is still usable after a failed update or deprovisioning and if an update can be repeated
-* Specify that Platforms SHOULD NOT reuse IDs
-* Allow Service Brokers to return additional information on GET requests
-* Add CF and K8s annotations to the profile document
-* Add support for ETag and If-Modified-Since headers
-* Clarify the response code when Platform does not provide the REQUIRED API version header
-* Service Instances can be labelled with information defined by the Service Broker
+* Add binding rotation fields to the spec and guidance on how to use the expiration fields for service binding
+* Remove ambiguity on provisioning status code and clarify 200 status with consistent language for depraction
+* Add context object to the response of fetching a service instance and turn into a non-requirement for service instances
+* Rename context to attributes and update openapi files and the spec with an example
+* Moved attributes to metadata and returns the metadata on fetch operations
+* Add guidance for orphan mitigation
+* Reconcile openapi and swagger files to match and generate identical clients and servers
 
 For changes in older versions, see the [release notes](https://github.com/openservicebrokerapi/servicebroker/blob/master/release-notes.md).
 
@@ -147,7 +144,7 @@ Requests from the Platform to the Service Broker MUST contain a header that
 declares the version number of the Open Service Broker API that the Platform
 is using:
 
-`X-Broker-API-Version: 2.16`
+`X-Broker-API-Version: 2.17`
 
 The version numbers are in the format `MAJOR.MINOR` using semantic versioning.
 
@@ -397,7 +394,7 @@ Broker API.
 
 #### cURL
 ```
-$ curl http://username:password@service-broker-url/v2/catalog -H "X-Broker-API-Version: 2.16"
+$ curl http://username:password@service-broker-url/v2/catalog -H "X-Broker-API-Version: 2.17"
 ```
 
 ### Response
@@ -764,7 +761,7 @@ it makes to Service Brokers.
 
 #### cURL
 ```
-$ curl http://username:password@service-broker-url/v2/service_instances/:instance_id/last_operation -H "X-Broker-API-Version: 2.16"
+$ curl http://username:password@service-broker-url/v2/service_instances/:instance_id/last_operation -H "X-Broker-API-Version: 2.17"
 ```
 
 ### Response
@@ -984,7 +981,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
     "parameter1": 1,
     "parameter2": "foo"
   }
-}' -X PUT -H "X-Broker-API-Version: 2.16" -H "Content-Type: application/json"
+}' -X PUT -H "X-Broker-API-Version: 2.17" -H "Content-Type: application/json"
 ```
 
 ### Response
@@ -1058,7 +1055,7 @@ The request provides these query string parameters as useful hints for brokers.
 
 ##### cURL
 ```
-$ curl 'http://username:password@broker-url/v2/service_instances/:instance_id' -X GET -H "X-Broker-API-Version: 2.16"
+$ curl 'http://username:password@broker-url/v2/service_instances/:instance_id' -X GET -H "X-Broker-API-Version: 2.17"
 ```
 
 ### Response
@@ -1245,7 +1242,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
     "organization_id": "org-guid-here",
     "space_id": "space-guid-here"
   }
-}' -X PATCH -H "X-Broker-API-Version: 2.16" -H "Content-Type: application/json"
+}' -X PATCH -H "X-Broker-API-Version: 2.17" -H "Content-Type: application/json"
 ```
 
 ### Response
@@ -1512,7 +1509,7 @@ $ curl http://username:password@service-broker-url/v2/service_instances/:instanc
     "parameter1-name-here": 1,
     "parameter2-name-here": "parameter2-value-here"
   }
-}' -X PUT -H "X-Broker-API-Version: 2.16" -H "Content-Type: application/json"
+}' -X PUT -H "X-Broker-API-Version: 2.17" -H "Content-Type: application/json"
 ```
 
 ### Response
@@ -1684,7 +1681,7 @@ The request provides these query string parameters as useful hints for brokers.
 
 ##### cURL
 ```
-$ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:binding_id' -X GET -H "X-Broker-API-Version: 2.16"
+$ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:binding_id' -X GET -H "X-Broker-API-Version: 2.17"
 ```
 
 ### Response
@@ -1786,7 +1783,7 @@ Service Instance.
 
 ```
 $ curl 'http://username:password@service-broker-url/v2/service_instances/:instance_id/
-  service_bindings/:binding_id?service_id=service-offering-id-here&plan_id=service-plan-id-here&accepts_incomplete=true' -X DELETE -H "X-Broker-API-Version: 2.16"
+  service_bindings/:binding_id?service_id=service-offering-id-here&plan_id=service-plan-id-here&accepts_incomplete=true' -X DELETE -H "X-Broker-API-Version: 2.17"
 ```
 
 ### Response
@@ -1867,7 +1864,7 @@ Brokers.
 #### cURL
 ```
 $ curl 'http://username:password@service-broker-url/v2/service_instances/:instance_id?accepts_incomplete=true
-  &service_id=service-offering-id-here&plan_id=service-plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.16"
+  &service_id=service-offering-id-here&plan_id=service-plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.17"
 ```
 
 ### Response

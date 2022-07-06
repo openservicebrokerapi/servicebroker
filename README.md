@@ -2,16 +2,16 @@
 
 ![Open Service Broker API](https://github.com/openservicebrokerapi/servicebroker/blob/master/logo.png?raw=true)
 
-## Latest Release: v2.16
-[Specification](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md)
+## Latest Release: v2.17
+[Specification](https://github.com/openservicebrokerapi/servicebroker/blob/v2.17/spec.md)
 
-[OpenAPI doc](http://petstore.swagger.io/?url=https://raw.githubusercontent.com/openservicebrokerapi/servicebroker/v2.16/openapi.yaml)
+[OpenAPI doc](http://petstore.swagger.io/?url=https://raw.githubusercontent.com/openservicebrokerapi/servicebroker/v2.17/openapi.yaml)
 
-[Profile](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/profile.md)
+[Profile](https://github.com/openservicebrokerapi/servicebroker/blob/v2.17/profile.md)
 
 [Workflows](diagram.md)
 
-[Release notes](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/release-notes.md)
+[Release notes](https://github.com/openservicebrokerapi/servicebroker/blob/v2.17/release-notes.md)
 
 ## Working Changes (might contain changes that are not yet released)
 Changes in these documents have been accepted by the working group for the next
