@@ -1,5 +1,15 @@
 # Service Broker API Release Notes
 
+## [v2.17](https://github.com/openservicebrokerapi/servicebroker/blob/v2.17/spec.md)
+
+* Add binding rotation fields to the spec and guidance on how to use the expiration fields for [service binding](https://github.com/openservicebrokerapi/servicebroker/blob/v2.17/spec.md#binding-rotation)
+* Remove ambiguity on [provisioning status code](https://github.com/openservicebrokerapi/servicebroker/blob/v2.17/spec.md#response-3) and clarify 200 status with consistent language for depraction
+* Add context object to the response of fetching a [service instance](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#fetching-a-service-instance) and turn into a non-requirement for service instances
+* Rename context to attributes and update openapi files and the [spec with an example](https://github.com/openservicebrokerapi/servicebroker/blob/v2.17/spec.md#body-4)
+* Moved attributes to [metadata](https://github.com/openservicebrokerapi/servicebroker/blob/v2.17/spec.md#body-4) and returns the metadata on fetch
+* Add guidance for [orphan mitigation](https://github.com/openservicebrokerapi/servicebroker/blob/v2.17/spec.md#orphan-mitigation)
+* Reconcile openapi and swagger files to match and generate identical clients and servers
+
 ## [v2.16](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md)
 
 * Add guidance for remembering the state of [service instance](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md#body-1) and [service binding](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md#body-2) operations
@@ -7,7 +17,7 @@
 * Add guidance to handle requests with invalid data
 * Allow Service Brokers to indicate if a Service Instance is still usable after a [failed](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md#body-1) update or deprovisioning and if an update can be repeated
 * Specify that Platforms SHOULD NOT reuse IDs
-* Allow the platform to supply Service ID and Plan ID as hints when retrieving a [service binding](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md#fetching-a-service-binding) or a [service instance](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md#fetching-a-service-instance) 
+* Allow the platform to supply Service ID and Plan ID as hints when retrieving a [service binding](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md#fetching-a-service-binding) or a [service instance](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md#fetching-a-service-instance)
 * Add [CF](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/profile.md#cloud-foundry-context-object) and [K8s](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/profile.md#kubernetes-context-object) annotations to the profile document
 * Add support for ETag and If-Modified-Since [headers](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md#catalog-management)
 * Clarify the response code when Platform does not provide the required [API version header](https://github.com/openservicebrokerapi/servicebroker/blob/v2.16/spec.md#api-version-header)
@@ -27,7 +37,7 @@
 * Allow brokers to return 200 for no-op [update Service Instance requests](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#response-5).
 * Allow brokers to not return parameters when returning a [Service Instance](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-5)
   or [Service Binding](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-5).
-* Add plan_updateable field to the [Service Plan object](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#service-plan-object). 
+* Add plan_updateable field to the [Service Plan object](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#service-plan-object).
 * [Clarify](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#blocking-operations) what happens when deleting during a provision/bind request.
 * Restrict Operation strings to 10,000 chartacters in the response body for [provisioning](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-4)
   or [deprovisioning](https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#body-12)

@@ -1,5 +1,5 @@
-# Open Service Broker API v2.16 Workflows
+# Open Service Broker API v2.17 Workflows
 
-![Workflows](https://docs.google.com/drawings/d/e/2PACX-1vRBvgtNzux33ee8ABbSpA_rF59jnKYUyD2quBGKlY-Nu0PrfzuYqyLmp5XKG4O8pUJEyVnUInqHSwfg/pub?w=1010&h=7426)
+![Workflows](https://docs.google.com/drawings/d/1_0Dz6SQPxwgct51X0pcZBd6N655s4XKL65GwhjCawpg/edit?usp=sharing)
 
 PMC members can edit the drawing [here](https://docs.google.com/drawings/d/1CTqMZg_ggOZLEG02jbxzM-ZSznm4mB2bSXdqhvUKvpw/edit)
