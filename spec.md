@@ -117,9 +117,9 @@ that do not understand them.
 
 ### Changes Since v2.16
 
-* Add binding rotation fields to the spec and guidance on how to use the expiration fields for service binding
+* Add binding rotation fields to the spec and guidance on how to use the expiration fields for Service Binding
 * Remove ambiguity on provisioning status code and clarify 200 status with consistent language for depraction
-* Add context object to the response of fetching a service instance and turn into a non-requirement for service instances
+* Add context object to the response of fetching a Service Instance and turn into a non-requirement for Service Instances
 * Rename context to attributes and update openapi files and the spec with an example
 * Moved attributes to metadata and returns the metadata on fetch operations
 * Add guidance for orphan mitigation
