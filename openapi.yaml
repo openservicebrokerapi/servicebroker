@@ -1049,5 +1049,5 @@ security:
   - basicAuth: []
 
 externalDocs:
-  description: The offical Open Service Broker API specification
+  description: The official Open Service Broker API specification
   url: https://github.com/openservicebrokerapi/servicebroker/
