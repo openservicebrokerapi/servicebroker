@@ -79,6 +79,10 @@ Spring Cloud App Broker is a framework for building Spring Boot applications tha
 [Cloud service broker](https://github.com/pivotal/cloud-service-broker/)
 This service broker uses Terraform to provision and bind services.
 
+[Open Broker API](https://pypi.org/project/openbrokerapi/)
+A Python library that provides the REST API implementation for the OSB API. Users
+implement an interface.
+
 # Other Libraries
 
 [`go-open-service-broker-client`](https://github.com/pmorie/go-open-service-broker-client):
