@@ -175,7 +175,7 @@ adhere to the following:
   user, such as the Platform refetching the catalog, MAY exclude the header from
   that HTTP request.
 - If present on a request, the `X-Broker-API-Originating-Identity` header
-  MUST contain the identify information for the Platform's user that took
+  MUST contain the identity information for the Platform's user that took
   the action to cause the request to be sent.
 
 If the Platform chooses to group multiple end-user operations into one request
