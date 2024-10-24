@@ -23,15 +23,14 @@ version of the specification, however are still subject to change.
 
 [Profile](https://github.com/openservicebrokerapi/servicebroker/blob/master/profile.md)
 
-[Roadmap and release planning](https://github.com/openservicebrokerapi/servicebroker/projects/1)
+[Roadmap](https://github.com/orgs/cloudfoundry/projects/30/views/7)
 
 [OSBAPI V3: Call for Input](https://docs.google.com/document/d/1zayT_7IECl-8DOtlp0kdfzIfSZMG7Y_N-SRPggs8eHg/edit)
 
 ## Communications
 
-- [Slack Channel](http://slack.openservicebrokerapi.org)
-- [Mailing List/Google Group](https://groups.google.com/forum/#!forum/open-service-broker-api)
-- [Bi Weekly Call](https://github.com/openservicebrokerapi/servicebroker/wiki/Regular-Call)
+- [Slack Channel](https://cloudfoundry.slack.com/archives/C02TXDMPSUS)
+- [Community call](https://github.com/cloudfoundry/community/blob/main/toc/working-groups/WORKING-GROUPS.md#service-management)
 
 ## Contributing
 
