@@ -1005,6 +1005,8 @@ components:
           type: string
         mount_config:
           $ref: '#/components/schemas/Object'
+        device_config:
+          $ref: '#/components/schemas/Object'
 
     Context:
       description: "See [Context Conventions](https://github.com/openservicebrokerapi/servicebroker/blob/master/profile.md#context-object) for more details."

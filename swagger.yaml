@@ -834,6 +834,8 @@ definitions:
         type: string
       mount_config:
         type: object
+      device_config:
+        type: object
   ServiceInstanceMetadata:
     type: object
     properties:

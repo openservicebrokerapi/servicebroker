@@ -1573,6 +1573,7 @@ can be mounted on all app instances simultaneously.
 | --- | --- | --- |
 | volume_id* | string | ID of the shared volume to mount on every app instance. |
 | mount_config | object | Configuration object to be passed to the driver when the volume is mounted. |
+| device_config | object | Configuration object to be passed to the driver when the device is created. |
 
 \* Fields with an asterisk are REQUIRED.
 
@@ -1614,6 +1615,10 @@ can be mounted on all app instances simultaneously.
     "device_type": "shared",
     "device": {
       "volume_id": "bc2c1eab-05b9-482d-b0cf-750ee07de311",
+      "device_config": {
+        "size_mb": 10240,
+        "fs_type": "ext4"
+      },
       "mount_config": {
         "key": "value"
       }
