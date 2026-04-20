@@ -3,6 +3,10 @@
 
 language: bash
 
+arch:
+  - amd64
+  - arm64
+
 services:
   - docker
 
